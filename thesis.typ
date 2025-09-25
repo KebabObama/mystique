@@ -30,6 +30,11 @@
 
 #pagebreak()
 
-#set heading(numbering: "1")
+#set heading(numbering: "1.1")
+
+= Nadpis 1
+== Nadpis 2
+=== Nadpis 3
+=== Nadpis 3
 
 // Zbytek práce zde

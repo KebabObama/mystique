@@ -159,13 +159,13 @@
 #pagebreak()
 
 #outline(
-  title: [Seznam obrázků],
+  title: heading(level: 1, outlined: true, [Seznam obrázků]),
   target: figure.where(kind: image),
 )
 
 #pagebreak()
 
 #outline(
-  title: heading(level: 1, [Seznam tabulek]),
+  title: heading(level: 1, outlined: true, [Seznam tabulek]),
   target: figure.where(kind: table),
 )
