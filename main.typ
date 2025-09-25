@@ -1,29 +1,5 @@
 
-#let thesis = (
-  name: "Název maturitní práce",
-  major: "Informační technologie",
-  class: "ITB4",
-  year: 2024,
-  author: "Jméno Příjmení",
-  abstract-cs: par([
-    Tvorba maturitní práce je jedním z velmi klíčových momentů při studiu. Kvalita zpracování její formální části je pak jedním z nejdůležitějších kritérií při jejím hodnocení. Cíl této práce je popsat jednotlivé kroky během tohoto procesu, doporučit postupy a vytvořit šablonu, která usnadní celý proces.@ujc_tecka
-  ]),
-  abstract-en: par([
-    The creation of a graduation thesis is one of the most crucial moments during studies. The quality of the processing of its formal part is then one of the most important criteria in its evaluation. The aim of this work is to describe the individual steps during this process, recommend procedures and create a template that will facilitate the entire process.
-  ]),
-  keywords-cs: par([
-    maturitní práce, šablona
-  ]),
-  keywords-en: par([
-    graduation thesis, template
-  ]),
-  acknowledgements: par([
-    Děkuji Mgr. Petru Novotnému za cenné připomínky a rady, které mi poskytl při vypracování maturitní práce.
-  ]),
-  assignment: par([
-    Zadání maturitní práce je přílohou této práce.
-  ])
-)
+#import "thesis.typ": thesis
 
 #set page(
   paper: "a4",
@@ -150,16 +126,23 @@
 
 #set align(left + top)
 
-#show outline.entry.where(
-  level: 1
-).or(
-  outline.entry.where(level: 2)
-): it => {
-  strong(it)
-}
+#[
+  #show (
+    outline
+      .entry
+      .where(
+        level: 1,
+      )
+      .or(
+        outline.entry.where(level: 2),
+      )
+  ): it => {
+    strong(it)
+  }
 
 
-#outline(depth: 3)
+  #outline(depth: 3)
+]
 
 #set page(footer: context [
   #set align(center)
@@ -167,14 +150,22 @@
   #counter(page).display("1")
 ])
 
-= Úvod
-
-// Úvod zde
-
-#set heading(numbering: "1")
-
-// Samotná práce zde
+#include "thesis.typ"
 
 #pagebreak()
 
 #bibliography("works.bib", title: "Seznam použité literatury", style: "iso-690-numeric")
+
+#pagebreak()
+
+#outline(
+  title: [Seznam obrázků],
+  target: figure.where(kind: image),
+)
+
+#pagebreak()
+
+#outline(
+  title: heading(level: 1, [Seznam tabulek]),
+  target: figure.where(kind: table),
+)
