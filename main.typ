@@ -5,6 +5,24 @@
   class: "ITB4",
   year: 2024,
   author: "Jméno Příjmení",
+  abstract-cs: par([
+    Tvorba maturitní práce je jedním z velmi klíčových momentů při studiu. Kvalita zpracování její formální části je pak jedním z nejdůležitějších kritérií při jejím hodnocení. Cíl této práce je popsat jednotlivé kroky během tohoto procesu, doporučit postupy a vytvořit šablonu, která usnadní celý proces.@ujc_tecka
+  ]),
+  abstract-en: par([
+    The creation of a graduation thesis is one of the most crucial moments during studies. The quality of the processing of its formal part is then one of the most important criteria in its evaluation. The aim of this work is to describe the individual steps during this process, recommend procedures and create a template that will facilitate the entire process.
+  ]),
+  keywords-cs: par([
+    maturitní práce, šablona
+  ]),
+  keywords-en: par([
+    graduation thesis, template
+  ]),
+  acknowledgements: par([
+    Děkuji Mgr. Petru Novotnému za cenné připomínky a rady, které mi poskytl při vypracování maturitní práce.
+  ]),
+  assignment: par([
+    Zadání maturitní práce je přílohou této práce.
+  ])
 )
 
 #set page(
@@ -18,11 +36,11 @@
 )
 
 #set text(font: "Times New Roman", size: 12pt, lang: "cs")
-#set par(justify: true, leading: 1.5em, spacing: 2em)
-#show heading: set par(leading: 0.5em)
-#show heading.where(level: 1): set text(size: 20pt)
-#show heading.where(level: 2): set text(size: 16pt)
-#show heading.where(level: 3): set text(size: 14pt)
+#show heading: set block(below: 16pt, above: 16pt)
+#set par(leading: 0.75em, spacing: 0.75em + 6pt, justify: true)
+#show heading.where(level: 1): set text(size: 20pt, weight: "bold")
+#show heading.where(level: 2): set text(size: 16pt, weight: "bold")
+#show heading.where(level: 3): set text(size: 14pt, weight: "bold")
 #set align(center)
 
 #grid(
@@ -80,47 +98,33 @@
 
 #set align(left + top)
 
-#show heading: it => {
-  [#it]
-  v(1em)
-}
+#heading(level: 1, outlined: false, [Zadání práce])
 
-#set text(top-edge: 0em, bottom-edge: 0em)
-#show heading: set text(top-edge: 6pt)
-
-#heading(level: 2, outlined: false, [Zadání práce])
+#thesis.assignment
 
 #pagebreak()
 
 #heading(level: 1, outlined: false, [ABSTRAKT])
 
-#par([
-  Tvorba maturitní práce je jedním z velmi klíčových momentů při studiu. Kvalita zpracování její formální části je pak jedním z nejdůležitějších kritérií při jejím hodnocení. Cíl této práce je popsat jednotlivé kroky během tohoto procesu, doporučit postupy a vytvořit šablonu, která usnadní celý proces.
-])
+#thesis.abstract-cs
 
 #heading(level: 1, outlined: false, [KLÍČOVÁ SLOVA])
 
-#par([
-  maturitní práce, šablona
-])
+#thesis.keywords-cs
 
 #heading(level: 1, outlined: false, [ABSTRACT])
 
-#par([
-  The creation of a graduation thesis is one of the most crucial moments during studies. The quality of the processing of its formal part is then one of the most important criteria in its evaluation. The aim of this work is to describe the individual steps during this process, recommend procedures and create a template that will facilitate the entire process.
-])
+#thesis.abstract-en
 
 #heading(level: 1, outlined: false, [KEYWORDS])
 
-#par([
-  graduation thesis, template
-])
+#thesis.keywords-en
 
 #pagebreak()
 
 #heading(level: 1, outlined: false, [PODĚKOVÁNÍ])
 
-Děkuji Mgr. Petru Novotnému za cenné připomínky a rady, které mi poskytl při vypracování maturitní práce.
+#thesis.acknowledgements
 
 #set align(left + bottom)
 
@@ -164,3 +168,13 @@ Děkuji Mgr. Petru Novotnému za cenné připomínky a rady, které mi poskytl p
 ])
 
 = Úvod
+
+// Úvod zde
+
+#set heading(numbering: "1")
+
+// Samotná práce zde
+
+#pagebreak()
+
+#bibliography("works.bib", title: "Seznam použité literatury", style: "iso-690-numeric")
