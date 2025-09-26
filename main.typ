@@ -154,7 +154,7 @@
 
 #pagebreak()
 
-#bibliography("works.bib", title: "Seznam použité literatury", style: "iso-690-numeric")
+#bibliography("works.bib", title: "Seznam použité literatury", style: "iso690-2022.csl")
 
 #pagebreak()
 
