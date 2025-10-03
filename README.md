@@ -16,4 +16,4 @@ Tento projekt je licencován pod [MIT licencí](LICENSE).
 
 ## Poděkování
 
-Používám [šablonu na citace](./iso690-numeric-brackets-cs.csl) vytvořenou Martou Zizienovou a Adamem Zizienem.
+Používám [šablonu na citace](./iso690-2022.csl) vytvořenou Martou Zizienovou a Adamem Zizienem.
