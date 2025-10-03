@@ -16,4 +16,5 @@ Tento projekt je licencován pod [MIT licencí](LICENSE).
 
 ## Poděkování
 
-Používám [šablonu na citace](./iso690-2022.csl) vytvořenou Martou Zizienovou a Adamem Zizienem.
+Tato šablona využívá [modifikovanou šablonu pro citování dle normy ČSN ISO 690-2022](./iso690-2022.csl). Tato šablona používá licenci CC0 1.0 Universal. Původními autory jsou:
+Marta Zizienová, Adam Zizien. Originální verze je dostupná online: https://github.com/zizienova/zoteroTUL2022

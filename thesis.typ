@@ -62,6 +62,12 @@
   caption: "Logo školy",
 )
 
+#figure(
+  $x_(1,2) = frac(-b plus.minus sqrt(b^2 - 4 a c), 2a)$,
+  kind: "equation",
+  supplement: "Rovnice",
+  caption: "Vzorec pro výpočet kvadratické rovnice",
+)
 
 == Nadpis 2
 === Nadpis 3
