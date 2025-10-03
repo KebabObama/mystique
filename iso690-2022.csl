@@ -15,6 +15,10 @@
       <name>Adam Zizien</name>
       <email>zizieada@fel.cvut.cz</email>
     </author>
+    <author>
+      <name>Jan Prokůpek</name>
+      <email>prokupekj.07@spst.eu</email>
+    </author>
     <category citation-format="numeric"/>
     <category field="generic-base"/>
     <summary>Style based on ČSN ISO 690:2022</summary>
