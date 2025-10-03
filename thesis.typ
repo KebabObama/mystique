@@ -33,6 +33,36 @@
 #set heading(numbering: "1.1")
 
 = Nadpis 1
+
+#figure(
+  [
+    ```tsx
+    import type React from "react";
+
+    export default async function Page() {
+      return <div>Hello, world!</div>;
+    }
+    ```
+  ],
+  supplement: "Výpis",
+  caption: "Ukázka kódu v jazyce TypeScript s využitím knihovny React.",
+)
+
+#figure(
+  table(
+    columns: 4,
+    [t], [1], [2], [3],
+    [y], [0.3s], [0.4s], [0.8s],
+  ),
+  caption: [Časy],
+)
+
+#figure(
+  image("res/logo.svg", width: 50%),
+  caption: "Logo školy",
+)
+
+
 == Nadpis 2
 === Nadpis 3
 === Nadpis 3
