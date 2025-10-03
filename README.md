@@ -16,4 +16,4 @@ Tento projekt je licencován pod [MIT licencí](LICENSE).
 
 ## Poděkování
 
-Používám [šablonu na citace](./iso690-numeric-brackets-cs.csl) vytvořenou Jiřím Kratochvílem a Libor Ansorge. Dostupná na https://www.zotero.org/styles/iso690-numeric-brackets-cs
+Používám [šablonu na citace](./iso690-numeric-brackets-cs.csl) vytvořenou Martou Zizienovou a Adamem Zizienem.
