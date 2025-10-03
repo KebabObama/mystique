@@ -23,6 +23,7 @@
   </info>
   <locale>
     <terms>
+      <term name="online">Online</term>
       <term name="from">z</term>
       <term name="no date">s. a.</term>
       <term name="accessed">citováno</term>
@@ -483,7 +484,15 @@
     </choose>
   </macro>
   <macro name="cele-datum">
+
+    <text macro="year-date"/>
+  </macro>
+  <macro name="doi-url">
     <choose>
+      <if match="any" variable="DOI">
+        <text variable="DOI" text-decoration="none" prefix="https://doi.org/"/>
+      </if>
+    </choose>    <!-- <choose>
       <if match="all" variable="issued cele-datum">
         <date date-parts="year" variable="issued">
           <date-part name="year" suffix="-"/>
@@ -494,14 +503,7 @@
       <else>
         <text macro="year-date"/>
       </else>
-    </choose>
-  </macro>
-  <macro name="doi-url">
-    <choose>
-      <if match="any" variable="DOI">
-        <text variable="DOI" text-decoration="none" prefix="https://doi.org/"/>
-      </if>
-    </choose>
+    </choose> -->
   </macro>
   <macro name="url-chapter">
     <choose>
@@ -649,6 +651,7 @@
               <text macro="isbn"/>
               <text macro="url"/>
               <text variable="archive"/>
+              <text macro="accessed"/>
               <text variable="note" text-case="capitalize-first"/>
             </group>
           </if>
@@ -785,7 +788,7 @@
                 <text macro="publisher-info"/>
                 <text macro="cele-datum"/>
               </group>
-              <text variable="rozmery"/>
+              <!-- <text variable="rozmery"/> -->
               <text macro="isbn"/>
               <text macro="url"/>
               <text macro="accessed"/>
@@ -845,7 +848,7 @@
                 </else>
               </choose>
               <text macro="isbn"/>
-              <choose>
+              <!-- <choose>
                 <if match="any" variable="archivovano">
                   <group delimiter=". ">
                     <group delimiter=", " prefix="Archivní kopie dostupná z: ">
@@ -858,7 +861,8 @@
                 <else>
                   <text macro="url"/>
                 </else>
-              </choose>
+              </choose> -->
+              <text macro="url"/>
               <text macro="accessed"/>
             </group>
           </else-if>
@@ -874,7 +878,7 @@
             <group delimiter=". " suffix=". ">
               <group delimiter=" ">
                 <text macro="responsability"/>
-                <text variable="nick" prefix="[" suffix="]"/>
+                <!-- <text variable="nick" prefix="[" suffix="]"/> -->
               </group>
               <text variable="title" font-style="italic"/>
               <text variable="genre" text-case="capitalize-first"/>
