@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@/hooks/use-theme";
-import "@/styles/globals.css";
+import "./globals.css";
 import type { Metadata } from "next";
 import { Pixelify_Sans } from "next/font/google";
 
