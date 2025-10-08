@@ -12,7 +12,9 @@
     "bracketSpacing": true,
     "expand": "never",
     "attributePosition": "auto",
-    "lineWidth": 80
+    "lineWidth": 80,
+    "bracketSameLine": false,
+    "lineEnding": "crlf"
   },
   "linter": {
     "enabled": true,
