@@ -17,10 +17,16 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "correctness": { "noUnusedImports": "on", "noUnusedVariables": "on" },
       "recommended": true,
-      "suspicious": { "noUnknownAtRules": "off" }
+      "suspicious": { "noUnknownAtRules": "off" },
+      "performance": "info"
     },
     "domains": { "next": "recommended", "react": "recommended" }
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } }
+  "assist": {
+    "actions": {
+      "source": { "organizeImports": "on", "useSortedProperties": "on" }
+    }
+  }
 }
