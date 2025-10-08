@@ -1,6 +1,6 @@
+import type { auth } from "@/lib/server-auth";
 import { betterFetch } from "@better-fetch/fetch";
 import { type NextRequest, NextResponse } from "next/server";
-import type { auth } from "@/lib/server-auth";
 
 type Session = typeof auth.$Infer.Session;
 
@@ -12,7 +12,7 @@ export const middleware = async (request: NextRequest) => {
     {
       baseURL: request.nextUrl.origin,
       headers: { cookie: request.headers.get("cookie") || "" },
-    },
+    }
   );
 
   if (request.nextUrl.pathname.startsWith("/auth")) {
