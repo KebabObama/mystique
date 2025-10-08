@@ -17,10 +17,11 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "style": { "noNamespace": "off" },
       "correctness": { "noUnusedImports": "on", "noUnusedVariables": "on" },
       "recommended": true,
       "suspicious": { "noUnknownAtRules": "off" },
-      "performance": "info"
+      "performance": { "noNamespaceImport": "off" }
     },
     "domains": { "next": "recommended", "react": "recommended" }
   },
