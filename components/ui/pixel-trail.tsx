@@ -169,7 +169,7 @@ export default function PixelTrail({
       <Canvas
         {...canvasProps}
         gl={glProps}
-        className={`absolute z-1 ${className}`}
+        className={`absolute ${className}`}
         style={gooeyFilter ? { filter: `url(#${gooeyFilter.id})` } : undefined}
       >
         <Scene
