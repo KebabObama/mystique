@@ -16,7 +16,7 @@ export default function Home() {
         />
       </div>
 
-      <div className="relative flex h-dvh w-dvw flex-col items-center justify-start gap-10 overflow-auto p-4 select-none md:justify-center">
+      <div className="relative flex h-dvh w-dvw flex-col items-center justify-start gap-10 overflow-auto p-4 md:justify-center">
         <Card className="sticky z-10 min-w-full sm:min-w-sm md:min-w-2xl">
           <Card.Header>
             <Card.Title className="text-center text-2xl font-bold">
@@ -29,7 +29,9 @@ export default function Home() {
           </Card.Header>
           <Card.Content>
             <Button className="w-full">
-              <a href="/dashboard">Enter the arcane realm</a>
+              <a href="/dashboard" className="w-full">
+                Enter the arcane realm
+              </a>
             </Button>
           </Card.Content>
         </Card>
