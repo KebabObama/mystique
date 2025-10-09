@@ -2,6 +2,7 @@ import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { cache } from "./cache";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", schema: schema }),
@@ -12,19 +13,26 @@ export const auth = betterAuth({
     account: schema.account,
     verification: schema.verification,
   },
+  secondaryStorage: {
+    get: async (key) => {
+      return await cache.get(key);
+    },
+    set: async (key, value, ttl) => {
+      if (ttl) await cache.set(key, value, { EX: ttl });
+      else await cache.set(key, value);
+    },
+    delete: async (key) => {
+      await cache.del(key);
+    },
+  },
   user: {
     additionalFields: {
-      bio: { type: "string", name: "bio", required: false, defaultValue: "" },
+      bio: { type: "string", name: "bio", required: true, defaultValue: "" },
     },
   },
   secret: process.env.BETTER_AUTH_SECRET as string,
   baseURL: process.env.BETTER_AUTH_URL as string,
-  emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: false,
-    minPasswordLength: 8,
-    maxPasswordLength: 128,
-  },
+  emailAndPassword: { enabled: false },
   session: {
     expiresIn: 60 * 60 * 24 * 7,
     updateAge: 60 * 60 * 24,
