@@ -4,10 +4,10 @@ export default function Home() {
   return (
     <main className="h-dvh w-dvw">
       <PixelTrail
-        gridSize={75}
-        trailSize={0.025}
-        maxAge={200}
-        interpolate={4}
+        gridSize={50}
+        trailSize={0.03}
+        maxAge={250}
+        interpolate={5}
         color="#fff"
         gooeyFilter={{ id: "custom-goo-filter", strength: 2 }}
       />
