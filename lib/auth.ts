@@ -24,11 +24,6 @@ export const auth = betterAuth({
       await cache.del(key);
     },
   },
-  user: {
-    additionalFields: {
-      bio: { type: "string", name: "bio", required: true, defaultValue: "" },
-    },
-  },
   secret: process.env.BETTER_AUTH_SECRET as string,
   baseURL: process.env.BETTER_AUTH_URL as string,
   emailAndPassword: { enabled: false },
