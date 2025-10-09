@@ -17,9 +17,8 @@ export const auth = betterAuth({
     get: async (key) => {
       return await cache.get(key);
     },
-    set: async (key, value, ttl) => {
-      if (ttl) await cache.set(key, value, { EX: ttl });
-      else await cache.set(key, value);
+    set: async (key, value) => {
+      await cache.set(key, value);
     },
     delete: async (key) => {
       await cache.del(key);
