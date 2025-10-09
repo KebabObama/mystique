@@ -53,7 +53,7 @@
 
 @layer base {
   * {
-    @apply border-border font-pixelify outline-ring/50;
+    @apply border-border font-pixelify outline-ring/50 box-border;
   }
   body {
     @apply bg-background text-foreground;
