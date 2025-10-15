@@ -82,37 +82,33 @@
 #pagebreak()
 
 #set align(left + top)
-
 #heading(level: 1, outlined: false, [Zadání práce])
-
 #thesis.assignment
 
 #pagebreak()
 
 #heading(level: 1, outlined: false, [ABSTRAKT])
-
 #thesis.abstract-cs
 
 #heading(level: 1, outlined: false, [KLÍČOVÁ SLOVA])
-
 #thesis.keywords-cs
 
-#heading(level: 1, outlined: false, [ABSTRACT])
+#pagebreak()
 
+#heading(level: 1, outlined: false, [ABSTRACT])
 #thesis.abstract-en
 
 #heading(level: 1, outlined: false, [KEYWORDS])
-
 #thesis.keywords-en
 
 #pagebreak()
 
 #heading(level: 1, outlined: false, [PODĚKOVÁNÍ])
-
 #thesis.acknowledgements
 
-#set align(left + bottom)
+#pagebreak()
 
+#set align(left + bottom)
 #heading(level: 1, outlined: false, [PROHLÁŠENÍ])
 
 #par([
