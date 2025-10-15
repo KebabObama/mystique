@@ -1,11 +1,14 @@
 "use client";
 import * as Sidebar from "@/components/ui/sidebar";
+import { useUser } from "@/hooks/use-user";
 import { SidebarIcon } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Border } from "../ui/border";
 import { Button } from "../ui/button";
 
 export function SidebarApp() {
   const { toggleSidebar, open } = Sidebar.useSidebar();
+  const store = useUser();
   return (
     <Sidebar.Sidebar
       variant="floating"
@@ -18,7 +21,6 @@ export function SidebarApp() {
           <Button
             className="justify-between overflow-visible"
             variant={"outline"}
-            size={"sm"}
           >
             <SidebarIcon />
             <span className="truncate overflow-hidden" hidden={!open}>
@@ -27,7 +29,16 @@ export function SidebarApp() {
           </Button>
         </Sidebar.SidebarMenuButton>
       </Sidebar.SidebarHeader>
-      <Sidebar.SidebarFooter></Sidebar.SidebarFooter>
+      <Sidebar.SidebarContent></Sidebar.SidebarContent>
+      <Sidebar.SidebarFooter>
+        <Sidebar.SidebarMenuButton className="mb-2 flex flex-row gap-6 overflow-visible">
+          <Avatar className="-p-2 -ml-0.5 scale-90 overflow-visible">
+            <AvatarImage src={store.image as string} />
+            <AvatarFallback />
+          </Avatar>
+          <span className="text-lg"> {store.name}</span>
+        </Sidebar.SidebarMenuButton>
+      </Sidebar.SidebarFooter>
     </Sidebar.Sidebar>
   );
 }
