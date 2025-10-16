@@ -30,21 +30,17 @@
 = Úvod
 
 S popularitou digitálních zábav stále více proniká využívání herních principů i jinde než v čistě herních prostředích. 
-Jedním z příkladů posledních let je přenos prvků stolních her, zejména systému Dungeons & Dragons, do videohry. @rpg-growth 
+Jedním z příkladů posledních let je přenos prvků stolních her, zejména systému Dungeons & Dragons, do videohry.
+Podle předpovědí společnosti Global Growth Insights bude nárůst žánru pokračovat rapidně až do roku 2035 @rpg-growth. 
 Tyto aplikace normálně usnadňují hráčům sdílet herní zkušenosti on-line přes internet, 
 provádět automatizaci u konkrétních herních metod a sjednotit kreativní vyprávění hráčů s již hotovým herním prvkem.
 
-Spolu s rozšiřováním online komunity žánru her na hrdiny (dále ji budu označovat jako RPG) narůstá i poptávka po nástrojích a hrách, které by ji podporovaly. 
-Tradiční „papírové“ hraní se tak přirozeně transformuje do digitálního formátu. S tímto fenoménem však nastává problém, který většina vývojářů ignoruje, 
-a tím je vytrácení ducha a mechanické hloubky první edice Dungeons & Dragons a dalších původně deskových her.
+Spolu s rozšiřováním online komunity žánru her na hrdiny (dále označována jako RPG) narůstá i poptávka po nástrojích a hrách, které by ji podporovaly. Tradiční „papírové“ hraní se tak přirozeně transformuje do digitálního formátu. S tímto fenoménem však nastává problém, který většina vývojářů ignoruje, a tím je vytrácení ducha a mechanické hloubky první edice Dungeons & Dragons a dalších původně deskových her.
 
 Cílem této práce je navrhnout a implementovat webovou aplikaci, 
 která se pokusí tato původní pravidla a zapomenuté nápady vrátit zpět do hry. Aplikace bude tvořena ve frameworku Next.JS, 
 za pomocí React Three fiber a má sloužit jako platforma pro tvorbu postavy a následné hraní s ní ve hře. 
-Během hraní v partiích od tří do osmi hráčů, kde jeden z hráčů bude znít role tzv. "dungeon mastera", 
-jehož úkolem je vytvářet prostředí pro hráče a má ovlivňovat všechny aspekty hry.
+Během hraní v partiích od tří do osmi hráčů, se hráči střídají ve svých tazích, při nichž ovládají jejich charakter. Při standardní hře jeden z hráčů má roli tzv. "dungeon mastera", jehož úkolem je vytvářet prostředí pro hráče a má ovlivňovat všechny aspekty hry.
 
-Účelem teoretické části je zkoumat raný vývoj edic Dungeons & Dragons pro jejich porovnání s moderními přístupy a analyzovat motivace pro opuštění určitých konceptů. 
-Praktická část se bude věnovat návrhu a vývoji samotné webové aplikace a jejímu testování a ověření přínosu pro dosažení stanovených cílů.
+Účelem teoretické části je zkoumat raný vývoj edic Dungeons & Dragons pro jejich porovnání s moderními přístupy a analyzovat motivace pro opuštění určitých konceptů. Praktická část se bude věnovat návrhu a vývoji samotné webové aplikace a jejímu testování a ověření přínosu pro dosažení stanovených cílů.
 
-#pagebreak()
