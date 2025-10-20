@@ -59,3 +59,20 @@ export const verification = pgTable("verification", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+
+export const conversation = pgTable("conversation", {
+  id: uuid("id").unique().defaultRandom().notNull(),
+  users: uuid("users").array(),
+  name: text("name"),
+});
+
+export const message = pgTable("message", {
+  id: uuid("id").unique().defaultRandom().notNull(),
+  conversation: uuid("conversation")
+    .notNull()
+    .references(() => conversation.id, { onDelete: "cascade" }),
+  text: text("text").notNull(),
+  sender: uuid("sender")
+    .notNull()
+    .references(() => user.id),
+});
