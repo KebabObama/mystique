@@ -1,6 +1,6 @@
 "use client";
 import * as Sidebar from "@/components/ui/sidebar";
-import { useUser } from "@/hooks/use-user";
+import { authClient } from "@/lib/auth-client";
 import { SidebarIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Border } from "../ui/border";
@@ -8,7 +8,8 @@ import { Button } from "../ui/button";
 
 export function SidebarApp() {
   const { toggleSidebar, open } = Sidebar.useSidebar();
-  const store = useUser();
+  const { data } = authClient.useSession();
+
   return (
     <Sidebar.Sidebar
       variant="floating"
@@ -33,10 +34,10 @@ export function SidebarApp() {
       <Sidebar.SidebarFooter>
         <Sidebar.SidebarMenuButton className="mb-2 flex flex-row gap-6 overflow-visible">
           <Avatar className="-p-2 -ml-0.5 scale-90 overflow-visible">
-            <AvatarImage src={store.image as string} />
+            <AvatarImage src={data?.user.image as string} />
             <AvatarFallback />
           </Avatar>
-          <span className="text-lg"> {store.name}</span>
+          <span className="text-lg"> {data?.user.name}</span>
         </Sidebar.SidebarMenuButton>
       </Sidebar.SidebarFooter>
     </Sidebar.Sidebar>

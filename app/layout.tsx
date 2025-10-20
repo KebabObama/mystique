@@ -1,5 +1,4 @@
 import { ThemeProvider } from "@/hooks/use-theme";
-import { UserProvider } from "@/hooks/use-user";
 import type { Metadata } from "next";
 import { Pixelify_Sans } from "next/font/google";
 import "./globals.css";
@@ -24,7 +23,7 @@ export default ({ children }: Readonly<{ children: React.ReactNode }>) => {
           enableSystem
           disableTransitionOnChange
         >
-          <UserProvider>{children}</UserProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>
