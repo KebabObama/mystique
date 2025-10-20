@@ -8,11 +8,11 @@ import { useState } from "react";
 export default () => {
   const [loading, setLoading] = useState<boolean>(false);
   return (
-    <Card className="md:max-w-1/2">
+    <Card className="absolute top-1/2 left-1/2 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 md:max-w-1/2">
       <Card.Header>
-        <Card.Title>Sign</Card.Title>
+        <Card.Title>Sign in using oauth</Card.Title>
       </Card.Header>
-      <Card.Content className="flex min-w-sm flex-col">
+      <Card.Content className="flex min-w-sm flex-col gap-6">
         <Button
           onClick={async () => {
             setLoading(true);

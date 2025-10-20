@@ -17,7 +17,7 @@ export default function () {
         gooeyFilter={{ id: "custom-goo-filter", strength: 1 }}
       />
 
-      <Card className="pointer-events-auto absolute top-1/2 left-1/2 -z-10 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 transform">
+      <Card className="pointer-events-auto absolute top-1/2 left-1/2 z-10 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 transform">
         <Card.Header>
           <Card.Title className="text-center text-2xl font-bold">
             Mystique

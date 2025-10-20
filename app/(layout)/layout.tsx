@@ -5,9 +5,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider className="h-dvh w-dvw overflow-hidden">
       <SidebarApp />
-      <main className="relative h-[calc(100dvh-2rem)] overflow-auto p-4">
-        {children}
-      </main>
+      <main className="relative h-full w-full">{children}</main>
     </SidebarProvider>
   );
 }
