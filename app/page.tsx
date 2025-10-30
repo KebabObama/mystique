@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import PixelTrail from "@/components/ui/pixel-trail";
 
-export default function () {
+export default () => {
   return (
     <main className="relative h-dvh w-dvw overflow-hidden">
       <PixelTrail
@@ -35,4 +35,4 @@ export default function () {
       </Card>
     </main>
   );
-}
+};

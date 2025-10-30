@@ -5,21 +5,18 @@ import { Canvas, CanvasProps, ThreeEvent, useThree } from "@react-three/fiber";
 import React, { useMemo } from "react";
 import * as THREE from "three";
 
-interface GooeyFilterProps {
-  id?: string;
-  strength?: number;
-}
+type GooeyFilterProps = { id?: string; strength?: number };
 
-interface SceneProps {
+type SceneProps = {
   gridSize: number;
   trailSize: number;
   maxAge: number;
   interpolate: number;
   easingFunction: (x: number) => number;
   pixelColor: string;
-}
+};
 
-interface PixelTrailProps {
+type PixelTrailProps = {
   gridSize?: number;
   trailSize?: number;
   maxAge?: number;
@@ -30,7 +27,7 @@ interface PixelTrailProps {
   gooeyFilter?: { id: string; strength: number };
   color?: string;
   className?: string;
-}
+};
 
 const GooeyFilter: React.FC<GooeyFilterProps> = ({
   id = "goo-filter",
@@ -101,14 +98,14 @@ const DotMaterial = shaderMaterial(
   `
 );
 
-function Scene({
+const Scene = ({
   gridSize,
   trailSize,
   maxAge,
   interpolate,
   easingFunction,
   pixelColor,
-}: SceneProps) {
+}: SceneProps) => {
   const size = useThree((s) => s.size);
   const viewport = useThree((s) => s.viewport);
 
@@ -143,7 +140,7 @@ function Scene({
       />
     </mesh>
   );
-}
+};
 
 export default function PixelTrail({
   gridSize = 40,

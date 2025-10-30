@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import type * as React from "react";
 
-function Body({
+const Body = ({
   className,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Root>) {
+}: React.ComponentProps<typeof TabsPrimitive.Root>) => {
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
@@ -15,13 +15,13 @@ function Body({
       {...props}
     />
   );
-}
+};
 
-function List({
+const List = ({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.List>) {
+}: React.ComponentProps<typeof TabsPrimitive.List>) => {
   return (
     <div className="relative">
       <TabsPrimitive.List
@@ -47,12 +47,12 @@ function List({
       <div className="bg-foreground dark:bg-ring absolute top-1.5 -right-1.5 h-[calc(100%-12px)] w-1.5" />
     </div>
   );
-}
+};
 
-function Trigger({
+const Trigger = ({
   className,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+}: React.ComponentProps<typeof TabsPrimitive.Trigger>) => {
   return (
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
@@ -63,12 +63,12 @@ function Trigger({
       {...props}
     />
   );
-}
+};
 
-function Content({
+const Content = ({
   className,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Content>) {
+}: React.ComponentProps<typeof TabsPrimitive.Content>) => {
   return (
     <TabsPrimitive.Content
       data-slot="tabs-content"
@@ -76,6 +76,6 @@ function Content({
       {...props}
     />
   );
-}
+};
 
 export default Object.assign(Body, { List, Content, Trigger });

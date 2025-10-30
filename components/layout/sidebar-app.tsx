@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Border } from "../ui/border";
 import { Button } from "../ui/button";
 
-export function SidebarApp() {
+export default () => {
   const { toggleSidebar, open } = Sidebar.useSidebar();
   const { data } = authClient.useSession();
 
@@ -42,4 +42,4 @@ export function SidebarApp() {
       </Sidebar.SidebarFooter>
     </Sidebar.Sidebar>
   );
-}
+};

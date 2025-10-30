@@ -1,4 +1,4 @@
-export function Border() {
+export const Border = () => {
   return (
     <>
       <div className="bg-foreground dark:bg-ring absolute -top-1.5 left-1.5 h-1.5 w-1/2" />
@@ -13,4 +13,4 @@ export function Border() {
       <div className="bg-foreground dark:bg-ring absolute top-1.5 -right-1.5 h-[calc(100%-12px)] w-1.5" />
     </>
   );
-}
+};

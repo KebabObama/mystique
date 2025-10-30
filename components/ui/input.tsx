@@ -2,11 +2,11 @@ import { cn } from "@/lib/utils";
 import type * as React from "react";
 import { Border } from "./border";
 
-export function Input({
+export const Input = ({
   className,
   type,
   ...props
-}: React.ComponentProps<"input">) {
+}: React.ComponentProps<"input">) => {
   return (
     <div className={cn("relative", className)}>
       <input
@@ -23,4 +23,4 @@ export function Input({
       <Border />
     </div>
   );
-}
+};

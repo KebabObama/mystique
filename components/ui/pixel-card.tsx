@@ -1,4 +1,4 @@
-import { JSX, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 class Pixel {
   width: number;
@@ -107,7 +107,7 @@ class Pixel {
   }
 }
 
-function getEffectiveSpeed(value: number, reducedMotion: boolean) {
+const getEffectiveSpeed = (value: number, reducedMotion: boolean) => {
   const min = 0;
   const max = 100;
   const throttle = 0.001;
@@ -119,7 +119,7 @@ function getEffectiveSpeed(value: number, reducedMotion: boolean) {
   } else {
     return value * throttle;
   }
-}
+};
 
 const VARIANTS = {
   default: {
@@ -170,7 +170,7 @@ interface VariantConfig {
   noFocus: boolean;
 }
 
-export default function PixelCard({
+export default ({
   variant = "default",
   gap,
   speed,
@@ -178,7 +178,7 @@ export default function PixelCard({
   noFocus,
   className = "",
   children,
-}: PixelCardProps): JSX.Element {
+}: PixelCardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pixelsRef = useRef<Pixel[]>([]);
@@ -314,4 +314,4 @@ export default function PixelCard({
       {children}
     </div>
   );
-}
+};
