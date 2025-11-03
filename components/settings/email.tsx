@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "../layout/toast";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import ResponsiveDialog from "../ui/responsive-dialog";
@@ -18,9 +19,10 @@ export default () => {
 		const { error } = await authClient.changeEmail({ newEmail: email });
 		setLoading(false);
 		if (error) {
-			console.error(error);
+			toast.error("Could not change email");
 			return;
 		}
+		toast.success("Email successfully changed");
 		setOpen(false);
 	};
 
