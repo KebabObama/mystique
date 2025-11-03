@@ -15,4 +15,7 @@ export const middleware = async (request: NextRequest) => {
 	return NextResponse.next();
 };
 
-export const config = { runtime: "nodejs", matcher: ["/dashboard", "/auth"] };
+export const config = {
+	runtime: "nodejs",
+	matcher: ["/dashboard", "/auth", "/settings", "/friends"],
+};
