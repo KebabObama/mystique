@@ -1,0 +1,54 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import ResponsiveDialog from "../ui/responsive-dialog";
+
+export default () => {
+	const user = authClient.useSession().data?.user;
+	const [email, setEmail] = useState(user?.email || "");
+	const [open, setOpen] = useState(false);
+	const [loading, setLoading] = useState(false);
+
+	const accept = async () => {
+		if (!email.trim()) return;
+		setLoading(true);
+		const { error } = await authClient.changeEmail({ newEmail: email });
+		setLoading(false);
+		if (error) {
+			console.error(error);
+			return;
+		}
+		setOpen(false);
+	};
+
+	useEffect(() => {
+		open;
+		setEmail(user?.name || "");
+	}, [user?.name, open]);
+
+	return (
+		<ResponsiveDialog
+			open={open}
+			onOpenChange={(v) => !loading && setOpen(v)}
+			trigger={<Button>Change Name</Button>}
+			title="Change username"
+		>
+			<div className="flex flex-col gap-6">
+				<Input
+					type="text"
+					value={email}
+					onChange={(e) => setEmail(e.target.value)}
+					disabled={loading}
+					placeholder="Enter your new name"
+					autoFocus
+				/>
+				<Button onClick={accept} disabled={loading || !email.trim()}>
+					{loading ? "Updating..." : "Accept"}
+				</Button>
+			</div>
+		</ResponsiveDialog>
+	);
+};
