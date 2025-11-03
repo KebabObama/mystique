@@ -1,7 +1,7 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
-	id: uuid("id").unique().defaultRandom().notNull(),
+	id: text("id").primaryKey(),
 	name: text("name").notNull(),
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("email_verified").default(false).notNull(),
@@ -16,10 +16,10 @@ export const user = pgTable("user", {
 });
 
 export const account = pgTable("account", {
-	id: uuid("id").unique().defaultRandom().notNull(),
+	id: text("id").primaryKey(),
 	accountId: text("account_id").notNull(),
 	providerId: text("provider_id").notNull(),
-	userId: uuid("user_id")
+	userId: text("user_id")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
 	accessToken: text("access_token"),
@@ -38,7 +38,7 @@ export const account = pgTable("account", {
 });
 
 export const verification = pgTable("verification", {
-	id: uuid("id").unique().defaultRandom().notNull(),
+	id: text("id").primaryKey(),
 	identifier: text("identifier").notNull(),
 	value: text("value").notNull(),
 	expiresAt: timestamp("expires_at").notNull(),
@@ -49,21 +49,4 @@ export const verification = pgTable("verification", {
 		.$defaultFn(() => new Date())
 		.$onUpdate(() => new Date())
 		.notNull(),
-});
-
-export const conversation = pgTable("conversation", {
-	id: uuid("id").unique().defaultRandom().notNull(),
-	users: uuid("users").array(),
-	name: text("name"),
-});
-
-export const message = pgTable("message", {
-	id: uuid("id").unique().defaultRandom().notNull(),
-	conversation: uuid("conversation")
-		.notNull()
-		.references(() => conversation.id, { onDelete: "cascade" }),
-	text: text("text").notNull(),
-	sender: uuid("sender")
-		.notNull()
-		.references(() => user.id),
 });
