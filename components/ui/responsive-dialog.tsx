@@ -38,7 +38,7 @@ export default ({
 		return (
 			<Drawer open={open} onOpenChange={onOpenChange}>
 				<DrawerTrigger asChild>{trigger}</DrawerTrigger>
-				<DrawerContent>
+				<DrawerContent className="pb-4.5">
 					<DrawerHeader>
 						<DrawerTitle>{title}</DrawerTitle>
 						{description && (
