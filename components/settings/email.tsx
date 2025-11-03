@@ -28,15 +28,15 @@ export default () => {
 
 	useEffect(() => {
 		open;
-		setEmail(user?.name || "");
-	}, [user?.name, open]);
+		setEmail(user?.email || "");
+	}, [user?.email, open]);
 
 	return (
 		<ResponsiveDialog
 			open={open}
 			onOpenChange={(v) => !loading && setOpen(v)}
-			trigger={<Button>Change Name</Button>}
-			title="Change username"
+			trigger={<Button>Change Email</Button>}
+			title="Change email"
 		>
 			<div className="flex flex-col gap-6">
 				<Input
@@ -44,7 +44,7 @@ export default () => {
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
 					disabled={loading}
-					placeholder="Enter your new name"
+					placeholder="Enter your new email"
 					autoFocus
 				/>
 				<Button onClick={accept} disabled={loading || !email.trim()}>
