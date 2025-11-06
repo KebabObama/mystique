@@ -13,9 +13,7 @@ export const user = pgTable("user", {
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("email_verified").default(false).notNull(),
 	image: text("image"),
-	createdAt: timestamp("created_at")
-		.$defaultFn(() => new Date())
-		.notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.$defaultFn(() => new Date())
 		.$onUpdate(() => new Date())
@@ -36,9 +34,7 @@ export const account = pgTable("account", {
 	refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
 	scope: text("scope"),
 	password: text("password"),
-	createdAt: timestamp("created_at")
-		.$defaultFn(() => new Date())
-		.notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.$onUpdate(() => new Date())
 		.notNull(),
@@ -49,9 +45,7 @@ export const verification = pgTable("verification", {
 	identifier: text("identifier").notNull(),
 	value: text("value").notNull(),
 	expiresAt: timestamp("expires_at").notNull(),
-	createdAt: timestamp("created_at")
-		.$defaultFn(() => new Date())
-		.notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.$defaultFn(() => new Date())
 		.$onUpdate(() => new Date())
@@ -76,4 +70,5 @@ export const message = pgTable("message", {
 		.notNull()
 		.references(() => user.id),
 	receivers: uuid("receivers").array().notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
