@@ -1,4 +1,11 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+	boolean,
+	integer,
+	pgTable,
+	text,
+	timestamp,
+	uuid,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
 	id: uuid("id").unique().defaultRandom().notNull(),
@@ -51,19 +58,22 @@ export const verification = pgTable("verification", {
 		.notNull(),
 });
 
-export const conversation = pgTable("conversation", {
+export const friendship = pgTable("friendship", {
 	id: uuid("id").unique().defaultRandom().notNull(),
-	users: uuid("users").array(),
-	name: text("name"),
+	sender: uuid("sender")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	receiver: uuid("receiver")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	state: integer("state").notNull().default(0),
 });
 
 export const message = pgTable("message", {
 	id: uuid("id").unique().defaultRandom().notNull(),
-	conversation: uuid("conversation")
-		.notNull()
-		.references(() => conversation.id, { onDelete: "cascade" }),
 	text: text("text").notNull(),
 	sender: uuid("sender")
 		.notNull()
 		.references(() => user.id),
+	receivers: uuid("receivers").array().notNull(),
 });
