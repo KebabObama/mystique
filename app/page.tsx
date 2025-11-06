@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import PixelTrail from "@/components/ui/pixel-trail";
@@ -28,9 +29,9 @@ export default () => {
 					</Card.Description>
 				</Card.Header>
 				<Card.Content>
-					<Button className="w-full">
-						<a href="/dashboard">Enter the arcane realm</a>
-					</Button>
+					<Link href="/dashboard">
+						<Button className="w-full">Enter the arcane realm</Button>
+					</Link>
 				</Card.Content>
 			</Card>
 		</main>
