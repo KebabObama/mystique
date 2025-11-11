@@ -7,3 +7,5 @@ desktop.ini
 *.bbl
 *.~lock*
 node_modules
+*.ts
+.next
