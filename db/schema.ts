@@ -1,11 +1,12 @@
 import {
 	boolean,
-	integer,
+	jsonb,
 	pgTable,
 	text,
 	timestamp,
 	uuid,
 } from "drizzle-orm/pg-core";
+import type { Message } from "@/sockets/messages";
 
 export const user = pgTable("user", {
 	id: uuid("id").unique().defaultRandom().notNull(),
@@ -52,7 +53,7 @@ export const verification = pgTable("verification", {
 		.notNull(),
 });
 
-export const friendship = pgTable("friendship", {
+export const friend = pgTable("friend", {
 	id: uuid("id").unique().defaultRandom().notNull(),
 	sender: uuid("sender")
 		.notNull()
@@ -60,15 +61,11 @@ export const friendship = pgTable("friendship", {
 	receiver: uuid("receiver")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
-	state: integer("state").notNull().default(0),
+	status: boolean("status").notNull().default(false),
 });
 
 export const message = pgTable("message", {
 	id: uuid("id").unique().defaultRandom().notNull(),
-	text: text("text").notNull(),
-	sender: uuid("sender")
-		.notNull()
-		.references(() => user.id),
-	receivers: uuid("receivers").array().notNull(),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
+	users: uuid("users").array().default([]).notNull(),
+	data: jsonb("data").$type<Message["data"]>().notNull(),
 });

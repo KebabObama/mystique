@@ -1,0 +1,2 @@
+import "./friends";
+import "./messages";

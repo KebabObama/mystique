@@ -27,6 +27,8 @@ const AvatarImage = ({
 }: React.ComponentProps<typeof AvatarPrimitive.Image>) => {
 	return (
 		<AvatarPrimitive.Image
+			suppressHydrationWarning
+			suppressContentEditableWarning
 			data-slot="avatar-image"
 			className={cn("aspect-square size-full", className)}
 			{...props}
