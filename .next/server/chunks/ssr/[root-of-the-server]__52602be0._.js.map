@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 23, "column": 0}, "map": {"version":3,"sources":["file:///C:/Projects/mystique/app/%28layout%29/%28wrapper%29/dashboard/page.tsx"],"sourcesContent":["export default () => {\n\treturn <div className=\"\"></div>;\n};\n"],"names":[],"mappings":";;;;;;uCAAe;IACd,qBAAO,8OAAC;QAAI,WAAU;;;;;;AACvB","debugId":null}}]
+}

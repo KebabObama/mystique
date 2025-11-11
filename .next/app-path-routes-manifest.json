@@ -1,0 +1,8 @@
+{
+  "/(layout)/(padded)/dashboard/page": "/dashboard",
+  "/_not-found/page": "/_not-found",
+  "/api/auth/[...all]/route": "/api/auth/[...all]",
+  "/auth/page": "/auth",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/"
+}

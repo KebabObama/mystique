@@ -1,0 +1,20 @@
+{
+  "node": {
+    "7fe3506389de200b08e95ac4b5f52c8005183156e6": {
+      "workers": {
+        "app/(layout)/(wrapper)/friends/page": {
+          "moduleId": "[project]/.next-internal/server/app/(layout)/(wrapper)/friends/page/actions.js { ACTIONS_MODULE0 => \"[project]/lib/friend.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": true,
+          "exportedName": "searchUsers",
+          "filename": "lib/friend.ts"
+        }
+      },
+      "layer": {
+        "app/(layout)/(wrapper)/friends/page": "action-browser"
+      },
+      "exportedName": "searchUsers",
+      "filename": "lib/friend.ts"
+    }
+  },
+  "edge": {}
+}

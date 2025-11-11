@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///C:/Projects/mystique/app/%28layout%29/%28wrapper%29/friends/page.tsx"],"sourcesContent":["\"use client\";\r\n\r\nimport { useSocket } from \"@/hooks/use-socket\";\r\nimport { useEffect } from \"react\";\r\n\r\nexport default () => {\r\n\tconst {\r\n\t\tconnect,\r\n\t\tdisconnect,\r\n\t\tconnected,\r\n\t\tjoin,\r\n\t\tselectFriendships,\r\n\t\tfriendships,\r\n\t} = useSocket();\r\n\tconst userId = \"user-id-here\";\r\n\r\n\tuseEffect(() => {\r\n\t\tconnect();\r\n\t\tjoin(userId);\r\n\t\tselectFriendships(userId);\r\n    console.log(friendships)\r\n\t\treturn () => disconnect();\r\n\t}, []);\r\n\r\n\treturn <div>Connected: {connected ? \"Yes\" : \"No\"}</div>;\r\n};\r\n"],"names":[],"mappings":";;;;;;;;;;AAGA;AAHA;;;;uCAKe;IACd,MAAM,EACL,OAAO,EACP,UAAU,EACV,SAAS,EACT,IAAI,EACJ,iBAAiB,EACjB,WAAW,EACX,GAAG;IACJ,MAAM,SAAS;IAEf,IAAA,kNAAS,EAAC;QACT;QACA,KAAK;QACL,kBAAkB;QAChB,QAAQ,GAAG,CAAC;QACd,OAAO,IAAM;IACd,GAAG,EAAE;IAEL,qBAAO,8OAAC;;YAAI;YAAY,YAAY,QAAQ;;;;;;;AAC7C","debugId":null}}]
+}

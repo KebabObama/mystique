@@ -1,0 +1,1 @@
+{"version":3,"sources":["turbopack:///[project]/app/(layout)/(padded)/dashboard/page.tsx"],"sourcesContent":["export default () => {\r\n  return <div className=\"\"></div>;\r\n};\r\n"],"names":[],"mappings":"wRAAe,IACN,CAAA,EAAA,EAAA,GAAA,EAAC,MAAA,CAAI,UAAU"}
