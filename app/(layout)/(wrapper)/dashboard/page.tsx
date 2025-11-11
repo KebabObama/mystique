@@ -1,3 +1,9 @@
+import { CharacterCreator } from "@/components/character-creator";
+
 export default () => {
-	return <div className=""></div>;
+	return (
+		<div className="">
+			<CharacterCreator />
+		</div>
+	);
 };
