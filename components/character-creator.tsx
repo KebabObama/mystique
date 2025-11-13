@@ -10,6 +10,7 @@ import {
 	User,
 } from "lucide-react";
 import React from "react";
+import { toast } from "@/components/layout/toast";
 import { cn } from "@/lib/utils";
 import type { Attribute, Character, Class, Race } from "@/types/game";
 import { ATTRIBUTES, CLASSES, RACES } from "@/types/game/consts";
@@ -149,8 +150,10 @@ export const CharacterCreator = () => {
 		else if (step === "attributes") setStep("name");
 		else if (step === "name") setStep("summary");
 		else {
-			// Create character
-			console.log("Creating character:", { ...character, name: characterName });
+			const temp = { ...character, name: characterName };
+			setCharacter(temp);
+			console.log("Creating character:", temp);
+			toast.success("Character successfully created");
 			setOpen(false);
 			setStep("race");
 			setCharacterName("");
