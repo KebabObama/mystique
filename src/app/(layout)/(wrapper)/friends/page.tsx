@@ -4,7 +4,7 @@ import { Users } from "lucide-react";
 import { AddFriendSection } from "@/components/comms/add-friend";
 import { FriendsListSection } from "@/components/comms/friend-list";
 import { FriendRequestsSection } from "@/components/comms/friend-requests";
-import { useUserStore } from "@/stores/user-store";
+import { useUserStore } from "@/hooks/use-user-store";
 
 export default function FriendsPage() {
 	const isAuthenticated = useUserStore((state) => state.isAuthenticated);

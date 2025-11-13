@@ -13,8 +13,8 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useState } from "react";
 import * as Sidebar from "@/components/ui/sidebar";
+import { useUserStore } from "@/hooks/use-user-store";
 import { authClient } from "@/lib/auth-client";
-import { useUserStore } from "@/stores/user-store";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Border } from "../ui/border";
 

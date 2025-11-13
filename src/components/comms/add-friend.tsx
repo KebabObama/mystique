@@ -6,13 +6,13 @@ import { useCommunication } from "@/components/providers/comms-provider";
 import { Button } from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useUserStore } from "@/stores/user-store";
+import { useUserStore } from "@/hooks/use-user-store";
 import { toast } from "../layout/toast";
 import { Border } from "../ui/border";
 
 export const AddFriendSection = () => {
 	const { sendFriendRequest } = useCommunication();
-	const currentUserId = useUserStore((state) => state.userId);
+	const currentUserId = useUserStore((state) => state.user?.id);
 	const [friendInput, setFriendInput] = React.useState<string>("");
 
 	const handleAddFriend = React.useCallback(() => {

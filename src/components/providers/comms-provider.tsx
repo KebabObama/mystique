@@ -10,7 +10,7 @@ import {
 } from "react";
 import { io, type Socket } from "socket.io-client";
 import type * as schema from "@/db/schema";
-import { useUserStore } from "@/stores/user-store";
+import { useUserStore } from "@/hooks/use-user-store";
 import { toast } from "../layout/toast";
 
 type FriendRequest = typeof schema.friendRequest.$inferSelect & {
@@ -52,7 +52,7 @@ export const CommunicationProvider = ({
 }: {
 	children: React.ReactNode;
 }) => {
-	const userId = useUserStore((state) => state.userId);
+	const userId = useUserStore((state) => state.user?.id);
 	const socketRef = useRef<Socket | null>(null);
 	const [requests, setRequests] = useState<FriendRequest[]>([]);
 	const [friends, setFriends] = useState<Friend[]>([]);

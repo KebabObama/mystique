@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useUserStore } from "@/hooks/use-user-store";
 import { authClient } from "@/lib/auth-client";
-import { useUserStore } from "@/stores/user-store";
 import { toast } from "../layout/toast";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";

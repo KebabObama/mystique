@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
+import { useUserStore } from "@/hooks/use-user-store";
 import { authClient } from "@/lib/auth-client";
-import { useUserStore } from "@/stores/user-store";
 
 export const UserStoreProvider = ({
 	children,
