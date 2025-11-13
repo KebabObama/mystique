@@ -1,2 +1,1 @@
-import "./friends";
-import "./messages";
+import "./communication";

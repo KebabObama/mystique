@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { useUserStore } from "@/stores/user-store";
 import { toast } from "../layout/toast";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import ResponsiveDialog from "../ui/responsive-dialog";
 
 export default () => {
-	const user = authClient.useSession().data?.user;
+	const user = useUserStore((state) => state.user);
 	const [email, setEmail] = useState(user?.email || "");
 	const [open, setOpen] = useState(false);
 	const [loading, setLoading] = useState(false);

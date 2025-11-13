@@ -14,13 +14,14 @@ import { useTheme } from "next-themes";
 import { useState } from "react";
 import * as Sidebar from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
+import { useUserStore } from "@/stores/user-store";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Border } from "../ui/border";
 
 export default () => {
 	const { setTheme, resolvedTheme } = useTheme();
 	const { toggleSidebar, open } = Sidebar.useSidebar();
-	const { data } = authClient.useSession();
+	const user = useUserStore((state) => state.user);
 	const [show, setShow] = useState(false);
 	const router = useRouter();
 	const toggleTheme = () => setTheme((p) => (p === "dark" ? "light" : "dark"));
@@ -33,7 +34,7 @@ export default () => {
 			className="bg-card relative my-4 ml-4 h-[calc(100dvh-2rem)] p-0"
 		>
 			<Border />
-			<Sidebar.SidebarHeader className="flex flex-col items-center justify-start">
+			<Sidebar.SidebarHeader className="flex flex-col items-center justify-start gap-2">
 				<Sidebar.SidebarMenuButton onClick={toggleSidebar}>
 					<SidebarIcon />
 					<span className="truncate overflow-hidden" hidden={!open}>
@@ -79,11 +80,11 @@ export default () => {
 					onClick={() => setShow(!show)}
 				>
 					<Avatar className="size-8 overflow-visible">
-						<AvatarImage src={data?.user?.image as string} />
+						<AvatarImage src={user?.image as string} />
 						<AvatarFallback />
 					</Avatar>
 					<span className="flex w-full flex-row justify-between text-lg">
-						{data?.user?.name || "User"}
+						{user?.name || "User"}
 						<ChevronDown
 							className={`transition-all duration-200 ${show ? "rotate-180" : "rotate-0"}`}
 						/>
