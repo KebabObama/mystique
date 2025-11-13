@@ -116,6 +116,7 @@ const Github = ({ loading, setLoading }: Props) => {
 const Login = ({ loading, setLoading }: Props) => {
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
+	const [rememberMe, setRememberMe] = useState<boolean>(false);
 	const router = useRouter();
 
 	const handleLogin = async (e: React.FormEvent) => {
@@ -127,6 +128,7 @@ const Login = ({ loading, setLoading }: Props) => {
 				email,
 				password,
 				callbackURL: "/dashboard",
+				rememberMe,
 			});
 
 			if (result.error) toast.error("Sign in failed");
@@ -164,6 +166,22 @@ const Login = ({ loading, setLoading }: Props) => {
 				required
 				disabled={loading}
 			/>
+			<div className="flex items-center gap-2">
+				<input
+					id="remember-me"
+					type="checkbox"
+					checked={rememberMe}
+					onChange={(e) => setRememberMe(e.target.checked)}
+					disabled={loading}
+					className="size-4 cursor-pointer border-4 bg-transparent accent-primary disabled:cursor-not-allowed"
+				/>
+				<label
+					htmlFor="remember-me"
+					className="text-sm cursor-pointer select-none"
+				>
+					Remember me
+				</label>
+			</div>
 			<Button type="submit" disabled={loading} className="mt-2 w-full">
 				{loading ? "Signing in..." : "Sign In"}
 			</Button>
