@@ -1,7 +1,0 @@
-{
-  "/(layout)/(wrapper)/dashboard/page": "app/(layout)/(wrapper)/dashboard/page.js",
-  "/(layout)/(wrapper)/friends/page": "app/(layout)/(wrapper)/friends/page.js",
-  "/api/auth/[...all]/route": "app/api/auth/[...all]/route.js",
-  "/auth/page": "app/auth/page.js",
-  "/page": "app/page.js"
-}

@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///C:/Projects/mystique/app/%28layout%29/%28padded%29/layout.tsx"],"sourcesContent":["export default ({ children }: { children: React.ReactNode }) => {\r\n  return (\r\n    <div className=\"relative h-dvh w-full overflow-x-hidden overflow-y-auto p-4\">\r\n      {children}\r\n    </div>\r\n  );\r\n};\r\n"],"names":[],"mappings":";;;;;;uCAAe,CAAC,EAAE,QAAQ,EAAiC;IACzD,qBACE,8OAAC;QAAI,WAAU;kBACZ;;;;;;AAGP","debugId":null}}]
-}

@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 6, "column": 0}, "map": {"version":3,"sources":["file:///C:/Projects/mystique/.next-internal/server/app/%28layout%29/%28wrapper%29/dashboard/page/actions.js%20%28server%20actions%20loader%29"],"sourcesContent":["export {uploadFromUrl as '7f12f7a96b986b8c47d08fa864dfa01765e92b068a'} from 'ACTIONS_MODULE0'\nexport {ensureAvatarUploaded as '7f3a6a39dfe58be1289f23597420b5a6a9780dc347'} from 'ACTIONS_MODULE0'\n"],"names":[],"mappings":";AAAA","debugId":null}},
-    {"offset": {"line": 55, "column": 0}, "map": {"version":3,"sources":["file:///C:/Projects/mystique/app/%28layout%29/%28wrapper%29/dashboard/page.tsx"],"sourcesContent":["export default () => {\r\n  return <div className=\"\"></div>;\r\n};\r\n"],"names":[],"mappings":";;;;;;uCAAe;IACb,qBAAO,8OAAC;QAAI,WAAU;;;;;;AACxB","debugId":null}}]
-}
