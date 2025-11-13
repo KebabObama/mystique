@@ -178,7 +178,7 @@ export const CharacterCreator = () => {
 					Create Character
 				</Button>
 			</Dialog.Trigger>
-			<Dialog.Content className="sm:max-w-2xl lg:max-w-6xl max-h-[90vh] h-full">
+			<Dialog.Content className="sm:max-w-2xl lg:max-w-4xl p-4">
 				<Dialog.Header>
 					<Dialog.Title className="text-2xl">
 						{step === "race" && "Choose Your Race"}
@@ -193,12 +193,13 @@ export const CharacterCreator = () => {
 						{step === "class" && "Select your character's class and role"}
 						{step === "attributes" &&
 							`Distribute ${ATTRIBUTE_POINTS} points across your attributes`}
-						{step === "name" && "Give your character a unique name"}
+						{step === "name" &&
+							"Give your character a unique name or generate one"}
 						{step === "summary" && "Review your character before creation"}
 					</Dialog.Description>
 				</Dialog.Header>
 
-				<div className="h-full overflow-x-hidden px-1.5 overflow-y-auto">
+				<div className="max-h-120 overflow-y-auto p-1.5">
 					{/* Race Selection */}
 					{step === "race" && (
 						<div className="grid grid-cols-2 gap-4">
@@ -273,9 +274,7 @@ export const CharacterCreator = () => {
 										"text-4xl font-bold",
 										remainingPoints === 0
 											? "text-green-500"
-											: remainingPoints < 5
-												? "text-orange-500"
-												: "text-foreground",
+											: "text-destructive",
 									)}
 								>
 									{remainingPoints}
@@ -332,62 +331,31 @@ export const CharacterCreator = () => {
 
 					{/* Name Input */}
 					{step === "name" && (
-						<div className="space-y-6">
-							<div className="flex items-center justify-center mb-8">
-								<div className="size-24 rounded-full bg-primary/10 border-2 border-primary/50 flex items-center justify-center">
-									<User className="size-12 text-primary" />
-								</div>
-							</div>
-							<div className="space-y-4">
-								<div className="p-4 bg-muted/30 border border-border rounded-lg">
-									<p className="text-sm text-muted-foreground mb-3 text-center">
-										Your Character
-									</p>
-									<p className="text-center text-lg capitalize font-semibold">
-										Level {character.level} {character.race} {character.class}
-									</p>
-								</div>
-								<div className="space-y-2">
-									<label
-										htmlFor="character-name"
-										className="text-sm font-medium"
-									>
-										Character Name
-									</label>
-									<div className="flex gap-2">
-										<Input
-											id="character-name"
-											type="text"
-											placeholder="Enter character name..."
-											value={characterName}
-											onChange={(e) => setCharacterName(e.target.value)}
-											className="flex-1"
-											autoFocus
-										/>
-										<Button
-											type="button"
-											variant="outline"
-											size="icon"
-											onClick={handleRandomName}
-											title="Generate random name"
-										>
-											<Shuffle className="size-4" />
-										</Button>
-									</div>
-								</div>
-								<p className="text-sm text-muted-foreground">
-									Choose a name that reflects your character's personality and
-									heritage. You can also generate a random name based on your
-									selected race.
-								</p>
-							</div>
+						<div className="flex gap-6">
+							<Input
+								type="text"
+								placeholder="Enter character name..."
+								value={characterName}
+								onChange={(e) => setCharacterName(e.target.value)}
+								className="flex-1"
+								autoFocus
+							/>
+							<Button
+								type="button"
+								variant="outline"
+								size="icon"
+								onClick={handleRandomName}
+								title="Generate random name"
+							>
+								<Shuffle className="size-4" />
+							</Button>
 						</div>
 					)}
 
 					{/* Summary */}
 					{step === "summary" && (
 						<div className="space-y-6">
-							<div className="flex flex-col items-center mb-6 p-6 bg-gradient-to-b from-muted/50 to-transparent border border-border rounded-lg">
+							<div className="flex flex-col items-center mb-6 p-6 bg-linear-to-b from-muted/50 to-transparent border border-border">
 								<div className="size-24 rounded-full bg-primary/10 border-2 border-primary/50 flex items-center justify-center mb-4">
 									<User className="size-12 text-primary" />
 								</div>
@@ -397,7 +365,7 @@ export const CharacterCreator = () => {
 								</p>
 							</div>
 							<div className="grid grid-cols-2 gap-4">
-								<div className="p-5 bg-muted/30 border border-border rounded-lg hover:bg-muted/40 transition-colors">
+								<div className="p-5 bg-muted/30 border border-border hover:bg-muted/40 transition-colors">
 									<p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
 										Race
 									</p>
@@ -408,7 +376,7 @@ export const CharacterCreator = () => {
 										{getRaceDescription(character.race)}
 									</p>
 								</div>
-								<div className="p-5 bg-muted/30 border border-border rounded-lg hover:bg-muted/40 transition-colors">
+								<div className="p-5 bg-muted/30 border border-border hover:bg-muted/40 transition-colors">
 									<p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
 										Class
 									</p>
@@ -420,7 +388,7 @@ export const CharacterCreator = () => {
 									</p>
 								</div>
 							</div>
-							<div className="p-5 bg-muted/30 border border-border rounded-lg">
+							<div className="p-5 bg-muted/30 border border-border">
 								<h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
 									<Sparkles className="size-5 text-primary" />
 									Attributes
@@ -429,7 +397,7 @@ export const CharacterCreator = () => {
 									{ATTRIBUTES.map((attr) => (
 										<div
 											key={attr}
-											className="flex flex-col items-center p-3 bg-background/50 border border-border rounded-lg"
+											className="flex flex-col items-center p-3 bg-background/50 border border-border"
 										>
 											<span className="text-xs text-muted-foreground uppercase mb-1">
 												{attr}
