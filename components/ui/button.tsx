@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Border } from "./border";
 
 const buttonVariants = cva(
-	"rounded-none active:translate-y-1 transition-transform relative inline-flex items-center justify-center gap-1.5 border-none cursor-pointer",
+	"rounded-none active:translate-y-1 transition-transform relative inline-flex items-center justify-center gap-1.5 border-none cursor-pointer disabled:opacity-50",
 	{
 		variants: {
 			variant: {
