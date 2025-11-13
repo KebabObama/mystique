@@ -1,6 +1,6 @@
 "use client";
 
-import { Ban, Info, MessageCircle, Send, UserMinus } from "lucide-react";
+import { Ban, Info, Send, UserMinus } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Border } from "../ui/border";
 import Dialog from "../ui/dialog";
 import { Input } from "../ui/input";
+import { FriendSlot } from "./friend-slot";
 
 type FriendDialogProps = {
 	friend: Friend;
@@ -76,47 +77,36 @@ const FriendDialog = ({ friend }: FriendDialogProps) => {
 			<div className="flex flex-col gap-6">
 				<div className="overflow-show border rounded-lg bg-muted/20 relative">
 					<Border />
-					{filteredMessages.length === 0 ? (
-						<div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-							<MessageCircle className="size-12 mb-2 opacity-50" />
-							<p className="text-sm">
-								No messages yet. Start the conversation!
-							</p>
-						</div>
-					) : (
-						<div className="flex flex-col w-full gap-2 overflow-y-auto h-full p-4 max-h-96 min-h-20 resize-y items-center">
-							{filteredMessages.map((m) => (
+					<div className="flex flex-col w-full gap-2 overflow-y-auto h-full p-4 max-h-96 min-h-20 resize-y items-center">
+						{filteredMessages.map((m) => (
+							<div
+								key={m.id}
+								className={cn(
+									"flex w-full gap-2 justify-between group",
+									m.sender === user?.id ? "flex-row-reverse" : "flex-row",
+								)}
+							>
 								<div
-									key={m.id}
 									className={cn(
-										"flex w-full gap-2 justify-between group",
-										m.sender === user?.id ? "flex-row-reverse" : "flex-row",
+										"text-sm py-1 px-4  rounded-lg max-w-[75%] wrap-break-word",
+										m.sender === user?.id
+											? "bg-background text-primary-foreground"
+											: "bg-background border",
 									)}
 								>
-									<div
-										className={cn(
-											"text-sm py-1 px-4  rounded-lg max-w-[75%] wrap-break-word",
-											m.sender === user?.id
-												? "bg-background text-primary-foreground"
-												: "bg-background border",
-										)}
-									>
-										{m.text}
-									</div>
-									<div className="flex flex-col gap-0 group-hover:scale-80 opacity-0 scale-0 transition-all duration-300 group-hover:opacity-100">
-										<span className="text-xs">
-											{m.sender === user?.id
-												? user?.name || "You"
-												: friend.name}
-										</span>
-										<span className="text-xs">
-											{new Date(m.createdAt as Date).toLocaleTimeString()}
-										</span>
-									</div>
+									{m.text}
 								</div>
-							))}
-						</div>
-					)}
+								<div className="flex flex-col gap-0 group-hover:scale-80 opacity-0 scale-0 transition-all duration-300 group-hover:opacity-100">
+									<span className="text-xs">
+										{m.sender === user?.id ? user?.name || "You" : friend.name}
+									</span>
+									<span className="text-xs">
+										{new Date(m.createdAt as Date).toLocaleTimeString()}
+									</span>
+								</div>
+							</div>
+						))}
+					</div>
 				</div>
 
 				<div className="flex gap-6">
@@ -215,44 +205,22 @@ export const FriendsListSection = () => {
 	const { friends } = useCommunication();
 
 	return (
-		<Card>
+		<Card className="w-full">
 			<Card.Header>
 				<Card.Title>Friends</Card.Title>
 			</Card.Header>
-			<Card.Content>
-				{friends.length === 0 ? (
-					<p className="text-sm text-muted-foreground">
-						No friends yet. Add some friends to get started!
-					</p>
-				) : (
-					<div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-						{friends.map((f) => (
-							<Dialog key={f.id}>
-								<Dialog.Trigger asChild>
-									<Button
-										size="lg"
-										className="flex flex-row gap-3"
-										variant="outline"
-									>
-										<Avatar className="size-12">
-											<AvatarImage src={f.image || undefined} />
-											<AvatarFallback>
-												{f.name?.charAt(0).toUpperCase() || "?"}
-											</AvatarFallback>
-										</Avatar>
-										<div className="flex flex-col min-w-0 flex-1">
-											<span className="font-medium truncate">{f.name}</span>
-											<span className="text-xs text-muted-foreground truncate">
-												{f.email}
-											</span>
-										</div>
-									</Button>
-								</Dialog.Trigger>
-								<FriendDialog friend={f} />
-							</Dialog>
-						))}
-					</div>
+			<Card.Content className="flex flex-col gap-6 items-center justify-center w-full">
+				{!friends.length && (
+					<p className="text-sm text-muted-foreground">No requests yet</p>
 				)}
+				{friends.map((f) => (
+					<Dialog key={f.id}>
+						<Dialog.Trigger className="w-full">
+							<FriendSlot image={f.image} name={f.name} />
+						</Dialog.Trigger>
+						<FriendDialog friend={f} />
+					</Dialog>
+				))}
 			</Card.Content>
 		</Card>
 	);

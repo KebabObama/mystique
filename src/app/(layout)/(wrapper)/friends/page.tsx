@@ -19,9 +19,11 @@ export default function FriendsPage() {
 
 	return (
 		<>
-			<FriendRequestsSection />
 			<AddFriendSection />
-			<FriendsListSection />
+			<div className="flex gap-6">
+				<FriendsListSection />
+				<FriendRequestsSection />
+			</div>
 		</>
 	);
 }
