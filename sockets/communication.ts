@@ -25,7 +25,6 @@ io.on("connection", (socket) => {
 
 	socket.on("join-room", async (userId: string) => {
 		try {
-			// Fetch groups
 			const groups = await db
 				.select()
 				.from(schema.group)
@@ -35,16 +34,13 @@ io.on("connection", (socket) => {
 			for (const g of groups) socket.join(`group:${g.id}`);
 			console.log(`User ${userId} joined ${groups.length} groups`);
 
-			// Fetch all friend relationships
 			const friendships = await db
 				.select()
 				.from(schema.friend)
 				.where(or(eq(schema.friend.a, userId), eq(schema.friend.b, userId)));
 
-			// Extract friend user IDs
 			const friendIds = friendships.map((f) => (f.a === userId ? f.b : f.a));
 
-			// Fetch user details for all friends
 			const friends =
 				friendIds.length > 0
 					? await db
@@ -58,13 +54,11 @@ io.on("connection", (socket) => {
 							.where(or(...friendIds.map((id) => eq(schema.user.id, id))))
 					: [];
 
-			// Fetch pending friend requests (where current user is the receiver)
 			const requests = await db
 				.select()
 				.from(schema.friendRequest)
 				.where(eq(schema.friendRequest.receiver, userId));
 
-			// Fetch sender details for friend requests
 			const senderIds = requests.map((r) => r.sender);
 			const senders =
 				senderIds.length > 0
@@ -79,7 +73,6 @@ io.on("connection", (socket) => {
 							.where(or(...senderIds.map((id) => eq(schema.user.id, id))))
 					: [];
 
-			// Map sender details to requests
 			const requestsWithSenderInfo = requests.map((req) => {
 				const sender = senders.find((s) => s.id === req.sender);
 				return {
@@ -90,7 +83,6 @@ io.on("connection", (socket) => {
 				};
 			});
 
-			// Fetch messages - get all direct messages involving this user
 			const messages = await db
 				.select()
 				.from(schema.message)
@@ -104,7 +96,6 @@ io.on("connection", (socket) => {
 					),
 				);
 
-			// Send initial data to the client
 			socket.emit("initial-data", {
 				friends: friends.map((f) => ({ ...f, friendship: "accepted" })),
 				requests: requestsWithSenderInfo,
@@ -124,7 +115,6 @@ io.on("connection", (socket) => {
 				receiver: receiverId,
 			});
 
-			// Fetch sender details
 			const [sender] = await db
 				.select({
 					id: schema.user.id,
@@ -184,7 +174,6 @@ io.on("connection", (socket) => {
 				.from(schema.user)
 				.where(eq(schema.user.id, receiverId));
 
-			// Send full user data to both parties
 			io.to(`user:${senderId}`).emit("friend:accepted", {
 				...receiverUser,
 				friendship: "accepted",
@@ -216,7 +205,6 @@ io.on("connection", (socket) => {
 
 	socket.on("friend:remove", async ({ userId, friendId }) => {
 		try {
-			// Delete the friendship from the database
 			await db
 				.delete(schema.friend)
 				.where(
@@ -236,7 +224,6 @@ io.on("connection", (socket) => {
 
 	socket.on("user:block", async ({ userId, blockedUserId }) => {
 		try {
-			// First, remove the friendship if it exists
 			await db
 				.delete(schema.friend)
 				.where(
@@ -252,10 +239,6 @@ io.on("connection", (socket) => {
 					),
 				);
 
-			// TODO: Add a blocked_users table to persist block relationships
-			// For now, just remove the friendship and notify both users
-
-			// Notify both users
 			io.to(`user:${userId}`).emit("user:blocked", { userId: blockedUserId });
 			io.to(`user:${blockedUserId}`).emit("friend:removed", {
 				friendId: userId,

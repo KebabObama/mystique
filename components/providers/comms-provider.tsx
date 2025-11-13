@@ -13,7 +13,6 @@ import type * as schema from "@/db/schema";
 import { useUserStore } from "@/stores/user-store";
 import { toast } from "../layout/toast";
 
-// Simplified types
 type FriendRequest = typeof schema.friendRequest.$inferSelect & {
 	senderName?: string;
 	senderEmail?: string;
