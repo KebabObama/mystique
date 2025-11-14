@@ -49,7 +49,7 @@ export type Item = {
 };
 
 export type Entity = {
-	user: string;
+	name: string;
 	level: number;
 	class: Class;
 	race: string;
