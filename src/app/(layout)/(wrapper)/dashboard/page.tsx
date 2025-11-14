@@ -1,5 +1,10 @@
-import { CharacterCreator } from "@/components/character-creator";
+import { CharacterCreator } from "@/components/creators/character/character-creator";
+import { Button } from "@/components/ui/button";
 
 export default () => {
-	return <CharacterCreator />;
+	return (
+		<CharacterCreator asChild>
+			<Button>Create Character</Button>
+		</CharacterCreator>
+	);
 };
