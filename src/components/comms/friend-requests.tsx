@@ -1,25 +1,20 @@
 "use client";
 
-import { useCommunication } from "@/components/providers/comms-provider";
 import { Button } from "@/components/ui/button";
 import Card from "@/components/ui/card";
-import { Check, UserPlus, X } from "lucide-react";
-import { useCallback } from "react";
+import { useCommunication } from "@/hooks/use-communication";
+import { useUser } from "@/hooks/use-user";
+import { Check, Trash, UserPlus, X } from "lucide-react";
+import React from "react";
 import Popover from "../ui/popover";
 import { FriendSlot } from "./friend-slot";
 
 export const FriendRequestsSection = () => {
-  const { requests, acceptRequest, denyRequest } = useCommunication();
-
-  const handleAccept = useCallback(
-    (senderId: string) => acceptRequest(senderId),
-    [acceptRequest]
-  );
-
-  const handleDeny = useCallback(
-    (senderId: string) => denyRequest(senderId),
-    [denyRequest]
-  );
+  const { friends } = useCommunication();
+  const user = useUser();
+  const requests = React.useMemo(() => {
+    return friends.filter((e) => !e.accepted);
+  }, [friends]);
 
   return (
     <Card className={requests.length ? "w-full" : "hidden w-full lg:block"}>
@@ -35,29 +30,36 @@ export const FriendRequestsSection = () => {
         )}
         {requests.map((req) => (
           <Popover key={req.sender}>
-            <Popover.Trigger className="w-full">
-              <FriendSlot
-                image={req.senderImage}
-                name={req.senderName}
-                email={req.senderEmail}
-              />
+            <Popover.Trigger asChild className="w-full">
+              <FriendSlot image={req.image} name={req.name} />
             </Popover.Trigger>
-            <Popover.Content className="grid grid-cols-2 gap-6" sideOffset={15}>
-              <Button
-                size="sm"
-                onClick={() => handleAccept(req.sender as string)}
-              >
-                <Check className="mr-1 size-4" />
-                Accept
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleDeny(req.sender as string)}
-              >
-                <X className="mr-1 size-4" />
-                Deny
-              </Button>
+            <Popover.Content className="grid grid-cols-2 gap-6" sideOffset={12}>
+              {req.sender === user.id ? (
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => friends.deny(req.id)}
+                  className="col-span-2"
+                >
+                  <Trash className="mr-1 size-4" />
+                  Cancel
+                </Button>
+              ) : (
+                <>
+                  <Button size="sm" onClick={() => friends.accept(req.id)}>
+                    <Check className="mr-1 size-4" />
+                    Accept
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => friends.deny(req.id)}
+                  >
+                    <X className="mr-1 size-4" />
+                    Deny
+                  </Button>
+                </>
+              )}
             </Popover.Content>
           </Popover>
         ))}

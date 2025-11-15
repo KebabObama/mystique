@@ -1,37 +1,36 @@
 "use client";
 
-import { useCommunication } from "@/components/providers/comms-provider";
 import { Button } from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useUserStore } from "@/hooks/use-user-store";
+import { useCommunication } from "@/hooks/use-communication";
+import { useUser } from "@/hooks/use-user";
 import { Copy, UserPlus } from "lucide-react";
 import React from "react";
 import { toast } from "../layout/toast";
 import { Border } from "../ui/border";
 
 export const AddFriendSection = () => {
-  const { sendFriendRequest } = useCommunication();
-  const currentUserId = useUserStore((state) => state.user?.id);
-  const [friendInput, setFriendInput] = React.useState<string>("");
+  const { friends } = useCommunication();
+  const user = useUser();
+  const [input, setInput] = React.useState<string>("");
+  const trimmed = input.trim();
 
   const handleAddFriend = React.useCallback(() => {
-    const trimmed = friendInput.trim();
     if (!trimmed) return;
-    sendFriendRequest(trimmed);
-    setFriendInput("");
+    friends.request(user, trimmed);
+    setInput("");
     toast.success("Friend request sent!");
-  }, [friendInput, sendFriendRequest]);
+  }, [input, setInput, friends, user]);
 
   const handleCopyId = React.useCallback(() => {
-    if (!currentUserId) return;
+    if (!user) return;
     navigator.clipboard
-      .writeText(currentUserId)
-      .then(() => toast("ID copied to clipboard!"))
-      .catch(() => toast.error("Failed to copy ID"));
-  }, [currentUserId]);
+      .writeText(user.id)
+      .then(() => toast("ID copied to clipboard!"));
+  }, [user.id]);
 
-  if (!currentUserId) return null;
+  if (!user) return null;
 
   return (
     <Card>
@@ -45,8 +44,8 @@ export const AddFriendSection = () => {
         <div className="flex w-full gap-6">
           <Input
             className="w-full"
-            value={friendInput}
-            onChange={(e) => setFriendInput(e.target.value)}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
             placeholder="Enter friend's user ID"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -55,7 +54,11 @@ export const AddFriendSection = () => {
               }
             }}
           />
-          <Button className="w-auto" onClick={handleAddFriend}>
+          <Button
+            className="w-auto"
+            onClick={handleAddFriend}
+            disabled={!trimmed.length}
+          >
             <UserPlus />
             Send
           </Button>
@@ -64,7 +67,7 @@ export const AddFriendSection = () => {
           <Border />
           <div className="flex-1">
             <p className="text-muted-foreground mb-1 text-xs">Your User ID</p>
-            <code className="font-mono text-sm">{currentUserId}</code>
+            <code className="font-mono text-sm">{user.id}</code>
           </div>
           <Button variant="outline" size="sm" onClick={handleCopyId}>
             <Copy className="mr-2 size-4" />

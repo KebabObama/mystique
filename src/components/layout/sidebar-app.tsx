@@ -1,7 +1,7 @@
 "use client";
 
 import * as Sidebar from "@/components/ui/sidebar";
-import { useUserStore } from "@/hooks/use-user-store";
+import { useUser } from "@/hooks/use-user";
 import { authClient } from "@/lib/auth-client";
 import {
   ChevronDown,
@@ -21,7 +21,7 @@ import { Border } from "../ui/border";
 export default () => {
   const { setTheme, resolvedTheme } = useTheme();
   const { toggleSidebar, open } = Sidebar.useSidebar();
-  const user = useUserStore((state) => state.user);
+  const user = useUser();
   const [show, setShow] = useState(false);
   const router = useRouter();
   const toggleTheme = () => setTheme((p) => (p === "dark" ? "light" : "dark"));

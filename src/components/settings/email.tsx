@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserStore } from "@/hooks/use-user-store";
+import { useUser } from "@/hooks/use-user";
 import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import { toast } from "../layout/toast";
@@ -9,8 +9,8 @@ import { Input } from "../ui/input";
 import ResponsiveDialog from "../ui/responsive-dialog";
 
 export default () => {
-  const user = useUserStore((state) => state.user);
-  const [email, setEmail] = useState(user?.email || "");
+  const user = useUser();
+  const [email, setEmail] = useState<string>(user.email);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -29,8 +29,8 @@ export default () => {
 
   useEffect(() => {
     open;
-    setEmail(user?.email || "");
-  }, [user?.email, open]);
+    setEmail(user.email);
+  }, [user.email, open]);
 
   return (
     <ResponsiveDialog

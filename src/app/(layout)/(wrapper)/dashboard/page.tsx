@@ -1,10 +1,7 @@
-import { CharacterCreator } from "@/components/creators/character/character-creator";
-import { Button } from "@/components/ui/button";
+"use client";
+
+import { useUser } from "@/hooks/use-user";
 
 export default () => {
-  return (
-    <CharacterCreator>
-      <Button>Create Character</Button>
-    </CharacterCreator>
-  );
+  return <>{useUser().id}</>;
 };

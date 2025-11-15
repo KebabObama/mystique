@@ -6,24 +6,28 @@ import { Border } from "../ui/border";
 type FriendSlotProps = {
   image?: string | null;
   name?: string;
-  email?: string;
   className?: string;
-};
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export const FriendSlot = React.forwardRef<HTMLDivElement, FriendSlotProps>(
-  ({ image, name, email, className }, ref) => {
+export const FriendSlot = React.forwardRef<HTMLButtonElement, FriendSlotProps>(
+  ({ image, name, className, ...props }, ref) => {
     return (
-      <div ref={ref} className={cn("relative flex h-10 flex-row", className)}>
+      <button
+        type="button"
+        ref={ref}
+        className={cn(
+          "relative h-10 w-full overflow-visible px-3 text-center sm:text-end",
+          className
+        )}
+        {...props}
+      >
         <Border />
-        <Avatar className="size-11.5">
+        <Avatar className="bg-card absolute top-1/2 left-0 hidden w-13 -translate-y-1/2 sm:block">
+          <Border />
           <AvatarImage src={image as string} />
         </Avatar>
-        <div className="bg-foreground dark:bg-ring h-10 w-1.5" />
-        <div className="flex w-full flex-col items-end justify-center py-0.5 pr-3 text-right">
-          <span className="font-medium">{name || "Unknown User"}</span>
-          <span className="text-muted-foreground text-sm">{email || ""}</span>
-        </div>
-      </div>
+        {name || "Friend"}
+      </button>
     );
   }
 );

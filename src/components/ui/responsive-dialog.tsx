@@ -15,8 +15,8 @@ import type React from "react";
 
 type ResponsiveDialogProps = {
   trigger: React.ReactNode;
-  title: string;
-  description?: string;
+  title: string | React.ReactNode;
+  description?: string | React.ReactNode;
   children: React.ReactNode;
   footer?: React.ReactNode;
   open?: boolean;
@@ -56,7 +56,7 @@ export default ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
-      <Dialog.Content className={className || "sm:max-w-[425px]"}>
+      <Dialog.Content className={className}>
         <Dialog.Header>
           <Dialog.Title>{title}</Dialog.Title>
           {description && (
