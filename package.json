@@ -7,8 +7,8 @@
     "build": "next build --turbopack",
     "start": "next start",
     "socket": "bun --watch run ./sockets/index.ts",
-    "lint": "bunx biome check --write",
-    "check": "biome check",
+    "lint": "prettier -w .",
+    "check": "prettier -c .",
     "prepare": "husky"
   },
   "dependencies": {
