@@ -5,15 +5,15 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 
 export default ({ children }: { children: React.ReactNode }) => {
-	return (
-		<UserStoreProvider>
-			<CommunicationProvider>
-				<SidebarProvider className="h-dvh w-dvw overflow-hidden">
-					<Sidebar />
-					<main className="relative h-full w-full">{children}</main>
-					<Toaster />
-				</SidebarProvider>
-			</CommunicationProvider>
-		</UserStoreProvider>
-	);
+  return (
+    <UserStoreProvider>
+      <CommunicationProvider>
+        <SidebarProvider className="h-dvh w-dvw overflow-hidden">
+          <Sidebar />
+          <main className="relative h-full w-full">{children}</main>
+          <Toaster />
+        </SidebarProvider>
+      </CommunicationProvider>
+    </UserStoreProvider>
+  );
 };
