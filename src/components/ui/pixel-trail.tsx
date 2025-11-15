@@ -120,7 +120,7 @@ const Scene = ({
   dotMaterial.uniforms.pixelColor.value = new THREE.Color(pixelColor);
 
   const [trail, onMove] = useTrailTexture({
-    size: 512,
+    size: 256,
     radius: trailSize,
     maxAge: maxAge,
     interpolate: interpolate || 0.1,
