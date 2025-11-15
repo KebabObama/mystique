@@ -21,6 +21,7 @@ type ResponsiveDialogProps = {
   footer?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  className?: string;
 };
 
 export default ({
@@ -31,6 +32,7 @@ export default ({
   footer,
   open,
   onOpenChange,
+  className,
 }: ResponsiveDialogProps) => {
   const isMobile = useIsMobile();
 
@@ -54,7 +56,7 @@ export default ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
-      <Dialog.Content className="sm:max-w-[425px]">
+      <Dialog.Content className={className || "sm:max-w-[425px]"}>
         <Dialog.Header>
           <Dialog.Title>{title}</Dialog.Title>
           {description && (

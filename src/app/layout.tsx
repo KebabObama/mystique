@@ -6,6 +6,7 @@ import "./globals.css";
 const pixelify = Pixelify_Sans({
   variable: "--font-pixelify-sans",
   subsets: ["latin"],
+  preload: true,
 });
 
 export const metadata: Metadata = {
