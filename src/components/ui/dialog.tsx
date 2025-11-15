@@ -16,7 +16,7 @@ const Body = ({
 const Trigger = ({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Trigger>) => {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
+  return <DialogPrimitive.Trigger {...props} />;
 };
 
 const Portal = ({
