@@ -5,11 +5,13 @@ import { useUser } from "@/hooks/use-user";
 import { authClient } from "@/lib/auth-client";
 import {
   ChevronDown,
+  LayoutDashboard,
   LogOut,
   Moon,
   Settings,
   SidebarIcon,
   Sun,
+  Users,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
@@ -34,27 +36,39 @@ export default () => {
       className="bg-card relative my-4 ml-4 h-[calc(100dvh-2rem)] p-0"
     >
       <Border />
-      <Sidebar.SidebarHeader className="flex flex-col items-center justify-start gap-2">
+      <Sidebar.SidebarHeader className="hidden flex-col items-center justify-start gap-2 md:flex">
         <Sidebar.SidebarMenuButton onClick={toggleSidebar}>
           <SidebarIcon />
-          <span className="truncate overflow-hidden" hidden={!open}>
-            Open Sidebar
-          </span>
+          Open Sidebar
         </Sidebar.SidebarMenuButton>
       </Sidebar.SidebarHeader>
       <div className="bg-foreground dark:bg-ring -mx-0.5 h-1.5 w-[calc(100%+0.25rem)]" />
-      <Sidebar.SidebarContent></Sidebar.SidebarContent>
+      <Sidebar.SidebarContent>
+        <Sidebar.SidebarMenu className="flex-col items-center justify-start gap-2 p-2 md:flex">
+          <Sidebar.SidebarMenuButton onClick={() => router.push("/dashboard")}>
+            <LayoutDashboard />
+            Dashboard
+          </Sidebar.SidebarMenuButton>
+          <Sidebar.SidebarMenuButton onClick={() => router.push("/friends")}>
+            <Users />
+            Friends
+          </Sidebar.SidebarMenuButton>
+        </Sidebar.SidebarMenu>
+      </Sidebar.SidebarContent>
       <Sidebar.SidebarFooter>
         {show && (
           <div className="relative m-2 flex flex-col">
             <Border />
             <Link href="/settings">
-              <Sidebar.SidebarMenuButton>
+              <Sidebar.SidebarMenuButton className="truncate">
                 <Settings />
                 Settings
               </Sidebar.SidebarMenuButton>
             </Link>
-            <Sidebar.SidebarMenuButton onClick={toggleTheme}>
+            <Sidebar.SidebarMenuButton
+              className="truncate"
+              onClick={toggleTheme}
+            >
               <Sun
                 className={`transition-all duration-500 ${isDark ? "rotate-180 opacity-0" : "rotate-0 opacity-100"} `}
               />
@@ -64,6 +78,7 @@ export default () => {
               {isDark ? "Light theme" : "Dark theme"}
             </Sidebar.SidebarMenuButton>
             <Sidebar.SidebarMenuButton
+              className="truncate"
               variant={"destructive"}
               onClick={() => {
                 authClient.signOut();
@@ -76,7 +91,7 @@ export default () => {
           </div>
         )}
         <Sidebar.SidebarMenuButton
-          className="my-2 flex cursor-pointer flex-row gap-6 overflow-visible transition-transform duration-200"
+          className="my-1.5 flex cursor-pointer flex-row gap-6 overflow-visible transition-transform duration-200"
           onClick={() => setShow(!show)}
         >
           <Avatar className="size-8 overflow-visible">

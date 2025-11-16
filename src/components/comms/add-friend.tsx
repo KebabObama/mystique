@@ -17,7 +17,14 @@ export const AddFriendSection = () => {
   const trimmed = input.trim();
 
   const handleAddFriend = React.useCallback(() => {
-    if (!trimmed) return;
+    if (
+      !trimmed ||
+      user.id === trimmed ||
+      friends.find((e) => e.friend === trimmed)
+    ) {
+      toast.error("Something went wrong");
+      return;
+    }
     friends.request(user, trimmed);
     setInput("");
     toast.success("Friend request sent!");
@@ -29,8 +36,6 @@ export const AddFriendSection = () => {
       .writeText(user.id)
       .then(() => toast("ID copied to clipboard!"));
   }, [user.id]);
-
-  if (!user) return null;
 
   return (
     <Card>

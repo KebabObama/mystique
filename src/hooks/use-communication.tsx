@@ -35,6 +35,7 @@ export const CommunicationProvider = ({
 
   React.useEffect(() => {
     if (!user?.id) return;
+    if (typeof window === "undefined") return;
 
     const socket = io(process.env.NEXT_PUBLIC_COMMS_SOCKET_URL as string, {
       transports: ["websocket"],
@@ -53,8 +54,8 @@ export const CommunicationProvider = ({
 
     socket.on("message:new", (msg: Message) => {
       console.log(msg);
-      toast(msg.text);
       setMessages((prev) => [...prev, msg]);
+      if (msg.sender !== user.id) toast(msg.text);
     });
 
     socket.on("friend:all", (allFriends: Friend[]) => {

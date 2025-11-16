@@ -5,21 +5,20 @@ import Card from "@/components/ui/card";
 import { useCommunication } from "@/hooks/use-communication";
 import { useUser } from "@/hooks/use-user";
 import { cn } from "@/lib/utils";
-import { Friend, SendMessage } from "@/types/communication";
+import { Friend, SendMessage, User } from "@/types/communication";
 import { Send, UserMinus } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarImage } from "../ui/avatar";
 import { Border } from "../ui/border";
 import { Input } from "../ui/input";
 import Dialog from "../ui/responsive-dialog";
 import { FriendSlot } from "./friend-slot";
 
-const FriendDialog = ({ friend }: { friend: Friend }) => {
+const FriendDialog = ({ friend, user }: { friend: Friend; user: User }) => {
   const [msg, setMsg] = React.useState("");
   const [showConfirmRemove, setShowConfirmRemove] = React.useState(false);
   const { messages, friends } = useCommunication();
-  const user = useUser();
 
   const filteredMessages = React.useMemo(
     () => messages.filter((m) => m.type === "friend" && m.link === friend.id),
@@ -42,8 +41,6 @@ const FriendDialog = ({ friend }: { friend: Friend }) => {
     setShowConfirmRemove(false);
     toast.success(`Removed ${friend.name} from friends`);
   }, [friend, friends]);
-
-  if (!user?.id) return null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -137,6 +134,7 @@ const FriendDialog = ({ friend }: { friend: Friend }) => {
 
 export const FriendsListSection = () => {
   const { friends } = useCommunication();
+  const user = useUser();
 
   const arr = React.useMemo(() => friends.filter((e) => e.accepted), [friends]);
 
@@ -145,7 +143,7 @@ export const FriendsListSection = () => {
       <Card.Header>
         <Card.Title>Friends</Card.Title>
       </Card.Header>
-      <Card.Content className="flex w-full flex-col items-center justify-center gap-6">
+      <Card.Content className="flex w-full flex-col items-center justify-center gap-9">
         {!friends.length && (
           <p className="text-muted-foreground text-sm">No requests yet</p>
         )}
@@ -153,20 +151,23 @@ export const FriendsListSection = () => {
           <Dialog
             key={f.id}
             className="md:min-w-lg lg:min-w-3xl xl:min-w-6xl"
-            trigger={<FriendSlot image={f.image} name={f.name} />}
+            trigger={
+              <FriendSlot
+                className="transition-all duration-300 active:translate-y-2"
+                image={f.image}
+                name={f.name}
+              />
+            }
             title={
               <div className="flex items-center gap-3">
                 <Avatar className="size-12">
                   <AvatarImage src={f.image || undefined} />
-                  <AvatarFallback className="capitalize">
-                    {f.name}
-                  </AvatarFallback>
                 </Avatar>
                 <span className="text-lg">{f.name}</span>
               </div>
             }
           >
-            <FriendDialog friend={f} />
+            <FriendDialog friend={f} user={user} />
           </Dialog>
         ))}
       </Card.Content>

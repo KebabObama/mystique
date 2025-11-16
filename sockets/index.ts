@@ -1,1 +1,1 @@
-import "./communication";
+import "./communication.ts";
