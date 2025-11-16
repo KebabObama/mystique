@@ -71,10 +71,7 @@ export const _Class = () => {
         })}
       </div>
       <div className="flex flex-col text-center">
-        <span className="text-lg">
-          {store.character.class.slice(0, 1).toUpperCase() +
-            store.character.class.slice(1)}
-        </span>
+        <span className="text-lg capitalize">{store.character.class}</span>
         <span className="text-muted-foreground min-h-12">
           {CLASS_INFO[store.character.class].description}
         </span>

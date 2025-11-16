@@ -51,12 +51,14 @@ export const _Race = () => {
             >
               {isSelected && <Border />}
               <Image
+                preload
                 src={`/classes/${e}.png`}
                 alt={e}
                 fill
                 sizes="100%"
-                loading="lazy"
                 fetchPriority="low"
+                quality={38}
+                unoptimized={false}
                 draggable={false}
                 className="object-contain transition-all duration-300"
               />
@@ -65,10 +67,7 @@ export const _Race = () => {
         })}
       </div>
       <div className="flex flex-col text-center">
-        <span className="text-lg">
-          {store.character.race.slice(0, 1).toUpperCase() +
-            store.character.race.slice(1)}
-        </span>
+        <span className="text-lg capitalize">{store.character.race}</span>
         <span className="text-muted-foreground min-h-12">
           {RACE_INFO[store.character.race].description}
         </span>
