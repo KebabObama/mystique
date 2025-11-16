@@ -1,5 +1,7 @@
 import {
+  CASTNAME,
   ITEM_TYPES,
+  RESOURCES,
   type ATTRIBUTES,
   type CLASSES,
   type EFFECTS,
@@ -16,12 +18,14 @@ export type Attribute = (typeof ATTRIBUTES)[number];
 export type Effect = (typeof EFFECTS)[number];
 export type Inventory = { [key: string]: Item | undefined };
 export type ItemType = (typeof ITEM_TYPES)[number];
+export type Resource = (typeof RESOURCES)[number];
+export type Castname = (typeof CASTNAME)[Class];
 
 export type Action = {
   id: string;
   name: string;
   modifier: Attribute;
-  concentration: boolean;
+  concentration: number;
   targeting: Vector | number;
   range: number;
   effects: [effect: Effect, amount: number][];
@@ -34,7 +38,6 @@ export type Item = {
   type: ItemType;
   weight: number;
   action: Action["id"][];
-  requirements: [attribute: Attribute, amount: number][];
   effects: [effect: Effect, amount: number][];
   resistances: [element: Element, amount: number][];
 };
@@ -43,13 +46,12 @@ export type Entity = {
   name: string;
   level: number;
   class: Class;
-  race: string;
   attributes: Record<Attribute, number>;
   actions: Action["id"][];
-};
-
-export type Character = Entity & {
-  race: Race;
+  resources: Record<Resource, [amount: number, max: number]>;
   inventory: Inventory;
+  effects: Record<Effect, number>;
   resistances: Record<Element, number>;
 };
+
+export type Character = Entity & { race: Race };

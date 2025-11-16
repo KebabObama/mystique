@@ -4,6 +4,7 @@ import { toast } from "@/components/layout/toast";
 import { Button } from "@/components/ui/button";
 import ResponsiveDialog from "@/components/ui/responsive-dialog";
 import { useCharacterStore } from "@/hooks/use-create-character";
+import { maxStats } from "@/lib/mod";
 import React from "react";
 import { _Attributes } from "./attribute";
 import { _Class } from "./class";
@@ -45,13 +46,17 @@ export const CharacterCreator = ({
 
   const next = () => {
     switch (step) {
-      case STEPS["Assign attributes"] - 1:
-      case STEPS["Name yourself"] - 1:
+      case STEPS["Choose your path"]:
+      case STEPS["Assign attributes"]:
         store.setCan(false);
         break;
+      case STEPS["Name yourself"]:
+        const l = maxStats.resources(store.character);
+        store.set("resources", l);
+        break;
       case STEPS["Is this you?"]:
-        toast.success("Character created successfully");
         console.log(store.character);
+        toast.success("Character created successfully");
         setOpen(false);
         break;
     }

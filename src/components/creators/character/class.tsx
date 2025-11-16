@@ -2,15 +2,7 @@ import { Border } from "@/components/ui/border";
 import { useCharacterStore } from "@/hooks/use-create-character";
 import { Character } from "@/types/game";
 import { CLASSES } from "@/types/game/consts";
-import {
-  Axe,
-  Book,
-  Flame,
-  Guitar,
-  Heart,
-  LucideIcon,
-  PawPrint,
-} from "lucide-react";
+import { Axe, Book, Flame, Heart, LucideIcon, PawPrint } from "lucide-react";
 
 export const CLASS_INFO: Record<
   Character["class"],
@@ -20,11 +12,6 @@ export const CLASS_INFO: Record<
     icon: Axe,
     description:
       "A fierce warrior driven by raw strength, thriving in the heart of battle.",
-  },
-  bard: {
-    icon: Guitar,
-    description:
-      "A charismatic performer whose magic flows through music, words, and inspiration.",
   },
   cleric: {
     icon: Heart,
@@ -53,7 +40,7 @@ export const _Class = () => {
 
   return (
     <section className="flex flex-col gap-9 p-4">
-      <div className="grid w-full grid-cols-2 justify-between gap-6 overflow-visible md:grid-cols-6">
+      <div className="grid w-full grid-cols-5 justify-between overflow-visible md:gap-6">
         {CLASSES.map((e) => {
           const temp = CLASS_INFO[e];
           const isSelected = store.character.class === e;

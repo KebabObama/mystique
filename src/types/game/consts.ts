@@ -1,6 +1,5 @@
 export const CLASSES = [
   "barbarian",
-  "bard",
   "cleric",
   "ranger",
   "wizard",
@@ -82,3 +81,13 @@ export const ITEM_TYPES = [
   "storage",
   "misc",
 ] as const;
+
+export const RESOURCES = ["hp", "cast", "actions", "stamina"] as const;
+
+export const CASTNAME = {
+  barbarian: "rage",
+  cleric: "divinity",
+  ranger: "mark",
+  warlock: null,
+  wizard: "memory",
+} as const;
