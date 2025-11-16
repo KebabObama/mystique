@@ -63,3 +63,22 @@ export const EFFECTS = [
   "focused",
   "invisible",
 ] as const;
+
+export const ITEM_TYPES = [
+  "one-hand",
+  "two-hand",
+  "potion",
+  "throwable",
+  "helmet",
+  "armor",
+  "gloves",
+  "leggings",
+  "boots",
+  "ammunition",
+  "cloak",
+  "ring",
+  "pendant",
+  "currency",
+  "storage",
+  "misc",
+] as const;

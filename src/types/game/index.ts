@@ -1,4 +1,11 @@
-import type { ATTRIBUTES, CLASSES, EFFECTS, ELEMENTS, RACES } from "./consts";
+import {
+  ITEM_TYPES,
+  type ATTRIBUTES,
+  type CLASSES,
+  type EFFECTS,
+  type ELEMENTS,
+  type RACES,
+} from "./consts";
 
 export type Vector = [x: number, y: number, z: number];
 export type Roll = [rolls: number, dice: number, bonus: number];
@@ -8,6 +15,7 @@ export type Race = (typeof RACES)[number];
 export type Attribute = (typeof ATTRIBUTES)[number];
 export type Effect = (typeof EFFECTS)[number];
 export type Inventory = { [key: string]: Item | undefined };
+export type ItemType = (typeof ITEM_TYPES)[number];
 
 export type Action = {
   id: string;
@@ -23,26 +31,9 @@ export type Action = {
 export type Item = {
   id: string;
   name: string;
-  type:
-    | "one-hand"
-    | "two-hand"
-    | "potion"
-    | "granade"
-    | "helmet"
-    | "armor"
-    | "gloves"
-    | "leggings"
-    | "boots"
-    | "ammunition"
-    | "cloak"
-    | "ring"
-    | "pendant"
-    | "currency"
-    | "storage"
-    | "misc";
+  type: ItemType;
   weight: number;
-  storage: Inventory;
-  actions: Action["id"][];
+  action: Action["id"][];
   requirements: [attribute: Attribute, amount: number][];
   effects: [effect: Effect, amount: number][];
   resistances: [element: Element, amount: number][];

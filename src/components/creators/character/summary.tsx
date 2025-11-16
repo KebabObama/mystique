@@ -1,0 +1,58 @@
+import { useCharacterStore } from "@/hooks/use-create-character";
+import { ATTRIBUTES } from "@/types/game/consts";
+import Image from "next/image";
+import { CLASS_INFO } from "./class";
+import { RACE_INFO } from "./race";
+
+export const _Summary = () => {
+  const character = useCharacterStore().character;
+
+  return (
+    <section className="flex flex-col gap-9 p-4">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div className="relative w-full scale-50 overflow-hidden md:aspect-9/16">
+          <Image
+            src={`/classes/${character.race}.png`}
+            alt={character.race}
+            fill
+            className="object-contain"
+          />
+        </div>
+
+        <div className="col-span-3 flex flex-col items-center gap-4 p-4 text-center">
+          <h2 className="text-2xl font-bold tracking-wide">
+            {character.name || "Nameless"}
+          </h2>
+
+          <p className="pixel-font text-lg font-semibold capitalize">
+            {character.class}
+          </p>
+          <p className="text-muted-foreground text-sm leading-snug">
+            {CLASS_INFO[character.class].description}
+          </p>
+
+          <p className="pixel-font text-lg font-semibold capitalize">
+            {character.race}
+          </p>
+          <p className="text-muted-foreground text-sm leading-snug">
+            {RACE_INFO[character.race].description}
+          </p>
+
+          <h3 className="pixel-font mt-2 text-xl font-semibold">Attributes</h3>
+          <div className="grid h-full grid-cols-2 gap-4 md:grid-cols-3">
+            {ATTRIBUTES.map((attr) => (
+              <div key={attr} className="aspect-square h-full border p-1">
+                <p className="text-muted-foreground pixel-font mb-1 text-xs uppercase">
+                  {attr}
+                </p>
+                <p className="pixel-font text-2xl font-bold">
+                  {character.attributes[attr]}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
