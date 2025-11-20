@@ -5,7 +5,7 @@ import Card from "../ui/card";
 import { SidebarTrigger } from "../ui/sidebar";
 
 export const Header = () => {
-  const text = usePathname().split("/");
+  const text = (usePathname() as string).split("/")[1];
 
   return (
     <Card className="py-2! md:hidden">
