@@ -1,12 +1,18 @@
-import { useCharacterStore } from "@/hooks/use-create-character";
-import { ATTRIBUTES } from "@/types/game/consts";
+import { Character } from "@/types/game";
+import { ATTRIBUTES } from "@/types/game/attributes.internal";
+import { CLASSES } from "@/types/game/classes.internal";
+import { RACES } from "@/types/game/races.internal";
 import Image from "next/image";
-import { CLASS_INFO } from "./class";
-import { RACE_INFO } from "./race";
 
-export const _Summary = () => {
-  const character = useCharacterStore().character;
-
+export const _Summary = ({
+  character,
+  setCharacter,
+  setCan,
+}: {
+  character: Character;
+  setCharacter: (character: Character) => void;
+  setCan: (b: boolean) => void;
+}) => {
   return (
     <section className="flex flex-col gap-9 p-4">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
@@ -28,28 +34,30 @@ export const _Summary = () => {
             {character.class}
           </p>
           <p className="text-muted-foreground text-sm leading-snug">
-            {CLASS_INFO[character.class].description}
+            {CLASSES[character.class].description}
           </p>
 
           <p className="pixel-font text-lg font-semibold capitalize">
             {character.race}
           </p>
           <p className="text-muted-foreground text-sm leading-snug">
-            {RACE_INFO[character.race].description}
+            {RACES[character.race].description}
           </p>
 
           <h3 className="pixel-font mt-2 text-xl font-semibold">Attributes</h3>
           <div className="grid h-full grid-cols-2 gap-4 md:grid-cols-3">
-            {ATTRIBUTES.map((attr) => (
-              <div key={attr} className="aspect-square h-full border p-1">
-                <p className="text-muted-foreground pixel-font mb-1 text-xs uppercase">
-                  {attr}
-                </p>
-                <p className="pixel-font text-2xl font-bold">
-                  {character.attributes[attr]}
-                </p>
-              </div>
-            ))}
+            {(Object.keys(ATTRIBUTES) as (keyof typeof ATTRIBUTES)[]).map(
+              (attr) => (
+                <div key={attr} className="aspect-square h-full border p-1">
+                  <p className="text-muted-foreground pixel-font mb-1 text-xs uppercase">
+                    {attr}
+                  </p>
+                  <p className="pixel-font text-2xl font-bold">
+                    {character.attributes[attr]}
+                  </p>
+                </div>
+              )
+            )}
           </div>
         </div>
       </div>

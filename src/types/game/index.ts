@@ -1,57 +1,85 @@
-import {
-  CASTNAME,
-  ITEM_TYPES,
-  RESOURCES,
-  type ATTRIBUTES,
-  type CLASSES,
-  type EFFECTS,
-  type ELEMENTS,
-  type RACES,
-} from "./consts";
+import { Ability, AbilitySource } from "./abilities.internal";
+import { Attribute } from "./attributes.internal";
+import { Class } from "./classes.internal";
+import { Effect } from "./effects.internal";
+import { Element } from "./elements.internal";
+import { ItemType } from "./items.internal";
+import { Race } from "./races.internal";
 
-export type Vector = [x: number, y: number, z: number];
-export type Roll = [rolls: number, dice: number, bonus: number];
-export type Element = (typeof ELEMENTS)[number];
-export type Class = (typeof CLASSES)[number];
-export type Race = (typeof RACES)[number];
-export type Attribute = (typeof ATTRIBUTES)[number];
-export type Effect = (typeof EFFECTS)[number];
-export type Inventory = { [key: string]: Item | undefined };
-export type ItemType = (typeof ITEM_TYPES)[number];
-export type Resource = (typeof RESOURCES)[number];
-export type Castname = (typeof CASTNAME)[Class];
+export type Roll = [rolls: number, dice: number, bonus?: number];
+export type Vec = [x: number, y: number, z: number];
 
-export type Action = {
-  id: string;
-  name: string;
-  modifier: Attribute;
-  concentration: number;
-  targeting: Vector | number;
-  range: number;
-  effects: [effect: Effect, amount: number][];
-  damage: [...Roll, element: Element][];
-};
+export type Abilities = (Ability & AbilitySource)[];
 
 export type Item = {
-  id: string;
   name: string;
   type: ItemType;
-  weight: number;
-  action: Action["id"][];
+  abilities: Ability["name"][];
   effects: [effect: Effect, amount: number][];
   resistances: [element: Element, amount: number][];
+  weight: number;
+  canStack: boolean;
 };
 
-export type Entity = {
+export type Equipment = {
+  helmet?: string;
+  armor?: string;
+  gloves?: string;
+  leggings?: string;
+  boots?: string;
+  left?: string;
+  right?: string;
+};
+
+export type InventoryItem = Item & { id: string };
+export type inventory = InventoryItem[];
+
+export type Object = {
+  id: string;
+  owner: string;
+  position: Vec;
+  size: Vec;
+  model?: string;
+};
+
+export type Character = {
   name: string;
   level: number;
   class: Class;
-  attributes: Record<Attribute, number>;
-  actions: Action["id"][];
-  resources: Record<Resource, [amount: number, max: number]>;
-  inventory: Inventory;
+  race: Race;
   effects: Record<Effect, number>;
+  attributes: Record<Attribute, number>;
+  health: [current: number, max: number];
+  stamina: [current: number, max: number];
+  actions: [current: number, max: number];
+  resource: [current: number, max: number];
+  weight: [current: number, max: number];
   resistances: Record<Element, number>;
+  inventory: InventoryItem[];
+  abilities: Abilities;
+  equipment: Equipment;
 };
 
-export type Character = Entity & { race: Race };
+export type NPC = {
+  name: string;
+  effects: Record<Effect, number>;
+  attributes: Record<Attribute, number>;
+  health: [current: number, max: number];
+  stamina: [current: number, max: number];
+  actions: [current: number, max: number];
+  resource: [current: number, max: number];
+  resistances: Record<Element, number>;
+  inventory: InventoryItem[];
+  abilities: Abilities;
+  equipment: Equipment;
+};
+
+export type InGamePlayable = (Character | NPC) & Object;
+
+export type Game = {
+  id: string;
+  objects: Object[];
+  playable: InGamePlayable[];
+  sequence: { current: string; order: string[] };
+  dm: string;
+};

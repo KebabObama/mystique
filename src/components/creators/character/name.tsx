@@ -1,12 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useCharacterStore } from "@/hooks/use-create-character";
 import { Character } from "@/types/game";
 import { Shuffle } from "lucide-react";
 
-export const _Name = () => {
-  const store = useCharacterStore();
-
+export const _Name = ({
+  character,
+  setCharacter,
+  setCan,
+}: {
+  character: Character;
+  setCharacter: (character: Character) => void;
+  setCan: (b: boolean) => void;
+}) => {
   const NAME_PREFIXES: Record<Character["race"], string[]> = {
     dragonborn: ["Drak", "Shar", "Kava", "Zor", "Mera", "Thar", "Bala", "Nyx"],
     dwarf: ["Thor", "Brom", "Gim", "Dwa", "Bal", "Krag", "Dum", "Thrain"],
@@ -26,12 +31,12 @@ export const _Name = () => {
   };
 
   const generateRandomName = () => {
-    const prefixes = NAME_PREFIXES[store.character.race];
-    const suffixes = NAME_SUFFIXES[store.character.race];
+    const prefixes = NAME_PREFIXES[character.race];
+    const suffixes = NAME_SUFFIXES[character.race];
     const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
     const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-    store.set("name", prefix + suffix);
-    store.setCan(true);
+    setCharacter({ ...character, name: prefix + suffix });
+    setCan(true);
   };
 
   return (
@@ -40,10 +45,10 @@ export const _Name = () => {
         <Input
           type="text"
           placeholder="Enter character name..."
-          value={store.character.name}
+          value={character.name}
           onChange={(e) => {
-            store.set("name", e.target.value);
-            store.setCan(true);
+            setCharacter({ ...character, name: e.target.value });
+            setCan(true);
           }}
           className="grow"
           autoFocus

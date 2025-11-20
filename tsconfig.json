@@ -15,7 +15,8 @@
     "jsx": "react-jsx",
     "incremental": true,
     "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./src/*"] }
+    "paths": { "@/*": ["./src/*"] },
+    "stripInternal": true
   },
   "include": [
     "next-env.d.ts",
@@ -30,6 +31,7 @@
     ".github",
     ".git",
     ".husky",
-    "**/*.internal.ts"
+    "**/*.internal.ts",
+    "**/*.internal.tsx"
   ]
 }
