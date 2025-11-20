@@ -22,7 +22,7 @@ export const _Race = ({
               type="button"
               onClick={() => setCharacter({ ...character, race: e })}
               key={e}
-              className={`border-border/20 relative w-full aspect-9/16 overflow-visible border-2 p-2 transition-all duration-300 ${isSelected ? "text-foreground" : "text-muted-foreground hover:border-border hover:scale-105"}`}
+              className={`border-border/20 relative aspect-9/16 w-full overflow-visible border-2 p-2 transition-all duration-300 ${isSelected ? "text-foreground" : "text-muted-foreground hover:border-border hover:scale-105"}`}
             >
               {isSelected && <Border />}
               <Image
