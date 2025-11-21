@@ -16,9 +16,7 @@ export default function AuthPage() {
     <Card className="absolute top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2">
       <Card.Header>
         <Card.Title>Welcome</Card.Title>
-        <Card.Description>
-          Sign in to your account or create a new one
-        </Card.Description>
+        <Card.Description>Sign in to your account or create a new one</Card.Description>
       </Card.Header>
       <Card.Content className="flex flex-col gap-6">
         <div className="grid grid-cols-2 gap-4">
@@ -31,9 +29,7 @@ export default function AuthPage() {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="text-muted-foreground px-2 select-none">
-              Or continue with
-            </span>
+            <span className="text-muted-foreground px-2 select-none">Or continue with</span>
           </div>
         </div>
 
@@ -63,10 +59,7 @@ const Google = ({ loading, setLoading }: Props) => {
       onClick={async () => {
         setLoading(true);
         try {
-          await authClient.signIn.social({
-            provider: "google",
-            callbackURL: "/dashboard",
-          });
+          await authClient.signIn.social({ provider: "google", callbackURL: "/dashboard" });
           toast("Redirecting to Google...");
         } catch (error) {
           console.error("Google auth error:", error);
@@ -90,10 +83,7 @@ const Github = ({ loading, setLoading }: Props) => {
       onClick={async () => {
         setLoading(true);
         try {
-          await authClient.signIn.social({
-            provider: "github",
-            callbackURL: "/dashboard",
-          });
+          await authClient.signIn.social({ provider: "github", callbackURL: "/dashboard" });
           toast("Redirecting to Github...");
         } catch (error) {
           console.error("GitHub auth error:", error);
@@ -121,12 +111,7 @@ const Login = ({ loading, setLoading }: Props) => {
     setLoading(true);
 
     try {
-      const result = await authClient.signIn.email({
-        email,
-        password,
-        callbackURL: "/dashboard",
-        rememberMe,
-      });
+      const result = await authClient.signIn.email({ email, password, callbackURL: "/dashboard", rememberMe });
 
       if (result.error) toast.error("Sign in failed");
       else {
@@ -172,10 +157,7 @@ const Login = ({ loading, setLoading }: Props) => {
           disabled={loading}
           className="accent-primary size-4 cursor-pointer border-4 bg-transparent disabled:cursor-not-allowed"
         />
-        <label
-          htmlFor="remember-me"
-          className="cursor-pointer text-sm select-none"
-        >
+        <label htmlFor="remember-me" className="cursor-pointer text-sm select-none">
           Remember me
         </label>
       </div>
@@ -209,12 +191,7 @@ const Register = ({ loading, setLoading }: Props) => {
     setLoading(true);
 
     try {
-      const result = await authClient.signUp.email({
-        email,
-        password,
-        name,
-        callbackURL: "/dashboard",
-      });
+      const result = await authClient.signUp.email({ email, password, name, callbackURL: "/dashboard" });
 
       if (result.error) {
         toast.error("Registration failed");

@@ -10,10 +10,7 @@ export const minio = new Client({
   secretKey: process.env.S3_ROOT_PASSWORD as string,
 });
 
-export const createBucket = async (
-  bucketName: string,
-  isPrivate: boolean = true
-) => {
+export const createBucket = async (bucketName: string, isPrivate: boolean = true) => {
   if (!(await minio.bucketExists(bucketName))) {
     await minio.makeBucket(bucketName, "eu-east-01");
     if (!isPrivate) {
@@ -33,14 +30,9 @@ export const createBucket = async (
   }
 };
 
-export const getUrl = async (
-  bucket: string,
-  object: string,
-  isPrivate: boolean = true
-) => {
+export const getUrl = async (bucket: string, object: string, isPrivate: boolean = true) => {
   try {
-    if (!isPrivate)
-      return `http://${process.env.S3_ENDPOINT}:${process.env.S3_PORT}/${bucket}/${object}`;
+    if (!isPrivate) return `http://${process.env.S3_ENDPOINT}:${process.env.S3_PORT}/${bucket}/${object}`;
     return await minio.presignedGetObject(bucket, object);
   } catch (err) {
     console.error("Error generating signed URL:", err);

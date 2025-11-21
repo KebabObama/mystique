@@ -3,16 +3,7 @@
 import * as Sidebar from "@/components/ui/sidebar";
 import { useUser } from "@/hooks/use-user";
 import { authClient } from "@/lib/auth-client";
-import {
-  ChevronDown,
-  LayoutDashboard,
-  LogOut,
-  Moon,
-  Settings,
-  SidebarIcon,
-  Sun,
-  Users,
-} from "lucide-react";
+import { ChevronDown, LayoutDashboard, LogOut, Moon, Settings, SidebarIcon, Sun, Users } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -65,10 +56,7 @@ export default () => {
                 Settings
               </Sidebar.SidebarMenuButton>
             </Link>
-            <Sidebar.SidebarMenuButton
-              className="truncate"
-              onClick={toggleTheme}
-            >
+            <Sidebar.SidebarMenuButton className="truncate" onClick={toggleTheme}>
               <Sun
                 className={`transition-all duration-500 ${isDark ? "rotate-180 opacity-0" : "rotate-0 opacity-100"} `}
               />
@@ -100,9 +88,7 @@ export default () => {
           </Avatar>
           <span className="flex w-full flex-row justify-between text-lg">
             {user?.name || "User"}
-            <ChevronDown
-              className={`transition-all duration-200 ${show ? "rotate-180" : "rotate-0"}`}
-            />
+            <ChevronDown className={`transition-all duration-200 ${show ? "rotate-180" : "rotate-0"}`} />
           </span>
         </Sidebar.SidebarMenuButton>
       </Sidebar.SidebarFooter>

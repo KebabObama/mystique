@@ -5,10 +5,7 @@ import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import type * as React from "react";
 import { Border } from "./border";
 
-const Avatar = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Root>) => {
+const Avatar = ({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Root>) => {
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
@@ -21,10 +18,7 @@ const Avatar = ({
   );
 };
 
-const AvatarImage = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Image>) => {
+const AvatarImage = ({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Image>) => {
   return (
     <AvatarPrimitive.Image
       suppressHydrationWarning
@@ -36,17 +30,11 @@ const AvatarImage = ({
   );
 };
 
-const AvatarFallback = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) => {
+const AvatarFallback = ({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Fallback>) => {
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
-      className={cn(
-        "bg-muted flex size-full items-center justify-center rounded-none",
-        className
-      )}
+      className={cn("bg-muted flex size-full items-center justify-center rounded-none", className)}
       {...props}
     />
   );

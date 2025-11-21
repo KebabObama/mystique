@@ -11,10 +11,7 @@ export const FriendSlot = React.forwardRef<HTMLButtonElement, FriendSlotProps>(
     return (
       <Button
         ref={ref}
-        className={cn(
-          "group h-10 w-full overflow-visible text-center odd:sm:text-end even:sm:text-start",
-          className
-        )}
+        className={cn("group h-10 w-full overflow-visible text-center odd:sm:text-end even:sm:text-start", className)}
         {...props}
       >
         <Avatar className="bg-card absolute top-1/2 z-10 hidden size-15 -translate-y-1/2 group-odd:left-0 group-even:right-0 sm:block">

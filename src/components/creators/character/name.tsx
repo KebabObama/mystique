@@ -53,13 +53,7 @@ export const _Name = ({
           className="grow"
           autoFocus
         />
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          onClick={generateRandomName}
-          title="Generate random name"
-        >
+        <Button type="button" variant="outline" size="icon" onClick={generateRandomName} title="Generate random name">
           <Shuffle className="size-4" />
         </Button>
       </div>

@@ -43,9 +43,7 @@ export default ({
         <DrawerContent className="pb-4.5">
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
-            {description && (
-              <DrawerDescription>{description}</DrawerDescription>
-            )}
+            {description && <DrawerDescription>{description}</DrawerDescription>}
           </DrawerHeader>
           <div className="px-4">{children}</div>
           {footer && <DrawerFooter>{footer}</DrawerFooter>}
@@ -59,9 +57,7 @@ export default ({
       <Dialog.Content className={className}>
         <Dialog.Header>
           <Dialog.Title>{title}</Dialog.Title>
-          {description && (
-            <Dialog.Description>{description}</Dialog.Description>
-          )}
+          {description && <Dialog.Description>{description}</Dialog.Description>}
         </Dialog.Header>
         <div className="grid gap-4 py-4">{children}</div>
         {footer && <Dialog.Footer>{footer}</Dialog.Footer>}

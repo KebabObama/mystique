@@ -45,15 +45,7 @@ const def: Character = {
   stamina: [10, 10],
   actions: [1, 1],
   resource: [3, 3],
-  resistances: {
-    acid: 0,
-    cold: 0,
-    fire: 0,
-    lightning: 0,
-    physical: 0,
-    poison: 0,
-    radiant: 0,
-  },
+  resistances: { acid: 0, cold: 0, fire: 0, lightning: 0, physical: 0, poison: 0, radiant: 0 },
   inventory: [],
   abilities: [],
   weight: [0, 0],
@@ -69,61 +61,21 @@ enum STEPS {
   "Is this you?",
 }
 
-export const calculateAttributes = (
-  base: Character["attributes"],
-  bonuses: Character["attributes"],
-  extra = 0
-) =>
-  Object.fromEntries(
-    attributeKeys.map((key) => [key, base[key] + bonuses[key] + extra])
-  ) as Character["attributes"];
+export const calculateAttributes = (base: Character["attributes"], bonuses: Character["attributes"], extra = 0) =>
+  Object.fromEntries(attributeKeys.map((key) => [key, base[key] + bonuses[key] + extra])) as Character["attributes"];
 
-export const CharacterCreator = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const CharacterCreator = ({ children }: { children: React.ReactNode }) => {
   const [step, setStep] = React.useState<STEPS>(0);
   const [can, setCan] = React.useState<boolean>(true);
   const [character, setCharacter] = React.useState<Character>(def);
 
   const SCREENS: Record<STEPS, React.ReactNode | null> = {
     [STEPS["hidden"]]: null,
-    [STEPS["Who are you?"]]: (
-      <_Race
-        character={character}
-        setCharacter={setCharacter}
-        setCan={setCan}
-      />
-    ),
-    [STEPS["Choose your path"]]: (
-      <_Class
-        character={character}
-        setCharacter={setCharacter}
-        setCan={setCan}
-      />
-    ),
-    [STEPS["Assign attributes"]]: (
-      <_Attributes
-        character={character}
-        setCharacter={setCharacter}
-        setCan={setCan}
-      />
-    ),
-    [STEPS["Name yourself"]]: (
-      <_Name
-        character={character}
-        setCharacter={setCharacter}
-        setCan={setCan}
-      />
-    ),
-    [STEPS["Is this you?"]]: (
-      <_Summary
-        character={character}
-        setCharacter={setCharacter}
-        setCan={setCan}
-      />
-    ),
+    [STEPS["Who are you?"]]: <_Race character={character} setCharacter={setCharacter} setCan={setCan} />,
+    [STEPS["Choose your path"]]: <_Class character={character} setCharacter={setCharacter} setCan={setCan} />,
+    [STEPS["Assign attributes"]]: <_Attributes character={character} setCharacter={setCharacter} setCan={setCan} />,
+    [STEPS["Name yourself"]]: <_Name character={character} setCharacter={setCharacter} setCan={setCan} />,
+    [STEPS["Is this you?"]]: <_Summary character={character} setCharacter={setCharacter} setCan={setCan} />,
   };
 
   const next = () => {
@@ -132,18 +84,13 @@ export const CharacterCreator = ({
       case STEPS["Assign attributes"]:
         setCharacter({
           ...character,
-          attributes: calculateAttributes(
-            character.attributes,
-            RACES[character.race].bonuses
-          ),
+          attributes: calculateAttributes(character.attributes, RACES[character.race].bonuses),
         });
         setCan(false);
         break;
       case STEPS["Name yourself"]:
-        const health =
-          CLASSES[character.class].hp + mod(character.attributes.con);
-        const stamina =
-          RACES[character.race].stamina + mod(character.attributes.dex);
+        const health = CLASSES[character.class].hp + mod(character.attributes.con);
+        const stamina = RACES[character.race].stamina + mod(character.attributes.dex);
         const resource = CLASSES[character.class].resource.first;
 
         setCharacter({
@@ -183,9 +130,7 @@ export const CharacterCreator = ({
         </Button>
       }
     >
-      <div className="h-full max-h-140 overflow-auto px-2 py-4">
-        {SCREENS[step]}
-      </div>
+      <div className="h-full max-h-140 overflow-auto px-2 py-4">{SCREENS[step]}</div>
     </ResponsiveDialog>
   );
 };

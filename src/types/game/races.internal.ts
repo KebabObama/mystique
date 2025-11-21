@@ -14,8 +14,7 @@ export const RACES = {
     stamina: -2,
   },
   elf: {
-    description:
-      "Elves are graceful and long-lived, attuned to nature and magic, excelling in agility and perception.",
+    description: "Elves are graceful and long-lived, attuned to nature and magic, excelling in agility and perception.",
     bonuses: { str: -3, dex: 3, con: -3, int: 1, wis: 1, cha: 1 },
     stamina: 2,
   },
@@ -37,10 +36,7 @@ export const RACES = {
     bonuses: { str: 1, dex: 1, con: 1, int: 0, wis: -2, cha: -1 },
     stamina: 0,
   },
-} as const satisfies Record<
-  string,
-  { description: string; bonuses: Record<Attribute, number>; stamina: number }
->;
+} as const satisfies Record<string, { description: string; bonuses: Record<Attribute, number>; stamina: number }>;
 
 /**
  * Race type inferred from {@link RACES}

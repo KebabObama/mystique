@@ -25,22 +25,11 @@ export default (req: NextApiRequest, res: NextApiResponseWithSocket) => {
           .innerJoin(
             schema.user,
             or(
-              and(
-                ne(schema.friend.sender, userId),
-                eq(schema.friend.sender, schema.user.id)
-              ),
-              and(
-                ne(schema.friend.receiver, userId),
-                eq(schema.friend.receiver, schema.user.id)
-              )
+              and(ne(schema.friend.sender, userId), eq(schema.friend.sender, schema.user.id)),
+              and(ne(schema.friend.receiver, userId), eq(schema.friend.receiver, schema.user.id))
             )
           )
-          .where(
-            or(
-              eq(schema.friend.sender, userId),
-              eq(schema.friend.receiver, userId)
-            )
-          );
+          .where(or(eq(schema.friend.sender, userId), eq(schema.friend.receiver, userId)));
 
         const messages = await db
           .select()
@@ -63,9 +52,7 @@ export default (req: NextApiRequest, res: NextApiResponseWithSocket) => {
           .values({ sender: sender.id, receiver: receiver, accepted: false })
           .returning()
           .then((res) => res[0]);
-        io.to([`user:${sender.id}`, `user:${receiver}`]).socketsJoin(
-          `friend:${request.id}`
-        );
+        io.to([`user:${sender.id}`, `user:${receiver}`]).socketsJoin(`friend:${request.id}`);
         io.to(`user:${receiver}`).emit("friend:new", {
           id: request.id,
           friend: sender.id,
@@ -90,10 +77,7 @@ export default (req: NextApiRequest, res: NextApiResponseWithSocket) => {
       });
 
       socket.on("friend:accept", async (id: string) => {
-        await db
-          .update(schema.friend)
-          .set({ accepted: true })
-          .where(eq(schema.friend.id, id));
+        await db.update(schema.friend).set({ accepted: true }).where(eq(schema.friend.id, id));
         io.to(`friend:${id}`).emit("friend:accept", id);
       });
 
@@ -101,11 +85,7 @@ export default (req: NextApiRequest, res: NextApiResponseWithSocket) => {
         io.to(`friend:${id}`).emit("friend:deny", id);
         io.to(`friend:${id}`).socketsLeave(`friend:${id}`);
         await db.delete(schema.friend).where(eq(schema.friend.id, id));
-        await db
-          .delete(schema.message)
-          .where(
-            and(eq(schema.message.type, "friend"), eq(schema.message.link, id))
-          );
+        await db.delete(schema.message).where(and(eq(schema.message.type, "friend"), eq(schema.message.link, id)));
       });
 
       socket.on("message:new", async (temp: SendMessage) => {

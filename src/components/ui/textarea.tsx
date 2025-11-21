@@ -3,10 +3,7 @@ import type * as React from "react";
 import { cn } from "@/lib/utils";
 import { Border } from "./border";
 
-const Textarea = ({
-  className,
-  ...props
-}: React.ComponentProps<"textarea">) => {
+const Textarea = ({ className, ...props }: React.ComponentProps<"textarea">) => {
   return (
     <div className={cn("relative inline-flex w-full", className)}>
       <textarea

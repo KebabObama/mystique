@@ -34,13 +34,7 @@ export type Equipment = {
 export type InventoryItem = Item & { id: string };
 export type inventory = InventoryItem[];
 
-export type Object = {
-  id: string;
-  owner: string;
-  position: Vec;
-  size: Vec;
-  model?: string;
-};
+export type Object = { id: string; owner: string; position: Vec; size: Vec; model?: string };
 
 export type Character = {
   name: string;

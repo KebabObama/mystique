@@ -21,10 +21,7 @@ export const _Attributes = ({
   const updateAttribute = (key: Attribute, delta: number) => {
     const newVal = character.attributes[key] + delta;
     if (newVal < base[key] || newVal > base[key] + 8) return;
-    setCharacter({
-      ...character,
-      attributes: { ...character.attributes, [key]: newVal },
-    });
+    setCharacter({ ...character, attributes: { ...character.attributes, [key]: newVal } });
     const newCurrent = current + delta;
     setCurrent(newCurrent);
     setCan(newCurrent === points);
@@ -56,10 +53,7 @@ export const _Attributes = ({
                 <Button
                   size="icon"
                   variant="outline"
-                  disabled={
-                    character.attributes[key] >= base[key] + 8 ||
-                    current === points
-                  }
+                  disabled={character.attributes[key] >= base[key] + 8 || current === points}
                   onClick={() => updateAttribute(key, 1)}
                 >
                   +
@@ -71,28 +65,24 @@ export const _Attributes = ({
       </div>
       <div className="flex flex-col text-center">
         <div className="relative text-lg">
-          {(Object.keys(ATTRIBUTES) as (keyof typeof ATTRIBUTES)[]).map(
-            (attr) => (
-              <span
-                key={attr}
-                className={`inset-0 transition-opacity duration-300 ${hovered === attr ? "opacity-100" : "absolute opacity-0"}`}
-              >
-                {ATTRIBUTES[attr].name}
-              </span>
-            )
-          )}
+          {(Object.keys(ATTRIBUTES) as (keyof typeof ATTRIBUTES)[]).map((attr) => (
+            <span
+              key={attr}
+              className={`inset-0 transition-opacity duration-300 ${hovered === attr ? "opacity-100" : "absolute opacity-0"}`}
+            >
+              {ATTRIBUTES[attr].name}
+            </span>
+          ))}
         </div>
         <div className="text-muted-foreground relative min-h-12 text-base">
-          {(Object.keys(ATTRIBUTES) as (keyof typeof ATTRIBUTES)[]).map(
-            (attr) => (
-              <span
-                key={attr}
-                className={`absolute inset-0 transition-opacity duration-300 ${hovered === attr ? "opacity-100" : "opacity-0"}`}
-              >
-                {ATTRIBUTES[attr].description}
-              </span>
-            )
-          )}
+          {(Object.keys(ATTRIBUTES) as (keyof typeof ATTRIBUTES)[]).map((attr) => (
+            <span
+              key={attr}
+              className={`absolute inset-0 transition-opacity duration-300 ${hovered === attr ? "opacity-100" : "opacity-0"}`}
+            >
+              {ATTRIBUTES[attr].description}
+            </span>
+          ))}
         </div>
       </div>
     </section>

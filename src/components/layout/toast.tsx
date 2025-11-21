@@ -8,9 +8,7 @@ import { Border } from "../ui/border";
 type ToastVariant = "default" | "success" | "error" | "warning" | "info";
 
 const temp = (message: string, variant: ToastVariant = "default") =>
-  sonnerToast.custom((id) => (
-    <Toast id={id} title={message} variant={variant} />
-  ));
+  sonnerToast.custom((id) => <Toast id={id} title={message} variant={variant} />);
 
 export const toast = Object.assign(temp, {
   show: temp,
@@ -26,11 +24,9 @@ const toastVariants = cva(
     variants: {
       variant: {
         default: "bg-background text-foreground",
-        success:
-          "bg-green-100 text-green-900 dark:bg-green-900 dark:text-green-100",
+        success: "bg-green-100 text-green-900 dark:bg-green-900 dark:text-green-100",
         error: "bg-red-100 text-red-900 dark:bg-red-900 dark:text-red-100",
-        warning:
-          "bg-yellow-100 text-yellow-900 dark:bg-yellow-900 dark:text-yellow-100",
+        warning: "bg-yellow-100 text-yellow-900 dark:bg-yellow-900 dark:text-yellow-100",
         info: "bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100",
       },
     },
@@ -38,11 +34,7 @@ const toastVariants = cva(
   }
 );
 
-const Toast = (props: {
-  id: string | number;
-  title: string;
-  variant: ToastVariant;
-}) => {
+const Toast = (props: { id: string | number; title: string; variant: ToastVariant }) => {
   const { title, variant } = props;
 
   return (

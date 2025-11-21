@@ -4,24 +4,11 @@ import { cn } from "@/lib/utils";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import type * as React from "react";
 
-const Body = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.Root>) => {
-  return (
-    <TabsPrimitive.Root
-      data-slot="tabs"
-      className={cn("flex flex-col gap-2", className)}
-      {...props}
-    />
-  );
+const Body = ({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) => {
+  return <TabsPrimitive.Root data-slot="tabs" className={cn("flex flex-col gap-2", className)} {...props} />;
 };
 
-const List = ({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.List>) => {
+const List = ({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) => {
   return (
     <div className="relative">
       <TabsPrimitive.List
@@ -49,10 +36,7 @@ const List = ({
   );
 };
 
-const Trigger = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.Trigger>) => {
+const Trigger = ({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) => {
   return (
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
@@ -65,17 +49,8 @@ const Trigger = ({
   );
 };
 
-const Content = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.Content>) => {
-  return (
-    <TabsPrimitive.Content
-      data-slot="tabs-content"
-      className={cn("flex-1 outline-none", className)}
-      {...props}
-    />
-  );
+const Content = ({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>) => {
+  return <TabsPrimitive.Content data-slot="tabs-content" className={cn("flex-1 outline-none", className)} {...props} />;
 };
 
 export default Object.assign(Body, { List, Content, Trigger });

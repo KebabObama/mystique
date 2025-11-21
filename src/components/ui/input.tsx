@@ -2,11 +2,7 @@ import { cn } from "@/lib/utils";
 import type * as React from "react";
 import { Border } from "./border";
 
-export const Input = ({
-  className,
-  type,
-  ...props
-}: React.ComponentProps<"input">) => {
+export const Input = ({ className, type, ...props }: React.ComponentProps<"input">) => {
   return (
     <div className={cn("relative", className)}>
       <input

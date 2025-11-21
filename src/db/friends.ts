@@ -1,12 +1,4 @@
-import {
-  boolean,
-  pgEnum,
-  pgTable,
-  text,
-  timestamp,
-  unique,
-  uuid,
-} from "drizzle-orm/pg-core";
+import { boolean, pgEnum, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 import * as schema from "./schema";
 
 export const friend = pgTable(
@@ -21,9 +13,7 @@ export const friend = pgTable(
       .notNull(),
     accepted: boolean("accepted").notNull(),
   },
-  (table) => ({
-    pair: unique("friendship_unique").on(table.sender, table.receiver),
-  })
+  (table) => ({ pair: unique("friendship_unique").on(table.sender, table.receiver) })
 );
 
 export const messageType = pgEnum("message_type", ["friend"]);

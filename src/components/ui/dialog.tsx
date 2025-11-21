@@ -7,34 +7,23 @@ import type * as React from "react";
 import { cn } from "@/lib/utils";
 import { Border } from "./border";
 
-const Body = ({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Root>) => {
+const Body = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) => {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 };
 
-const Trigger = ({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Trigger>) => {
+const Trigger = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Trigger>) => {
   return <DialogPrimitive.Trigger {...props} />;
 };
 
-const Portal = ({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Portal>) => {
+const Portal = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Portal>) => {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
 };
 
-const Close = ({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Close>) => {
+const Close = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Close>) => {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 };
 
-const Overlay = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Overlay>) => {
+const Overlay = ({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Overlay>) => {
   return (
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
@@ -52,9 +41,7 @@ const Content = ({
   children,
   showCloseButton = true,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content> & {
-  showCloseButton?: boolean;
-}) => {
+}: React.ComponentProps<typeof DialogPrimitive.Content> & { showCloseButton?: boolean }) => {
   return (
     <Portal data-slot="dialog-portal">
       <Overlay />
@@ -96,19 +83,13 @@ const Footer = ({ className, ...props }: React.ComponentProps<"div">) => {
   return (
     <div
       data-slot="dialog-footer"
-      className={cn(
-        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className
-      )}
+      className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
       {...props}
     />
   );
 };
 
-const Title = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Title>) => {
+const Title = ({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Title>) => {
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
@@ -118,10 +99,7 @@ const Title = ({
   );
 };
 
-const Description = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Description>) => {
+const Description = ({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Description>) => {
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
@@ -131,16 +109,6 @@ const Description = ({
   );
 };
 
-const Dialog = Object.assign(Body, {
-  Close,
-  Content,
-  Description,
-  Footer,
-  Header,
-  Overlay,
-  Portal,
-  Title,
-  Trigger,
-});
+const Dialog = Object.assign(Body, { Close, Content, Description, Footer, Header, Overlay, Portal, Title, Trigger });
 
 export default Dialog;

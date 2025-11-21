@@ -10,15 +10,7 @@ import { EFFECTS } from "./effects.internal";
  * @radiant {@link EFFECTS smitten}
  */
 
-export const ELEMENTS = [
-  "acid",
-  "cold",
-  "fire",
-  "lightning",
-  "physical",
-  "poison",
-  "radiant",
-] as const;
+export const ELEMENTS = ["acid", "cold", "fire", "lightning", "physical", "poison", "radiant"] as const;
 
 /**
  * Element type inferred from {@link ELEMENTS}

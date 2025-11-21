@@ -4,41 +4,11 @@ import { AbilityPreserve } from "@/types/game/abilities.internal";
 // Damage scales with level; costs roughly map to power tiers.
 export const ABILITIES = [
   // --- Acid (corroding) ---
-  {
-    name: "Acid Strike I",
-    cost: 1,
-    targeting: ["ranged", 8],
-    effects: [["corroding", 0]],
-    damage: [["acid", 1, 4]],
-  },
-  {
-    name: "Acid Strike II",
-    cost: 1,
-    targeting: ["ranged", 8],
-    effects: [["corroding", 1]],
-    damage: [["acid", 2, 5]],
-  },
-  {
-    name: "Acid Strike III",
-    cost: 2,
-    targeting: ["ranged", 8],
-    effects: [["corroding", 1]],
-    damage: [["acid", 3, 6]],
-  },
-  {
-    name: "Acid Strike IV",
-    cost: 2,
-    targeting: ["ranged", 8],
-    effects: [["corroding", 2]],
-    damage: [["acid", 4, 8]],
-  },
-  {
-    name: "Acid Strike V",
-    cost: 3,
-    targeting: ["ranged", 10],
-    effects: [["corroding", 2]],
-    damage: [["acid", 5, 10]],
-  },
+  { name: "Acid Strike I", cost: 1, targeting: ["ranged", 8], effects: [["corroding", 0]], damage: [["acid", 1, 4]] },
+  { name: "Acid Strike II", cost: 1, targeting: ["ranged", 8], effects: [["corroding", 1]], damage: [["acid", 2, 5]] },
+  { name: "Acid Strike III", cost: 2, targeting: ["ranged", 8], effects: [["corroding", 1]], damage: [["acid", 3, 6]] },
+  { name: "Acid Strike IV", cost: 2, targeting: ["ranged", 8], effects: [["corroding", 2]], damage: [["acid", 4, 8]] },
+  { name: "Acid Strike V", cost: 3, targeting: ["ranged", 10], effects: [["corroding", 2]], damage: [["acid", 5, 10]] },
   {
     name: "Acid Strike VI",
     cost: 3,
@@ -90,29 +60,11 @@ export const ABILITIES = [
     ],
     damage: [],
   },
-  {
-    name: "Acid Fortify",
-    cost: 1,
-    targeting: ["self"],
-    effects: [["regenerating", 1]],
-    damage: [],
-  },
+  { name: "Acid Fortify", cost: 1, targeting: ["self"], effects: [["regenerating", 1]], damage: [] },
 
   // --- Cold (frostbite) ---
-  {
-    name: "Frost Strike I",
-    cost: 1,
-    targeting: ["ranged", 9],
-    effects: [["frostbite", 0]],
-    damage: [["cold", 1, 4]],
-  },
-  {
-    name: "Frost Strike II",
-    cost: 1,
-    targeting: ["ranged", 9],
-    effects: [["frostbite", 1]],
-    damage: [["cold", 2, 5]],
-  },
+  { name: "Frost Strike I", cost: 1, targeting: ["ranged", 9], effects: [["frostbite", 0]], damage: [["cold", 1, 4]] },
+  { name: "Frost Strike II", cost: 1, targeting: ["ranged", 9], effects: [["frostbite", 1]], damage: [["cold", 2, 5]] },
   {
     name: "Frost Strike III",
     cost: 2,
@@ -120,13 +72,7 @@ export const ABILITIES = [
     effects: [["frostbite", 1]],
     damage: [["cold", 3, 6]],
   },
-  {
-    name: "Frost Strike IV",
-    cost: 2,
-    targeting: ["ranged", 9],
-    effects: [["frostbite", 2]],
-    damage: [["cold", 4, 8]],
-  },
+  { name: "Frost Strike IV", cost: 2, targeting: ["ranged", 9], effects: [["frostbite", 2]], damage: [["cold", 4, 8]] },
   {
     name: "Frost Strike V",
     cost: 3,
@@ -185,57 +131,15 @@ export const ABILITIES = [
     ],
     damage: [],
   },
-  {
-    name: "Winter's Blessing",
-    cost: 1,
-    targeting: ["self"],
-    effects: [["regenerating", 1]],
-    damage: [],
-  },
+  { name: "Winter's Blessing", cost: 1, targeting: ["self"], effects: [["regenerating", 1]], damage: [] },
 
   // --- Fire (burning) ---
-  {
-    name: "Flame Strike I",
-    cost: 1,
-    targeting: ["ranged", 10],
-    effects: [["burning", 0]],
-    damage: [["fire", 1, 4]],
-  },
-  {
-    name: "Flame Strike II",
-    cost: 1,
-    targeting: ["ranged", 10],
-    effects: [["burning", 1]],
-    damage: [["fire", 2, 5]],
-  },
-  {
-    name: "Flame Strike III",
-    cost: 2,
-    targeting: ["ranged", 10],
-    effects: [["burning", 1]],
-    damage: [["fire", 3, 6]],
-  },
-  {
-    name: "Flame Strike IV",
-    cost: 2,
-    targeting: ["ranged", 10],
-    effects: [["burning", 2]],
-    damage: [["fire", 4, 8]],
-  },
-  {
-    name: "Flame Strike V",
-    cost: 3,
-    targeting: ["ranged", 12],
-    effects: [["burning", 2]],
-    damage: [["fire", 5, 10]],
-  },
-  {
-    name: "Flame Strike VI",
-    cost: 3,
-    targeting: ["ranged", 12],
-    effects: [["burning", 3]],
-    damage: [["fire", 6, 12]],
-  },
+  { name: "Flame Strike I", cost: 1, targeting: ["ranged", 10], effects: [["burning", 0]], damage: [["fire", 1, 4]] },
+  { name: "Flame Strike II", cost: 1, targeting: ["ranged", 10], effects: [["burning", 1]], damage: [["fire", 2, 5]] },
+  { name: "Flame Strike III", cost: 2, targeting: ["ranged", 10], effects: [["burning", 1]], damage: [["fire", 3, 6]] },
+  { name: "Flame Strike IV", cost: 2, targeting: ["ranged", 10], effects: [["burning", 2]], damage: [["fire", 4, 8]] },
+  { name: "Flame Strike V", cost: 3, targeting: ["ranged", 12], effects: [["burning", 2]], damage: [["fire", 5, 10]] },
+  { name: "Flame Strike VI", cost: 3, targeting: ["ranged", 12], effects: [["burning", 3]], damage: [["fire", 6, 12]] },
   {
     name: "Flame Strike VII",
     cost: 4,
@@ -280,13 +184,7 @@ export const ABILITIES = [
     ],
     damage: [],
   },
-  {
-    name: "Kindle's Gift",
-    cost: 1,
-    targeting: ["self"],
-    effects: [["energized", 1]],
-    damage: [],
-  },
+  { name: "Kindle's Gift", cost: 1, targeting: ["self"], effects: [["energized", 1]], damage: [] },
 
   // --- Lightning (shocked) ---
   {
@@ -375,78 +273,18 @@ export const ABILITIES = [
     ],
     damage: [],
   },
-  {
-    name: "Surge Gift",
-    cost: 1,
-    targeting: ["self"],
-    effects: [["hastened", 1]],
-    damage: [],
-  },
+  { name: "Surge Gift", cost: 1, targeting: ["self"], effects: [["hastened", 1]], damage: [] },
 
   // --- Physical (bleeding) ---
-  {
-    name: "Strike I",
-    cost: 1,
-    targeting: ["melee"],
-    effects: [["bleeding", 0]],
-    damage: [["physical", 1, 4]],
-  },
-  {
-    name: "Strike II",
-    cost: 1,
-    targeting: ["melee"],
-    effects: [["bleeding", 1]],
-    damage: [["physical", 2, 5]],
-  },
-  {
-    name: "Strike III",
-    cost: 2,
-    targeting: ["melee"],
-    effects: [["bleeding", 1]],
-    damage: [["physical", 3, 6]],
-  },
-  {
-    name: "Strike IV",
-    cost: 2,
-    targeting: ["melee"],
-    effects: [["bleeding", 2]],
-    damage: [["physical", 4, 8]],
-  },
-  {
-    name: "Strike V",
-    cost: 3,
-    targeting: ["melee"],
-    effects: [["bleeding", 2]],
-    damage: [["physical", 5, 10]],
-  },
-  {
-    name: "Strike VI",
-    cost: 3,
-    targeting: ["melee"],
-    effects: [["bleeding", 3]],
-    damage: [["physical", 6, 12]],
-  },
-  {
-    name: "Strike VII",
-    cost: 4,
-    targeting: ["melee"],
-    effects: [["bleeding", 4]],
-    damage: [["physical", 7, 14]],
-  },
-  {
-    name: "Strike VIII",
-    cost: 4,
-    targeting: ["melee", 2],
-    effects: [["bleeding", 5]],
-    damage: [["physical", 8, 16]],
-  },
-  {
-    name: "Warrior's Fortitude",
-    cost: 2,
-    targeting: ["self"],
-    effects: [["fortified", 3]],
-    damage: [],
-  },
+  { name: "Strike I", cost: 1, targeting: ["melee"], effects: [["bleeding", 0]], damage: [["physical", 1, 4]] },
+  { name: "Strike II", cost: 1, targeting: ["melee"], effects: [["bleeding", 1]], damage: [["physical", 2, 5]] },
+  { name: "Strike III", cost: 2, targeting: ["melee"], effects: [["bleeding", 1]], damage: [["physical", 3, 6]] },
+  { name: "Strike IV", cost: 2, targeting: ["melee"], effects: [["bleeding", 2]], damage: [["physical", 4, 8]] },
+  { name: "Strike V", cost: 3, targeting: ["melee"], effects: [["bleeding", 2]], damage: [["physical", 5, 10]] },
+  { name: "Strike VI", cost: 3, targeting: ["melee"], effects: [["bleeding", 3]], damage: [["physical", 6, 12]] },
+  { name: "Strike VII", cost: 4, targeting: ["melee"], effects: [["bleeding", 4]], damage: [["physical", 7, 14]] },
+  { name: "Strike VIII", cost: 4, targeting: ["melee", 2], effects: [["bleeding", 5]], damage: [["physical", 8, 16]] },
+  { name: "Warrior's Fortitude", cost: 2, targeting: ["self"], effects: [["fortified", 3]], damage: [] },
   {
     name: "Hamstring",
     cost: 2,
@@ -467,57 +305,15 @@ export const ABILITIES = [
     ],
     damage: [],
   },
-  {
-    name: "Battle Roar",
-    cost: 1,
-    targeting: ["self"],
-    effects: [["enraged", 1]],
-    damage: [],
-  },
+  { name: "Battle Roar", cost: 1, targeting: ["self"], effects: [["enraged", 1]], damage: [] },
 
   // --- Poison (toxin) ---
-  {
-    name: "Toxin Strike I",
-    cost: 1,
-    targeting: ["ranged", 8],
-    effects: [["toxin", 0]],
-    damage: [["poison", 1, 4]],
-  },
-  {
-    name: "Toxin Strike II",
-    cost: 1,
-    targeting: ["ranged", 8],
-    effects: [["toxin", 1]],
-    damage: [["poison", 2, 5]],
-  },
-  {
-    name: "Toxin Strike III",
-    cost: 2,
-    targeting: ["ranged", 8],
-    effects: [["toxin", 1]],
-    damage: [["poison", 3, 6]],
-  },
-  {
-    name: "Toxin Strike IV",
-    cost: 2,
-    targeting: ["ranged", 8],
-    effects: [["toxin", 2]],
-    damage: [["poison", 4, 8]],
-  },
-  {
-    name: "Toxin Strike V",
-    cost: 3,
-    targeting: ["ranged", 10],
-    effects: [["toxin", 2]],
-    damage: [["poison", 5, 10]],
-  },
-  {
-    name: "Toxin Strike VI",
-    cost: 3,
-    targeting: ["ranged", 10],
-    effects: [["toxin", 3]],
-    damage: [["poison", 6, 12]],
-  },
+  { name: "Toxin Strike I", cost: 1, targeting: ["ranged", 8], effects: [["toxin", 0]], damage: [["poison", 1, 4]] },
+  { name: "Toxin Strike II", cost: 1, targeting: ["ranged", 8], effects: [["toxin", 1]], damage: [["poison", 2, 5]] },
+  { name: "Toxin Strike III", cost: 2, targeting: ["ranged", 8], effects: [["toxin", 1]], damage: [["poison", 3, 6]] },
+  { name: "Toxin Strike IV", cost: 2, targeting: ["ranged", 8], effects: [["toxin", 2]], damage: [["poison", 4, 8]] },
+  { name: "Toxin Strike V", cost: 3, targeting: ["ranged", 10], effects: [["toxin", 2]], damage: [["poison", 5, 10]] },
+  { name: "Toxin Strike VI", cost: 3, targeting: ["ranged", 10], effects: [["toxin", 3]], damage: [["poison", 6, 12]] },
   {
     name: "Toxin Strike VII",
     cost: 4,
@@ -562,13 +358,7 @@ export const ABILITIES = [
     ],
     damage: [],
   },
-  {
-    name: "Antidote Chant",
-    cost: 1,
-    targeting: ["self"],
-    effects: [["regenerating", 1]],
-    damage: [],
-  },
+  { name: "Antidote Chant", cost: 1, targeting: ["self"], effects: [["regenerating", 1]], damage: [] },
 
   // --- Radiant (smitten) ---
   {
@@ -657,23 +447,11 @@ export const ABILITIES = [
     ],
     damage: [],
   },
-  {
-    name: "Dawn's Grace",
-    cost: 1,
-    targeting: ["self"],
-    effects: [["hastened", 1]],
-    damage: [],
-  },
+  { name: "Dawn's Grace", cost: 1, targeting: ["self"], effects: [["hastened", 1]], damage: [] },
   // --- Additional High-Level Spells (levels V - VIII): 10 per element (70 total) ---
 
   // Acid: 10 high-level acid spells
-  {
-    name: "Acid Vortex V",
-    cost: 4,
-    targeting: ["aoe", 10, 2],
-    effects: [["corroding", 5]],
-    damage: [["acid", 9, 18]],
-  },
+  { name: "Acid Vortex V", cost: 4, targeting: ["aoe", 10, 2], effects: [["corroding", 5]], damage: [["acid", 9, 18]] },
   {
     name: "Acid Vortex VI",
     cost: 5,
@@ -844,27 +622,9 @@ export const ABILITIES = [
   },
 
   // Fire: 10 high-level fire spells
-  {
-    name: "Pyre Nova V",
-    cost: 4,
-    targeting: ["aoe", 10, 2],
-    effects: [["burning", 5]],
-    damage: [["fire", 9, 18]],
-  },
-  {
-    name: "Pyre Nova VI",
-    cost: 5,
-    targeting: ["aoe", 12, 2],
-    effects: [["burning", 6]],
-    damage: [["fire", 11, 20]],
-  },
-  {
-    name: "Pyre Nova VII",
-    cost: 6,
-    targeting: ["aoe", 12, 3],
-    effects: [["burning", 8]],
-    damage: [["fire", 13, 22]],
-  },
+  { name: "Pyre Nova V", cost: 4, targeting: ["aoe", 10, 2], effects: [["burning", 5]], damage: [["fire", 9, 18]] },
+  { name: "Pyre Nova VI", cost: 5, targeting: ["aoe", 12, 2], effects: [["burning", 6]], damage: [["fire", 11, 20]] },
+  { name: "Pyre Nova VII", cost: 6, targeting: ["aoe", 12, 3], effects: [["burning", 8]], damage: [["fire", 13, 22]] },
   {
     name: "Pyre Nova VIII",
     cost: 7,
@@ -1027,27 +787,9 @@ export const ABILITIES = [
   },
 
   // Physical: 10 high-level physical spells
-  {
-    name: "Maul V",
-    cost: 4,
-    targeting: ["melee"],
-    effects: [["bleeding", 5]],
-    damage: [["physical", 9, 18]],
-  },
-  {
-    name: "Maul VI",
-    cost: 5,
-    targeting: ["melee"],
-    effects: [["bleeding", 6]],
-    damage: [["physical", 11, 20]],
-  },
-  {
-    name: "Maul VII",
-    cost: 6,
-    targeting: ["melee"],
-    effects: [["bleeding", 8]],
-    damage: [["physical", 13, 22]],
-  },
+  { name: "Maul V", cost: 4, targeting: ["melee"], effects: [["bleeding", 5]], damage: [["physical", 9, 18]] },
+  { name: "Maul VI", cost: 5, targeting: ["melee"], effects: [["bleeding", 6]], damage: [["physical", 11, 20]] },
+  { name: "Maul VII", cost: 6, targeting: ["melee"], effects: [["bleeding", 8]], damage: [["physical", 13, 22]] },
   {
     name: "Maul VIII",
     cost: 7,
@@ -1120,20 +862,8 @@ export const ABILITIES = [
   },
 
   // Poison: 10 high-level poison spells
-  {
-    name: "Plagueburst V",
-    cost: 4,
-    targeting: ["aoe", 10, 2],
-    effects: [["toxin", 5]],
-    damage: [["poison", 9, 18]],
-  },
-  {
-    name: "Plagueburst VI",
-    cost: 5,
-    targeting: ["aoe", 12, 2],
-    effects: [["toxin", 6]],
-    damage: [["poison", 11, 20]],
-  },
+  { name: "Plagueburst V", cost: 4, targeting: ["aoe", 10, 2], effects: [["toxin", 5]], damage: [["poison", 9, 18]] },
+  { name: "Plagueburst VI", cost: 5, targeting: ["aoe", 12, 2], effects: [["toxin", 6]], damage: [["poison", 11, 20]] },
   {
     name: "Plagueburst VII",
     cost: 6,
@@ -1210,20 +940,8 @@ export const ABILITIES = [
   },
 
   // Radiant: 10 high-level radiant spells
-  {
-    name: "Dawnstar V",
-    cost: 4,
-    targeting: ["ranged", 12],
-    effects: [["smitten", 5]],
-    damage: [["radiant", 9, 18]],
-  },
-  {
-    name: "Dawnstar VI",
-    cost: 5,
-    targeting: ["ranged", 14],
-    effects: [["smitten", 6]],
-    damage: [["radiant", 11, 20]],
-  },
+  { name: "Dawnstar V", cost: 4, targeting: ["ranged", 12], effects: [["smitten", 5]], damage: [["radiant", 9, 18]] },
+  { name: "Dawnstar VI", cost: 5, targeting: ["ranged", 14], effects: [["smitten", 6]], damage: [["radiant", 11, 20]] },
   {
     name: "Dawnstar VII",
     cost: 6,

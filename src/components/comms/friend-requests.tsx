@@ -25,9 +25,7 @@ export const FriendRequestsSection = () => {
         </Card.Title>
       </Card.Header>
       <Card.Content className="flex flex-col items-center justify-center gap-6">
-        {requests.length === 0 && (
-          <p className="text-muted-foreground text-sm">No requests pending</p>
-        )}
+        {requests.length === 0 && <p className="text-muted-foreground text-sm">No requests pending</p>}
         {requests.map((req) => (
           <Popover key={req.sender}>
             <Popover.Trigger asChild className="w-full">
@@ -35,12 +33,7 @@ export const FriendRequestsSection = () => {
             </Popover.Trigger>
             <Popover.Content className="grid grid-cols-2 gap-6" sideOffset={12}>
               {req.sender === user.id ? (
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => friends.deny(req.id)}
-                  className="col-span-2"
-                >
+                <Button size="sm" variant="destructive" onClick={() => friends.deny(req.id)} className="col-span-2">
                   <Trash className="mr-1 size-4" />
                   Cancel
                 </Button>
@@ -50,11 +43,7 @@ export const FriendRequestsSection = () => {
                     <Check className="mr-1 size-4" />
                     Accept
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => friends.deny(req.id)}
-                  >
+                  <Button size="sm" variant="outline" onClick={() => friends.deny(req.id)}>
                     <X className="mr-1 size-4" />
                     Deny
                   </Button>

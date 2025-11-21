@@ -43,9 +43,7 @@ export const _Race = ({
       </div>
       <div className="flex flex-col text-center">
         <span className="text-lg capitalize">{character.race}</span>
-        <span className="text-muted-foreground min-h-12">
-          {RACES[character.race].description}
-        </span>
+        <span className="text-muted-foreground min-h-12">{RACES[character.race].description}</span>
       </div>
     </section>
   );

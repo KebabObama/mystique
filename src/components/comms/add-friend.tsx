@@ -17,11 +17,7 @@ export const AddFriendSection = () => {
   const trimmed = input.trim();
 
   const handleAddFriend = React.useCallback(() => {
-    if (
-      !trimmed ||
-      user.id === trimmed ||
-      friends.find((e) => e.friend === trimmed)
-    ) {
+    if (!trimmed || user.id === trimmed || friends.find((e) => e.friend === trimmed)) {
       toast.error("Something went wrong");
       return;
     }
@@ -32,9 +28,7 @@ export const AddFriendSection = () => {
 
   const handleCopyId = React.useCallback(() => {
     if (!user) return;
-    navigator.clipboard
-      .writeText(user.id)
-      .then(() => toast("ID copied to clipboard!"));
+    navigator.clipboard.writeText(user.id).then(() => toast("ID copied to clipboard!"));
   }, [user.id]);
 
   return (
@@ -59,11 +53,7 @@ export const AddFriendSection = () => {
               }
             }}
           />
-          <Button
-            className="w-auto"
-            onClick={handleAddFriend}
-            disabled={!trimmed.length}
-          >
+          <Button className="w-auto" onClick={handleAddFriend} disabled={!trimmed.length}>
             <UserPlus />
             Send
           </Button>

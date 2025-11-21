@@ -27,12 +27,7 @@ const FriendDialog = ({ friend, user }: { friend: Friend; user: User }) => {
 
   const handleSendMessage = React.useCallback(() => {
     if (!msg.trim() || !user?.id) return;
-    messages.send({
-      type: "friend",
-      link: friend.id,
-      text: msg,
-      sender: user.id,
-    } as SendMessage);
+    messages.send({ type: "friend", link: friend.id, text: msg, sender: user.id } as SendMessage);
     setMsg("");
   }, [messages, user, msg]);
 
@@ -58,20 +53,14 @@ const FriendDialog = ({ friend, user }: { friend: Friend; user: User }) => {
               <div
                 className={cn(
                   "max-w-[75%] rounded-lg px-4 py-1 text-sm wrap-break-word",
-                  m.sender === user.id
-                    ? "bg-background text-primary-foreground"
-                    : "bg-background border"
+                  m.sender === user.id ? "bg-background text-primary-foreground" : "bg-background border"
                 )}
               >
                 {m.text}
               </div>
               <div className="flex scale-0 flex-col gap-0 opacity-0 transition-all duration-300 group-hover:scale-80 group-hover:opacity-100">
-                <span className="text-xs">
-                  {m.sender === user.id ? user.name : friend.name}
-                </span>
-                <span className="text-xs">
-                  {new Date(m.createdAt as Date).toLocaleTimeString()}
-                </span>
+                <span className="text-xs">{m.sender === user.id ? user.name : friend.name}</span>
+                <span className="text-xs">{new Date(m.createdAt as Date).toLocaleTimeString()}</span>
               </div>
             </div>
           ))}
@@ -99,30 +88,16 @@ const FriendDialog = ({ friend, user }: { friend: Friend; user: User }) => {
       <div className="border-border dark:border-ring -mx-6 flex flex-col gap-3 border-t-3 px-6 pt-8 pb-4 md:pb-0">
         {showConfirmRemove ? (
           <div className="flex items-center gap-6">
-            <span className="text-muted-foreground w-full text-sm">
-              Remove friend
-            </span>
-            <Button
-              variant="destructive"
-              size="sm"
-              className=""
-              onClick={handleRemoveFriend}
-            >
+            <span className="text-muted-foreground w-full text-sm">Remove friend</span>
+            <Button variant="destructive" size="sm" className="" onClick={handleRemoveFriend}>
               Confirm
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowConfirmRemove(false)}
-            >
+            <Button variant="outline" size="sm" onClick={() => setShowConfirmRemove(false)}>
               Cancel
             </Button>
           </div>
         ) : (
-          <Button
-            variant="destructive"
-            onClick={() => setShowConfirmRemove(true)}
-          >
+          <Button variant="destructive" onClick={() => setShowConfirmRemove(true)}>
             <UserMinus className="mr-2 size-4" />
             Remove Friend
           </Button>
@@ -144,19 +119,13 @@ export const FriendsListSection = () => {
         <Card.Title>Friends</Card.Title>
       </Card.Header>
       <Card.Content className="flex w-full flex-col items-center justify-center gap-9">
-        {!friends.length && (
-          <p className="text-muted-foreground text-sm">No requests yet</p>
-        )}
+        {!friends.length && <p className="text-muted-foreground text-sm">No requests yet</p>}
         {arr.map((f) => (
           <Dialog
             key={f.id}
             className="md:min-w-lg lg:min-w-3xl xl:min-w-6xl"
             trigger={
-              <FriendSlot
-                className="transition-all duration-300 active:translate-y-2"
-                image={f.image}
-                name={f.name}
-              />
+              <FriendSlot className="transition-all duration-300 active:translate-y-2" image={f.image} name={f.name} />
             }
             title={
               <div className="flex items-center gap-3">
