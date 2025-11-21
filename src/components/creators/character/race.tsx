@@ -26,16 +26,11 @@ export const _Race = ({
             >
               {isSelected && <Border />}
               <Image
-                preload
+                className="h-full w-full bg-contain bg-center bg-no-repeat"
                 src={`/classes/${e}.png`}
                 alt={e}
                 fill
-                sizes="100%"
-                fetchPriority="low"
-                quality={38}
-                unoptimized={false}
-                draggable={false}
-                className="object-contain transition-all duration-300"
+                preload
               />
             </button>
           );
