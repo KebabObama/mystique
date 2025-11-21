@@ -6,10 +6,7 @@ import { and, eq, inArray, ne, or } from "drizzle-orm";
 import { NextApiRequest } from "next";
 import { Server } from "socket.io";
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponseWithSocket
-) {
+export default (req: NextApiRequest, res: NextApiResponseWithSocket) => {
   if (!res.socket.server.io) {
     const io = new Server(res.socket.server);
 
@@ -127,4 +124,4 @@ export default function handler(
     res.socket.server.io = io;
   }
   res.end();
-}
+};
