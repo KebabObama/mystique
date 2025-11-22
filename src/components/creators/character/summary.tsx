@@ -1,13 +1,8 @@
-import { Character } from "@/types/game";
-import { ATTRIBUTES } from "@/types/game/attributes.internal";
-import { CLASSES } from "@/types/game/classes.internal";
-import { RACES } from "@/types/game/races.internal";
+import { Attribute, ATTRIBUTES, Character, CLASSES, RACES } from "@/types/game";
 import Image from "next/image";
 
 export const _Summary = ({
   character,
-  setCharacter,
-  setCan,
 }: {
   character: Character;
   setCharacter: (character: Character) => void;
@@ -31,7 +26,7 @@ export const _Summary = ({
 
           <h3 className="pixel-font mt-2 text-xl font-semibold">Attributes</h3>
           <div className="grid h-full grid-cols-2 gap-4 md:grid-cols-3">
-            {(Object.keys(ATTRIBUTES) as (keyof typeof ATTRIBUTES)[]).map((attr) => (
+            {(Object.keys(ATTRIBUTES) as Attribute[]).map((attr) => (
               <div key={attr} className="aspect-square h-full border p-1">
                 <p className="text-muted-foreground pixel-font mb-1 text-xs uppercase">{attr}</p>
                 <p className="pixel-font text-2xl font-bold">{character.attributes[attr]}</p>

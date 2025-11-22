@@ -14,6 +14,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import type React from "react";
 
 type ResponsiveDialogProps = {
+  asChild?: boolean;
   trigger: React.ReactNode;
   title: string | React.ReactNode;
   description?: string | React.ReactNode;
@@ -24,7 +25,7 @@ type ResponsiveDialogProps = {
   className?: string;
 };
 
-export default ({
+export const ResponsiveDialog = ({
   trigger,
   title,
   description,
@@ -33,19 +34,20 @@ export default ({
   open,
   onOpenChange,
   className,
+  asChild = false,
 }: ResponsiveDialogProps) => {
   const isMobile = useIsMobile();
 
   if (isMobile)
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerTrigger asChild>{trigger}</DrawerTrigger>
-        <DrawerContent className="pb-4.5">
+        <DrawerTrigger asChild={asChild}>{trigger}</DrawerTrigger>
+        <DrawerContent className={className}>
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
             {description && <DrawerDescription>{description}</DrawerDescription>}
           </DrawerHeader>
-          <div className="px-4">{children}</div>
+          {children}
           {footer && <DrawerFooter>{footer}</DrawerFooter>}
         </DrawerContent>
       </Drawer>
@@ -53,13 +55,13 @@ export default ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
+      <Dialog.Trigger asChild={asChild}>{trigger}</Dialog.Trigger>
       <Dialog.Content className={className}>
         <Dialog.Header>
           <Dialog.Title>{title}</Dialog.Title>
           {description && <Dialog.Description>{description}</Dialog.Description>}
         </Dialog.Header>
-        <div className="grid gap-4 py-4">{children}</div>
+        {children}
         {footer && <Dialog.Footer>{footer}</Dialog.Footer>}
       </Dialog.Content>
     </Dialog>

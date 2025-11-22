@@ -1,12 +1,10 @@
 import { Border } from "@/components/ui/border";
-import { Character } from "@/types/game";
-import { RACES } from "@/types/game/races.internal";
+import { Character, RACES } from "@/types/game";
 import Image from "next/image";
 
 export const _Race = ({
   character,
   setCharacter,
-  setCan,
 }: {
   character: Character;
   setCharacter: (character: Character) => void;
@@ -15,7 +13,7 @@ export const _Race = ({
   return (
     <section className="flex flex-col gap-9 pt-1.5 md:px-4">
       <div className="flex w-full flex-row gap-2.5 md:gap-6">
-        {(Object.keys(RACES) as (keyof typeof RACES)[]).map((e, i) => {
+        {(Object.keys(RACES) as (keyof typeof RACES)[]).map((e) => {
           const isSelected = character.race === e;
           return (
             <button

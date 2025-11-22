@@ -1,12 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import ResponsiveDialog from "@/components/ui/responsive-dialog";
+import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
 import { mod } from "@/lib/utils";
-import { Character } from "@/types/game";
-import { attributeKeys } from "@/types/game/attributes.internal";
-import { CLASSES } from "@/types/game/classes.internal";
-import { RACES } from "@/types/game/races.internal";
+import { Attribute, Attributes, ATTRIBUTES, Character, CLASSES, RACES } from "@/types/game";
 import React from "react";
 import { _Attributes } from "./attributes";
 import { _Class } from "./class";
@@ -61,8 +58,10 @@ enum STEPS {
   "Is this you?",
 }
 
-export const calculateAttributes = (base: Character["attributes"], bonuses: Character["attributes"], extra = 0) =>
-  Object.fromEntries(attributeKeys.map((key) => [key, base[key] + bonuses[key] + extra])) as Character["attributes"];
+export const calculateAttributes = (base: Attributes, bonuses: Attributes, extra = 0) => {
+  const keys = Object.keys(ATTRIBUTES) as Attribute[];
+  return Object.fromEntries(keys.map((key) => [key, base[key] + bonuses[key] + extra])) as Attributes;
+};
 
 export const CharacterCreator = ({ children }: { children: React.ReactNode }) => {
   const [step, setStep] = React.useState<STEPS>(0);
@@ -112,6 +111,7 @@ export const CharacterCreator = ({ children }: { children: React.ReactNode }) =>
 
   return (
     <ResponsiveDialog
+      asChild
       trigger={<Button onClick={() => setStep(1)}>{children}</Button>}
       title={STEPS[step]}
       description=""

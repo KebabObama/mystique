@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Character } from "@/types/game";
-import { Attribute, ATTRIBUTES } from "@/types/game/attributes.internal";
+import { Attribute, ATTRIBUTES, Character } from "@/types/game";
 import React from "react";
 
 export const _Attributes = ({
@@ -31,7 +30,7 @@ export const _Attributes = ({
     <section className="flex flex-col gap-6 p-4 text-center text-xl">
       Allocate all points: ({current}/{points})
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-        {(Object.keys(ATTRIBUTES) as (keyof typeof ATTRIBUTES)[]).map((key) => {
+        {(Object.keys(ATTRIBUTES) as Attribute[]).map((key) => {
           const attr = character.attributes[key];
           return (
             <div

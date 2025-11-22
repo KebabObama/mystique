@@ -1,11 +1,9 @@
 import { Border } from "@/components/ui/border";
-import { Character } from "@/types/game";
-import { CLASSES } from "@/types/game/classes.internal";
+import { Character, Class, CLASSES } from "@/types/game";
 
 export const _Class = ({
   character,
   setCharacter,
-  setCan,
 }: {
   character: Character;
   setCharacter: (character: Character) => void;
@@ -14,7 +12,7 @@ export const _Class = ({
   return (
     <section className="flex flex-col gap-9 p-4">
       <div className="grid w-full grid-cols-6 justify-between overflow-visible md:gap-6">
-        {(Object.keys(CLASSES) as (keyof typeof CLASSES)[]).map((e) => {
+        {(Object.keys(CLASSES) as Class[]).map((e) => {
           const temp = CLASSES[e];
           const isSelected = character.class === e;
           return (
