@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "../layout/toast";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import ResponsiveDialog from "../ui/responsive-dialog";
+import { ResponsiveDialog } from "../ui/responsive-dialog";
 
 export default () => {
   const user = useUser();

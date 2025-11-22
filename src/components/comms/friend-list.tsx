@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Border } from "../ui/border";
 import { Input } from "../ui/input";
-import Dialog from "../ui/responsive-dialog";
+import { ResponsiveDialog } from "../ui/responsive-dialog";
 import { FriendSlot } from "./friend-slot";
 
 const FriendDialog = ({ friend, user }: { friend: Friend; user: User }) => {
@@ -121,7 +121,7 @@ export const FriendsListSection = () => {
       <Card.Content className="flex w-full flex-col items-center justify-center gap-9">
         {!friends.length && <p className="text-muted-foreground text-sm">No requests yet</p>}
         {arr.map((f) => (
-          <Dialog
+          <ResponsiveDialog
             key={f.id}
             className="md:min-w-lg lg:min-w-3xl xl:min-w-6xl"
             trigger={
@@ -137,7 +137,7 @@ export const FriendsListSection = () => {
             }
           >
             <FriendDialog friend={f} user={user} />
-          </Dialog>
+          </ResponsiveDialog>
         ))}
       </Card.Content>
     </Card>
