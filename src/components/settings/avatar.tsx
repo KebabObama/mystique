@@ -2,8 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
-import { Bucket } from "@/lib/bucket/bucket";
-import { getUrl, uploadToBucket } from "@/lib/bucket/upload";
+import { uploadToBucket } from "@/lib/bucket/upload";
 import { useRef, useState } from "react";
 import Cropper, { type Area } from "react-easy-crop";
 import { toast } from "../layout/toast";
@@ -66,16 +65,13 @@ export const Avatar = () => {
     setIsUploading(true);
     try {
       const path = `${crypto.randomUUID()}.png`;
-      const formData = new FormData();
-      formData.append("file", await getCroppedImg(imageSrc, croppedAreaPixels), path);
-      formData.append("bucket", "avatars-bucket" satisfies Bucket.Names);
-      formData.append("filename", path);
       console.log(1);
-      const result = await uploadToBucket(formData);
+      const f = await getCroppedImg(imageSrc, croppedAreaPixels);
+      const result = await uploadToBucket("avatars-bucket", f, path);
       console.log(2);
       if (!result.success) throw new Error();
       const { error } = await authClient.updateUser({
-        image: await getUrl(path),
+        image: result.path,
       });
       console.log(3);
       if (error) throw new Error();

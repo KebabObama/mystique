@@ -46,7 +46,6 @@ export namespace Bucket {
 
   export const get = async (bucket: Names, object: string) => {
     try {
-      await exists(bucket);
       return names[bucket]
         ? `http://${connection.endPoint}:${connection.port}/${bucket}/${object}`
         : await client.presignedGetObject(bucket, object, 86400);
@@ -58,8 +57,6 @@ export namespace Bucket {
 
   export const set = async (bucket: Names, file: Buffer | File | Blob, filename: string) => {
     try {
-      exists(bucket);
-      await create(bucket);
       let bufferData: Buffer;
       if (file instanceof Buffer) {
         bufferData = file;

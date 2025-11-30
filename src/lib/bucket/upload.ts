@@ -2,23 +2,17 @@
 
 import { Bucket } from "./bucket";
 
-export const uploadToBucket = async (formData: FormData) => {
-  const bucket = formData.get("bucket") as string;
-  const file = formData.get("file") as File;
-  const filename = formData.get("filename") as string;
-  const exists = await Bucket.exists(bucket);
-  if (!file || !filename || !bucket || !exists) return { success: false };
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+export const uploadToBucket = async (bucket: Bucket.Names, file: Blob | File | Buffer, filename: string) => {
+  if (!file || !filename || !bucket) return { success: false };
   try {
-    await Bucket.set(bucket as Bucket.Names, buffer, filename);
-    return { success: true };
+    const data = await Bucket.set(bucket, file, filename);
+    return { success: true, path: data.url };
   } catch (error) {
     console.error("Upload failed:", error);
     return { success: false };
   }
 };
 
-export const getUrl = async (path: string) => {
-  return await Bucket.get("avatars-bucket", path);
+export const getUrl = async (bucket: Bucket.Names, path: string) => {
+  return await Bucket.get(bucket, path);
 };
