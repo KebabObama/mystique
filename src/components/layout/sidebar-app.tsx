@@ -27,13 +27,12 @@ export default () => {
       className="bg-card relative my-4 ml-4 h-[calc(100dvh-2rem)] p-0"
     >
       <Border />
-      <Sidebar.SidebarHeader className="hidden flex-col items-center justify-start gap-2 md:flex">
+      <Sidebar.SidebarHeader className="border-foreground dark:border-ring -mx-0.5 hidden flex-col items-center justify-start gap-2 border-b-6 md:flex">
         <Sidebar.SidebarMenuButton onClick={toggleSidebar}>
           <SidebarIcon />
-          Open Sidebar
+          Toggle Sidebar
         </Sidebar.SidebarMenuButton>
       </Sidebar.SidebarHeader>
-      <div className="bg-foreground dark:bg-ring -mx-0.5 h-1.5 w-[calc(100%+0.25rem)]" />
       <Sidebar.SidebarContent>
         <Sidebar.SidebarMenu className="flex-col items-center justify-start gap-2 p-2 md:flex">
           <Sidebar.SidebarMenuButton onClick={() => router.push("/dashboard")}>

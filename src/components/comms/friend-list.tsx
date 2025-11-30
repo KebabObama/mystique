@@ -58,9 +58,9 @@ const FriendDialog = ({ friend, user }: { friend: Friend; user: User }) => {
               >
                 {m.text}
               </div>
-              <div className="flex scale-0 flex-col gap-0 opacity-0 transition-all duration-300 group-hover:scale-80 group-hover:opacity-100">
-                <span className="text-xs">{m.sender === user.id ? user.name : friend.name}</span>
-                <span className="text-xs">{new Date(m.createdAt as Date).toLocaleTimeString()}</span>
+              <div className="text-muted-foreground flex scale-0 flex-col gap-0 text-xs font-light opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
+                <span>{m.sender === user.id ? user.name : friend.name}</span>
+                <span>{new Date(m.createdAt).toLocaleTimeString()}</span>
               </div>
             </div>
           ))}
@@ -123,6 +123,7 @@ export const FriendsListSection = () => {
         {arr.map((f) => (
           <ResponsiveDialog
             key={f.id}
+            asChild
             className="md:min-w-lg lg:min-w-3xl xl:min-w-6xl"
             trigger={
               <FriendSlot className="transition-all duration-300 active:translate-y-2" image={f.image} name={f.name} />

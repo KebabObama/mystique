@@ -152,7 +152,7 @@ const Sidebar = ({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-card text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+          className="bg-card text-sidebar-foreground mt-4 -ml-1.5 h-[calc(100dvh-1rem-6px)] w-(--sidebar-width) p-0 pl-3 md:mt-0 md:ml-0 md:pl-0 [&>button]:hidden"
           style={{ "--sidebar-width": SIDEBAR_WIDTH_MOBILE } as React.CSSProperties}
           side={side}
         >

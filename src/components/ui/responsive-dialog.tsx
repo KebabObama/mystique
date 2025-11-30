@@ -11,6 +11,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 import type React from "react";
 
 type ResponsiveDialogProps = {
@@ -42,7 +43,7 @@ export const ResponsiveDialog = ({
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
         <DrawerTrigger asChild={asChild}>{trigger}</DrawerTrigger>
-        <DrawerContent className={className}>
+        <DrawerContent className={cn("p-4", className)}>
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
             {description && <DrawerDescription>{description}</DrawerDescription>}
