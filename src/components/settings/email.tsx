@@ -34,6 +34,7 @@ export default () => {
 
   return (
     <ResponsiveDialog
+      asChild
       open={open}
       onOpenChange={(v) => !loading && setOpen(v)}
       trigger={<Button>Change Email</Button>}

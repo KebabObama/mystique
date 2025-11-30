@@ -1,3 +1,4 @@
+import { Avatar } from "@/components/settings/avatar";
 import Email from "@/components/settings/email";
 import Name from "@/components/settings/name";
 
@@ -11,6 +12,9 @@ export default () => {
       <div className="flex flex-col gap-6">
         <span>Email: </span>
         <Email />
+      </div>
+      <div>
+        <Avatar />
       </div>
     </>
   );
