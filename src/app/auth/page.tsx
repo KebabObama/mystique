@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import Tabs from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
 
-export default function AuthPage() {
+export default () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   return (
@@ -52,7 +52,7 @@ export default function AuthPage() {
       </Card.Content>
     </Card>
   );
-}
+};
 
 type Props = { loading: boolean; setLoading: (loading: boolean) => void };
 
@@ -68,7 +68,7 @@ const Google = ({ loading, setLoading }: Props) => {
             provider: "google",
             callbackURL: "/dashboard",
           });
-          toast("Redirecting to Google...");
+          toast.show("Redirecting to Google...");
         } catch (error) {
           console.error("Google auth error:", error);
           toast.error("Authentication failed");
@@ -94,7 +94,7 @@ const Github = ({ loading, setLoading }: Props) => {
             provider: "github",
             callbackURL: "/dashboard",
           });
-          toast("Redirecting to Github...");
+          toast.show("Redirecting to Github...");
         } catch (error) {
           console.error("GitHub auth error:", error);
           toast.error("Authentication failed");
@@ -128,7 +128,7 @@ const Login = ({ loading, setLoading }: Props) => {
 
       if (result.error) toast.error("Sign in failed");
       else {
-        toast("Success!");
+        toast.show("Success!");
         router.push("/dashboard");
       }
     } catch (error) {

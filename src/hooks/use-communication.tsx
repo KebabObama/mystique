@@ -48,7 +48,8 @@ export const CommunicationProvider = ({
 
     socket.on("message:new", (msg: Message) => {
       setMessages((prev) => [...prev, msg]);
-      if (msg.sender !== user.id) toast(msg.text);
+      if (msg.sender !== user.id)
+        toast({ message: msg.text, title: "New message" });
     });
 
     socket.on("friend:all", (allFriends: Friend[]) => {
@@ -57,7 +58,10 @@ export const CommunicationProvider = ({
 
     socket.on("friend:new", (newFriend: Friend) => {
       setFriends((prev) => [...prev, newFriend]);
-      toast(`New friend request from: ${newFriend.name}`);
+      toast({
+        message: `New friend request from: ${newFriend.name}`,
+        title: "Friend request",
+      });
     });
 
     socket.on("friend:accept", (id: string) => {

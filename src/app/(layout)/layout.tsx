@@ -1,7 +1,7 @@
+import { Toaster } from "sonner";
 import { Header } from "@/components/layout/header";
 import SidebarApp from "@/components/layout/sidebar-app";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { Toaster } from "@/components/ui/sonner";
 import { CommunicationProvider } from "@/hooks/use-communication";
 import { UserProvider } from "@/hooks/use-user";
 

@@ -27,14 +27,13 @@ export const AddFriendSection = () => {
     }
     friends.request(user, trimmed);
     setInput("");
-    toast.success("Friend request sent!");
   }, [friends, user, trimmed]);
 
   const handleCopyId = React.useCallback(() => {
     if (!user) return;
     navigator.clipboard
       .writeText(user.id)
-      .then(() => toast("ID copied to clipboard!"));
+      .then(() => toast.show("ID copied to clipboard!"));
   }, [user.id, user]);
 
   return (

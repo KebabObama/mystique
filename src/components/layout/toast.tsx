@@ -1,55 +1,88 @@
 "use client";
 
 import { cva } from "class-variance-authority";
+import type React from "react";
 import { toast as sonnerToast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Border } from "../ui/border";
+import { Button } from "../ui/button";
 
-type ToastVariant = "default" | "success" | "error" | "warning" | "info";
-
-const temp = (message: string, variant: ToastVariant = "default") =>
-  sonnerToast.custom((id) => (
-    <Toast id={id} title={message} variant={variant} />
-  ));
-
-export const toast = Object.assign(temp, {
-  show: temp,
-  success: (message: string) => temp(message, "success"),
-  error: (message: string) => temp(message, "error"),
-  warning: (message: string) => temp(message, "warning"),
-  info: (message: string) => temp(message, "info"),
-});
+type ToastOptions = {
+  message: string | React.ReactNode;
+  title?: string;
+  variant?: "default" | "success" | "error" | "warning";
+  action?: React.MouseEventHandler<HTMLButtonElement>;
+};
 
 const toastVariants = cva(
-  "select-none flex rounded-lg shadow-lg ring-1 ring-black/5 w-full md:max-w-[364px] items-center p-4 font-pixelify",
+  "select-none flex shadow-lg ring-1 ring-black/5 w-full md:max-w-md items-center p-4 font-pixelify",
   {
     variants: {
       variant: {
         default: "bg-background text-foreground",
-        success:
-          "bg-green-100 text-green-900 dark:bg-green-900 dark:text-green-100",
-        error: "bg-red-100 text-red-900 dark:bg-red-900 dark:text-red-100",
-        warning:
-          "bg-yellow-100 text-yellow-900 dark:bg-yellow-900 dark:text-yellow-100",
-        info: "bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100",
+        success: "bg-green-500",
+        error: "bg-destructive",
+        warning: "bg-yellow-500",
       },
     },
     defaultVariants: { variant: "default" },
   },
 );
 
-const Toast = (props: {
-  id: string | number;
-  title: string;
-  variant: ToastVariant;
-}) => {
-  const { title, variant } = props;
+export const toast = Object.assign(
+  (options: Omit<ToastOptions, "variant">) =>
+    sonnerToast.custom(() => <Toast {...options} />),
+  {
+    show: (
+      message: string,
+      action?: React.MouseEventHandler<HTMLButtonElement>,
+    ) =>
+      sonnerToast.custom(() => (
+        <Toast action={action} message={message} variant="default" />
+      )),
+    warning: (
+      message: string,
+      action?: React.MouseEventHandler<HTMLButtonElement>,
+    ) =>
+      sonnerToast.custom(() => (
+        <Toast action={action} message={message} variant="warning" />
+      )),
+    success: (
+      message: string,
+      action?: React.MouseEventHandler<HTMLButtonElement>,
+    ) =>
+      sonnerToast.custom(() => (
+        <Toast
+          action={action}
+          message={message}
+          title="Success..."
+          variant="success"
+        />
+      )),
+    error: (
+      message: string,
+      action?: React.MouseEventHandler<HTMLButtonElement>,
+    ) =>
+      sonnerToast.custom(() => (
+        <Toast
+          action={action}
+          message={message}
+          title="Error..."
+          variant="error"
+        />
+      )),
+  },
+);
 
+const Toast = (props: ToastOptions) => {
+  const { message, title, action, variant = "default" } = props;
   return (
-    <div className="relative">
-      <div className={cn(toastVariants({ variant }))}>
-        <p className="text-sm font-medium">{title}</p>
+    <div className={cn(toastVariants({ variant }))}>
+      <div className="flex flex-col gap-1 flex-1">
+        {title && <p className="text-sm font-medium">{title}</p>}
+        <div className="text-sm">{message}</div>
       </div>
+      {action && <Button onClick={action} />}
       <Border />
     </div>
   );
