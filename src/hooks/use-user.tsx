@@ -1,9 +1,9 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
-import { User } from "@/types/communication";
 import React from "react";
 import { create } from "zustand";
+import { authClient } from "@/lib/auth-client";
+import type { User } from "@/types/communication";
 
 const defaults = {
   id: "",

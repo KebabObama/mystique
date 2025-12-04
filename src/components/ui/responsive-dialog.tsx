@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import Dialog from "@/components/ui/dialog";
 import {
   Drawer,
@@ -12,7 +13,6 @@ import {
 } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import type React from "react";
 
 type ResponsiveDialogProps = {
   asChild?: boolean;
@@ -41,12 +41,14 @@ export const ResponsiveDialog = ({
 
   if (isMobile)
     return (
-      <Drawer open={open} onOpenChange={onOpenChange}>
+      <Drawer onOpenChange={onOpenChange} open={open}>
         <DrawerTrigger asChild={asChild}>{trigger}</DrawerTrigger>
         <DrawerContent className={cn("p-4", className)}>
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
-            {description && <DrawerDescription>{description}</DrawerDescription>}
+            {description && (
+              <DrawerDescription>{description}</DrawerDescription>
+            )}
           </DrawerHeader>
           {children}
           {footer && <DrawerFooter>{footer}</DrawerFooter>}
@@ -55,12 +57,14 @@ export const ResponsiveDialog = ({
     );
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog onOpenChange={onOpenChange} open={open}>
       <Dialog.Trigger asChild={asChild}>{trigger}</Dialog.Trigger>
       <Dialog.Content className={className}>
         <Dialog.Header>
           <Dialog.Title>{title}</Dialog.Title>
-          {description && <Dialog.Description>{description}</Dialog.Description>}
+          {description && (
+            <Dialog.Description>{description}</Dialog.Description>
+          )}
         </Dialog.Header>
         {children}
         {footer && <Dialog.Footer>{footer}</Dialog.Footer>}

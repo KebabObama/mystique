@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useUser } from "@/hooks/use-user";
 import { authClient } from "@/lib/auth-client";
-import { useEffect, useState } from "react";
 import { toast } from "../layout/toast";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -35,21 +35,20 @@ export default () => {
   return (
     <ResponsiveDialog
       asChild
-      open={open}
       onOpenChange={(v) => !loading && setOpen(v)}
-      trigger={<Button>Change Name</Button>}
+      open={open}
       title="Change username"
-    >
+      trigger={<Button>Change Name</Button>}>
       <div className="flex flex-col gap-6">
         <Input
+          autoFocus
+          disabled={loading}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Enter your new name"
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
-          disabled={loading}
-          placeholder="Enter your new name"
-          autoFocus
         />
-        <Button onClick={accept} disabled={loading || !name.trim()}>
+        <Button disabled={loading || !name.trim()} onClick={accept}>
           {loading ? "Updating..." : "Accept"}
         </Button>
       </div>

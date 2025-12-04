@@ -1,4 +1,12 @@
-import { Axe, BookAudio, BowArrow, Cross, Flame, Guitar, LucideIcon } from "lucide-react";
+import {
+  Axe,
+  BookAudio,
+  BowArrow,
+  Cross,
+  Flame,
+  Guitar,
+  type LucideIcon,
+} from "lucide-react";
 
 /**
  * @corroding       [{@link ELEMENTS acid}] Remove all resistances other than acid per stack
@@ -50,21 +58,33 @@ export type Vec = [x: number, y: number, z: number];
 export const ATTRIBUTES = {
   str: {
     name: "Strength",
-    description: "Physical power and athletic prowess. Affects melee attacks and carrying capacity.",
+    description:
+      "Physical power and athletic prowess. Affects melee attacks and carrying capacity.",
   },
   dex: {
     name: "Dexterity",
-    description: "Agility, reflexes, and balance. Influences armor class, initiative, and ranged attacks.",
+    description:
+      "Agility, reflexes, and balance. Influences armor class, initiative, and ranged attacks.",
   },
   con: {
     name: "Constitution",
-    description: "Endurance and stamina. Determines hit points and resistance to physical hardship.",
+    description:
+      "Endurance and stamina. Determines hit points and resistance to physical hardship.",
   },
-  int: { name: "Intelligence", description: "Reasoning and memory. Governs arcane spellcasting and knowledge skills." },
-  wis: { name: "Wisdom", description: "Awareness and insight. Powers divine magic and perception abilities." },
+  int: {
+    name: "Intelligence",
+    description:
+      "Reasoning and memory. Governs arcane spellcasting and knowledge skills.",
+  },
+  wis: {
+    name: "Wisdom",
+    description:
+      "Awareness and insight. Powers divine magic and perception abilities.",
+  },
   cha: {
     name: "Charisma",
-    description: "Force of personality and leadership. Affects social interactions and certain spells.",
+    description:
+      "Force of personality and leadership. Affects social interactions and certain spells.",
   },
 } as const satisfies Record<string, { name: string; description: string }>;
 export type Attribute = keyof typeof ATTRIBUTES;
@@ -141,34 +161,42 @@ export type LearnedAbility = {
   damage: [element: Element, ...Roll][];
 } & (
   | { type: "character" }
-  | { type: "item"; cooldown: number | "consumable" | "once-per-rest" | "wait-until-rest"; item: string }
+  | {
+      type: "item";
+      cooldown: number | "consumable" | "once-per-rest" | "wait-until-rest";
+      item: string;
+    }
 );
 
 export const CLASSES = {
   barbarian: {
     icon: Axe,
-    description: "Barbarians are fierce warriors who rely on rage to fuel their attacks and resist damage.",
+    description:
+      "Barbarians are fierce warriors who rely on rage to fuel their attacks and resist damage.",
     resource: { name: "rage", first: 1, levelUp: 1 },
     attribute: "str",
     hp: 10,
   },
   bard: {
     icon: Guitar,
-    description: "Bards inspire allies with music and magic, using inspiration to enhance their and others' abilities.",
+    description:
+      "Bards inspire allies with music and magic, using inspiration to enhance their and others' abilities.",
     resource: { name: "inspiration", first: 2, levelUp: 1 },
     attribute: "cha",
     hp: 8,
   },
   cleric: {
     icon: Cross,
-    description: "Clerics channel divine power to heal allies and smite foes, drawing strength from their faith.",
+    description:
+      "Clerics channel divine power to heal allies and smite foes, drawing strength from their faith.",
     resource: { name: "faith", first: 2, levelUp: 2 },
     attribute: "wis",
     hp: 6,
   },
   ranger: {
     icon: BowArrow,
-    description: "Rangers are skilled hunters and trackers, marking their targets and striking with precision.",
+    description:
+      "Rangers are skilled hunters and trackers, marking their targets and striking with precision.",
     resource: { name: "mark", first: 3, levelUp: 3 },
     attribute: "dex",
     hp: 8,
@@ -183,7 +211,8 @@ export const CLASSES = {
   },
   wizard: {
     icon: BookAudio,
-    description: "Wizards study arcane secrets and rely on memory to cast spells with precision and versatility.",
+    description:
+      "Wizards study arcane secrets and rely on memory to cast spells with precision and versatility.",
     resource: { name: "memory", first: 4, levelUp: 3 },
     attribute: "int",
     hp: 6,
@@ -209,44 +238,67 @@ export type Class = keyof typeof CLASSES;
  * @poison {@link EFFECTS toxin}
  * @radiant {@link EFFECTS smitten}
  */
-export const ELEMENTS = ["acid", "cold", "fire", "lightning", "physical", "poison", "radiant"] as const;
+export const ELEMENTS = [
+  "acid",
+  "cold",
+  "fire",
+  "lightning",
+  "physical",
+  "poison",
+  "radiant",
+] as const;
 export type Element = (typeof ELEMENTS)[number];
 
 export const RACES = {
   dragonborn: {
-    description: "Dragonborn are proud draconic humanoids, often seeking honor and glory.",
+    description:
+      "Dragonborn are proud draconic humanoids, often seeking honor and glory.",
     bonuses: { str: 1, dex: -1, con: 1, int: 0, wis: 1, cha: -2 },
     stamina: -1,
   },
   dwarf: {
-    description: "Dwarves are sturdy and resilient, skilled in crafting, mining, and combat.",
+    description:
+      "Dwarves are sturdy and resilient, skilled in crafting, mining, and combat.",
     bonuses: { str: 1, dex: -2, con: 2, int: 0, wis: 0, cha: -1 },
     stamina: -2,
   },
   elf: {
-    description: "Elves are graceful and long-lived, attuned to nature and magic, excelling in agility and perception.",
+    description:
+      "Elves are graceful and long-lived, attuned to nature and magic, excelling in agility and perception.",
     bonuses: { str: -3, dex: 3, con: -3, int: 1, wis: 1, cha: 1 },
     stamina: 2,
   },
   human: {
-    description: "Humans are versatile and ambitious, able to adapt to any situation and excel.",
+    description:
+      "Humans are versatile and ambitious, able to adapt to any situation and excel.",
     bonuses: { str: -1, dex: 1, con: 0, int: -1, wis: -1, cha: 2 },
     stamina: 2,
   },
   orc: {
-    description: "Orcs are fierce warriors with strong physical abilities, often driven by strength and survival.",
+    description:
+      "Orcs are fierce warriors with strong physical abilities, often driven by strength and survival.",
     bonuses: { str: 5, dex: -2, con: 3, int: -2, wis: -2, cha: -2 },
     stamina: -2,
   },
   tiefling: {
-    description: "Tieflings are descended from fiends, possessing innate magical abilities and often facing prejudice.",
+    description:
+      "Tieflings are descended from fiends, possessing innate magical abilities and often facing prejudice.",
     bonuses: { str: 1, dex: 1, con: 1, int: 0, wis: -2, cha: -1 },
     stamina: 0,
   },
-} as const satisfies Record<string, { description: string; bonuses: Record<Attribute, number>; stamina: number }>;
+} as const satisfies Record<
+  string,
+  { description: string; bonuses: Record<Attribute, number>; stamina: number }
+>;
 export type Race = keyof typeof RACES;
 
-export type Object = { id: string; owner: string; position: Vec; size: Vec; model?: string };
+export type Object = {
+  id: string;
+  owner: string;
+  position: Vec;
+  size: Vec;
+  model?: string;
+};
 
 export type Character = {
   name: string;

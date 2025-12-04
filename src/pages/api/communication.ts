@@ -1,12 +1,12 @@
+import { and, eq, inArray, ne, or } from "drizzle-orm";
+import type { NextApiRequest } from "next";
+import { Server } from "socket.io";
 import * as schema from "@/db/schema";
 import { db } from "@/lib/db";
-import { Friend, Message, SendMessage, User } from "@/types/communication";
-import { NextApiResponseWithSocket } from "@/types/sockets";
-import { and, eq, inArray, ne, or } from "drizzle-orm";
-import { NextApiRequest } from "next";
-import { Server } from "socket.io";
+import type { Friend, Message, SendMessage, User } from "@/types/communication";
+import type { NextApiResponseWithSocket } from "@/types/sockets";
 
-export default (req: NextApiRequest, res: NextApiResponseWithSocket) => {
+export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
   if (!res.socket.server.io) {
     const io = new Server(res.socket.server);
 
@@ -25,11 +25,22 @@ export default (req: NextApiRequest, res: NextApiResponseWithSocket) => {
           .innerJoin(
             schema.user,
             or(
-              and(ne(schema.friend.sender, userId), eq(schema.friend.sender, schema.user.id)),
-              and(ne(schema.friend.receiver, userId), eq(schema.friend.receiver, schema.user.id))
-            )
+              and(
+                ne(schema.friend.sender, userId),
+                eq(schema.friend.sender, schema.user.id),
+              ),
+              and(
+                ne(schema.friend.receiver, userId),
+                eq(schema.friend.receiver, schema.user.id),
+              ),
+            ),
           )
-          .where(or(eq(schema.friend.sender, userId), eq(schema.friend.receiver, userId)));
+          .where(
+            or(
+              eq(schema.friend.sender, userId),
+              eq(schema.friend.receiver, userId),
+            ),
+          );
 
         const messages = await db
           .select()
@@ -37,8 +48,8 @@ export default (req: NextApiRequest, res: NextApiResponseWithSocket) => {
           .where(
             inArray(
               schema.message.link,
-              friendships.map((f) => f.id)
-            )
+              friendships.map((f) => f.id),
+            ),
           );
         socket.join(`user:${userId}`);
         socket.join(friendships.map((e) => `friend:${e.id}`));
@@ -52,7 +63,9 @@ export default (req: NextApiRequest, res: NextApiResponseWithSocket) => {
           .values({ sender: sender.id, receiver: receiver, accepted: false })
           .returning()
           .then((res) => res[0]);
-        io.to([`user:${sender.id}`, `user:${receiver}`]).socketsJoin(`friend:${request.id}`);
+        io.to([`user:${sender.id}`, `user:${receiver}`]).socketsJoin(
+          `friend:${request.id}`,
+        );
         io.to(`user:${receiver}`).emit("friend:new", {
           id: request.id,
           friend: sender.id,
@@ -77,7 +90,10 @@ export default (req: NextApiRequest, res: NextApiResponseWithSocket) => {
       });
 
       socket.on("friend:accept", async (id: string) => {
-        await db.update(schema.friend).set({ accepted: true }).where(eq(schema.friend.id, id));
+        await db
+          .update(schema.friend)
+          .set({ accepted: true })
+          .where(eq(schema.friend.id, id));
         io.to(`friend:${id}`).emit("friend:accept", id);
       });
 
@@ -85,7 +101,11 @@ export default (req: NextApiRequest, res: NextApiResponseWithSocket) => {
         io.to(`friend:${id}`).emit("friend:deny", id);
         io.to(`friend:${id}`).socketsLeave(`friend:${id}`);
         await db.delete(schema.friend).where(eq(schema.friend.id, id));
-        await db.delete(schema.message).where(and(eq(schema.message.type, "friend"), eq(schema.message.link, id)));
+        await db
+          .delete(schema.message)
+          .where(
+            and(eq(schema.message.type, "friend"), eq(schema.message.link, id)),
+          );
       });
 
       socket.on("message:new", async (temp: SendMessage) => {

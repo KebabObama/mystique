@@ -1,4 +1,4 @@
-import * as schema from "@/db/schema";
+import type * as schema from "@/db/schema";
 
 export type User = typeof schema.user.$inferSelect;
 export type Message = typeof schema.message.$inferSelect;

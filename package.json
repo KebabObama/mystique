@@ -6,9 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "socket": "bun --watch run ./sockets/index.ts",
-    "lint": "prettier -w .",
-    "check": "prettier -c .",
+    "lint": "biome check --write --unsafe",
+    "check": "biome check",
     "prepare": "husky"
   },
   "dependencies": {
@@ -47,6 +46,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.3.8",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^20.19.25",
     "@types/pg": "^8.15.6",

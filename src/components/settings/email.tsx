@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useUser } from "@/hooks/use-user";
 import { authClient } from "@/lib/auth-client";
-import { useEffect, useState } from "react";
 import { toast } from "../layout/toast";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -35,21 +35,20 @@ export default () => {
   return (
     <ResponsiveDialog
       asChild
-      open={open}
       onOpenChange={(v) => !loading && setOpen(v)}
-      trigger={<Button>Change Email</Button>}
+      open={open}
       title="Change email"
-    >
+      trigger={<Button>Change Email</Button>}>
       <div className="flex flex-col gap-6">
         <Input
+          autoFocus
+          disabled={loading}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your new email"
           type="text"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={loading}
-          placeholder="Enter your new email"
-          autoFocus
         />
-        <Button onClick={accept} disabled={loading || !email.trim()}>
+        <Button disabled={loading || !email.trim()} onClick={accept}>
           {loading ? "Updating..." : "Accept"}
         </Button>
       </div>

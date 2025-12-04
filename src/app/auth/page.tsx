@@ -1,13 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "@/components/layout/toast";
 import { Button } from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Tabs from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 export default function AuthPage() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -16,7 +16,9 @@ export default function AuthPage() {
     <Card className="absolute top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2">
       <Card.Header>
         <Card.Title>Welcome</Card.Title>
-        <Card.Description>Sign in to your account or create a new one</Card.Description>
+        <Card.Description>
+          Sign in to your account or create a new one
+        </Card.Description>
       </Card.Header>
       <Card.Content className="flex flex-col gap-6">
         <div className="grid grid-cols-2 gap-4">
@@ -29,7 +31,9 @@ export default function AuthPage() {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="text-muted-foreground px-2 select-none">Or continue with</span>
+            <span className="text-muted-foreground px-2 select-none">
+              Or continue with
+            </span>
           </div>
         </div>
 
@@ -38,10 +42,10 @@ export default function AuthPage() {
             <Tabs.Trigger value="login">Sign In</Tabs.Trigger>
             <Tabs.Trigger value="register">Sign Up</Tabs.Trigger>
           </Tabs.List>
-          <Tabs.Content value="login" className="flex flex-col gap-4">
+          <Tabs.Content className="flex flex-col gap-4" value="login">
             <Login loading={loading} setLoading={setLoading} />
           </Tabs.Content>
-          <Tabs.Content value="register" className="flex flex-col gap-4">
+          <Tabs.Content className="flex flex-col gap-4" value="register">
             <Register loading={loading} setLoading={setLoading} />
           </Tabs.Content>
         </Tabs>
@@ -55,11 +59,15 @@ type Props = { loading: boolean; setLoading: (loading: boolean) => void };
 const Google = ({ loading, setLoading }: Props) => {
   return (
     <Button
-      variant="outline"
+      className="w-full"
+      disabled={loading}
       onClick={async () => {
         setLoading(true);
         try {
-          await authClient.signIn.social({ provider: "google", callbackURL: "/dashboard" });
+          await authClient.signIn.social({
+            provider: "google",
+            callbackURL: "/dashboard",
+          });
           toast("Redirecting to Google...");
         } catch (error) {
           console.error("Google auth error:", error);
@@ -68,9 +76,7 @@ const Google = ({ loading, setLoading }: Props) => {
           setLoading(false);
         }
       }}
-      disabled={loading}
-      className="w-full"
-    >
+      variant="outline">
       Google
     </Button>
   );
@@ -79,11 +85,15 @@ const Google = ({ loading, setLoading }: Props) => {
 const Github = ({ loading, setLoading }: Props) => {
   return (
     <Button
-      variant="outline"
+      className="w-full"
+      disabled={loading}
       onClick={async () => {
         setLoading(true);
         try {
-          await authClient.signIn.social({ provider: "github", callbackURL: "/dashboard" });
+          await authClient.signIn.social({
+            provider: "github",
+            callbackURL: "/dashboard",
+          });
           toast("Redirecting to Github...");
         } catch (error) {
           console.error("GitHub auth error:", error);
@@ -92,9 +102,7 @@ const Github = ({ loading, setLoading }: Props) => {
           setLoading(false);
         }
       }}
-      disabled={loading}
-      className="w-full"
-    >
+      variant="outline">
       GitHub
     </Button>
   );
@@ -111,7 +119,12 @@ const Login = ({ loading, setLoading }: Props) => {
     setLoading(true);
 
     try {
-      const result = await authClient.signIn.email({ email, password, callbackURL: "/dashboard", rememberMe });
+      const result = await authClient.signIn.email({
+        email,
+        password,
+        callbackURL: "/dashboard",
+        rememberMe,
+      });
 
       if (result.error) toast.error("Sign in failed");
       else {
@@ -127,41 +140,43 @@ const Login = ({ loading, setLoading }: Props) => {
   };
 
   return (
-    <form onSubmit={handleLogin} className="flex flex-col gap-3">
+    <form className="flex flex-col gap-3" onSubmit={handleLogin}>
       <label htmlFor="login-email">Email</label>
       <Input
-        id="login-email"
-        type="email"
-        placeholder="Enter your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
         disabled={loading}
+        id="login-email"
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Enter your email"
+        required
+        type="email"
+        value={email}
       />
       <label htmlFor="login-password">Password</label>
       <Input
-        id="login-password"
-        type="password"
-        placeholder="Enter your password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
         disabled={loading}
+        id="login-password"
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Enter your password"
+        required
+        type="password"
+        value={password}
       />
       <div className="flex items-center gap-2">
         <input
-          id="remember-me"
-          type="checkbox"
           checked={rememberMe}
-          onChange={(e) => setRememberMe(e.target.checked)}
-          disabled={loading}
           className="accent-primary size-4 cursor-pointer border-4 bg-transparent disabled:cursor-not-allowed"
+          disabled={loading}
+          id="remember-me"
+          onChange={(e) => setRememberMe(e.target.checked)}
+          type="checkbox"
         />
-        <label htmlFor="remember-me" className="cursor-pointer text-sm select-none">
+        <label
+          className="cursor-pointer text-sm select-none"
+          htmlFor="remember-me">
           Remember me
         </label>
       </div>
-      <Button type="submit" disabled={loading} className="mt-2 w-full">
+      <Button className="mt-2 w-full" disabled={loading} type="submit">
         {loading ? "Signing in..." : "Sign In"}
       </Button>
     </form>
@@ -191,7 +206,12 @@ const Register = ({ loading, setLoading }: Props) => {
     setLoading(true);
 
     try {
-      const result = await authClient.signUp.email({ email, password, name, callbackURL: "/dashboard" });
+      const result = await authClient.signUp.email({
+        email,
+        password,
+        name,
+        callbackURL: "/dashboard",
+      });
 
       if (result.error) {
         toast.error("Registration failed");
@@ -208,49 +228,49 @@ const Register = ({ loading, setLoading }: Props) => {
   };
 
   return (
-    <form onSubmit={handleRegister} className="flex flex-col gap-3">
+    <form className="flex flex-col gap-3" onSubmit={handleRegister}>
       <label htmlFor="register-name">Full Name</label>
       <Input
-        id="register-name"
-        type="text"
-        placeholder="Enter your full name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
         disabled={loading}
+        id="register-name"
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Enter your full name"
+        required
+        type="text"
+        value={name}
       />
       <label htmlFor="register-email">Email</label>
       <Input
-        id="register-email"
-        type="email"
-        placeholder="Enter your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
         disabled={loading}
+        id="register-email"
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Enter your email"
+        required
+        type="email"
+        value={email}
       />
       <label htmlFor="register-password">Password</label>
       <Input
-        id="register-password"
-        type="password"
-        placeholder="Create a password (min. 6 characters)"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
         disabled={loading}
+        id="register-password"
         minLength={6}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Create a password (min. 6 characters)"
+        required
+        type="password"
+        value={password}
       />
       <label htmlFor="register-confirm-password">Confirm Password</label>
       <Input
-        id="register-confirm-password"
-        type="password"
-        placeholder="Confirm your password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        required
         disabled={loading}
+        id="register-confirm-password"
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        placeholder="Confirm your password"
+        required
+        type="password"
+        value={confirmPassword}
       />
-      <Button type="submit" disabled={loading} className="mt-2 w-full">
+      <Button className="mt-2 w-full" disabled={loading} type="submit">
         {loading ? "Creating account..." : "Create Account"}
       </Button>
     </form>

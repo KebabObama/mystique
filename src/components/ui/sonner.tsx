@@ -8,10 +8,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
       className="toaster group"
       position="bottom-right"
-      swipeDirections={["right", "left"]}
       style={
         {
           "--normal-bg": "var(--popover)",
@@ -19,6 +17,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
           "--normal-border": "var(--border)",
         } as React.CSSProperties
       }
+      swipeDirections={["right", "left"]}
+      theme={theme as ToasterProps["theme"]}
       {...props}
     />
   );

@@ -2,4 +2,12 @@
 	"typescript.preferences.autoImportFileExcludePatterns": [
 		"**/node_modules/@radix-ui/"
   ],
+  "cSpell.words": [
+    "dragonborn",
+    "oklch",
+    "pixelify",
+    "tiefling",
+    "Tieflings",
+    "turbopack"
+  ],
 }

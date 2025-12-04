@@ -27,7 +27,7 @@ class Pixel {
     y: number,
     color: string,
     speed: number,
-    delay: number
+    delay: number,
   ) {
     this.width = canvas.width;
     this.height = canvas.height;
@@ -56,7 +56,12 @@ class Pixel {
   draw() {
     const centerOffset = this.maxSizeInteger * 0.5 - this.size * 0.5;
     this.ctx.fillStyle = this.color;
-    this.ctx.fillRect(this.x + centerOffset, this.y + centerOffset, this.size, this.size);
+    this.ctx.fillRect(
+      this.x + centerOffset,
+      this.y + centerOffset,
+      this.size,
+      this.size,
+    );
   }
 
   appear() {
@@ -117,10 +122,34 @@ const getEffectiveSpeed = (value: number, reducedMotion: boolean) => {
 };
 
 const VARIANTS = {
-  default: { activeColor: null, gap: 5, speed: 35, colors: "#f8fafc,#f1f5f9,#cbd5e1", noFocus: false },
-  blue: { activeColor: "#e0f2fe", gap: 10, speed: 25, colors: "#e0f2fe,#7dd3fc,#0ea5e9", noFocus: false },
-  yellow: { activeColor: "#fef08a", gap: 3, speed: 20, colors: "#fef08a,#fde047,#eab308", noFocus: false },
-  pink: { activeColor: "#fecdd3", gap: 6, speed: 80, colors: "#fecdd3,#fda4af,#e11d48", noFocus: true },
+  default: {
+    activeColor: null,
+    gap: 5,
+    speed: 35,
+    colors: "#f8fafc,#f1f5f9,#cbd5e1",
+    noFocus: false,
+  },
+  blue: {
+    activeColor: "#e0f2fe",
+    gap: 10,
+    speed: 25,
+    colors: "#e0f2fe,#7dd3fc,#0ea5e9",
+    noFocus: false,
+  },
+  yellow: {
+    activeColor: "#fef08a",
+    gap: 3,
+    speed: 20,
+    colors: "#fef08a,#fde047,#eab308",
+    noFocus: false,
+  },
+  pink: {
+    activeColor: "#fecdd3",
+    gap: 6,
+    speed: 80,
+    colors: "#fecdd3,#fda4af,#e11d48",
+    noFocus: true,
+  },
 };
 
 interface PixelCardProps {
@@ -141,13 +170,25 @@ interface VariantConfig {
   noFocus: boolean;
 }
 
-export default ({ variant = "default", gap, speed, colors, noFocus, className = "", children }: PixelCardProps) => {
+export default ({
+  variant = "default",
+  gap,
+  speed,
+  colors,
+  noFocus,
+  className = "",
+  children,
+}: PixelCardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pixelsRef = useRef<Pixel[]>([]);
-  const animationRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
+  const animationRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(
+    null,
+  );
   const timePreviousRef = useRef(performance.now());
-  const reducedMotion = useRef(window.matchMedia("(prefers-reduced-motion: reduce)").matches).current;
+  const reducedMotion = useRef(
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  ).current;
 
   const variantCfg: VariantConfig = VARIANTS[variant] || VARIANTS.default;
   const finalGap = gap ?? variantCfg.gap;
@@ -156,7 +197,7 @@ export default ({ variant = "default", gap, speed, colors, noFocus, className = 
   const finalNoFocus = noFocus ?? variantCfg.noFocus;
 
   const initPixels = useCallback(() => {
-    if (!containerRef.current || !canvasRef.current) return;
+    if (!(containerRef.current && canvasRef.current)) return;
     const rect = containerRef.current.getBoundingClientRect();
     const width = Math.floor(rect.width);
     const height = Math.floor(rect.height);
@@ -169,14 +210,25 @@ export default ({ variant = "default", gap, speed, colors, noFocus, className = 
     const pxs = [];
     for (let x = 0; x < width; x += parseInt(finalGap.toString(), 10)) {
       for (let y = 0; y < height; y += parseInt(finalGap.toString(), 10)) {
-        const color = colorsArray[Math.floor(Math.random() * colorsArray.length)];
+        const color =
+          colorsArray[Math.floor(Math.random() * colorsArray.length)];
 
         const dx = x - width / 2;
         const dy = y - height / 2;
         const distance = Math.sqrt(dx * dx + dy * dy);
         const delay = reducedMotion ? 0 : distance;
         if (!ctx) return;
-        pxs.push(new Pixel(canvasRef.current, ctx, x, y, color, getEffectiveSpeed(finalSpeed, reducedMotion), delay));
+        pxs.push(
+          new Pixel(
+            canvasRef.current,
+            ctx,
+            x,
+            y,
+            color,
+            getEffectiveSpeed(finalSpeed, reducedMotion),
+            delay,
+          ),
+        );
       }
     }
     pixelsRef.current = pxs;
@@ -190,7 +242,7 @@ export default ({ variant = "default", gap, speed, colors, noFocus, className = 
     if (timePassed < timeInterval) return;
     timePreviousRef.current = timeNow - (timePassed % timeInterval);
     const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx || !canvasRef.current) return;
+    if (!(ctx && canvasRef.current)) return;
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     let allIdle = true;
     for (let i = 0; i < pixelsRef.current.length; i++) {
@@ -228,22 +280,22 @@ export default ({ variant = "default", gap, speed, colors, noFocus, className = 
     if (containerRef.current) observer.observe(containerRef.current);
     return () => {
       observer.disconnect();
-      if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
+      if (animationRef.current !== null)
+        cancelAnimationFrame(animationRef.current);
     };
   }, [initPixels]);
 
   return (
     <div
-      role="presentation"
       aria-hidden="true"
-      ref={containerRef}
       className={`relative isolate grid h-[400px] w-[300px] place-items-center overflow-hidden rounded-[25px] border border-[#27272a] transition-colors duration-200 ease-[cubic-bezier(0.5,1,0.89,1)] select-none ${className}`}
+      onBlur={finalNoFocus ? undefined : onBlur}
+      onFocus={finalNoFocus ? undefined : onFocus}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      onFocus={finalNoFocus ? undefined : onFocus}
-      onBlur={finalNoFocus ? undefined : onBlur}
-      tabIndex={finalNoFocus ? -1 : 0}
-    >
+      ref={containerRef}
+      role="presentation"
+      tabIndex={finalNoFocus ? -1 : 0}>
       <canvas className="block h-full w-full" ref={canvasRef} />
       {children}
     </div>

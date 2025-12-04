@@ -1,5 +1,5 @@
-import type { user } from "@/db/schema";
 import { createAuthClient } from "better-auth/react";
+import type { user } from "@/db/schema";
 
 export type User = typeof user.$inferSelect;
 

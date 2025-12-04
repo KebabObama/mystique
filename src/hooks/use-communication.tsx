@@ -1,9 +1,9 @@
 "use client";
 
-import { toast } from "@/components/layout/toast";
-import { Friend, Message, SendMessage, User } from "@/types/communication";
 import React from "react";
-import { io, Socket } from "socket.io-client";
+import { io, type Socket } from "socket.io-client";
+import { toast } from "@/components/layout/toast";
+import type { Friend, Message, SendMessage, User } from "@/types/communication";
 import { useUser } from "./use-user";
 
 export type CommunicationContextValue = {
@@ -17,9 +17,15 @@ export type CommunicationContextValue = {
   } & Friend[];
 };
 
-const CommunicationContext = React.createContext<CommunicationContextValue | undefined>(undefined);
+const CommunicationContext = React.createContext<
+  CommunicationContextValue | undefined
+>(undefined);
 
-export const CommunicationProvider = ({ children }: { children: React.ReactNode }) => {
+export const CommunicationProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const socket = io();
   const user = useUser();
   const [friends, setFriends] = React.useState<Friend[]>([]);
@@ -55,7 +61,9 @@ export const CommunicationProvider = ({ children }: { children: React.ReactNode 
     });
 
     socket.on("friend:accept", (id: string) => {
-      setFriends((prev) => prev.map((f) => (f.id === id ? { ...f, accepted: true } : f)));
+      setFriends((prev) =>
+        prev.map((f) => (f.id === id ? { ...f, accepted: true } : f)),
+      );
     });
 
     socket.on("friend:deny", (id: string) => {
@@ -65,7 +73,7 @@ export const CommunicationProvider = ({ children }: { children: React.ReactNode 
     return () => {
       socket.disconnect();
     };
-  }, [user.id]);
+  }, [user.id, socket.disconnect, socket.emit, socket.on]);
 
   const value: CommunicationContextValue = {
     socket: socket,
@@ -92,11 +100,18 @@ export const CommunicationProvider = ({ children }: { children: React.ReactNode 
     console.log(friends);
   }, [friends]);
 
-  return <CommunicationContext.Provider value={value}>{children}</CommunicationContext.Provider>;
+  return (
+    <CommunicationContext.Provider value={value}>
+      {children}
+    </CommunicationContext.Provider>
+  );
 };
 
 export const useCommunication = () => {
   const ctx = React.useContext(CommunicationContext);
-  if (!ctx) throw new Error("useCommunication must be used within <CommunicationProvider>");
+  if (!ctx)
+    throw new Error(
+      "useCommunication must be used within <CommunicationProvider>",
+    );
   return ctx;
 };

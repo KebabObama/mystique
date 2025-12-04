@@ -1,7 +1,7 @@
+import { Shuffle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Character } from "@/types/game";
-import { Shuffle } from "lucide-react";
+import type { Character } from "@/types/game";
 
 export const _Name = ({
   character,
@@ -43,17 +43,22 @@ export const _Name = ({
     <section className="flex flex-col gap-9 p-4">
       <div className="flex gap-6">
         <Input
-          type="text"
-          placeholder="Enter character name..."
-          value={character.name}
+          autoFocus
+          className="grow"
           onChange={(e) => {
             setCharacter({ ...character, name: e.target.value });
             setCan(true);
           }}
-          className="grow"
-          autoFocus
+          placeholder="Enter character name..."
+          type="text"
+          value={character.name}
         />
-        <Button type="button" variant="outline" size="icon" onClick={generateRandomName} title="Generate random name">
+        <Button
+          onClick={generateRandomName}
+          size="icon"
+          title="Generate random name"
+          type="button"
+          variant="outline">
           <Shuffle className="size-4" />
         </Button>
       </div>
