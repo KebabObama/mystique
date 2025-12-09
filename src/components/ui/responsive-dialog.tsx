@@ -22,7 +22,7 @@ type ResponsiveDialogProps = {
   children: React.ReactNode;
   footer?: React.ReactNode;
   open?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  onOpenChange?(open: boolean): void;
   className?: string;
 };
 
@@ -43,15 +43,13 @@ export const ResponsiveDialog = ({
     return (
       <Drawer onOpenChange={onOpenChange} open={open}>
         <DrawerTrigger asChild={asChild}>{trigger}</DrawerTrigger>
-        <DrawerContent className={cn("p-4", className)}>
+        <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
-            {description && (
-              <DrawerDescription>{description}</DrawerDescription>
-            )}
+            <DrawerDescription>{description}</DrawerDescription>
           </DrawerHeader>
-          {children}
-          {footer && <DrawerFooter>{footer}</DrawerFooter>}
+          <div className={cn("p-3", className)}>{children}</div>
+          {footer && <DrawerFooter className="mt-0 p-3">{footer}</DrawerFooter>}
         </DrawerContent>
       </Drawer>
     );
@@ -59,14 +57,12 @@ export const ResponsiveDialog = ({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <Dialog.Trigger asChild={asChild}>{trigger}</Dialog.Trigger>
-      <Dialog.Content className={className}>
+      <Dialog.Content className="xl:min-w-6xl lg:min-w-4xl md:min-w-2xl">
         <Dialog.Header>
           <Dialog.Title>{title}</Dialog.Title>
-          {description && (
-            <Dialog.Description>{description}</Dialog.Description>
-          )}
+          <Dialog.Description>{description}</Dialog.Description>
         </Dialog.Header>
-        {children}
+        <div className={cn("mb-3", className)}>{children}</div>
         {footer && <Dialog.Footer>{footer}</Dialog.Footer>}
       </Dialog.Content>
     </Dialog>
