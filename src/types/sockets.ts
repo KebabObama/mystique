@@ -1,6 +1,6 @@
+import type { NextApiResponse } from "next";
 import type { Server as HTTPServer } from "node:http";
 import type { Socket as NetSocket } from "node:net";
-import type { NextApiResponse } from "next";
 import type { Server } from "socket.io";
 
 export type SocketServer = HTTPServer & { io?: Server | undefined };

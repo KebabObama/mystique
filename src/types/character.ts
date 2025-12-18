@@ -43,15 +43,7 @@ export namespace Item {
       abilities: string[];
       type: Extract<
         Item.Types,
-        | "shield"
-        | "helmet"
-        | "armor"
-        | "gloves"
-        | "ring"
-        | "necklace"
-        | "cape"
-        | "leggings"
-        | "boots"
+        "shield" | "helmet" | "armor" | "gloves" | "ring" | "necklace" | "cape" | "leggings" | "boots"
       >;
       resistances: Record<GameTypes.Element, number>;
       armor: number;

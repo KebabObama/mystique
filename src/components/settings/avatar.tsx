@@ -1,17 +1,17 @@
 "use client";
 
-import { useRef, useState } from "react";
-import Cropper, { type Area } from "react-easy-crop";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { uploadToBucket } from "@/lib/bucket/upload";
+import { useRef, useState } from "react";
+import Cropper, { type Area } from "react-easy-crop";
 import { toast } from "../layout/toast";
 import { ResponsiveDialog } from "../ui/responsive-dialog";
 import { Slider } from "../ui/slider";
 
 const getCroppedImg = async (
   imageSrc: string,
-  crop: { width: number; height: number; x: number; y: number },
+  crop: { width: number; height: number; x: number; y: number }
 ): Promise<Blob> => {
   const image = new Image();
   image.src = imageSrc;
@@ -24,17 +24,7 @@ const getCroppedImg = async (
   canvas.width = crop.width;
   canvas.height = crop.height;
   const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-  ctx.drawImage(
-    image,
-    crop.x,
-    crop.y,
-    crop.width,
-    crop.height,
-    0,
-    0,
-    crop.width,
-    crop.height,
-  );
+  ctx.drawImage(image, crop.x, crop.y, crop.width, crop.height, 0, 0, crop.width, crop.height);
 
   return new Promise((resolve) => {
     canvas.toBlob((blob) => {
@@ -95,17 +85,15 @@ export const Avatar = () => {
   };
 
   return (
-    <ResponsiveDialog
-      asChild
-      title={"Upload and Crop Avatar"}
-      trigger={<Button>Upload Profile Picture</Button>}>
+    <ResponsiveDialog asChild title={"Upload and Crop Avatar"} trigger={<Button>Upload Profile Picture</Button>}>
       <button
         aria-label="Select image to upload"
         className="group bg-muted relative mt-4 aspect-square w-full overflow-hidden rounded-lg border-3 border-dashed transition-colors duration-200 select-none hover:border-black/20"
         onClick={() => {
           if (imageSrc === null) inputRef.current?.click();
         }}
-        type="button">
+        type="button"
+      >
         {imageSrc ? (
           <Cropper
             aspect={1}
@@ -140,13 +128,7 @@ export const Avatar = () => {
         />
       </div>
 
-      <input
-        accept="image/*"
-        className="hidden"
-        onChange={onFileChange}
-        ref={inputRef}
-        type="file"
-      />
+      <input accept="image/*" className="hidden" onChange={onFileChange} ref={inputRef} type="file" />
       <div className="flex justify-end gap-2">
         <Button onClick={() => inputRef.current?.click()} variant="outline">
           Select Image

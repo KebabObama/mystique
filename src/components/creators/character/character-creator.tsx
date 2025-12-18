@@ -1,17 +1,10 @@
 "use client";
 
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
 import { mod } from "@/lib/utils";
-import {
-  ATTRIBUTES,
-  type Attribute,
-  type Attributes,
-  type Character,
-  CLASSES,
-  RACES,
-} from "@/types/game";
+import { ATTRIBUTES, CLASSES, RACES, type Attribute, type Attributes, type Character } from "@/types/game";
+import React from "react";
 import { _Attributes } from "./attributes";
 import { _Class } from "./class";
 import { _Name } from "./name";
@@ -73,63 +66,23 @@ enum STEPS {
   "Is this you?",
 }
 
-export const calculateAttributes = (
-  base: Attributes,
-  bonuses: Attributes,
-  extra = 0,
-) => {
+export const calculateAttributes = (base: Attributes, bonuses: Attributes, extra = 0) => {
   const keys = Object.keys(ATTRIBUTES) as Attribute[];
-  return Object.fromEntries(
-    keys.map((key) => [key, base[key] + bonuses[key] + extra]),
-  ) as Attributes;
+  return Object.fromEntries(keys.map((key) => [key, base[key] + bonuses[key] + extra])) as Attributes;
 };
 
-export const CharacterCreator = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const CharacterCreator = ({ children }: { children: React.ReactNode }) => {
   const [step, setStep] = React.useState<STEPS>(0);
   const [can, setCan] = React.useState<boolean>(true);
   const [character, setCharacter] = React.useState<Character>(def);
 
   const SCREENS: Record<STEPS, React.ReactNode | null> = {
     [STEPS.hidden]: null,
-    [STEPS["Who are you?"]]: (
-      <_Race
-        character={character}
-        setCan={setCan}
-        setCharacter={setCharacter}
-      />
-    ),
-    [STEPS["Choose your path"]]: (
-      <_Class
-        character={character}
-        setCan={setCan}
-        setCharacter={setCharacter}
-      />
-    ),
-    [STEPS["Assign attributes"]]: (
-      <_Attributes
-        character={character}
-        setCan={setCan}
-        setCharacter={setCharacter}
-      />
-    ),
-    [STEPS["Name yourself"]]: (
-      <_Name
-        character={character}
-        setCan={setCan}
-        setCharacter={setCharacter}
-      />
-    ),
-    [STEPS["Is this you?"]]: (
-      <_Summary
-        character={character}
-        setCan={setCan}
-        setCharacter={setCharacter}
-      />
-    ),
+    [STEPS["Who are you?"]]: <_Race character={character} setCan={setCan} setCharacter={setCharacter} />,
+    [STEPS["Choose your path"]]: <_Class character={character} setCan={setCan} setCharacter={setCharacter} />,
+    [STEPS["Assign attributes"]]: <_Attributes character={character} setCan={setCan} setCharacter={setCharacter} />,
+    [STEPS["Name yourself"]]: <_Name character={character} setCan={setCan} setCharacter={setCharacter} />,
+    [STEPS["Is this you?"]]: <_Summary character={character} setCan={setCan} setCharacter={setCharacter} />,
   };
 
   const next = () => {
@@ -138,18 +91,13 @@ export const CharacterCreator = ({
       case STEPS["Assign attributes"]:
         setCharacter({
           ...character,
-          attributes: calculateAttributes(
-            character.attributes,
-            RACES[character.race].bonuses,
-          ),
+          attributes: calculateAttributes(character.attributes, RACES[character.race].bonuses),
         });
         setCan(false);
         break;
       case STEPS["Name yourself"]: {
-        const health =
-          CLASSES[character.class].hp + mod(character.attributes.con);
-        const stamina =
-          RACES[character.race].stamina + mod(character.attributes.dex);
+        const health = CLASSES[character.class].hp + mod(character.attributes.con);
+        const stamina = RACES[character.race].stamina + mod(character.attributes.dex);
         const resource = CLASSES[character.class].resource.first;
 
         setCharacter({
@@ -189,10 +137,9 @@ export const CharacterCreator = ({
       }}
       open={step !== 0}
       title={STEPS[step]}
-      trigger={<Button onClick={() => setStep(1)}>{children}</Button>}>
-      <div className="h-full max-h-140 overflow-auto px-2 py-4">
-        {SCREENS[step]}
-      </div>
+      trigger={<Button onClick={() => setStep(1)}>{children}</Button>}
+    >
+      <div className="h-full max-h-140 overflow-auto px-2 py-4">{SCREENS[step]}</div>
     </ResponsiveDialog>
   );
 };

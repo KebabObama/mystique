@@ -1,8 +1,8 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import * as React from "react";
-import { cn } from "@/lib/utils";
 import { Border } from "./border";
 
 const Context = React.createContext<{
@@ -13,10 +13,7 @@ const Context = React.createContext<{
   setTriggerWidth: () => {},
 });
 
-const Body = ({
-  children,
-  ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Root>) => {
+const Body = ({ children, ...props }: React.ComponentProps<typeof PopoverPrimitive.Root>) => {
   const [triggerWidth, setTriggerWidth] = React.useState<number | null>(null);
   return (
     <Context.Provider value={{ triggerWidth, setTriggerWidth }}>
@@ -77,7 +74,7 @@ const Content = ({
         align={align}
         className={cn(
           "bg-card text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 origin-(--radix-popover-content-transform-origin) rounded-none p-6 shadow-md outline-hidden",
-          className,
+          className
         )}
         data-slot="popover-content"
         sideOffset={sideOffset}
@@ -85,7 +82,8 @@ const Content = ({
           width: triggerWidth ? `${triggerWidth}px` : undefined,
           ...style,
         }}
-        {...props}>
+        {...props}
+      >
         {children}
 
         <Border />
@@ -94,9 +92,7 @@ const Content = ({
   );
 };
 
-const Anchor = ({
-  ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Anchor>) => {
+const Anchor = ({ ...props }: React.ComponentProps<typeof PopoverPrimitive.Anchor>) => {
   return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />;
 };
 

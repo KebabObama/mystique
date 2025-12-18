@@ -1,12 +1,7 @@
 "use client";
 
 import { shaderMaterial, useTrailTexture } from "@react-three/drei";
-import {
-  Canvas,
-  type CanvasProps,
-  type ThreeEvent,
-  useThree,
-} from "@react-three/fiber";
+import { Canvas, type CanvasProps, type ThreeEvent, useThree } from "@react-three/fiber";
 import type React from "react";
 import { useMemo } from "react";
 import * as THREE from "three";
@@ -35,26 +30,14 @@ type PixelTrailProps = {
   className?: string;
 };
 
-const GooeyFilter: React.FC<GooeyFilterProps> = ({
-  id = "goo-filter",
-  strength = 10,
-}) => {
+const GooeyFilter: React.FC<GooeyFilterProps> = ({ id = "goo-filter", strength = 10 }) => {
   return (
     <svg className="absolute z-1 overflow-hidden">
       <title>Pixel trail</title>
       <defs>
         <filter id={id}>
-          <feGaussianBlur
-            in="SourceGraphic"
-            result="blur"
-            stdDeviation={strength}
-          />
-          <feColorMatrix
-            in="blur"
-            result="goo"
-            type="matrix"
-            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
-          />
+          <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation={strength} />
+          <feColorMatrix in="blur" result="goo" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" />
           <feComposite in="SourceGraphic" in2="goo" operator="atop" />
         </filter>
       </defs>
@@ -102,17 +85,10 @@ const DotMaterial = shaderMaterial(
 
       gl_FragColor = vec4(pixelColor, trail);
     }
-  `,
+  `
 );
 
-const Scene = ({
-  gridSize,
-  trailSize,
-  maxAge,
-  interpolate,
-  easingFunction,
-  pixelColor,
-}: SceneProps) => {
+const Scene = ({ gridSize, trailSize, maxAge, interpolate, easingFunction, pixelColor }: SceneProps) => {
   const size = useThree((s) => s.size);
   const viewport = useThree((s) => s.viewport);
 
@@ -167,14 +143,13 @@ export default function PixelTrail({
 }: PixelTrailProps) {
   return (
     <>
-      {gooeyFilter && (
-        <GooeyFilter id={gooeyFilter.id} strength={gooeyFilter.strength} />
-      )}
+      {gooeyFilter && <GooeyFilter id={gooeyFilter.id} strength={gooeyFilter.strength} />}
       <Canvas
         {...canvasProps}
         className={`absolute ${className}`}
         gl={glProps}
-        style={gooeyFilter ? { filter: `url(#${gooeyFilter.id})` } : undefined}>
+        style={gooeyFilter ? { filter: `url(#${gooeyFilter.id})` } : undefined}
+      >
         <Scene
           easingFunction={easingFunction}
           gridSize={gridSize}

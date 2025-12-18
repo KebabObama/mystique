@@ -1,13 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { toast } from "@/components/layout/toast";
 import { Button } from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Tabs from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -16,9 +16,7 @@ export default () => {
     <Card className="absolute top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2">
       <Card.Header>
         <Card.Title>Welcome</Card.Title>
-        <Card.Description>
-          Sign in to your account or create a new one
-        </Card.Description>
+        <Card.Description>Sign in to your account or create a new one</Card.Description>
       </Card.Header>
       <Card.Content className="flex flex-col gap-6">
         <div className="grid grid-cols-2 gap-4">
@@ -31,9 +29,7 @@ export default () => {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="text-muted-foreground px-2 select-none">
-              Or continue with
-            </span>
+            <span className="text-muted-foreground px-2 select-none">Or continue with</span>
           </div>
         </div>
 
@@ -76,7 +72,8 @@ const Google = ({ loading, setLoading }: Props) => {
           setLoading(false);
         }
       }}
-      variant="outline">
+      variant="outline"
+    >
       Google
     </Button>
   );
@@ -102,7 +99,8 @@ const Github = ({ loading, setLoading }: Props) => {
           setLoading(false);
         }
       }}
-      variant="outline">
+      variant="outline"
+    >
       GitHub
     </Button>
   );
@@ -170,9 +168,7 @@ const Login = ({ loading, setLoading }: Props) => {
           onChange={(e) => setRememberMe(e.target.checked)}
           type="checkbox"
         />
-        <label
-          className="cursor-pointer text-sm select-none"
-          htmlFor="remember-me">
+        <label className="cursor-pointer text-sm select-none" htmlFor="remember-me">
           Remember me
         </label>
       </div>

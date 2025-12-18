@@ -1,7 +1,7 @@
-import { Shuffle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Character } from "@/types/game";
+import { Shuffle } from "lucide-react";
 
 export const _Name = ({
   character,
@@ -53,12 +53,7 @@ export const _Name = ({
           type="text"
           value={character.name}
         />
-        <Button
-          onClick={generateRandomName}
-          size="icon"
-          title="Generate random name"
-          type="button"
-          variant="outline">
+        <Button onClick={generateRandomName} size="icon" title="Generate random name" type="button" variant="outline">
           <Shuffle className="size-4" />
         </Button>
       </div>

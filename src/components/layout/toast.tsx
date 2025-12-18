@@ -1,9 +1,9 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import type React from "react";
 import { toast as sonnerToast } from "sonner";
-import { cn } from "@/lib/utils";
 import { Border } from "../ui/border";
 import { Button } from "../ui/button";
 
@@ -26,59 +26,28 @@ const toastVariants = cva(
       },
     },
     defaultVariants: { variant: "default" },
-  },
+  }
 );
 
 export const toast = Object.assign(
-  (options: Omit<ToastOptions, "variant">) =>
-    sonnerToast.custom(() => <Toast {...options} />),
+  (options: Omit<ToastOptions, "variant">) => sonnerToast.custom(() => <Toast {...options} />),
   {
-    show: (
-      message: string,
-      action?: React.MouseEventHandler<HTMLButtonElement>,
-    ) =>
-      sonnerToast.custom(() => (
-        <Toast action={action} message={message} variant="default" />
-      )),
-    warning: (
-      message: string,
-      action?: React.MouseEventHandler<HTMLButtonElement>,
-    ) =>
-      sonnerToast.custom(() => (
-        <Toast action={action} message={message} variant="warning" />
-      )),
-    success: (
-      message: string,
-      action?: React.MouseEventHandler<HTMLButtonElement>,
-    ) =>
-      sonnerToast.custom(() => (
-        <Toast
-          action={action}
-          message={message}
-          title="Success..."
-          variant="success"
-        />
-      )),
-    error: (
-      message: string,
-      action?: React.MouseEventHandler<HTMLButtonElement>,
-    ) =>
-      sonnerToast.custom(() => (
-        <Toast
-          action={action}
-          message={message}
-          title="Error..."
-          variant="error"
-        />
-      )),
-  },
+    show: (message: string, action?: React.MouseEventHandler<HTMLButtonElement>) =>
+      sonnerToast.custom(() => <Toast action={action} message={message} variant="default" />),
+    warning: (message: string, action?: React.MouseEventHandler<HTMLButtonElement>) =>
+      sonnerToast.custom(() => <Toast action={action} message={message} variant="warning" />),
+    success: (message: string, action?: React.MouseEventHandler<HTMLButtonElement>) =>
+      sonnerToast.custom(() => <Toast action={action} message={message} title="Success..." variant="success" />),
+    error: (message: string, action?: React.MouseEventHandler<HTMLButtonElement>) =>
+      sonnerToast.custom(() => <Toast action={action} message={message} title="Error..." variant="error" />),
+  }
 );
 
 const Toast = (props: ToastOptions) => {
   const { message, title, action, variant = "default" } = props;
   return (
     <div className={cn(toastVariants({ variant }))}>
-      <div className="flex flex-col gap-1 flex-1">
+      <div className="flex flex-1 flex-col gap-1">
         {title && <p className="text-sm font-medium">{title}</p>}
         <div className="text-sm">{message}</div>
       </div>

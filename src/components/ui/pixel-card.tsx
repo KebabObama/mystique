@@ -27,7 +27,7 @@ class Pixel {
     y: number,
     color: string,
     speed: number,
-    delay: number,
+    delay: number
   ) {
     this.width = canvas.width;
     this.height = canvas.height;
@@ -56,12 +56,7 @@ class Pixel {
   draw() {
     const centerOffset = this.maxSizeInteger * 0.5 - this.size * 0.5;
     this.ctx.fillStyle = this.color;
-    this.ctx.fillRect(
-      this.x + centerOffset,
-      this.y + centerOffset,
-      this.size,
-      this.size,
-    );
+    this.ctx.fillRect(this.x + centerOffset, this.y + centerOffset, this.size, this.size);
   }
 
   appear() {
@@ -170,25 +165,13 @@ interface VariantConfig {
   noFocus: boolean;
 }
 
-export default ({
-  variant = "default",
-  gap,
-  speed,
-  colors,
-  noFocus,
-  className = "",
-  children,
-}: PixelCardProps) => {
+export default ({ variant = "default", gap, speed, colors, noFocus, className = "", children }: PixelCardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pixelsRef = useRef<Pixel[]>([]);
-  const animationRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(
-    null,
-  );
+  const animationRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
   const timePreviousRef = useRef(performance.now());
-  const reducedMotion = useRef(
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  ).current;
+  const reducedMotion = useRef(window.matchMedia("(prefers-reduced-motion: reduce)").matches).current;
 
   const variantCfg: VariantConfig = VARIANTS[variant] || VARIANTS.default;
   const finalGap = gap ?? variantCfg.gap;
@@ -210,25 +193,14 @@ export default ({
     const pxs = [];
     for (let x = 0; x < width; x += parseInt(finalGap.toString(), 10)) {
       for (let y = 0; y < height; y += parseInt(finalGap.toString(), 10)) {
-        const color =
-          colorsArray[Math.floor(Math.random() * colorsArray.length)];
+        const color = colorsArray[Math.floor(Math.random() * colorsArray.length)];
 
         const dx = x - width / 2;
         const dy = y - height / 2;
         const distance = Math.sqrt(dx * dx + dy * dy);
         const delay = reducedMotion ? 0 : distance;
         if (!ctx) return;
-        pxs.push(
-          new Pixel(
-            canvasRef.current,
-            ctx,
-            x,
-            y,
-            color,
-            getEffectiveSpeed(finalSpeed, reducedMotion),
-            delay,
-          ),
-        );
+        pxs.push(new Pixel(canvasRef.current, ctx, x, y, color, getEffectiveSpeed(finalSpeed, reducedMotion), delay));
       }
     }
     pixelsRef.current = pxs;
@@ -280,8 +252,7 @@ export default ({
     if (containerRef.current) observer.observe(containerRef.current);
     return () => {
       observer.disconnect();
-      if (animationRef.current !== null)
-        cancelAnimationFrame(animationRef.current);
+      if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
     };
   }, [initPixels]);
 
@@ -295,7 +266,8 @@ export default ({
       onMouseLeave={onMouseLeave}
       ref={containerRef}
       role="presentation"
-      tabIndex={finalNoFocus ? -1 : 0}>
+      tabIndex={finalNoFocus ? -1 : 0}
+    >
       <canvas className="block h-full w-full" ref={canvasRef} />
       {children}
     </div>

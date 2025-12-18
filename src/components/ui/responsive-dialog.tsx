@@ -1,6 +1,5 @@
 "use client";
 
-import type React from "react";
 import Dialog from "@/components/ui/dialog";
 import {
   Drawer,
@@ -13,6 +12,7 @@ import {
 } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import type React from "react";
 
 type ResponsiveDialogProps = {
   asChild?: boolean;
@@ -57,7 +57,7 @@ export const ResponsiveDialog = ({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <Dialog.Trigger asChild={asChild}>{trigger}</Dialog.Trigger>
-      <Dialog.Content className="xl:min-w-6xl lg:min-w-4xl md:min-w-2xl">
+      <Dialog.Content className="md:min-w-2xl lg:min-w-4xl xl:min-w-6xl">
         <Dialog.Header>
           <Dialog.Title>{title}</Dialog.Title>
           <Dialog.Description>{description}</Dialog.Description>

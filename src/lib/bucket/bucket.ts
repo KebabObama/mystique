@@ -39,7 +39,7 @@ export namespace Bucket {
               Resource: [`arn:aws:s3:::${bucket}/*`],
             },
           ],
-        }),
+        })
       );
     }
   };
@@ -55,18 +55,13 @@ export namespace Bucket {
     }
   };
 
-  export const set = async (
-    bucket: Names,
-    file: Buffer | File | Blob,
-    filename: string,
-  ) => {
+  export const set = async (bucket: Names, file: Buffer | File | Blob, filename: string) => {
     try {
       let bufferData: Buffer;
       if (file instanceof Buffer) {
         bufferData = file;
       } else {
-        const arrayBuffer =
-          "arrayBuffer" in file ? await file.arrayBuffer() : file;
+        const arrayBuffer = "arrayBuffer" in file ? await file.arrayBuffer() : file;
         bufferData = Buffer.from(arrayBuffer as ArrayBuffer);
       }
       await client.putObject(bucket, filename, bufferData);

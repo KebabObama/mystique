@@ -1,5 +1,5 @@
 import { Border } from "@/components/ui/border";
-import { type Character, CLASSES, type Class } from "@/types/game";
+import { CLASSES, type Character, type Class } from "@/types/game";
 
 export const _Class = ({
   character,
@@ -20,7 +20,8 @@ export const _Class = ({
               className={`border-border/20 relative w-full overflow-visible border-2 p-2 transition-all duration-300 ${isSelected ? "text-foreground" : "text-muted-foreground hover:border-border hover:scale-105"}`}
               key={e}
               onClick={() => setCharacter({ ...character, class: e })}
-              type="button">
+              type="button"
+            >
               {isSelected && <Border />}
               <temp.icon className="size-full" key={e} />
             </button>
@@ -29,9 +30,7 @@ export const _Class = ({
       </div>
       <div className="flex flex-col text-center">
         <span className="text-lg capitalize">{character.class}</span>
-        <span className="text-muted-foreground min-h-12">
-          {CLASSES[character.class].description}
-        </span>
+        <span className="text-muted-foreground min-h-12">{CLASSES[character.class].description}</span>
       </div>
     </section>
   );

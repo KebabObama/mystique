@@ -1,6 +1,6 @@
+import { ThemeProvider } from "@/hooks/use-theme";
 import type { Metadata } from "next";
 import { Pixelify_Sans } from "next/font/google";
-import { ThemeProvider } from "@/hooks/use-theme";
 import "./globals.css";
 
 const pixelify = Pixelify_Sans({
@@ -18,11 +18,7 @@ export default ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${pixelify.variable} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          disableTransitionOnChange
-          enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
           {children}
         </ThemeProvider>
       </body>

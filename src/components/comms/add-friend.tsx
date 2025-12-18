@@ -1,12 +1,12 @@
 "use client";
 
-import { Copy, UserPlus } from "lucide-react";
-import React from "react";
 import { Button } from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useCommunication } from "@/hooks/use-communication";
 import { useUser } from "@/hooks/use-user";
+import { Copy, UserPlus } from "lucide-react";
+import React from "react";
 import { toast } from "../layout/toast";
 import { Border } from "../ui/border";
 
@@ -17,11 +17,7 @@ export const AddFriendSection = () => {
   const trimmed = input.trim();
 
   const handleAddFriend = React.useCallback(() => {
-    if (
-      !trimmed ||
-      user.id === trimmed ||
-      friends.find((e) => e.friend === trimmed)
-    ) {
+    if (!trimmed || user.id === trimmed || friends.find((e) => e.friend === trimmed)) {
       toast.error("Something went wrong");
       return;
     }
@@ -31,9 +27,7 @@ export const AddFriendSection = () => {
 
   const handleCopyId = React.useCallback(() => {
     if (!user) return;
-    navigator.clipboard
-      .writeText(user.id)
-      .then(() => toast.show("ID copied to clipboard!"));
+    navigator.clipboard.writeText(user.id).then(() => toast.show("ID copied to clipboard!"));
   }, [user.id, user]);
 
   return (
@@ -58,10 +52,7 @@ export const AddFriendSection = () => {
             placeholder="Enter friend's user ID"
             value={input}
           />
-          <Button
-            className="w-auto"
-            disabled={!trimmed.length}
-            onClick={handleAddFriend}>
+          <Button className="w-auto" disabled={!trimmed.length} onClick={handleAddFriend}>
             <UserPlus />
             Send
           </Button>

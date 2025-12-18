@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useUser } from "@/hooks/use-user";
 import { authClient } from "@/lib/auth-client";
+import { useEffect, useState } from "react";
 import { toast } from "../layout/toast";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -38,7 +38,8 @@ export default () => {
       onOpenChange={(v) => !loading && setOpen(v)}
       open={open}
       title="Change email"
-      trigger={<Button>Change Email</Button>}>
+      trigger={<Button>Change Email</Button>}
+    >
       <div className="flex flex-col gap-6">
         <Input
           autoFocus

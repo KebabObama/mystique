@@ -1,14 +1,14 @@
 "use client";
 
-import { Send, UserMinus } from "lucide-react";
-import React from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import { useCommunication } from "@/hooks/use-communication";
 import { useUser } from "@/hooks/use-user";
 import { cn } from "@/lib/utils";
 import type { Friend, SendMessage, User } from "@/types/communication";
+import { Send, UserMinus } from "lucide-react";
+import React from "react";
+import { toast } from "sonner";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Border } from "../ui/border";
 import { Input } from "../ui/input";
@@ -22,7 +22,7 @@ const FriendDialog = ({ friend, user }: { friend: Friend; user: User }) => {
 
   const filteredMessages = React.useMemo(
     () => messages.filter((m) => m.type === "friend" && m.link === friend.id),
-    [messages, friend],
+    [messages, friend]
   );
 
   const handleSendMessage = React.useCallback(() => {
@@ -51,16 +51,16 @@ const FriendDialog = ({ friend, user }: { friend: Friend; user: User }) => {
             <div
               className={cn(
                 "group flex w-full justify-between gap-2",
-                m.sender === user?.id ? "flex-row-reverse" : "flex-row",
+                m.sender === user?.id ? "flex-row-reverse" : "flex-row"
               )}
-              key={m.id}>
+              key={m.id}
+            >
               <div
                 className={cn(
                   "max-w-[75%] rounded-lg px-4 py-1 text-sm wrap-break-word",
-                  m.sender === user.id
-                    ? "bg-background text-primary-foreground"
-                    : "bg-background border",
-                )}>
+                  m.sender === user.id ? "bg-background text-primary-foreground" : "bg-background border"
+                )}
+              >
                 {m.text}
               </div>
               <div className="text-muted-foreground flex scale-0 flex-col gap-0 text-xs font-light opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
@@ -93,27 +93,16 @@ const FriendDialog = ({ friend, user }: { friend: Friend; user: User }) => {
       <div className="border-border dark:border-ring -mx-6 flex flex-col gap-3 border-t-3 px-6 pt-8 pb-4 md:pb-0">
         {showConfirmRemove ? (
           <div className="flex items-center gap-6">
-            <span className="text-muted-foreground w-full text-sm">
-              Remove friend
-            </span>
-            <Button
-              className=""
-              onClick={handleRemoveFriend}
-              size="sm"
-              variant="destructive">
+            <span className="text-muted-foreground w-full text-sm">Remove friend</span>
+            <Button className="" onClick={handleRemoveFriend} size="sm" variant="destructive">
               Confirm
             </Button>
-            <Button
-              onClick={() => setShowConfirmRemove(false)}
-              size="sm"
-              variant="outline">
+            <Button onClick={() => setShowConfirmRemove(false)} size="sm" variant="outline">
               Cancel
             </Button>
           </div>
         ) : (
-          <Button
-            onClick={() => setShowConfirmRemove(true)}
-            variant="destructive">
+          <Button onClick={() => setShowConfirmRemove(true)} variant="destructive">
             <UserMinus className="mr-2 size-4" />
             Remove Friend
           </Button>
@@ -135,9 +124,7 @@ export const FriendsListSection = () => {
         <Card.Title>Friends</Card.Title>
       </Card.Header>
       <Card.Content className="flex w-full flex-col items-center justify-center gap-9">
-        {!friends.length && (
-          <p className="text-muted-foreground text-sm">No requests yet</p>
-        )}
+        {!friends.length && <p className="text-muted-foreground text-sm">No requests yet</p>}
         {arr.map((f) => (
           <ResponsiveDialog
             asChild
@@ -152,12 +139,9 @@ export const FriendsListSection = () => {
               </div>
             }
             trigger={
-              <FriendSlot
-                className="transition-all duration-300 active:translate-y-2"
-                image={f.image}
-                name={f.name}
-              />
-            }>
+              <FriendSlot className="transition-all duration-300 active:translate-y-2" image={f.image} name={f.name} />
+            }
+          >
             <FriendDialog friend={f} user={user} />
           </ResponsiveDialog>
         ))}

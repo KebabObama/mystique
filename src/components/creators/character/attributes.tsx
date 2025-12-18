@@ -1,7 +1,7 @@
-import { Slot } from "@radix-ui/react-slot";
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { ATTRIBUTES, type Attribute, type Character } from "@/types/game";
+import { Slot } from "@radix-ui/react-slot";
+import React from "react";
 
 export const _Attributes = ({
   character,
@@ -40,25 +40,25 @@ export const _Attributes = ({
             <Slot
               className="flex flex-row items-center justify-between px-9 py-6 text-lg capitalize"
               key={key}
-              onMouseOver={() => setHovered(key)}>
+              onMouseOver={() => setHovered(key)}
+            >
               {key}
               <div className="flex gap-3">
                 <Button
                   disabled={character.attributes[key] <= base[key]}
                   onClick={() => updateAttribute(key, -1)}
                   size="icon"
-                  variant="outline">
+                  variant="outline"
+                >
                   -
                 </Button>
                 {attr}
                 <Button
-                  disabled={
-                    character.attributes[key] >= base[key] + 8 ||
-                    current === points
-                  }
+                  disabled={character.attributes[key] >= base[key] + 8 || current === points}
                   onClick={() => updateAttribute(key, 1)}
                   size="icon"
-                  variant="outline">
+                  variant="outline"
+                >
                   +
                 </Button>
               </div>
@@ -68,26 +68,24 @@ export const _Attributes = ({
       </div>
       <div className="flex flex-col text-center">
         <div className="relative text-lg">
-          {(Object.keys(ATTRIBUTES) as (keyof typeof ATTRIBUTES)[]).map(
-            (attr) => (
-              <span
-                className={`inset-0 transition-opacity duration-300 ${hovered === attr ? "opacity-100" : "absolute opacity-0"}`}
-                key={attr}>
-                {ATTRIBUTES[attr].name}
-              </span>
-            ),
-          )}
+          {(Object.keys(ATTRIBUTES) as (keyof typeof ATTRIBUTES)[]).map((attr) => (
+            <span
+              className={`inset-0 transition-opacity duration-300 ${hovered === attr ? "opacity-100" : "absolute opacity-0"}`}
+              key={attr}
+            >
+              {ATTRIBUTES[attr].name}
+            </span>
+          ))}
         </div>
         <div className="text-muted-foreground relative min-h-12 text-base">
-          {(Object.keys(ATTRIBUTES) as (keyof typeof ATTRIBUTES)[]).map(
-            (attr) => (
-              <span
-                className={`absolute inset-0 transition-opacity duration-300 ${hovered === attr ? "opacity-100" : "opacity-0"}`}
-                key={attr}>
-                {ATTRIBUTES[attr].description}
-              </span>
-            ),
-          )}
+          {(Object.keys(ATTRIBUTES) as (keyof typeof ATTRIBUTES)[]).map((attr) => (
+            <span
+              className={`absolute inset-0 transition-opacity duration-300 ${hovered === attr ? "opacity-100" : "opacity-0"}`}
+              key={attr}
+            >
+              {ATTRIBUTES[attr].description}
+            </span>
+          ))}
         </div>
       </div>
     </section>

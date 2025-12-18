@@ -2,11 +2,7 @@
 
 import { Bucket } from "./bucket";
 
-export const uploadToBucket = async (
-  bucket: Bucket.Names,
-  file: Blob | File | Buffer,
-  filename: string,
-) => {
+export const uploadToBucket = async (bucket: Bucket.Names, file: Blob | File | Buffer, filename: string) => {
   if (!(file && filename && bucket)) return { success: false };
   try {
     const data = await Bucket.set(bucket, file, filename);
