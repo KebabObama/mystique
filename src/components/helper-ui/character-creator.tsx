@@ -6,8 +6,8 @@ import React from "react";
 import { Button } from "../ui/button";
 import { ResponsiveDialog } from "../ui/responsive-dialog";
 import { UpdateCharacterAttributes } from "./update-character-attributes";
-import { UpdateCharacterVisage } from "./update-character-name";
 import { UpdateCharacterRace } from "./update-character-race";
+import { UpdateCharacterVisage } from "./update-character-visage";
 
 export const CharacterCreator = () => {
   const [char, setChar] = React.useState(Helper.DEFAULT_CHARACTER);

@@ -35,6 +35,7 @@ export const UpdateCharacterVisage = ({ initial, save, className }: Props) => {
       </div>
       <div className="relative aspect-3/2 w-full md:aspect-square lg:aspect-3/2 xl:aspect-7/4">
         <Border />
+        <span>Variant: </span>
         <Slider />
       </div>
       <Button onClick={() => save(char)} disabled={char.name.length === 0}>
