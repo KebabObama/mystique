@@ -1,9 +1,9 @@
-import { CreateCharacter } from "@/components/character/create-character";
+import { CharacterCreator } from "@/components/helper-ui/character-creator";
 
 export default () => {
   return (
     <>
-      <CreateCharacter />
+      <CharacterCreator />
     </>
   );
 };

@@ -3,11 +3,15 @@ import SidebarApp from "@/components/layout/sidebar-app";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { CommunicationProvider } from "@/hooks/use-communication";
 import { UserProvider } from "@/hooks/use-user";
+import { auth } from "@/lib/auth";
+import { User } from "@/types/communication";
+import { headers } from "next/headers";
 import { Toaster } from "sonner";
 
-export default ({ children }: { children: React.ReactNode }) => {
+export default async ({ children }: { children: React.ReactNode }) => {
+  const session = await auth.api.getSession({ headers: await headers() });
   return (
-    <UserProvider>
+    <UserProvider user={session?.user as User}>
       <CommunicationProvider>
         <SidebarProvider className="h-dvh w-dvw overflow-hidden">
           <SidebarApp />

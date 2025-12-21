@@ -11,7 +11,7 @@ const Body = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) =
 };
 
 const Trigger = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Trigger>) => {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
+  return <DialogPrimitive.Trigger data-slot="dialog-trigger" aria-controls={""} {...props} />;
 };
 
 const Portal = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Portal>) => {
