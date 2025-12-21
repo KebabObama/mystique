@@ -37,9 +37,13 @@ export const toast = Object.assign(
     warning: (message: string, action?: React.MouseEventHandler<HTMLButtonElement>) =>
       sonnerToast.custom(() => <Toast action={action} message={message} variant="warning" />),
     success: (message: string, action?: React.MouseEventHandler<HTMLButtonElement>) =>
-      sonnerToast.custom(() => <Toast action={action} message={message} title="Success..." variant="success" />),
+      sonnerToast.custom(() => (
+        <Toast action={action} message={message} title="Success..." variant="success" />
+      )),
     error: (message: string, action?: React.MouseEventHandler<HTMLButtonElement>) =>
-      sonnerToast.custom(() => <Toast action={action} message={message} title="Error..." variant="error" />),
+      sonnerToast.custom(() => (
+        <Toast action={action} message={message} title="Error..." variant="error" />
+      )),
   }
 );
 

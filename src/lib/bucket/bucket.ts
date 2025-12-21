@@ -66,10 +66,7 @@ export namespace Bucket {
       }
       await client.putObject(bucket, filename, bufferData);
       const fileUrl = await get(bucket, filename);
-      return {
-        success: true,
-        url: fileUrl,
-      };
+      return { success: true, url: fileUrl };
     } catch (err) {
       return {
         success: false,

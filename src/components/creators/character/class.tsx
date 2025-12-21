@@ -30,7 +30,9 @@ export const _Class = ({
       </div>
       <div className="flex flex-col text-center">
         <span className="text-lg capitalize">{character.class}</span>
-        <span className="text-muted-foreground min-h-12">{CLASSES[character.class].description}</span>
+        <span className="text-muted-foreground min-h-12">
+          {CLASSES[character.class].description}
+        </span>
       </div>
     </section>
   );

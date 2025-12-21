@@ -8,10 +8,7 @@ import { Border } from "./border";
 const Context = React.createContext<{
   triggerWidth: number | null;
   setTriggerWidth: (width: number) => void;
-}>({
-  triggerWidth: null,
-  setTriggerWidth: () => {},
-});
+}>({ triggerWidth: null, setTriggerWidth: () => {} });
 
 const Body = ({ children, ...props }: React.ComponentProps<typeof PopoverPrimitive.Root>) => {
   const [triggerWidth, setTriggerWidth] = React.useState<number | null>(null);
@@ -78,10 +75,7 @@ const Content = ({
         )}
         data-slot="popover-content"
         sideOffset={sideOffset}
-        style={{
-          width: triggerWidth ? `${triggerWidth}px` : undefined,
-          ...style,
-        }}
+        style={{ width: triggerWidth ? `${triggerWidth}px` : undefined, ...style }}
         {...props}
       >
         {children}

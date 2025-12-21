@@ -13,7 +13,7 @@ type SceneProps = {
   trailSize: number;
   maxAge: number;
   interpolate: number;
-  easingFunction: (x: number) => number;
+  easingFunction?(x: number): number;
   pixelColor: string;
 };
 
@@ -22,7 +22,7 @@ type PixelTrailProps = {
   trailSize?: number;
   maxAge?: number;
   interpolate?: number;
-  easingFunction?: (x: number) => number;
+  easingFunction?(x: number): number;
   canvasProps?: Partial<CanvasProps>;
   glProps?: WebGLContextAttributes & { powerPreference?: string };
   gooeyFilter?: { id: string; strength: number };
@@ -37,7 +37,12 @@ const GooeyFilter: React.FC<GooeyFilterProps> = ({ id = "goo-filter", strength =
       <defs>
         <filter id={id}>
           <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation={strength} />
-          <feColorMatrix in="blur" result="goo" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" />
+          <feColorMatrix
+            in="blur"
+            result="goo"
+            type="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
+          />
           <feComposite in="SourceGraphic" in2="goo" operator="atop" />
         </filter>
       </defs>
@@ -88,7 +93,14 @@ const DotMaterial = shaderMaterial(
   `
 );
 
-const Scene = ({ gridSize, trailSize, maxAge, interpolate, easingFunction, pixelColor }: SceneProps) => {
+const Scene = ({
+  gridSize,
+  trailSize,
+  maxAge,
+  interpolate,
+  easingFunction,
+  pixelColor,
+}: SceneProps) => {
   const size = useThree((s) => s.size);
   const viewport = useThree((s) => s.viewport);
 
@@ -132,11 +144,7 @@ export default function PixelTrail({
   interpolate = 5,
   easingFunction = (x: number) => x,
   canvasProps = {},
-  glProps = {
-    antialias: false,
-    powerPreference: "high-performance",
-    alpha: true,
-  },
+  glProps = { antialias: false, powerPreference: "high-performance", alpha: true },
   gooeyFilter,
   color = "#ffffff",
   className = "",

@@ -53,7 +53,13 @@ export const _Name = ({
           type="text"
           value={character.name}
         />
-        <Button onClick={generateRandomName} size="icon" title="Generate random name" type="button" variant="outline">
+        <Button
+          onClick={generateRandomName}
+          size="icon"
+          title="Generate random name"
+          type="button"
+          variant="outline"
+        >
           <Shuffle className="size-4" />
         </Button>
       </div>

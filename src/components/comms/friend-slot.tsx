@@ -10,7 +10,10 @@ export const FriendSlot = React.forwardRef<HTMLButtonElement, FriendSlotProps>(
   ({ image, name, className, ...props }, ref) => {
     return (
       <Button
-        className={cn("group h-10 w-full overflow-visible text-center odd:sm:text-end even:sm:text-start", className)}
+        className={cn(
+          "group h-10 w-full overflow-visible text-center odd:sm:text-end even:sm:text-start",
+          className
+        )}
         ref={ref}
         {...props}
       >

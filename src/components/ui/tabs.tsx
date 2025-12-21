@@ -5,10 +5,20 @@ import * as TabsPrimitive from "@radix-ui/react-tabs";
 import type * as React from "react";
 
 const Body = ({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) => {
-  return <TabsPrimitive.Root className={cn("flex flex-col gap-2", className)} data-slot="tabs" {...props} />;
+  return (
+    <TabsPrimitive.Root
+      className={cn("flex flex-col gap-2", className)}
+      data-slot="tabs"
+      {...props}
+    />
+  );
 };
 
-const List = ({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) => {
+const List = ({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.List>) => {
   return (
     <div className="relative">
       <TabsPrimitive.List
@@ -50,7 +60,13 @@ const Trigger = ({ className, ...props }: React.ComponentProps<typeof TabsPrimit
 };
 
 const Content = ({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>) => {
-  return <TabsPrimitive.Content className={cn("flex-1 outline-none", className)} data-slot="tabs-content" {...props} />;
+  return (
+    <TabsPrimitive.Content
+      className={cn("flex-1 outline-none", className)}
+      data-slot="tabs-content"
+      {...props}
+    />
+  );
 };
 
 export default Object.assign(Body, { List, Content, Trigger });

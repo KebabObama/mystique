@@ -22,7 +22,10 @@ const SheetPortal = ({ ...props }: React.ComponentProps<typeof SheetPrimitive.Po
   return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
 };
 
-const SheetOverlay = ({ className, ...props }: React.ComponentProps<typeof SheetPrimitive.Overlay>) => {
+const SheetOverlay = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof SheetPrimitive.Overlay>) => {
   return (
     <SheetPrimitive.Overlay
       className={cn(
@@ -73,11 +76,23 @@ const SheetContent = ({
 };
 
 const SheetHeader = ({ className, ...props }: React.ComponentProps<"div">) => {
-  return <div className={cn("flex flex-col gap-1.5 p-4", className)} data-slot="sheet-header" {...props} />;
+  return (
+    <div
+      className={cn("flex flex-col gap-1.5 p-4", className)}
+      data-slot="sheet-header"
+      {...props}
+    />
+  );
 };
 
 const SheetFooter = ({ className, ...props }: React.ComponentProps<"div">) => {
-  return <div className={cn("mt-auto flex flex-col gap-2 p-4", className)} data-slot="sheet-footer" {...props} />;
+  return (
+    <div
+      className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+      data-slot="sheet-footer"
+      {...props}
+    />
+  );
 };
 
 const SheetTitle = ({ className, ...props }: React.ComponentProps<typeof SheetPrimitive.Title>) => {
@@ -90,7 +105,10 @@ const SheetTitle = ({ className, ...props }: React.ComponentProps<typeof SheetPr
   );
 };
 
-const SheetDescription = ({ className, ...props }: React.ComponentProps<typeof SheetPrimitive.Description>) => {
+const SheetDescription = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof SheetPrimitive.Description>) => {
   return (
     <SheetPrimitive.Description
       className={cn("text-muted-foreground text-sm", className)}
@@ -100,4 +118,13 @@ const SheetDescription = ({ className, ...props }: React.ComponentProps<typeof S
   );
 };
 
-export { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger };
+export {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+};

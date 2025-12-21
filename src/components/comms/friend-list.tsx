@@ -27,12 +27,7 @@ const FriendDialog = ({ friend, user }: { friend: Friend; user: User }) => {
 
   const handleSendMessage = React.useCallback(() => {
     if (!(msg.trim() && user?.id)) return;
-    messages.send({
-      type: "friend",
-      link: friend.id,
-      text: msg,
-      sender: user.id,
-    } as SendMessage);
+    messages.send({ type: "friend", link: friend.id, text: msg, sender: user.id } as SendMessage);
     setMsg("");
   }, [messages, user, msg, friend.id]);
 
@@ -58,7 +53,9 @@ const FriendDialog = ({ friend, user }: { friend: Friend; user: User }) => {
               <div
                 className={cn(
                   "max-w-[75%] rounded-lg px-4 py-1 text-sm wrap-break-word",
-                  m.sender === user.id ? "bg-background text-primary-foreground" : "bg-background border"
+                  m.sender === user.id
+                    ? "bg-background text-primary-foreground"
+                    : "bg-background border"
                 )}
               >
                 {m.text}
@@ -139,7 +136,11 @@ export const FriendsListSection = () => {
               </div>
             }
             trigger={
-              <FriendSlot className="transition-all duration-300 active:translate-y-2" image={f.image} name={f.name} />
+              <FriendSlot
+                className="transition-all duration-300 active:translate-y-2"
+                image={f.image}
+                name={f.name}
+              />
             }
           >
             <FriendDialog friend={f} user={user} />

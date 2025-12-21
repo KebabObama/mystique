@@ -2,7 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -97,15 +103,7 @@ const SidebarProvider = ({
   const state = open ? "expanded" : "collapsed";
 
   const contextValue = React.useMemo<SidebarContextProps>(
-    () => ({
-      state,
-      open,
-      setOpen,
-      isMobile,
-      openMobile,
-      setOpenMobile,
-      toggleSidebar,
-    }),
+    () => ({ state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar }),
     [state, open, setOpen, isMobile, openMobile, toggleSidebar]
   );
 
@@ -113,7 +111,10 @@ const SidebarProvider = ({
     <SidebarContext.Provider value={contextValue}>
       <TooltipProvider delayDuration={0}>
         <div
-          className={cn("group/sidebar-wrapper has-data-[variant=inset]:bg-card flex min-h-svh w-full", className)}
+          className={cn(
+            "group/sidebar-wrapper has-data-[variant=inset]:bg-card flex min-h-svh w-full",
+            className
+          )}
           data-slot="sidebar-wrapper"
           style={
             {
@@ -148,7 +149,10 @@ const Sidebar = ({
   if (collapsible === "none") {
     return (
       <div
-        className={cn("bg-card text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col", className)}
+        className={cn(
+          "bg-card text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
+          className
+        )}
         data-slot="sidebar"
         {...props}
       >
@@ -480,7 +484,12 @@ const SidebarMenuButton = ({
   return (
     <Tooltip>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent align="center" hidden={state !== "collapsed" || isMobile} side="right" {...tooltip} />
+      <TooltipContent
+        align="center"
+        hidden={state !== "collapsed" || isMobile}
+        side="right"
+        {...tooltip}
+      />
     </Tooltip>
   );
 };
@@ -490,10 +499,7 @@ const SidebarMenuAction = ({
   asChild = false,
   showOnHover = false,
   ...props
-}: React.ComponentProps<"button"> & {
-  asChild?: boolean;
-  showOnHover?: boolean;
-}) => {
+}: React.ComponentProps<"button"> & { asChild?: boolean; showOnHover?: boolean }) => {
   const Comp = asChild ? Slot : "button";
 
   return (
@@ -568,11 +574,7 @@ const SidebarMenuSubButton = ({
   isActive = false,
   className,
   ...props
-}: React.ComponentProps<"a"> & {
-  asChild?: boolean;
-  size?: "sm" | "md";
-  isActive?: boolean;
-}) => {
+}: React.ComponentProps<"a"> & { asChild?: boolean; size?: "sm" | "md"; isActive?: boolean }) => {
   const Comp = asChild ? Slot : "a";
 
   return (

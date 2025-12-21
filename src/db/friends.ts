@@ -13,9 +13,7 @@ export const friend = pgTable(
       .notNull(),
     accepted: boolean("accepted").notNull(),
   },
-  (table) => ({
-    pair: unique("friendship_unique").on(table.sender, table.receiver),
-  })
+  (table) => ({ pair: unique("friendship_unique").on(table.sender, table.receiver) })
 );
 
 export const messageType = pgEnum("message_type", ["friend"]);

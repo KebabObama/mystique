@@ -1,10 +1,9 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
 import type * as React from "react";
-
-import { cn } from "@/lib/utils";
 import { Border } from "./border";
 
 const Body = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) => {
@@ -12,7 +11,7 @@ const Body = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) =
 };
 
 const Trigger = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Trigger>) => {
-  return <DialogPrimitive.Trigger {...props} />;
+  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
 };
 
 const Portal = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Portal>) => {
@@ -41,9 +40,7 @@ const Content = ({
   children,
   showCloseButton = true,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content> & {
-  showCloseButton?: boolean;
-}) => {
+}: React.ComponentProps<typeof DialogPrimitive.Content> & { showCloseButton?: boolean }) => {
   return (
     <Portal data-slot="dialog-portal">
       <Overlay />
@@ -101,7 +98,10 @@ const Title = ({ className, ...props }: React.ComponentProps<typeof DialogPrimit
   );
 };
 
-const Description = ({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Description>) => {
+const Description = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Description>) => {
   return (
     <DialogPrimitive.Description
       className={cn("text-muted-foreground text-sm", className)}

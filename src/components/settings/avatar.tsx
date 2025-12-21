@@ -70,9 +70,7 @@ export const Avatar = () => {
       const result = await uploadToBucket("avatars-bucket", f, path);
       console.log(2);
       if (!result.success) throw new Error();
-      const { error } = await authClient.updateUser({
-        image: result.path,
-      });
+      const { error } = await authClient.updateUser({ image: result.path });
       console.log(3);
       if (error) throw new Error();
       toast.success("Profile picture updated successfully!");
@@ -85,7 +83,11 @@ export const Avatar = () => {
   };
 
   return (
-    <ResponsiveDialog asChild title={"Upload and Crop Avatar"} trigger={<Button>Upload Profile Picture</Button>}>
+    <ResponsiveDialog
+      asChild
+      title={"Upload and Crop Avatar"}
+      trigger={<Button>Upload Profile Picture</Button>}
+    >
       <button
         aria-label="Select image to upload"
         className="group bg-muted relative mt-4 aspect-square w-full overflow-hidden rounded-lg border-3 border-dashed transition-colors duration-200 select-none hover:border-black/20"
@@ -128,7 +130,13 @@ export const Avatar = () => {
         />
       </div>
 
-      <input accept="image/*" className="hidden" onChange={onFileChange} ref={inputRef} type="file" />
+      <input
+        accept="image/*"
+        className="hidden"
+        onChange={onFileChange}
+        ref={inputRef}
+        type="file"
+      />
       <div className="flex justify-end gap-2">
         <Button onClick={() => inputRef.current?.click()} variant="outline">
           Select Image

@@ -3,59 +3,20 @@
 import { Button } from "@/components/ui/button";
 import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
 import { mod } from "@/lib/utils";
-import { ATTRIBUTES, CLASSES, RACES, type Attribute, type Attributes, type Character } from "@/types/game";
+import {
+  ATTRIBUTES,
+  CLASSES,
+  RACES,
+  type Attribute,
+  type Attributes,
+  type Character,
+} from "@/types/game";
 import React from "react";
 import { _Attributes } from "./attributes";
 import { _Class } from "./class";
 import { _Name } from "./name";
 import { _Race } from "./race";
 import { _Summary } from "./summary";
-
-const def: Character = {
-  name: "",
-  level: 1,
-  class: "wizard",
-  race: "human",
-  effects: {
-    corroding: 0,
-    frostbite: 0,
-    burning: 0,
-    shocked: 0,
-    bleeding: 0,
-    toxin: 0,
-    smitten: 0,
-    hastened: 0,
-    fortified: 0,
-    weakened: 0,
-    regenerating: 0,
-    energized: 0,
-    shielded: 0,
-    enraged: 0,
-    focused: 0,
-    confused: 0,
-    fastened: 0,
-    slowed: 0,
-    stunned: 0,
-  },
-  attributes: { str: 8, dex: 8, con: 8, int: 8, wis: 8, cha: 8 },
-  health: [6, 6],
-  stamina: [10, 10],
-  actions: [1, 1],
-  resource: [3, 3],
-  resistances: {
-    acid: 0,
-    cold: 0,
-    fire: 0,
-    lightning: 0,
-    physical: 0,
-    poison: 0,
-    radiant: 0,
-  },
-  inventory: [],
-  abilities: [],
-  weight: [0, 0],
-  equipment: {},
-};
 
 enum STEPS {
   hidden,
@@ -68,7 +29,9 @@ enum STEPS {
 
 export const calculateAttributes = (base: Attributes, bonuses: Attributes, extra = 0) => {
   const keys = Object.keys(ATTRIBUTES) as Attribute[];
-  return Object.fromEntries(keys.map((key) => [key, base[key] + bonuses[key] + extra])) as Attributes;
+  return Object.fromEntries(
+    keys.map((key) => [key, base[key] + bonuses[key] + extra])
+  ) as Attributes;
 };
 
 export const CharacterCreator = ({ children }: { children: React.ReactNode }) => {
@@ -78,11 +41,21 @@ export const CharacterCreator = ({ children }: { children: React.ReactNode }) =>
 
   const SCREENS: Record<STEPS, React.ReactNode | null> = {
     [STEPS.hidden]: null,
-    [STEPS["Who are you?"]]: <_Race character={character} setCan={setCan} setCharacter={setCharacter} />,
-    [STEPS["Choose your path"]]: <_Class character={character} setCan={setCan} setCharacter={setCharacter} />,
-    [STEPS["Assign attributes"]]: <_Attributes character={character} setCan={setCan} setCharacter={setCharacter} />,
-    [STEPS["Name yourself"]]: <_Name character={character} setCan={setCan} setCharacter={setCharacter} />,
-    [STEPS["Is this you?"]]: <_Summary character={character} setCan={setCan} setCharacter={setCharacter} />,
+    [STEPS["Who are you?"]]: (
+      <_Race character={character} setCan={setCan} setCharacter={setCharacter} />
+    ),
+    [STEPS["Choose your path"]]: (
+      <_Class character={character} setCan={setCan} setCharacter={setCharacter} />
+    ),
+    [STEPS["Assign attributes"]]: (
+      <_Attributes character={character} setCan={setCan} setCharacter={setCharacter} />
+    ),
+    [STEPS["Name yourself"]]: (
+      <_Name character={character} setCan={setCan} setCharacter={setCharacter} />
+    ),
+    [STEPS["Is this you?"]]: (
+      <_Summary character={character} setCan={setCan} setCharacter={setCharacter} />
+    ),
   };
 
   const next = () => {

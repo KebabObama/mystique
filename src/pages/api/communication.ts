@@ -85,7 +85,9 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
         io.to(`friend:${id}`).emit("friend:deny", id);
         io.to(`friend:${id}`).socketsLeave(`friend:${id}`);
         await db.delete(schema.friend).where(eq(schema.friend.id, id));
-        await db.delete(schema.message).where(and(eq(schema.message.type, "friend"), eq(schema.message.link, id)));
+        await db
+          .delete(schema.message)
+          .where(and(eq(schema.message.type, "friend"), eq(schema.message.link, id)));
       });
 
       socket.on("message:new", async (temp: SendMessage) => {

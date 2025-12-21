@@ -8,11 +8,7 @@ export default () => {
     <main className="pointer-events-none relative h-dvh w-dvw overflow-hidden">
       <PixelTrail
         className="absolute"
-        glProps={{
-          alpha: false,
-          antialias: true,
-          powerPreference: "high-performance",
-        }}
+        glProps={{ alpha: false, antialias: true, powerPreference: "high-performance" }}
         gooeyFilter={{ id: "custom-goo-filter", strength: 1 }}
         gridSize={40}
         interpolate={3}

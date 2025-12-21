@@ -14,6 +14,4 @@ export const proxy = async (request: NextRequest) => {
   return NextResponse.next();
 };
 
-export const config = {
-  matcher: ["/dashboard", "/auth", "/settings", "/friends"],
-};
+export const config = { matcher: ["/dashboard", "/auth", "/settings", "/friends"] };

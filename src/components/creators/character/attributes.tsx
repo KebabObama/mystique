@@ -21,10 +21,7 @@ export const _Attributes = ({
   const updateAttribute = (key: Attribute, delta: number) => {
     const newVal = character.attributes[key] + delta;
     if (newVal < base[key] || newVal > base[key] + 8) return;
-    setCharacter({
-      ...character,
-      attributes: { ...character.attributes, [key]: newVal },
-    });
+    setCharacter({ ...character, attributes: { ...character.attributes, [key]: newVal } });
     const newCurrent = current + delta;
     setCurrent(newCurrent);
     setCan(newCurrent === points);

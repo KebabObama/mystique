@@ -1,5 +1,9 @@
-import { CharacterCreator } from "@/components/creators/character/character-creator";
+import { CreateCharacter } from "@/components/character/create-character";
 
 export default () => {
-  return <CharacterCreator>Create Character</CharacterCreator>;
+  return (
+    <>
+      <CreateCharacter />
+    </>
+  );
 };

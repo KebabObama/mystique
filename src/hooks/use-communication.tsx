@@ -51,10 +51,7 @@ export const CommunicationProvider = ({ children }: { children: React.ReactNode 
 
     socket.on("friend:new", (newFriend: Friend) => {
       setFriends((prev) => [...prev, newFriend]);
-      toast({
-        message: `New friend request from: ${newFriend.name}`,
-        title: "Friend request",
-      });
+      toast({ message: `New friend request from: ${newFriend.name}`, title: "Friend request" });
     });
 
     socket.on("friend:accept", (id: string) => {

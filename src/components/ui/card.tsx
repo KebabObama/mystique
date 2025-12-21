@@ -33,11 +33,23 @@ const Header = ({ className, ...props }: React.ComponentProps<"div">) => {
 };
 
 const Title = ({ className, ...props }: React.ComponentProps<"div">) => {
-  return <div className={cn("leading-none font-semibold", className)} data-slot="card-title" {...props} />;
+  return (
+    <div
+      className={cn("leading-none font-semibold", className)}
+      data-slot="card-title"
+      {...props}
+    />
+  );
 };
 
 const Description = ({ className, ...props }: React.ComponentProps<"div">) => {
-  return <div className={cn("text-muted-foreground text-sm", className)} data-slot="card-description" {...props} />;
+  return (
+    <div
+      className={cn("text-muted-foreground text-sm", className)}
+      data-slot="card-description"
+      {...props}
+    />
+  );
 };
 
 const Action = ({ className, ...props }: React.ComponentProps<"div">) => {
@@ -56,15 +68,12 @@ const Content = ({ className, ...props }: React.ComponentProps<"div">) => {
 
 const Footer = ({ className, ...props }: React.ComponentProps<"div">) => {
   return (
-    <div className={cn("flex items-center px-6 [.border-t]:pt-6", className)} data-slot="card-footer" {...props} />
+    <div
+      className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
+      data-slot="card-footer"
+      {...props}
+    />
   );
 };
 
-export default Object.assign(Body, {
-  Header,
-  Title,
-  Description,
-  Action,
-  Content,
-  Footer,
-});
+export default Object.assign(Body, { Header, Title, Description, Action, Content, Footer });

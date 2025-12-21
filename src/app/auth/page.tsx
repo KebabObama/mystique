@@ -60,10 +60,7 @@ const Google = ({ loading, setLoading }: Props) => {
       onClick={async () => {
         setLoading(true);
         try {
-          await authClient.signIn.social({
-            provider: "google",
-            callbackURL: "/dashboard",
-          });
+          await authClient.signIn.social({ provider: "google", callbackURL: "/dashboard" });
           toast.show("Redirecting to Google...");
         } catch (error) {
           console.error("Google auth error:", error);
@@ -87,10 +84,7 @@ const Github = ({ loading, setLoading }: Props) => {
       onClick={async () => {
         setLoading(true);
         try {
-          await authClient.signIn.social({
-            provider: "github",
-            callbackURL: "/dashboard",
-          });
+          await authClient.signIn.social({ provider: "github", callbackURL: "/dashboard" });
           toast.show("Redirecting to Github...");
         } catch (error) {
           console.error("GitHub auth error:", error);

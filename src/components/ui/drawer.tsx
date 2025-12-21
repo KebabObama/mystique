@@ -21,7 +21,10 @@ const DrawerClose = ({ ...props }: React.ComponentProps<typeof DrawerPrimitive.C
   return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />;
 };
 
-const DrawerOverlay = ({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Overlay>) => {
+const DrawerOverlay = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof DrawerPrimitive.Overlay>) => {
   return (
     <DrawerPrimitive.Overlay
       className={cn(
@@ -34,7 +37,11 @@ const DrawerOverlay = ({ className, ...props }: React.ComponentProps<typeof Draw
   );
 };
 
-const DrawerContent = ({ className, children, ...props }: React.ComponentProps<typeof DrawerPrimitive.Content>) => {
+const DrawerContent = ({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof DrawerPrimitive.Content>) => {
   return (
     <DrawerPortal data-slot="drawer-portal">
       <DrawerOverlay />
@@ -71,10 +78,19 @@ const DrawerHeader = ({ className, ...props }: React.ComponentProps<"div">) => {
 };
 
 const DrawerFooter = ({ className, ...props }: React.ComponentProps<"div">) => {
-  return <div className={cn("mt-auto flex flex-col gap-2 p-4", className)} data-slot="drawer-footer" {...props} />;
+  return (
+    <div
+      className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+      data-slot="drawer-footer"
+      {...props}
+    />
+  );
 };
 
-const DrawerTitle = ({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Title>) => {
+const DrawerTitle = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof DrawerPrimitive.Title>) => {
   return (
     <DrawerPrimitive.Title
       className={cn("text-foreground font-semibold", className)}
@@ -84,7 +100,10 @@ const DrawerTitle = ({ className, ...props }: React.ComponentProps<typeof Drawer
   );
 };
 
-const DrawerDescription = ({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Description>) => {
+const DrawerDescription = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof DrawerPrimitive.Description>) => {
   return (
     <DrawerPrimitive.Description
       className={cn("text-muted-foreground text-sm", className)}

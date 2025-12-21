@@ -165,13 +165,23 @@ interface VariantConfig {
   noFocus: boolean;
 }
 
-export default ({ variant = "default", gap, speed, colors, noFocus, className = "", children }: PixelCardProps) => {
+export default ({
+  variant = "default",
+  gap,
+  speed,
+  colors,
+  noFocus,
+  className = "",
+  children,
+}: PixelCardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pixelsRef = useRef<Pixel[]>([]);
   const animationRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
   const timePreviousRef = useRef(performance.now());
-  const reducedMotion = useRef(window.matchMedia("(prefers-reduced-motion: reduce)").matches).current;
+  const reducedMotion = useRef(
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ).current;
 
   const variantCfg: VariantConfig = VARIANTS[variant] || VARIANTS.default;
   const finalGap = gap ?? variantCfg.gap;
@@ -200,7 +210,17 @@ export default ({ variant = "default", gap, speed, colors, noFocus, className = 
         const distance = Math.sqrt(dx * dx + dy * dy);
         const delay = reducedMotion ? 0 : distance;
         if (!ctx) return;
-        pxs.push(new Pixel(canvasRef.current, ctx, x, y, color, getEffectiveSpeed(finalSpeed, reducedMotion), delay));
+        pxs.push(
+          new Pixel(
+            canvasRef.current,
+            ctx,
+            x,
+            y,
+            color,
+            getEffectiveSpeed(finalSpeed, reducedMotion),
+            delay
+          )
+        );
       }
     }
     pixelsRef.current = pxs;

@@ -3,11 +3,20 @@
 		"**/node_modules/@radix-ui/"
   ],
   "cSpell.words": [
+    "cooldown",
     "dragonborn",
+    "drei",
+    "NPC",
     "oklch",
     "pixelify",
     "tiefling",
     "Tieflings",
-    "turbopack"
+    "turbopack",
+    "vaul"
   ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.watcherExclude": {
+    "**/gameplay/**": true,
+    ".next/**":true
+  }
 }
