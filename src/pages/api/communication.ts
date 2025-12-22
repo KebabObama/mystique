@@ -1,10 +1,11 @@
-import * as schema from "@/db/schema";
 import { db } from "@/lib/db";
-import type { Friend, Message, SendMessage, User } from "@/types/communication";
+import type { Friend, Message, SendMessage } from "@/types/communication";
 import type { NextApiResponseWithSocket } from "@/types/sockets";
+import { User } from "better-auth";
 import { and, eq, inArray, ne, or } from "drizzle-orm";
 import type { NextApiRequest } from "next";
 import { Server } from "socket.io";
+import * as schema from "../../../db/schema";
 
 export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
   if (!res.socket.server.io) {

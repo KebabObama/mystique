@@ -13,12 +13,11 @@ const buttonVariants = cva(
         destructive: "bg-destructive",
         outline: "bg-card",
         ghost: "bg-transparent",
-        link: "bg-transparent",
       },
       size: {
         sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5",
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        lg: "h-12 py-8 px-6 has-[>svg]:px-4 text-2xl",
+        default: "h-9 px-4 py-2 has-[>svg]:px-3 text-lg font-semibold",
+        lg: "h-12 py-8 px-6 has-[>svg]:px-4 text-2xl font-bold",
         icon: "size-9",
       },
     },
@@ -33,21 +32,17 @@ const Button = ({ className, variant, size, asChild = false, ...props }: ButtonP
   const Comp = asChild ? Slot : "button";
 
   return (
-    <Comp
-      className={cn(buttonVariants({ variant, size, className }))}
-      data-slot="button"
-      {...props}
-    >
+    <Comp className={cn(buttonVariants({ variant, size, className }))} {...props}>
       {props.children}
-      {variant !== "ghost" && variant !== "link" && (
+      {variant !== "ghost" && (
         <>
           <Border />
           {variant !== "outline" && (
             <>
-              <div className="bg-foreground/10 absolute top-0 left-0 h-1.5 w-full" />
-              <div className="bg-foreground/10 absolute top-1.5 left-0 h-1.5 w-1.5" />
-              <div className="bg-foreground/10 absolute bottom-0 left-0 h-1.5 w-full" />
-              <div className="bg-foreground/10 absolute right-0 bottom-1.5 h-1.5 w-1.5" />
+              <div className="bg-border/30 absolute top-0 left-0 h-1.5 w-full" />
+              <div className="bg-border/30 absolute top-1.5 left-0 h-1.5 w-1.5" />
+              <div className="bg-border/30 absolute bottom-0 left-0 h-1.5 w-full" />
+              <div className="bg-border/30 absolute right-0 bottom-1.5 h-1.5 w-1.5" />
             </>
           )}
         </>
@@ -56,4 +51,4 @@ const Button = ({ className, variant, size, asChild = false, ...props }: ButtonP
   );
 };
 
-export { Button, buttonVariants, type ButtonProps };
+export { Button, type ButtonProps };

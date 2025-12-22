@@ -39,6 +39,14 @@ export const INFO = {
     human: {
       description: "Versatile and ambitious. Humans lack the specialized traits of other races but make up for it with a balanced adaptability that allows them to excel in any discipline.",
       starting: { str: 5, dex: 5, con: 5, wis: 5, int: 5 },
-    }
+    },
+    tiefling: {
+      description: "Cunning survivors touched by infernal planes. They possess an uncanny intuition for battlefield dynamics and the quick reflexes needed to exploit any opening.",
+      starting: { str: 3, dex: 6, con: 3, wis: 7, int: 6 },
+    },
+    orc: {
+      description: "Bound by blood and iron. Orcs are driven by an unstoppable physical momentum, possessing the raw power to shatter defenses and the stamina to endure grueling conflicts.",
+      starting: { str: 8, dex: 4, con: 8, wis: 2, int: 3 },
+    },
   } satisfies Record<Game.Race, { description: string; starting: Record<Game.Attribute, number> }>,
 } as const;

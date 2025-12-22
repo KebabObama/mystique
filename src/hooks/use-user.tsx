@@ -1,6 +1,6 @@
 "use client";
 
-import type { User } from "@/types/communication";
+import { User } from "better-auth";
 import React from "react";
 import { create } from "zustand";
 
@@ -15,7 +15,12 @@ const defaults = {
 };
 
 export const useUser = create<User>()(() => defaults);
+
 export const UserProvider = ({ children, user }: { children: React.ReactNode; user: User }) => {
-  useUser.setState(user);
+  const ref = React.useRef<boolean>(true);
+  if (ref.current) {
+    useUser.setState(user);
+    ref.current = false;
+  }
   return <>{children}</>;
 };

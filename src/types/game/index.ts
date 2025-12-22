@@ -1,3 +1,4 @@
+import { User } from "better-auth";
 import { INFO as info } from "./info";
 import { KEYS as keys } from "./keys";
 
@@ -62,5 +63,12 @@ export namespace Game {
     abilities: { consumables: Consumable[]; equipment: Equipment[]; memorized: Memorized[] };
   } & Record<Resource, Values>;
 
-  export type Playable = { id: string; owner: string; object: Character | NPC };
+  export type Playable = { id: string; owner: User["id"]; object: Character | NPC };
+
+  export type Lobby = {
+    users: User["id"][];
+    sequence: Playable[];
+    current: Playable["id"];
+    dm: User["id"];
+  };
 }

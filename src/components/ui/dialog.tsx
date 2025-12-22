@@ -1,126 +1,101 @@
 "use client";
 
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { XIcon } from "lucide-react";
-import type * as React from "react";
+import * as React from "react";
+import { Drawer } from "vaul";
 import { Border } from "./border";
 
-const Body = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) => {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />;
-};
+const DialogContext = React.createContext({ isMobile: false, fullscreen: false });
 
-const Trigger = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Trigger>) => {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" aria-controls={""} {...props} />;
-};
-
-const Portal = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Portal>) => {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
-};
-
-const Close = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Close>) => {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
-};
-
-const Overlay = ({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Overlay>) => {
+const Root = ({
+  children,
+  fullscreen = false,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Root> & { fullscreen?: boolean }) => {
+  const isMobile = useIsMobile();
+  const Component = isMobile ? Drawer.Root : DialogPrimitive.Root;
   return (
-    <DialogPrimitive.Overlay
-      className={cn(
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
-        className
-      )}
-      data-slot="dialog-overlay"
-      {...props}
-    />
+    <DialogContext.Provider value={{ isMobile, fullscreen }}>
+      <Component {...props}>{children}</Component>
+    </DialogContext.Provider>
   );
 };
 
 const Content = ({
   className,
   children,
-  showCloseButton = true,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content> & { showCloseButton?: boolean }) => {
+}: React.ComponentProps<typeof DialogPrimitive.Content>) => {
+  const { isMobile, fullscreen } = React.useContext(DialogContext);
+  if (!isMobile)
+    return (
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="animate-in fade-in fixed inset-0 z-50 bg-black/50 duration-200" />
+        <DialogPrimitive.Content
+          className={cn(
+            "bg-card animate-in zoom-in-95 -translate-y-1/flex-col fixed top-1/2 left-1/2 z-50 flex -translate-x-1/2 -translate-y-1/2 flex-col p-6 shadow-xl duration-200 sm:rounded-lg",
+            fullscreen ? "h-[90vh] w-[90vw] max-w-5xl" : "w-full max-w-lg",
+            className
+          )}
+          {...props}
+        >
+          <Border />
+          {children}
+          {!fullscreen && (
+            <DialogPrimitive.Close className="absolute top-6 right-6 text-2xl opacity-70 transition-opacity hover:opacity-100">
+              ✕
+            </DialogPrimitive.Close>
+          )}
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    );
+
   return (
-    <Portal data-slot="dialog-portal">
-      <Overlay />
-      <DialogPrimitive.Content
+    <Drawer.Portal>
+      <Drawer.Overlay className="fixed inset-0 z-50 bg-black/50" />
+      <Drawer.Content
         className={cn(
-          "bg-card data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-none border-none p-6 shadow-lg duration-200 sm:max-w-lg",
+          "bg-card fixed -bottom-1.5 z-50 mx-1.5 flex w-[calc(100%-0.75rem)] flex-col p-6 outline-none",
+          fullscreen ? "h-[94vh]" : "max-h-[96%]",
           className
         )}
-        data-slot="dialog-content"
         {...props}
       >
-        {children}
-        {showCloseButton && (
-          <DialogPrimitive.Close
-            className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
-            data-slot="dialog-close"
-          >
-            <XIcon />
-            <span className="sr-only">Close</span>
-          </DialogPrimitive.Close>
-        )}
         <Border />
-      </DialogPrimitive.Content>
-    </Portal>
+        {children}
+      </Drawer.Content>
+    </Drawer.Portal>
   );
 };
 
-const Header = ({ className, ...props }: React.ComponentProps<"div">) => {
-  return (
-    <div
-      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
-      data-slot="dialog-header"
-      {...props}
-    />
-  );
-};
-
-const Footer = ({ className, ...props }: React.ComponentProps<"div">) => {
-  return (
-    <div
-      className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
-      data-slot="dialog-footer"
-      {...props}
-    />
-  );
+const Trigger = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Trigger>) => {
+  const { isMobile } = React.useContext(DialogContext);
+  const Comp = isMobile ? Drawer.Trigger : DialogPrimitive.Trigger;
+  return <Comp {...props} />;
 };
 
 const Title = ({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Title>) => {
-  return (
-    <DialogPrimitive.Title
-      className={cn("text-lg leading-none font-semibold", className)}
-      data-slot="dialog-title"
-      {...props}
-    />
-  );
+  const { isMobile } = React.useContext(DialogContext);
+  const Comp = isMobile ? Drawer.Title : DialogPrimitive.Title;
+  return <Comp className={cn("-mt-3 text-lg font-bold tracking-tight", className)} {...props} />;
 };
 
 const Description = ({
   className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Description>) => {
-  return (
-    <DialogPrimitive.Description
-      className={cn("text-muted-foreground text-sm", className)}
-      data-slot="dialog-description"
-      {...props}
-    />
-  );
+  const { isMobile } = React.useContext(DialogContext);
+  const Comp = isMobile ? Drawer.Description : DialogPrimitive.Description;
+  return <Comp className={cn("text-muted mb-3 font-semibold", className)} {...props} />;
 };
 
-const Dialog = Object.assign(Body, {
-  Close,
-  Content,
-  Description,
-  Footer,
-  Header,
-  Overlay,
-  Portal,
-  Title,
-  Trigger,
-});
+const Footer = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn("mt-auto flex flex-col gap-6 pt-6 sm:flex-row sm:justify-end", className)}
+    {...props}
+  />
+);
 
-export default Dialog;
+export const Dialog = Object.assign(Root, { Root, Trigger, Content, Title, Description, Footer });

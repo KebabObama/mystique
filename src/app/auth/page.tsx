@@ -29,7 +29,7 @@ export default () => {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="text-muted-foreground px-2 select-none">Or continue with</span>
+            <span className="text-muted px-2 select-none">Or continue with</span>
           </div>
         </div>
 

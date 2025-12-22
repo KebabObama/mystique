@@ -7,7 +7,7 @@ const Body = ({ className, ...props }: React.ComponentProps<"div">) => {
   return (
     <div
       className={cn(
-        "bg-card text-card-foreground relative flex w-auto flex-col gap-6 rounded-none border-0 py-6 shadow-sm",
+        "bg-card text-card relative flex w-auto flex-col gap-6 rounded-none border-0 py-6 shadow-sm",
         className
       )}
       data-slot="card"
@@ -44,11 +44,7 @@ const Title = ({ className, ...props }: React.ComponentProps<"div">) => {
 
 const Description = ({ className, ...props }: React.ComponentProps<"div">) => {
   return (
-    <div
-      className={cn("text-muted-foreground text-sm", className)}
-      data-slot="card-description"
-      {...props}
-    />
+    <div className={cn("text-muted text-sm", className)} data-slot="card-description" {...props} />
   );
 };
 

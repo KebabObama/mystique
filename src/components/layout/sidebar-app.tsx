@@ -20,7 +20,7 @@ import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Border } from "../ui/border";
 
-export default () => {
+export const SidebarApp = () => {
   const { setTheme, resolvedTheme } = useTheme();
   const { toggleSidebar } = Sidebar.useSidebar();
   const user = useUser();
@@ -31,24 +31,30 @@ export default () => {
 
   return (
     <Sidebar.Sidebar
-      className="bg-card relative my-4 ml-4 h-[calc(100dvh-2rem)] p-0"
+      className="bg-card relative my-4 ml-4 h-[calc(100dvh-2rem)] p-0 text-lg"
       collapsible="icon"
       variant="floating"
     >
       <Border />
-      <Sidebar.SidebarHeader className="border-foreground dark:border-ring -mx-0.5 hidden flex-col items-center justify-start gap-2 border-b-6 md:flex">
-        <Sidebar.SidebarMenuButton onClick={toggleSidebar}>
+      <Sidebar.SidebarHeader className="-mx-0.5 hidden flex-col items-center justify-start gap-2 border-b-6 md:flex">
+        <Sidebar.SidebarMenuButton onClick={toggleSidebar} className="truncate text-lg">
           <SidebarIcon />
           Toggle Sidebar
         </Sidebar.SidebarMenuButton>
       </Sidebar.SidebarHeader>
       <Sidebar.SidebarContent>
         <Sidebar.SidebarMenu className="flex-col items-center justify-start gap-2 p-2 md:flex">
-          <Sidebar.SidebarMenuButton onClick={() => router.push("/dashboard")}>
+          <Sidebar.SidebarMenuButton
+            onClick={() => router.push("/dashboard")}
+            className="truncate text-lg"
+          >
             <LayoutDashboard />
             Dashboard
           </Sidebar.SidebarMenuButton>
-          <Sidebar.SidebarMenuButton onClick={() => router.push("/friends")}>
+          <Sidebar.SidebarMenuButton
+            onClick={() => router.push("/friends")}
+            className="truncate text-lg"
+          >
             <Users />
             Friends
           </Sidebar.SidebarMenuButton>
@@ -59,12 +65,12 @@ export default () => {
           <div className="relative m-2 flex flex-col">
             <Border />
             <Link href="/settings">
-              <Sidebar.SidebarMenuButton className="truncate">
+              <Sidebar.SidebarMenuButton className="truncate text-lg">
                 <Settings />
                 Settings
               </Sidebar.SidebarMenuButton>
             </Link>
-            <Sidebar.SidebarMenuButton className="truncate" onClick={toggleTheme}>
+            <Sidebar.SidebarMenuButton onClick={toggleTheme} className="truncate text-lg">
               <Sun
                 className={`transition-all duration-500 ${isDark ? "rotate-180 opacity-0" : "rotate-0 opacity-100"} `}
               />
@@ -74,7 +80,7 @@ export default () => {
               {isDark ? "Light theme" : "Dark theme"}
             </Sidebar.SidebarMenuButton>
             <Sidebar.SidebarMenuButton
-              className="truncate"
+              className="truncate text-lg"
               onClick={() => {
                 authClient.signOut();
                 router.replace("/");
@@ -82,7 +88,7 @@ export default () => {
               variant={"destructive"}
             >
               <LogOut />
-              <span>Sign Out</span>
+              Sign Out
             </Sidebar.SidebarMenuButton>
           </div>
         )}

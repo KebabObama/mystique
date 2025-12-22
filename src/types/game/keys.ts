@@ -2,7 +2,7 @@
 export const KEYS = {
   ELEMENTS: ["fire", "cold", "acid", "lightning", "physical", "poison"],
   ATTRIBUTES: ["str", "dex", "con", "wis", "int"],
-  RACES: ["dragonborn", "dwarf", "elf", "human"],
+  RACES: ["dragonborn", "dwarf", "elf", "human", "orc", "tiefling"],
   ITEM_TYPES: ["one-hand", "two-hand", "shield", "helmet", "armor", "leggings", "consumable", "misc"],
   RESOURCES:["health", "actions", "memories", "weight"],
   EFFECTS: [ 

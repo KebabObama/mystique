@@ -25,9 +25,7 @@ export const FriendRequestsSection = () => {
         </Card.Title>
       </Card.Header>
       <Card.Content className="flex flex-col items-center justify-center gap-6">
-        {requests.length === 0 && (
-          <p className="text-muted-foreground text-sm">No requests pending</p>
-        )}
+        {requests.length === 0 && <p className="text-muted text-sm">No requests pending</p>}
         {requests.map((req) => (
           <Popover key={req.sender}>
             <Popover.Trigger asChild className="w-full">

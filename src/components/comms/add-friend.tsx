@@ -60,7 +60,7 @@ export const AddFriendSection = () => {
         <div className="relative flex items-center gap-2 p-3">
           <Border />
           <div className="flex-1">
-            <p className="text-muted-foreground mb-1 text-xs">Your User ID</p>
+            <p className="text-muted mb-1 text-xs">Your User ID</p>
             <code className="font-mono text-sm">{user.id}</code>
           </div>
           <Button onClick={handleCopyId} size="sm" variant="outline">

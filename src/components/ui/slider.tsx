@@ -1,22 +1,21 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
-
-function Slider({
+export const Slider = ({
   className,
   defaultValue,
   value,
   min = 0,
   max = 100,
   ...props
-}: React.ComponentProps<typeof SliderPrimitive.Root>) {
-  const _values = React.useMemo(
-    () => (Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max]),
-    [value, defaultValue, min, max]
-  );
+}: React.ComponentProps<typeof SliderPrimitive.Root>) => {
+  const thumbValues = React.useMemo(() => {
+    const target = value ?? defaultValue ?? [min];
+    return Array.isArray(target) ? target : [target];
+  }, [value, defaultValue, min]);
 
   return (
     <SliderPrimitive.Root
@@ -33,7 +32,7 @@ function Slider({
     >
       <SliderPrimitive.Track
         className={cn(
-          "bg-muted relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
+          "bg-muted relative grow overflow-hidden data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
         )}
         data-slot="slider-track"
       >
@@ -44,15 +43,17 @@ function Slider({
           data-slot="slider-range"
         />
       </SliderPrimitive.Track>
-      {Array.from({ length: _values.length }, (index: number) => (
+
+      {/* We only map the thumbs if mounted, or we render a single thumb 
+          by default to match the most common server-side expectation.
+      */}
+      {thumbValues.map((_, index) => (
         <SliderPrimitive.Thumb
-          className="border-primary ring-ring/50 block size-4 shrink-0 rounded-full border bg-white shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+          key={`thumb-${index}`}
+          className="bg-foreground border-primary block size-3 shrink-0 transition-[color,box-shadow] outline-none hover:ring-4 focus-visible:ring-4"
           data-slot="slider-thumb"
-          key={index}
         />
       ))}
     </SliderPrimitive.Root>
   );
-}
-
-export { Slider };
+};

@@ -1,7 +1,8 @@
 "use client";
 
 import { toast } from "@/components/layout/toast";
-import type { Friend, Message, SendMessage, User } from "@/types/communication";
+import type { Friend, Message, SendMessage } from "@/types/communication";
+import { User } from "better-auth";
 import React from "react";
 import { io, type Socket } from "socket.io-client";
 import { useUser } from "./use-user";

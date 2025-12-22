@@ -60,17 +60,22 @@ export namespace Helper {
   };
 
   export const generateRandomName = (c: Game.Character) => {
-    const NAME_PREFIXES: Record<Game.Race, string[]> = {
+    const NAME_PREFIXES: Record<Game.Character["race"], string[]> = {
       dragonborn: ["Drak", "Shar", "Kava", "Zor", "Mera", "Thar", "Bala", "Nyx"],
       dwarf: ["Thor", "Brom", "Gim", "Dwa", "Bal", "Krag", "Dum", "Thrain"],
       elf: ["Gala", "Lego", "Ara", "Cele", "Thran", "Elro", "Fea", "Luth"],
       human: ["Ara", "Bran", "Cath", "Dun", "Eri", "Finn", "Gwen", "Hal"],
+      orc: ["Grom", "Thrak", "Durg", "Mog", "Grak", "Urg", "Brok", "Skar"],
+      tiefling: ["Zar", "Mor", "Kael", "Dae", "Raz", "Vel", "Nyx", "Ash"],
     };
-    const NAME_SUFFIXES: Record<Game.Race, string[]> = {
+
+    const NAME_SUFFIXES: Record<Game.Character["race"], string[]> = {
       dragonborn: ["oth", "ash", "nar", "ix", "ath", "orn", "yx", "ion"],
       dwarf: ["in", "li", "dur", "nar", "rim", "dan", "bur", "rik"],
       elf: ["driel", "las", "wen", "born", "duil", "ion", "nor", "ien"],
       human: ["gorn", "wen", "ric", "ley", "ton", "wyn", "dor", "ian"],
+      orc: ["ash", "nak", "ush", "gul", "lok", "tar", "gar", "dak"],
+      tiefling: ["iel", "oth", "ax", "mon", "ius", "eth", "ara", "lyn"],
     };
     const prefixes = NAME_PREFIXES[c.race];
     const suffixes = NAME_SUFFIXES[c.race];
