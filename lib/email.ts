@@ -31,4 +31,3 @@ export const sendResetPassword = async ({
     html: `<p>Click <a href="${url}">here</a> to reset your password.</p>`,
   });
 };
-

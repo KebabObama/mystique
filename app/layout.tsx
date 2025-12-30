@@ -38,4 +38,3 @@ export default async ({ children }: Readonly<{ children: React.ReactNode }>) => 
     </html>
   );
 };
-
