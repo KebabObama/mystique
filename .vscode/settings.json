@@ -1,0 +1,19 @@
+{
+  "cSpell.words": [
+    "cooldown",
+    "dragonborn",
+    "drei",
+    "dvh",
+    "NPC",
+    "oklch",
+    "pixelify",
+    "tiefling",
+    "Tieflings",
+    "turbopack",
+    "vaul"
+  ],
+  "files.watcherExclude": {
+    "**/gameplay/**": true,
+    ".next/**":true
+  },
+}
