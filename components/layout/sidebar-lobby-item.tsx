@@ -24,9 +24,9 @@ export const SidebarLobbyItem = ({ lobby }: { lobby: Lobby.Type }) => {
 
   return (
     <Sidebar.SidebarMenuSubItem className="flex flex-row items-center gap-1.5">
-      <span className="mr-auto">{lobby.name}</span>
-      <Link href={`/game/${lobby.id}`}>
-        <Play className="size-4" />
+      {lobby.name}
+      <Link href={`/game/${lobby.id}`} className="ml-auto">
+        <Play className="ml-auto size-4" />
       </Link>
       <Dialog fullscreen>
         <Dialog.Trigger>
@@ -62,7 +62,7 @@ export const SidebarLobbyItem = ({ lobby }: { lobby: Lobby.Type }) => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-            <Button onClick={() => sendMessage(user.id, lobby.id, message)}>Send message</Button>
+            <Button onClick={() => sendMessage(lobby.id, message)}>Send message</Button>
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog>

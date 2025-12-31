@@ -418,7 +418,10 @@ const SidebarMenu = ({ className, ...props }: React.ComponentProps<"ul">) => {
 const SidebarMenuItem = ({ className, ...props }: React.ComponentProps<"li">) => {
   return (
     <li
-      className={cn("group/menu-item relative", className)}
+      className={cn(
+        "group/menu-item ring-ring data-[active=true]:bg-muted data-[state=open]:hover:bg-muted relative flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden transition-[width,height,padding,transform] duration-200 group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! focus-visible:ring-2 active:scale-96 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+        className
+      )}
       data-sidebar="menu-item"
       data-slot="sidebar-menu-item"
       {...props}
