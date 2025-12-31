@@ -76,7 +76,7 @@ export const lobby = pgTable("lobby", {
 // prettier-ignore
 export const lobbyMember = pgTable("lobby_member", {
   lobbyId:    uuid("lobby_id").notNull().references(() => lobby.id, { onDelete: "cascade" }),
-    userId:     uuid("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  userId:     uuid("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   },
   (table) => [
     primaryKey({ columns: [table.lobbyId, table.userId] }), 
@@ -92,8 +92,8 @@ export const message = pgTable("message", {
     content:    text("content").notNull(),
     createdAt:  timestamp("created_at").defaultNow().notNull(),
   },
-  (t) => [
-    index("message_lobby_idx").on(t.lobbyId)
+  (table) => [
+    index("message_lobby_idx").on(table.lobbyId)
   ]
 );
 

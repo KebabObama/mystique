@@ -1,6 +1,6 @@
+import { LobbyProvider } from "@/hooks/use-lobby";
 import { UserProvider } from "@/hooks/use-user";
 import { auth } from "@/lib/auth";
-import { User } from "better-auth";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Pixelify_Sans } from "next/font/google";
@@ -29,7 +29,9 @@ export default async ({ children }: Readonly<{ children: React.ReactNode }>) => 
           disableTransitionOnChange
           enableSystem
         >
-          <UserProvider user={session?.user as User}> {children}</UserProvider>{" "}
+          <UserProvider user={session?.user}>
+            <LobbyProvider>{children}</LobbyProvider>
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>
