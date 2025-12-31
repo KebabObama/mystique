@@ -1,5 +1,14 @@
 import { relations } from "drizzle-orm";
-import { boolean, index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  index,
+  json,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 // prettier-ignore
 export const user = pgTable("user", {
@@ -48,13 +57,60 @@ export const account = pgTable("account",{
 export const verification = pgTable("verification",{
     id: uuid("id").primaryKey().defaultRandom(),
     identifier: text("identifier").notNull(),
-    value: text("value").notNull(),
-    expiresAt: timestamp("expires_at").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()).notNull(),
+    value:      text("value").notNull(),
+    expiresAt:  timestamp("expires_at").notNull(),
+    createdAt:  timestamp("created_at").defaultNow().notNull(),
+    updatedAt:  timestamp("updated_at").defaultNow().$onUpdate(() => new Date()).notNull(),
   },
   (table) => [index("verification_identifier_idx").on(table.identifier)]
 );
+
+// prettier-ignore
+export const lobby = pgTable("lobby", {
+  id:           uuid("id").primaryKey().defaultRandom(),
+  name:         text("name"),
+  data:         json(),
+  createdAt:    timestamp("created_at").defaultNow().notNull(),
+});
+
+// prettier-ignore
+export const lobbyMember = pgTable("lobby_member", {
+  lobbyId:    uuid("lobby_id").notNull().references(() => lobby.id, { onDelete: "cascade" }),
+    userId:     uuid("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.lobbyId, table.userId] }), 
+    index("member_user_idx").on(table.userId)
+  ]
+);
+
+// prettier-ignore
+export const message = pgTable("message", {
+    id:         uuid("id").primaryKey().defaultRandom(),
+    lobbyId:    uuid("lobby_id").notNull().references(() => lobby.id, { onDelete: "cascade" }),
+    senderId:   uuid("sender_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    content:    text("content").notNull(),
+    createdAt:  timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [
+    index("message_lobby_idx").on(t.lobbyId)
+  ]
+);
+
+export const lobbyRelations = relations(lobby, ({ many }) => ({
+  members: many(lobbyMember),
+  messages: many(message),
+}));
+
+export const lobbyMemberRelations = relations(lobbyMember, ({ one }) => ({
+  lobby: one(lobby, { fields: [lobbyMember.lobbyId], references: [lobby.id] }),
+  user: one(user, { fields: [lobbyMember.userId], references: [user.id] }),
+}));
+
+export const messageRelations = relations(message, ({ one }) => ({
+  group: one(lobby, { fields: [message.lobbyId], references: [lobby.id] }),
+  sender: one(user, { fields: [message.senderId], references: [user.id] }),
+}));
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),

@@ -6,7 +6,7 @@ import { nextCookies } from "better-auth/next-js";
 import { sendResetPassword, sendVerificationEmail } from "./email";
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db, { provider: "pg", schema: schema }),
+  database: drizzleAdapter(db, { provider: "pg", schema }),
   advanced: { database: { generateId: false, useNumberId: false } },
   secret: process.env.BETTER_AUTH_SECRET as string,
   baseURL: process.env.BETTER_AUTH_URL as string,
@@ -17,7 +17,7 @@ export const auth = betterAuth({
     sendOnSignIn: true,
     sendVerificationEmail: sendVerificationEmail,
   },
-  experimental: { joins: false },
+  experimental: { joins: true },
   account: { encryptOAuthTokens: true },
   session: {
     expiresIn: 60 * 60 * 24 * 7,
