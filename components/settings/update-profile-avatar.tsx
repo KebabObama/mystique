@@ -3,8 +3,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-user";
+import { uploadFile } from "@/lib/upload-file";
 import { authClient, getCroppedImg } from "@/lib/utils";
-import { uploadFile } from "@/server/upload-file";
 import { Camera, Loader2 } from "lucide-react";
 import React, { useRef, useState } from "react";
 import Cropper, { type Area } from "react-easy-crop";

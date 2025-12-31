@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@/components/layout/toast";
-import { Lobby } from "@/server/lobby";
+import { Lobby } from "@/lib/lobby";
 import React from "react";
 import { io, type Socket } from "socket.io-client";
 import { create } from "zustand";

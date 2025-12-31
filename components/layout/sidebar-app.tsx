@@ -3,8 +3,8 @@
 import * as Sidebar from "@/components/ui/sidebar";
 import { useLobby } from "@/hooks/use-lobby";
 import { useUser } from "@/hooks/use-user";
+import { Lobby } from "@/lib/lobby";
 import { authClient } from "@/lib/utils";
-import { Lobby } from "@/server/lobby";
 import {
   ChevronDown,
   LayoutDashboard,
