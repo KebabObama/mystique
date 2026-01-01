@@ -43,11 +43,9 @@ const Content = ({
         >
           <Border />
           {children}
-          {!fullscreen && (
-            <DialogPrimitive.Close className="absolute top-6 right-6 text-2xl opacity-70 transition-opacity hover:opacity-100">
-              ✕
-            </DialogPrimitive.Close>
-          )}
+          <DialogPrimitive.Close className="absolute top-3 right-4 text-2xl opacity-70 transition-opacity hover:opacity-100">
+            ✕
+          </DialogPrimitive.Close>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     );
@@ -73,7 +71,7 @@ const Content = ({
 const Trigger = ({ ...props }: React.ComponentProps<typeof DialogPrimitive.Trigger>) => {
   const { isMobile } = React.useContext(DialogContext);
   const Comp = isMobile ? Drawer.Trigger : DialogPrimitive.Trigger;
-  return <Comp {...props} />;
+  return <Comp {...props} aria-controls="trigger" />;
 };
 
 const Title = ({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Title>) => {

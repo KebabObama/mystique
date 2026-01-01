@@ -28,7 +28,7 @@ export namespace Lobby {
       where: eq(lobbyMember.userId, userId),
       with: { lobby: { with: {
         members: { columns: {}, with: { user: true } },
-        messages: { orderBy: (m, { desc }) => [desc(m.createdAt)] },
+        messages: { },
       }}},
     });
     return data.map(({ lobby }) => ({
@@ -58,7 +58,7 @@ export namespace Lobby {
       where: eq(lobby.id, lobbyId),
       with: {
         members: { columns: {}, with: { user: true } },
-        messages: { orderBy: (m, { desc }) => [desc(m.createdAt)] },
+        messages: { },
       },
     });
     if (!result) throw new Error("Lobby not found.");

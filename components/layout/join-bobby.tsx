@@ -8,11 +8,11 @@ import { Dialog } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { SidebarMenuButton } from "../ui/sidebar";
 
-export const CreateLobby = () => {
-  const createLobby = useLobby((s) => s.createLobby);
-  const [name, setName] = React.useState("");
+export const JoinLobby = () => {
+  const joinLobby = useLobby((s) => s.joinLobby);
+  const [code, setCode] = React.useState("");
   const [open, setOpen] = React.useState(false);
-  const disabled = name.length === 0;
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(code);
   return (
     <Dialog open={open} onOpenChange={(e) => setOpen(e)}>
       <Dialog.Trigger asChild>
@@ -26,17 +26,17 @@ export const CreateLobby = () => {
         <Dialog.Description>
           Want to play or just want to text? Create lobby and see.
         </Dialog.Description>
-        <Input value={name} onChange={(e) => setName(e.target.value)} />
+        <Input value={code} onChange={(e) => setCode(e.target.value)} />
         <Dialog.Footer>
           <Button
             type="submit"
-            disabled={disabled}
+            disabled={!isUuid}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              createLobby(name);
+              joinLobby(code);
               setOpen(!open);
-              setName("");
+              setCode("");
             }}
           >
             Create
