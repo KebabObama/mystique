@@ -1,7 +1,7 @@
 "use client";
 
 import { useLobby } from "@/hooks/use-lobby";
-import { Plus } from "lucide-react";
+import { Ampersand } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
 import { Dialog } from "../ui/dialog";
@@ -17,14 +17,14 @@ export const JoinLobby = () => {
     <Dialog open={open} onOpenChange={(e) => setOpen(e)}>
       <Dialog.Trigger asChild>
         <SidebarMenuButton className="flex items-center truncate text-lg">
-          <Plus />
-          Create lobby
+          <Ampersand />
+          Join lobby
         </SidebarMenuButton>
       </Dialog.Trigger>
       <Dialog.Content>
-        <Dialog.Title>Create new lobby</Dialog.Title>
+        <Dialog.Title>Join new lobby</Dialog.Title>
         <Dialog.Description>
-          Want to play or just want to text? Create lobby and see.
+          Want to play or just want to text? Join lobby and see.
         </Dialog.Description>
         <Input value={code} onChange={(e) => setCode(e.target.value)} />
         <Dialog.Footer>
