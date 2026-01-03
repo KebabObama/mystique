@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import PixelTrail from "@/components/ui/pixel-trail";
 import Link from "next/link";
 
-export default function Home() {
+export default (): React.ReactNode => {
   return (
     <main className="pointer-events-none relative h-dvh w-dvw overflow-hidden">
       <PixelTrail
@@ -16,7 +16,7 @@ export default function Home() {
         trailSize={0.05}
       />
       <Card className="absolute top-1/2 left-1/2 flex -translate-1/2 flex-col gap-6 p-6 text-center">
-        <h1 className="text-2xl font-extrabold">Mystique</h1>
+        <h1 className="text-2xl font-extrabold">mystique</h1>
         <p className="text-lg">
           Multiplayer online Dungeons and Dragons game simulating 1st edition gameplay
         </p>
