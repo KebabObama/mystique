@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import PixelTrail from "@/components/ui/pixel-trail";
 import Link from "next/link";
+import React from "react";
 
 export default (): React.ReactNode => {
   return (
@@ -26,4 +27,4 @@ export default (): React.ReactNode => {
       </Card>
     </main>
   );
-}
+};

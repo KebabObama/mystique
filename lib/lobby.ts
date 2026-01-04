@@ -71,4 +71,3 @@ export namespace Lobby {
     return await db.insert(message).values({senderId: userId, lobbyId, content}).returning().then(e=>e[0]);
   };
 }
-

@@ -981,4 +981,3 @@ export const ABILITIES = createAbilities({
 });
 
 export const ABILITY_ARRAY = Object.values(ABILITIES);
-

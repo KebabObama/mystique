@@ -113,4 +113,3 @@ export namespace Game {
     object: Character;
   };
 }
-

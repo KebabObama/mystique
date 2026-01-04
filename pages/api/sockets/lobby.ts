@@ -39,4 +39,3 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
 
   res.end();
 };
-

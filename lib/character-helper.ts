@@ -63,4 +63,3 @@ export namespace CharacterHelper {
     return prefix + suffix;
   };
 }
-

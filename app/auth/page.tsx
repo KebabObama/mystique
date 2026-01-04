@@ -2,6 +2,7 @@
 
 import { toast } from "@/components/layout/toast";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Tabs from "@/components/ui/tabs";
 import { authClient } from "@/lib/utils";
@@ -12,13 +13,13 @@ export default () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   return (
-    <section className="absolute top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2">
-      <div className="grid grid-cols-2 gap-4">
+    <Card className="absolute top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 gap-6">
+      <div className="grid grid-cols-2 gap-6">
         <Github loading={loading} setLoading={setLoading} />
         <Google loading={loading} setLoading={setLoading} />
       </div>
 
-      <div className="relative text-center">
+      <div className="relative text-center my-6">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
         </div>
@@ -39,7 +40,7 @@ export default () => {
           <Register loading={loading} setLoading={setLoading} />
         </Tabs.Content>
       </Tabs>
-    </section>
+    </Card>
   );
 };
 

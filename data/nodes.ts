@@ -294,4 +294,3 @@ export const NODES: Game.Node[] = [
     attributes: { wis: 3, con: 2 },
   },
 ];
-
