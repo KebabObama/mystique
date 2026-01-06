@@ -130,7 +130,6 @@ const FloorComponent = ({
     <group castShadow name="floor" {...groupProps} position={centerPosition}>
       {tiles.map((tile) => (
         <Tile
-          receiveShadow
           key={tile.id}
           gridPosition={tile.position}
           tileId={tile.id}

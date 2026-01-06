@@ -10,19 +10,16 @@ import { useUser } from "./use-user";
 export type LobbyStore = {
   socket: Socket | null;
   lobbies: Lobby.Type[];
-  activeLobbyId: string | null;
   connect: () => void;
   disconnect: () => void;
   sendMessage: (lobbyId: string, content: string) => void;
   joinLobby: (lobbyId: string) => void;
   createLobby: (name: string) => void;
-  setActiveLobby: (lobbyId: string) => void;
 };
 
 export const useLobby = create<LobbyStore>((set, get) => ({
   socket: null,
   lobbies: [],
-  activeLobbyId: null,
 
   connect: () => {
     const userId = useUser.getState().id;
@@ -69,13 +66,11 @@ export const useLobby = create<LobbyStore>((set, get) => ({
     set({ socket });
   },
 
-  setActiveLobby: (lobbyId: string) => set({ activeLobbyId: lobbyId }),
-
   disconnect: () => {
     const socket = get().socket;
     if (socket) {
       socket.disconnect();
-      set({ socket: null, lobbies: [], activeLobbyId: null });
+      set({ socket: null, lobbies: [] });
     }
   },
 

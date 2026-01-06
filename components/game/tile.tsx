@@ -29,7 +29,7 @@ export const Tile = ({
     const worldX = gridX * size;
     const worldZ = gridZ * size;
     return {
-      meshPosition: [worldX, height / 2, worldZ] as [number, number, number],
+      meshPosition: [worldX, -height / 2, worldZ] as [number, number, number],
       geometryArgs: [size, height, size] as const,
       worldPosition: new THREE.Vector3(worldX, 0, worldZ),
     };

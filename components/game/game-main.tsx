@@ -3,23 +3,19 @@
 import { useLobby } from "@/hooks/use-lobby";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { Render } from "@/types/render";
+import { Outlines } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import Link from "next/link";
 import React from "react";
+import { Material } from "three";
 import { Button } from "../ui/button";
 import { Floor } from "./floor";
 
-type GameProps = { readonly children: React.ReactNode; readonly lobbyId: string };
+type GameProps = { children: React.ReactNode; lobbyId: string };
 
 export const GameMain = ({ children, lobbyId }: GameProps) => {
-  const setActiveLobby = useLobby((s) => s.setActiveLobby);
   const lobby = useLobby((s) => s.lobbies).find((s) => s.id === lobbyId);
   const mobile = useIsMobile();
-
-  React.useEffect(() => {
-    setActiveLobby(lobbyId);
-    console.log(lobby);
-  }, [lobbyId, setActiveLobby]);
 
   if (mobile) {
     return (
@@ -37,29 +33,31 @@ export const GameMain = ({ children, lobbyId }: GameProps) => {
     );
   }
 
-  const handleTileClick: Render.TileEventCallback = (gridPos, worldPos, tileId) => {
+  const handleTileClick: Render.TileEventCallback = (gridPos, _, tileId) => {
     console.log("Tile clicked in main game:", { gridPos, tileId });
   };
 
   return (
     <Canvas shadows>
-      {children}
       <Floor
         tileSize={1}
         width={50}
         depth={50}
         tileHeight={0.1}
+        centerGrid
         onTileClick={handleTileClick}
-        tileProps={{ roughness: 0.8, metalness: 0.2, castShadow: true, receiveShadow: true }}
+        tileProps={{ roughness: 0.8, metalness: 0.2, castShadow: false, receiveShadow: true }}
       />
+      {children}
       <mesh
         castShadow
-        position={[5, 5, 5]}
+        position={[0, 5, 0]}
         onClick={(e) => {
           e.stopPropagation();
-          console.log(5, 5, 5);
+          console.log(e);
         }}
       >
+        <Outlines customDepthMaterial={new Material()} thickness={5} color={"red"} />
         <boxGeometry />
         <meshStandardMaterial />
       </mesh>

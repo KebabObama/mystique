@@ -1,6 +1,6 @@
 "use client";
 
-import { useGameCamera } from "@/hooks/use-game";
+import { useCamera } from "@/hooks/use-camera";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
@@ -16,10 +16,10 @@ const CONSTANTS = {
 export const CameraController = () => {
   const { camera: threeCamera, gl } = useThree();
   const keys = useRef<Record<string, boolean>>({});
-  const { target, distance, azimuth, elevation } = useGameCamera((s) => s.camera);
-  const setCameraAzimuth = useGameCamera((s) => s.setCameraAzimuth);
-  const setCameraTarget = useGameCamera((s) => s.setCameraTarget);
-  const setCameraDistance = useGameCamera((s) => s.setCameraDistance);
+  const { target, distance, azimuth, elevation } = useCamera((s) => s.camera);
+  const setCameraAzimuth = useCamera((s) => s.setCameraAzimuth);
+  const setCameraTarget = useCamera((s) => s.setCameraTarget);
+  const setCameraDistance = useCamera((s) => s.setCameraDistance);
   const tempVec3 = useRef(new THREE.Vector3());
   const tempSpherical = useRef(new THREE.Spherical());
 
