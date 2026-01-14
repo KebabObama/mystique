@@ -34,7 +34,7 @@ export const SidebarMain = () => {
             {lobbies.map((lobby) => (
               <SidebarLobbyItem lobby={lobby} key={lobby.id}>
                 <SidebarMenuButton className="ml-1.5 text-center text-lg capitalize">
-                  {lobby.name?.at(0)}
+                  {lobby.name[0]}
                 </SidebarMenuButton>
               </SidebarLobbyItem>
             ))}

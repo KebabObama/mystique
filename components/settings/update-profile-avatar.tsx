@@ -68,7 +68,7 @@ export const UpdateUserAvatar = () => {
           onClick={() => inputRef.current?.click()}
         >
           <AvatarImage src={user?.image ?? ""} />
-          <AvatarFallback className="text-xl">{user?.name?.charAt(0)}</AvatarFallback>
+          <AvatarFallback className="text-xl">{user?.name[0]}</AvatarFallback>
           <Camera className="fill-background/30 text-border group-hover:text-foreground absolute top-1/2 left-1/2 size-12 -translate-1/2 drop-shadow-md transition-all duration-200 group-hover:size-24" />
         </Avatar>
 
