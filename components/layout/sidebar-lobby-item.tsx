@@ -3,19 +3,29 @@
 import { useLobby } from "@/hooks/use-lobby";
 import { useUser } from "@/hooks/use-user";
 import { Lobby } from "@/lib/lobby";
-import { Text } from "lucide-react";
-import Link from "next/link";
+import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { Code, Delete, Play, Send, Text, Users } from "lucide-react";
+import { redirect } from "next/navigation";
 import React from "react";
+import { Border } from "../ui/border";
 import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 import { Dialog } from "../ui/dialog";
 import { Input } from "../ui/input";
-import { useSidebar } from "../ui/sidebar";
+import { toast } from "./toast";
 
-export const SidebarLobbyItem = ({ lobby }: { lobby: Lobby.Type }) => {
+export const SidebarLobbyItem = ({
+  children,
+  lobby,
+}: {
+  lobby: Lobby.Type;
+  readonly children: React.ReactNode;
+}) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const user = useUser();
-  const sendMessage = useLobby((state) => state.sendMessage);
-  const { open } = useSidebar();
+  const sendMessage = useLobby((s) => s.sendMessage);
+  const leaveLobby = useLobby((s) => s.leaveLobby);
+  const [isUserList, setIsUserList] = React.useState(false);
 
   const send = () => {
     const input = inputRef.current;
@@ -32,25 +42,30 @@ export const SidebarLobbyItem = ({ lobby }: { lobby: Lobby.Type }) => {
   };
 
   return (
-    <div className="flex flex-row items-center gap-3">
-      <Link
-        href={`/game/${lobby.id}`}
-        className={`text-foreground hover:text-muted ml-0.75 grow truncate transition-all duration-300 ${
-          !open
-            ? "max-w-[1ch] overflow-hidden text-xl whitespace-nowrap"
-            : "max-w-full text-[.9rem]"
-        }`}
-      >
-        {lobby.name}
-      </Link>
-
-      <Dialog fullscreen>
-        <Dialog.Trigger>
-          <Text className="text-foreground hover:text-muted size-4 transition-all duration-300" />
-        </Dialog.Trigger>
-        <Dialog.Content>
-          <Dialog.Title>{lobby.name}</Dialog.Title>
-          <Dialog.Description>{lobby.id}</Dialog.Description>
+    <Dialog fullscreen>
+      <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+      <Dialog.Content>
+        <Dialog.Title>{lobby.name}</Dialog.Title>
+        <Dialog.Description>{lobby.id}</Dialog.Description>
+        {isUserList ? (
+          <div className="flex h-full w-full flex-col gap-7.5 overflow-y-auto px-1.5 py-6">
+            {lobby.members.map((member) => (
+              <Card
+                key={member.id}
+                className="group flex h-18 items-center justify-between gap-6 p-0 odd:flex-row even:flex-row-reverse"
+              >
+                <Avatar className="bg-border relative z-50 size-24">
+                  <AvatarImage src={member.image || ""} />
+                  <Border />
+                </Avatar>
+                <div className="flex flex-col p-3 group-odd:text-end group-even:text-start">
+                  <span>{member.name}</span>
+                  <span className="text-muted">{member.email}</span>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : (
           <div className="flex h-full w-full flex-col gap-2 overflow-y-auto">
             {lobby.messages.map((e) => (
               <div
@@ -63,19 +78,18 @@ export const SidebarLobbyItem = ({ lobby }: { lobby: Lobby.Type }) => {
                   <span>{lobby.members.find((f) => f.id === e.senderId)?.name}</span>
                   <span>{getDate(e.createdAt)}</span>
                 </span>
-                <span
-                  className={`${user.id === e.senderId ? "text-end" : "text-start"} text-xlF grow`}
-                >
+                <span className={`${user.id === e.senderId ? "text-end" : "text-start"} grow`}>
                   {e.content}
                 </span>
               </div>
             ))}
           </div>
-          <Dialog.Footer>
+        )}
+        <Dialog.Footer className="h-fit">
+          <div className="flex h-fit w-full flex-col gap-6">
             <Input
               ref={inputRef}
               type="text"
-              className="grow"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -84,10 +98,46 @@ export const SidebarLobbyItem = ({ lobby }: { lobby: Lobby.Type }) => {
                 }
               }}
             />
-            <Button onClick={send}>Send</Button>
-          </Dialog.Footer>
-        </Dialog.Content>
-      </Dialog>
-    </div>
+            <div className="grid grid-cols-5 gap-6">
+              <Button onClick={send}>
+                <Send />
+                Send
+              </Button>
+              <Button onClick={() => redirect(`/game/${lobby.id}`)}>
+                <Play />
+                Play
+              </Button>
+              <Button
+                className="group"
+                onClick={() => {
+                  navigator.clipboard.writeText(lobby.id);
+                  toast.show("Code to lobby copied!");
+                }}
+              >
+                <Code className="transition-all duration-150 group-active:rotate-180" />
+                Code
+              </Button>
+              <Button onClick={() => setIsUserList((p) => !p)}>
+                {!isUserList ? (
+                  <>
+                    <Users />
+                    Members
+                  </>
+                ) : (
+                  <>
+                    <Text />
+                    Messages
+                  </>
+                )}
+              </Button>
+              <Button variant={"destructive"} onClick={() => leaveLobby(lobby.id)}>
+                <Delete />
+                Leave
+              </Button>
+            </div>
+          </div>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog>
   );
 };

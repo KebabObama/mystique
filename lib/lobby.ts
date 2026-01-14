@@ -2,7 +2,7 @@
 
 import { lobby, lobbyMember, message } from "@/db/schema";
 import { db } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export namespace Lobby {
   export type Type = {
@@ -39,7 +39,7 @@ export namespace Lobby {
   // prettier-ignore
   export const create = async (userId: string, name: string): Promise<Type> => {
     return await db.transaction(async (tx) => {
-      const [newLobby] = await tx.insert(lobby).values({ name, data: {} }).returning();
+      const [newLobby] = await tx.insert(lobby).values({ name }).returning();
       await tx.insert(lobbyMember).values({ lobbyId: newLobby.id, userId: userId });
       const result = await tx.query.lobby.findFirst({
         where: eq(lobby.id, newLobby.id),
@@ -49,6 +49,21 @@ export namespace Lobby {
       return { ...result, members: result.members.map((m) => m.user), messages: [] } satisfies Lobby.Type;
     });
   };
+
+  export const leave = async (userId: string, lobbyId: string) => {
+    return await db.transaction(async (tx) => {
+      await tx
+        .delete(lobbyMember)
+        .where(and(eq(lobbyMember.userId, userId), eq(lobbyMember.lobbyId, lobbyId)));
+      const remaining = await tx
+        .select()
+        .from(lobbyMember)
+        .where(eq(lobbyMember.lobbyId, lobbyId))
+        .limit(1);
+      if (remaining.length === 0) await tx.delete(lobby).where(eq(lobby.id, lobbyId));
+    });
+  };
+
   // prettier-ignore
   export const join = async (userId: string, lobbyId: string) => {
     await db.insert(lobbyMember).values({ lobbyId, userId }).onConflictDoNothing().catch(()=> {

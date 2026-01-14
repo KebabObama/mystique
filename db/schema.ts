@@ -1,3 +1,4 @@
+import { Game } from "@/types/game";
 import { relations } from "drizzle-orm";
 import {
   boolean,
@@ -69,7 +70,7 @@ export const verification = pgTable("verification",{
 export const lobby = pgTable("lobby", {
   id:           uuid("id").primaryKey().defaultRandom(),
   name:         text("name"),
-  data:         json(),
+  data:         json("data").$type<Game.Lobby>(),
   createdAt:    timestamp("created_at").defaultNow().notNull(),
 });
 

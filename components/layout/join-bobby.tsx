@@ -26,7 +26,18 @@ export const JoinLobby = () => {
         <Dialog.Description>
           Want to play or just want to text? Join lobby and see.
         </Dialog.Description>
-        <Input value={code} onChange={(e) => setCode(e.target.value)} />
+        <Input
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              joinLobby(code);
+              setOpen(!open);
+              setCode("");
+            }
+          }}
+        />
         <Dialog.Footer>
           <Button
             type="submit"

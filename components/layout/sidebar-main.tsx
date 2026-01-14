@@ -7,7 +7,6 @@ import {
   SidebarContent,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
   SidebarMenuSub,
   useSidebar,
 } from "../ui/sidebar";
@@ -33,9 +32,11 @@ export const SidebarMain = () => {
           <>
             <div className="mt-auto"></div>
             {lobbies.map((lobby) => (
-              <SidebarMenuItem key={lobby.id}>
-                <SidebarLobbyItem lobby={lobby} />
-              </SidebarMenuItem>
+              <SidebarLobbyItem lobby={lobby} key={lobby.id}>
+                <SidebarMenuButton className="ml-1.5 text-center text-lg capitalize">
+                  {lobby.name?.at(0)}
+                </SidebarMenuButton>
+              </SidebarLobbyItem>
             ))}
           </>
         )}
@@ -43,7 +44,9 @@ export const SidebarMain = () => {
       {open && (
         <SidebarMenuSub className={`-mt-1 overflow-hidden pr-1 pl-3 transition-all duration-200`}>
           {lobbies.map((lobby) => (
-            <SidebarLobbyItem lobby={lobby} key={lobby.id} />
+            <SidebarLobbyItem key={lobby.id} lobby={lobby}>
+              <SidebarMenuButton>{lobby.name}</SidebarMenuButton>
+            </SidebarLobbyItem>
           ))}
         </SidebarMenuSub>
       )}

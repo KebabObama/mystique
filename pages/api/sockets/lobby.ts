@@ -25,6 +25,11 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
       socket.emit("lobby:create", result);
     });
 
+    socket.on("lobby:leave", async (userId, lobbyId) => {
+      Lobby.leave(userId, lobbyId);
+      socket.emit("lobby:leave", lobbyId);
+    });
+
     socket.on("lobby:join", async (userId, lobbyId) => {
       const result = await Lobby.join(userId, lobbyId);
       socket.join(`lobby:${result.id}`);

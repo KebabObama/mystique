@@ -13,6 +13,7 @@ export const CreateLobby = () => {
   const [name, setName] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const disabled = name.length === 0;
+
   return (
     <Dialog open={open} onOpenChange={(e) => setOpen(e)}>
       <Dialog.Trigger asChild>
@@ -26,14 +27,24 @@ export const CreateLobby = () => {
         <Dialog.Description>
           Want to play or just want to text? Create lobby and see.
         </Dialog.Description>
-        <Input value={name} onChange={(e) => setName(e.target.value)} />
+        <Input
+          autoFocus
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              createLobby(name);
+              setOpen(!open);
+              setName("");
+            }
+          }}
+        />
         <Dialog.Footer>
           <Button
             type="submit"
             disabled={disabled}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               createLobby(name);
               setOpen(!open);
               setName("");

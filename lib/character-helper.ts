@@ -31,9 +31,13 @@ export namespace CharacterHelper {
       actions:    { current: 2, max: 2 },
       memories:   { current: 0, max: 0 },
       weight:     { current: 0, max: 10 },
-      abilities:  { memorized: [], consumable: [], equipment: [] },
+      abilities:  { memorized: [], equipment: [] },
+      resistance: {
+        physical: 0,
+        mystical: 0
+      },
       inventory:  [],
-    } as Game.Character;
+    } as Game.Character satisfies Game.Character;
     temp = updateByAttributes(temp);
     return temp;
   }

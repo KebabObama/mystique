@@ -9,7 +9,7 @@ const CONSTANTS = {
   MOVE_SPEED: 10,
   ROTATE_SPEED: 1.5,
   ZOOM_SPEED: 100,
-  MIN_DISTANCE: 0.2,
+  MIN_DISTANCE: 4,
   TARGET_Y_MIN: 0,
 } as const;
 

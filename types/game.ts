@@ -1,3 +1,5 @@
+import type { User } from "better-auth";
+
 // prettier-ignore
 export namespace Game {
   export const KEYS = {
@@ -64,31 +66,30 @@ export namespace Game {
     cost:     number;
     type:     Resistance | "healing";
     amount:   Dice[];
-    variant: "aoe" | "direct";
-    range: number;
-    size: number;
+    range:    number;
+    size:     number;
     effects:  Record<Effect, number>;
   };
 
   export type Node = {
-    name: string;
-    required: string[];
-    ability: Ability[];
+    name:       string;
+    required:   string[];
+    ability:    Ability[];
     attributes: Partial<Record<Attribute, number>>;
   };
 
   export type Item = {
-    name: string;
-    type: ItemType;
-    resistance?: Record<Resistance, number>;
-    abilities: Ability[];
-    weight: number;
-    value: number;
+    name:         string;
+    type:         ItemType;
+    resistance?:  Record<Resistance, number>;
+    abilities:    Ability[];
+    weight:       number;
+    value:        number;
   };
   
   export type Stack = {
     equipped: boolean;
-    amount: number;
+    amount:   number;
   } & Item;
 
   export type Character = {
@@ -100,9 +101,23 @@ export namespace Game {
     effects:    Record<Effect, number>;
     attributes: Record<Attribute, number>;
     inventory:  Stack[];
+    resistance: Record<Resistance,number>;
     abilities: {
       memorized:  (Ability & { learned: number                   })[]
-      consumable: (Ability  & { source : string                   })[]
+      equipment:  (Ability & { source : string; cooldown: number })[]
+    };
+  } & Record<Resource, Values>;
+
+  export type NPC = {
+    name:       string;
+    level:      number;
+    stamina:    number;
+    inventory:  Stack[];
+    effects:    Record<Effect, number>;
+    attributes: Record<Attribute, number>;
+    resistance: Record<Resistance,number>;
+    abilities: {
+      memorized:  (Ability & { learned: number                   })[]
       equipment:  (Ability & { source : string; cooldown: number })[]
     };
   } & Record<Resource, Values>;
@@ -110,6 +125,15 @@ export namespace Game {
   export type Playable = {
     id:     string;
     owner:  number;
-    object: Character;
+    object: Character | NPC;
+  };
+
+  export type Lobby = {
+    id: string;
+    users: User[];
+    dm: string;
+    playables: Playable[];
+    order: (Playable["id"] | "dm")[]
+    sequence: number;
   };
 }

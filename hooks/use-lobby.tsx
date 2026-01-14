@@ -15,6 +15,7 @@ export type LobbyStore = {
   sendMessage: (lobbyId: string, content: string) => void;
   joinLobby: (lobbyId: string) => void;
   createLobby: (name: string) => void;
+  leaveLobby: (lobbyId: string) => void;
 };
 
 export const useLobby = create<LobbyStore>((set, get) => ({
@@ -36,7 +37,11 @@ export const useLobby = create<LobbyStore>((set, get) => ({
     });
 
     socket.on("lobby:create", (newLobby: Lobby.Type) => {
-      set((state) => ({ lobbies: [...state.lobbies, newLobby] }));
+      set((s) => ({ lobbies: [...s.lobbies, newLobby] }));
+    });
+
+    socket.on("lobby:leave", (lobbyId) => {
+      set((s) => ({ lobbies: [...s.lobbies.filter((e) => lobbyId !== e.id)] }));
     });
 
     socket.on("lobby:join", (updatedLobby: Lobby.Type) => {
@@ -87,6 +92,11 @@ export const useLobby = create<LobbyStore>((set, get) => ({
   sendMessage: (lobbyId, content) => {
     const userId = useUser.getState().id;
     get().socket?.emit("lobby:send", userId, lobbyId, content);
+  },
+
+  leaveLobby: (lobbyId) => {
+    const userId = useUser.getState().id;
+    get().socket?.emit("lobby:leave", userId, lobbyId);
   },
 }));
 
