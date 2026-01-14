@@ -69,7 +69,7 @@ export const verification = pgTable("verification",{
 // prettier-ignore
 export const lobby = pgTable("lobby", {
   id:           uuid("id").primaryKey().defaultRandom(),
-  name:         text("name"),
+  name:         text("name").notNull(),
   data:         json("data").$type<Game.Lobby>(),
   createdAt:    timestamp("created_at").defaultNow().notNull(),
 });

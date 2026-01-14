@@ -16,7 +16,7 @@ export namespace Lobby {
       updatedAt: Date;
     }[];
     id: string;
-    name: string | null;
+    name: string;
     data: unknown;
     createdAt: Date;
     messages: { id: string; createdAt: Date; lobbyId: string; senderId: string; content: string }[];

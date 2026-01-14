@@ -7,7 +7,7 @@ export const SELECTION_MODES = ["single", "area"] as const;
 
 export type Tool = (typeof TOOLS)[number];
 export type SelectionMode = (typeof SELECTION_MODES)[number];
-type Block = { id: string; position: [number, number, number]; color: string };
+export type Block = { id: string; position: [number, number, number]; color: string };
 
 type BuilderState = {
   blocks: Block[];
