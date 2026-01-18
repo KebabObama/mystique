@@ -10,8 +10,8 @@ import {
   SidebarMenuSub,
   useSidebar,
 } from "../ui/sidebar";
-import { CreateLobby } from "./create-lobby";
-import { JoinLobby } from "./join-bobby";
+import { LobbyCreate } from "./lobby-create";
+import { LobbyJoin } from "./lobby-join";
 import { SidebarLobbyItem } from "./sidebar-lobby-item";
 
 export const SidebarMain = () => {
@@ -26,8 +26,8 @@ export const SidebarMain = () => {
           <LayoutDashboard />
           Dashboard
         </SidebarMenuButton>
-        <JoinLobby />
-        <CreateLobby />
+        <LobbyJoin />
+        <LobbyCreate />
         {!open && (
           <>
             <div className="mt-auto"></div>
