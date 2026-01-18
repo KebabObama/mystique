@@ -1,30 +1,26 @@
 # úvod
 
-Deskové hry na hrdiny představují specifickou kategorii herních systémů, které kombinují prvky narativního vyprávění, strategického rozhodování a pravidlově řízené interakce mezi hráči. Mezi nejznámější zástupce tohoto žánru patří systémy Dungeons & Dragons a jeho česká varianta Dračí doupě, které jsou založeny na spolupráci skupiny hráčů vedených jedním hráčem v roli Dungeon Mastera. Ten je zodpovědný za řízení herního světa, interpretaci pravidel a vytváření herních situací, zatímco ostatní hráči ovládají jednotlivé herní postavy.
+Žánr deskových her na hrdiny se stal jedinečným typem herových systémů, které spojují prvky vypravěčského vyprávění, strategického rozhodování a pravidelně řízených interakcí mezi hráči. Patří sem nejznámější deskové hry na hrdiny systému Dungeons & Dragons a jeho český analog Dračí doupě, které se staví na spolupráci skupinového hráče se skupinou hráčů řízených jedním hráčem jako Dungeon Masterem. Dungeon Master je odpovědný za řízení herového světa a interpretaci pravidel, zatímco hráči ovládají jednotlivé herové postavy.
 
-S rozvojem digitálních technologií a webových aplikací dochází k postupné transformaci tradičních deskových her do online prostředí. Tento přechod přináší řadu výhod, mezi které patří snadnější dostupnost hry, možnost hraní na dálku, automatizace výpočtů a pravidel nebo rozšíření herního zážitku o multimediální prvky. Zároveň však klade vysoké nároky na návrh aplikační architektury, synchronizaci dat mezi hráči a zachování plynulosti herního průběhu.
+S rozvojem aplikací a online prostředí se tyto hry začínají objevovat i v online prostředí. To s sebou přináší řadu výhod, jako je možnost jednodušeji dostupné hry, možnosti hraní na dálku, automatizace provádění pravidel nebo obohacení hry o multimediální prvky. Hraní her tohoto typu ale klade vysoké nároky na konstrukci aplikace, synchronizaci dat mezi hráči a udržení plynulosti hry.
 
-Cílem této práce je návrh a implementace webové aplikace umožňující hraní multiplayerové hry na hrdiny inspirované systémem Dračího doupěte. Aplikace je navržena jako komplexní herní platforma, která zahrnuje správu herních entit, tvorbu a úpravu postav, organizaci multiplayerových lobby a podporu samotného herního sezení včetně bojových a nebojových interakcí. Důraz je kladen na moderní webové technologie, modularitu řešení a možnost dalšího rozšiřování aplikace.
-
-Práce se zaměřuje především na teoretické aspekty použitých technologií a jejich vhodnost pro daný typ aplikace. Popsány jsou klíčové frameworky a nástroje použité při vývoji frontendové i backendové části aplikace, databázové řešení, práce se statickými soubory a kontejnerizace celého systému. Teoretická část tak vytváří základ pro následnou praktickou implementaci projektu.
+Cílem této práce je návrh a implementace webové aplikace umožňující hraní multiplayerové hry na hrdiny inspirované Dračí doupětem. Aplikace je navržena tak, aby sloužila jako plnohodnotná herní platforma zahrnující správu herních jednotek, tvorbu a úpravu postav, správu multiplayerových utkání a vedení samotné hry. Důraz je kladen na využití moderních technologií pro web a na maximální možnosti dalšího rozšiřování ​‍​‌‍​‍‌aplikace.
 
 # Architektura
 
-Architektura aplikace je navržena na principu client–server modelu, který představuje standardní přístup k vývoji moderních webových aplikací. Tento model umožňuje jasné oddělení jednotlivých vrstev systému.
+Pro aplikaci bylo zvoleno schéma klient-server, které je běžným standardem pro vývoj webových aplikací. Architektura klient-server umožňuje čisté oddělení klientského kódu od serverového, což umožní bezpečnost serveru a jeden zdroj pravdy.
 
-Klientská část aplikace běží v prostředí webového prohlížeče a slouží jako rozhraní mezi uživatelem a aplikací. Jejím hlavním úkolem je vykreslování uživatelského rozhraní, zpracování uživatelských vstupů a vizualizace aktuálního herního stavu. Klient komunikuje se serverem prostřednictvím síťových požadavků a v reálném čase reaguje na změny herního prostředí, což je klíčové pro plynulý průběh multiplayerových herních sezení.
+Klientská část aplikace běží přímo v webovém prohlížeči a představuje rozhraní mezi uživatelem a aplikací. Její hlavní úlohou je zobrazování uživatelského rozhraní, zpracovávání uživatelských vstupů a zobrazování aktuálního herního stavu. Klientská část aplikace s serverem komunikuje pomocí síťových požadavků a reaguje v reálném čase na změny.
 
-Serverová část aplikace zajišťuje veškerou aplikační logiku a funguje jako centrální autoritativní a autentizační prvek celého systému. Je odpovědná za správu herních stavů, validaci akcí hráčů, autentizaci a autorizaci uživatelů a komunikaci s databázovou vrstvou. Server rovněž koordinuje komunikaci mezi jednotlivými klienty a zajišťuje synchronizaci dat v reálném čase, čímž je zajištěna konzistence herního světa pro všechny připojené hráče.
+Části aplikace, které se zabývají jsou prováděny na serveru a jsou zde umístěny rozhodící autoritativní a autentizační část celého systému. Zajišťuje také správu herních stavů, ověřování tahů hráčů, přihlášení a legitimaci uživatele a komunikační funkce s databází. Server také zajišťuje komunikační funkce s jednotlivými klienty a provádí synchronizaci dat v reálném čase s cílem zajištění ​‍​‌‍​‍‌konzistence.
 
 # Programovací jazyky
 
-Volba programovacího jazyka pro fullstack aplikaci zásadně ovlivňuje rychlost vývoje a stabilitu celého systému. V rámci tohoto projektu byla zvolena kombinace moderního standardu JavaScriptu a jeho typové nadstavby TypeScript.
+Výběr programovacího jazyka pro fullstack aplikace je extrémně důležité pro rychlost vývoje i stabilnost takového systému. V tomto projektu bude kombinován moderní standard jazyka JavaScriptu se jeho typovou nadstavbou TypeScriptem.
 
 ## JavaScript
 
-JavaScript představuje primární programovací jazyk webu a jedinou nativní technologii pro logiku na straně klienta, kterou podporují všechny moderní prohlížeče. Pro potřeby této práce je JavaScript klíčový jako dynamický, interpretovaný jazyk s asynchronním modelem zpracování událostí.
-
-V prostředí této aplikace je JavaScript využíván především skrze svůj moderní standard ECMAScript. Ten umožňuje efektivní manipulaci s asynchronními datovými toky pomocí konstrukcí async a await, což je nezbytné pro komunikaci se servery a databázemi. Díky neblokujícímu vstupu a výstupu je JavaScript ideální pro aplikace vyžadující vysokou míru interaktivity, jako jsou real-time herní systémy, kde je nutné zpracovávat mnoho vstupů od různých hráčů současně bez prodlev v uživatelském rozhraní.
+JavaScript je hlavním programovací jazykem pro web a jediným nativním webovým jazykem pro logiku na straně klienta, který je podporován všemi moderními prohlížeči. Pro účely této publikace je jazyk JavaScript velice důležitý, protože se jedná o dynamicky interpretovaný jazyk s asynchronV kontextu této aplikace je jazyk JavaScript využíván hlavně prostřednictvím jeho současného standardu ECMAScript. Ten poskytuje účelnou manipulaci asynchronními proudy dat prostřednictvím konstrukcí async a await, což je nesmírné požadavku pro interakce s serverem i databází. Také kvůli neblokujícím vstupu a výstupu je jazyk JavaScript nejvhodnějším pro aplikace vyžadující vysoké interaktivní hodnoty, jako jsou systémy reálného času, kde je zapotřebí zpracování velké množství vstupů od různých uživatelů současně bez prodlení.
 
 ## TypeScript
 
@@ -36,21 +32,23 @@ TypeScript rovněž poskytuje pokročilé funkce, jako jsou rozhraní a generick
 
 # Použité technologie
 
-Výběr technologií pro vývoj komplexní multiplayerové aplikace je kritickým krokem, který definuje nejen možnosti budoucího rozvoje, ale i limity výkonu, bezpečnosti a udržitelnosti kódu. Pro realizaci platformy inspirované hrou Dungeons and Dragons byly zvoleny technologie, které reprezentují současný vrchol v oblasti vývoje webových aplikací. Důraz byl kladen především na modularitu, rozšiřitelnost a možnost efektivní práce s dynamickými daty v reálném čase.
+Výběr technologií na vývoj komplexní aplikace s multiplayer podporou je rozhodujícím bodem, který určuje nikoli pouze možnosti dalšího rozvoje, ale také omezení výkonu, bezpečnosti a udržitelnosti vyvinutého kódu. Pro vývoj platformy na bázi hry Dungeons & Dragons byly vybrane technologie, které představují aktuální špičku na poli vývojových technologií webových aplikací. Značný důraz byl kladen na modulárnost, rozšiřitelnost a efektivní zpracování dynam
 
 ## Next.JS
 
-Jako základní technologická platforma moderních webových aplikací se v současnosti často využívají tzv. meta-frameworky postavené nad knihovnou React. Tyto frameworky reagují na omezení tradičních přístupů založených výhradně na konceptu Single Page Applications a rozšiřují je o pokročilé mechanismy pro renderování, routování a optimalizaci přenosu dat. Jejich cílem je sjednotit vývoj klientské i serverové části aplikace do jednoho konzistentního prostředí a nabídnout flexibilní architekturu schopnou reagovat na rozdílné nároky jednotlivých částí systému.
+Jako základy technologie pro moderne webové aplikace se dnes často používají tzv. meta-frameworky navržené nad knihovnou React. Takové frameworky reagují na omezení klasických přístupů, které se soustředí jenom na Single Page Applications, a rozšiřují ho o pokročilé mechanismy pro renderování, routování a optimalizaci přenosu dat. Cílem takových frameworků je sjednotit vývoj obou částí klienta a serveru jedné aplikace v jediném prostředí a nabídnout flexibilní architekturu, která bude reagovat podle rozdílných potřeb obou částí systému
 
 ### App Router
 
-Srdcem aplikace je App Router, který představuje zásadní architektonický posun od tradičního směrování. App Router je postaven na specifikaci React Server Components (RSC). Tato technologie umožňuje definovat komponenty, které se renderují výhradně na serveru a do klientského zařízení se nikdy nepřenášejí ve formě spustitelného JavaScript kódu.
+Srdcem frameworku je App Router, což je zásadnější změna v architektuře než klasické routing. App Router je založen na specifikaci React Server Components (RSC). Jeho velkou výhodou je možnost definovat komponenty, které se na serveru vykreslí a na klienta nikdy nepostupují ve formě spustitelného JavaScript kódu.
 
-1. Server Components (Default): V App Routeru jsou všechny komponenty ve výchozím nastavení serverové. Při požadavku na stránku server provede renderování React stromu. Výsledkem není HTML string (jako u klasického SSR), ale speciální textový formát zvaný RSC Payload. Tento payload obsahuje serializovanou reprezentaci UI stromu, odkazy na klientské komponenty a předpočítaná data. Klient (prohlížeč) tento stream postupně zpracovává a rekonstruuje DOM. Díky tomu je možné přistupovat k databázi nebo souborovému systému přímo v těle komponenty (pomocí async/await), aniž by bylo nutné vytvářet API endpointy.
+1. Server Components
+   - V App Routeru jsou všechny komponenty ve výchozím nastavení serverové. Při požadavku na stránku server provede renderování React stromu. Výsledkem není HTML string (jako u klasického SSR), ale speciální textový formát zvaný RSC Payload. Tento payload obsahuje serializovanou reprezentaci UI stromu, odkazy na klientské komponenty a předpočítaná data. Klient (prohlížeč) tento stream postupně zpracovává a rekonstruuje DOM. Díky tomu je možné přistupovat k databázi nebo souborovému systému přímo v těle komponenty (pomocí async/await), aniž by bylo nutné vytvářet API endpointy.
 
-2. Client Components: Pro interaktivní prvky (tlačítka, formuláře, ovládání mapy) se využívají klientské komponenty označené direktivou 'use client'. Next.js inteligentně odděluje kód těchto komponent a posílá je klientovi jako separátní JavaScriptové balíčky (chunks). Dochází tak k tzv. hydrataci, kdy se na serverem vyrenderované HTML "naváže" klientská logika.
+2. Client Components
+   - Pro interaktivní prvky se využívají klientské komponenty označené direktivou 'use client'. Next.js inteligentně odděluje kód těchto komponent a posílá je klientovi jako separátní JavaScriptové balíčky nazývané _"chunks"_. Dochází tak k _"hydrataci"_, kdy se na serverem vyrenderované HTML "naváže" klientská logika.
 
-Tento model hybridního renderování zajišťuje, že statické části herního rozhraní (hlavičky, popisy, layout) nezatěžují hlavní vlákno prohlížeče, zatímco dynamické části zůstávají plně interaktivní.
+Tento model hybridního renderování zajišťuje, že statické části rozhraní nezatěžují hlavní vlákno prohlížeče, zatímco dynamické části zůstávají plně interaktivní.
 
 ### Pages Router
 
@@ -86,13 +84,18 @@ Next.js v implementuje komplexní cachovací mechanismus, který je inspirován 
 
 ### Runtime
 
-Architektura Next.js umožňuje volbu běhového prostředí (runtime) pro každou routu zvlášť.
+Architektura Next.js poskytuje volbu běhového _runtime_ pro keždou danou cestu zvlášť, stejně jako Node.js.
 
 - Node.js
-  - Je využit pro většinu aplikace, včetně WebSocket serveru a databázových operací skz DrizzleORM. Poskytuje plnou kompatibilitu se všemi Node.js API a knihovnami. Hlavní nevýhodou je snížená rychlost a plná závislost na node modulech.
+  - Používá se v většině aplikace
+  - Hlavním nedostatkem je nižší výkon a závislost na modulech.
+  - Využití: WebSocket server, procesy skz Drizzle ORM. Plná podpora server API jako low Level API.
 
 - Edge Runtime
-  - Je založen na V8 isolation a je určen pro kód, který musí běžet s minimální latencí, typicky middleware pro autorizaci nebo proxy pro autentizaci. V této práci je Edge runtime zvažován pro budoucí optimalizaci směrování hráčů do nejbližších herních regionů, ačkoliv primární logika běží na Node.js z důvodu potřeby dlouhotrvajících spojení.
+  - Je založen na V8 isolation
+  - Vysoce optimalizovaný kód
+  - Musí běžet s minimální latencí
+  - Využití: middleware pro ověřování přístupů nebo proxy pro ověřování autentizací.
 
 ## Turbopack
 
@@ -132,21 +135,21 @@ Logika funkcionálních komponent je řízena pomocí mechanismu Hooků, které 
 
 Stavové hooky Slouží k uchování lokálního stavu komponenty mezi jednotlivými rendery. Standardem ve většině aplikací jsou: useState a useReducer. Zatímco useState je využit pro jednoduché hodnoty, popřípadně vnořené objekty, tak useReducer je implementován pro komplexní logiku, kde jeden akční vstup může ovlivnit více stavových proměnných. Při změně hodnoty hooku vždy nastane aktualizace komponentu ve kterém se hook nachází.
 
-Efektové hook useEffek je vyžíván jako náhrada starší metody životního cyklu. Jedná se o způsob napojení na životní cyklus react komponentu. Který se aktivuje vždy když se jakákoliv z jeho _"závislostí"_ pozmění. Pokuď se funkce v useEffekt napojuje na DOM strukturu je potřeba vždy vyčistit _"event listenery"_ na konci životního cyklu aplikace.
+Efektový hook se jmenuje hook useEffek a je používáno jako náhrada pro starší životní cyklus v podobě soběstačné metody. Jedná se o způsob, jak napojit na životní cyklus React komponentu, který se spustí jen v případě, že se hodnota jeho „závislostí“ změní. Pokuď se funkce v useEffekt napojuje na DOM strukturu je potřeba vždy vyčistit _"event listenery"_ na konci životního cyklu aplikace.
 
 Referenční hook useRef umožňuje uchovat referenci na hodnotu, která přetrvává mezi rendery, ale jejíž změna nevyvolává nové vykreslení. Využíván je především na reference HTML elementů a udržování více verzí hodnot jednoho parametru.
 
 ### React Server Components
 
-Zatímco Next.js poskytuje routing pro serverové komponenty, samotná technologie RSC je vlastností Reactu. Klíčovým rozdílem oproti klasickému SSR je způsob serializace. Serverové komponenty nejsou na serveru transformovány do HTML, ale do speciálního formátu, který popisuje strukturu UI. Tento formát umožňuje Reactu na klientovi sloučit nově příchozí serverová data s již existujícím stavem klientských komponent, tato funkce je nazývána _"state prevention"_. Díky tomu je možné, aby se při navigaci v menu neztratil stav klientských komponent.
+I když Next.js podporuje routing zahrnující server-side komponenty, samotný mechanismus RSC je součástí Reactu. Hlavním odlišným faktorem v porovnání s tradiční SSR je seriazizace. Na serverovém nástroji se totiž komponenty nezpracovávají na různé html prvky, ale dělají to na velmi specifickou strukturu. Takže React na straně klienta sloučí nově doručené serverové informace spolu s údajemi již existujících stavú klientských komponent, velmi praktičtí nástroj na obhospodařovávání komponent a rychlého vykreslování.
 
-### Immutabilita a referenční identita
+### Immutabilita a referenční ident
 
-Pro správné fungování detekce změn v Reactu je klíčový koncept _neměnosti_ dat. V JavaScriptu jsou objekty a pole předávány referencí. Tradiční mutabilní přístup, kdy se mění hodnota přímo v paměti, je v Reactu antipatternem.
+Důležitý princip pro efektivní práci s detekcí změn ve Reactu je právě nedokončenost dat. V jazyku JavaScript jsou objektu a rozsahu posílána reference. Kulturní objekt s proměnností veadratickým způsobem přímo na míre-findu několi by bylo ve Reactu
 
-React využívá pro detekci změn takzvaný _"Shallow Comparison"_. Místo aby knihovna procházela hlubokou strukturu vnořených objektů a porovnávala každou hodnotu zvlášť, porovnává pouze reference objektů. Optimalizace tohoto systému se ze O(n) stává O(1).
+V zařízení React se využívá takzvaný „_Shallow Comparison_“ místo hlubokého rozboru struktur vnořených objektech. Oproti tomu knihovna místo hlubokého rozboru rozdílnou hodnotou jednotlivě srovnávané objekty pouze jejich
 
-Pokud se reference na objekt nezměnila, React předpokládá, že se nezměnila ani data uvnitř, a přeskočí náročný proces renderování. Aby aplikace donutila komponentu k překreslení, musí při aktualizaci stavu vytvořit zcela novou instanci objektu, čímž se změní jeho referenční identita. Tento princip je striktně dodržován, což zaručuje predikovatelnost toku dat.
+Pokud se reference na objekt nezměnila, React uměl progressDialoguecalled zapomenula, že se.data nezměnil内部, a přeskočídifficil获取runtime proces renderování. Pro instance festival.applicative, aby musela měnit komponentu rins, když se aktualizovala.data state Pavel musela vytvořit úplně fresh nový instance objektu, takže by se měnil også reference na objekt. Takhle.aldrin princip Eugineaders_annotations,rectticky
 
 ### React Compiler
 
@@ -162,18 +165,11 @@ Architektura backendu stojí na robustním řešení pro persistenci a správu d
 
 Jako primární databázové úložiště byl vybrán PostgreSQL, pokročilý open-source objektově-relační databázový systém. Jeho volba v kontextu vývoje multiplayerové RPG hry vychází z několika klíčových vlastností, které zajišťují stabilitu, integritu a výkon.
 
-Základním požadavkem na herní databázi je garance, že data zůstanou konzistentní i v případě selhání systému nebo souběžných požadavků. PostgreSQL plně implementuje model ACID, přesněji:
-
-- Atomicity
-- Consistency
-- Isolation
-- Durability.
-
-V praxi to znamená, že herní operace jsou zpracovávány jako atomické transakce. Příkladem může být obchodování mezi hráči: pokud hráč A předává předmět hráči B výměnou za měnu, databáze zajistí, že se odečtení předmětu, přičtení předmětu a přesun měny stanou v jediném okamžiku. Pokud by jakákoliv část procesu selhala, celá transakce se vrátí zpět a nedojde k situaci, kdy předmět zmizí, ale zlaťáky se nepřevedou.
+Základní kritériem pro databázi je zajištění konzistence dat i při selhání systému nebo více souběžných požadavcích. PostgreSQL plně podporuje ACID model - Atomicity, Consistency, Isolation a Durability. To znamená, že herní operace probíhají jako atomické transakce. Při obchodování mezi hráči, třeba když hráč A dá hráči B předmět výměnou za měnu, databáze zajistí, že odečtení předmětu, přidání předmětu a převod peněz nastanou v jednom kroku. Pokud dojde k selhání kterékoliv části, transakce se vrátí a nedojde k situaci, kdy by zmizel předmět, ale peníze by zůstaly nepřevodné.
 
 Ačkoliv je PostgreSQL relační databází, pro moderní aplikace nabízí silnou podporu pro práci s nestrukturovanými daty pomocí datového typu JSONB. Tento formát umožňuje ukládat JSON dokumenty v binární, indexovatelné podobě přímo do sloupce tabulky. Pro RPG hru je tato vlastnost kritická. Zatímco základní entity mají pevnou strukturu, rozšiřující entity mají mnoho proměných, které mohou, ale nemusí být přístupny pro všechny entity ve stejné tabulce. Místo vytváření desítek sloupců s hodnotami NULL pro každý možný atribut, využívá databáze sloupec metadata typu JSONB. PostgreSQL umožňuje nad klíči uvnitř tohoto JSON objektu vytvářet zobecněnýy převrácený index nazývaný: GIN index, což umožňuje extrémně rychlé vyhledávání s výkonem srovnatelným s NoSQL databázemi.
 
-PostgreSQL využívá mechanismus MVCC (Multi-Version Concurrency Control). Díky tomu mohou čtecí operace probíhat současně s operacemi zápisu, aniž by se vzájemně blokovaly. To je nezbytné pro udržení nízké latence v prostředí, kde desítky hráčů interagují v reálném čase.
+K tomu využívá také technologii MVCC (Multi-Version Concurrency Control). S její pomocí můžou probíhat čtecí operace i operace zápisu paralelně bez toho, aby se sečetly, a takové operace nezamezují, ani nerozptylují veškerý tok operačního systému. To je nezbytné pro udržení nízké latence, při vícero real-rime připojení.
 
 ### Drizzle ORM
 
@@ -196,9 +192,11 @@ Hlavní předností Drizzle ORM je hluboká integrace s TypeScriptem. Knihovna v
    - Výsledek databázového dotazu je automaticky typován.
    - Není potřeba manuálně definovat rozhraní pro výsledky dotazů, Drizzle je odvodí dynamicky na základě toho, jaké sloupce a relace byly v dotazu vyžádány.
 
-Pro zjednodušení práce s propojenými daty nabízí Drizzle tzv. Relational Query API. Toto API umožňuje vývojářům načítat hierarchická data deklarativním způsobem, podobně jako v GraphQL nebo Prisma ORM. Drizzle interně optimalizuje tyto požadavky, aby předešel problému N+1, což situace, kdy pro každou položku seznamu aplikace posílá samostatný dotaz do databáze. V závislosti na struktuře dat a použitém databázovém ovladači Drizzle buď zkompiluje požadavek do jednoho efektivního SQL dotazu, nebo data načte paralelně v minimálním počtu kroků a spojí je na úrovni aplikace, čímž zajišťuje optimální výkon i při složitých datových strukturách.
+Pro​‍​‌‍​‍‌ práci s propojenými daty nabízí Drizzle zjednodušené Relational Query API. To umožňuje vývojářům načítat hierarchická data deklarativně, podobně jako v GraphQL nebo Prisma ORM. Drizzle interně optimalizuje tyto požadavky, aby předešel problému N+1, situaci, kdy aplikace pro každou položku seznamu posílá do databáze samostatný dotaz.
 
-Součástí ekosystému je nástroj příkazové řádky Drizzle Kit, který automatizuje správu změn v databázi. Porovnává aktuální schéma definované v TypeScriptu se snapshotem předchozího stavu a generuje SQL migrační soubory. Tento proces zajišťuje, že vývoj databáze je verzovaný, transparentní a bezpečně replikovatelný napříč vývojovým, testovacím a produkčním prostředím.
+Podle struktury dat a použitého databázového ovladače Drizzle buď zkompiluje požadavek do jednoho efektivního SQL dotazu, nebo data načte paralelně v minimálním počtu kroků a spojí je na úrovni aplikace. Tím zajišťuje optimální výkon i při složitých datových ​‍​‌‍​‍‌strukturách.
+
+Součástí ekosystému je nástroj Drizzle Kit, který automatizuje správu změn v databázi. Porovnává aktuální schéma definované v TypeScriptu se snapshotem předchozího stavu a generuje SQL migrační soubory. Tento proces zajišťuje, že vývoj databáze je verzovaný, transparentní a bezpečně replikovatelný napříč vývojovým, testovacím a produkčním prostředím.
 
 ## Tailwind CSS
 
@@ -206,7 +204,7 @@ Pro definici vizuální podoby uživatelského rozhraní a tvorbu responzivního
 
 ### Utility-First paradigma
 
-Základem Tailwind CSS je koncept Utility-First. Namísto vytváření sémantických tříd, které v sobě nesou desítky deklarací, framework poskytuje atomické třídy reprezentující jednotlivé CSS vlastnosti. V kontextu herní aplikace tento přístup přináší několik klíčových výhod:
+Základem Tailwind CSS je koncept Utility-First. Namísto vytváření sémantických tříd, které v sobě nesou desítky deklarací, framework poskytuje atomické třídy reprezentující jednotlivé CSS vlastnosti. V kontextu aplikace tento přístup přináší několik klíčových výhod:
 
 - Eliminace kontextového přepínání:
   - Stylizace probíhá přímo v kódu komponenty.
@@ -234,39 +232,19 @@ Každá webová aplikace vyžaduje rozhrání, které se dokáže přizpůsobit 
 
 ### Designový systém
 
-Aplikace využívá centrální konfigurační soubor, který umožňuje rozšíření základníh knihovny o specifické prvky. Tento soubor je od verze Tailwind CSS v4 psán v podobě souoru css, ve kterém se pre-definují kaskádové styly. Do konfiguračního souboru jsou zaneseny vlastní barevné palety, specifické fonty a definice animací.
-
-Díky integraci s TypeScriptem jsou tyto vlastní třídy plně typované. Pokud vývojář definuje v konfiguraci novou barvu, editor mu ji automaticky nabídne, čímž se minimalizuje riziko vzniku chyb v designu.
+Aplikace využívá centrální konfigurační soubor, který umožňuje rozšíření základníh knihovny o specifické prvky. Tento soubor je od verze Tailwind CSS v4 psán v podobě souoru css, ve kterém se pre-definují kaskádové styly. Do konfiguračního souboru jsou zaneseny vlastní barevné palety, specifické fonty a definice animací.Díky integraci s TypeScriptem jsou tyto vlastní třídy plně typované. Pokud vývojář definuje v konfiguraci novou barvu, editor mu ji automaticky nabídne, čímž se minimalizuje riziko vzniku chyb v designu.
 
 ## Zustand
 
-Pro správu globálního stavu aplikace byla zvolena knihovna Zustand. Jedná se o moderní, minimalistické řešení pro state management v prostředí Reactu, které se zaměřuje na jednoduchost, nízkou režii a vysoký výkon. V aplikaci plní Zustand roli centrálního uzlu, který propojuje data přicházející ze serveru s uživatelským rozhraním.
-
-### Architektura Store a principy
+Pro​‍​‌‍​‍‌ zacházení s globálním stavem aplikací je použita knihovna Zustand. Jde o moderní a jednoduché řešení pro správu stavů v Reactu, které se vyznačuje tím, že je minimalistické, má nízké režie.
 
 Zustand funguje na principu centrálního úložiště, označovaného jako Store. Na rozdíl od komplexních knihoven, jako je Redux, Zustand nevyžaduje obalování aplikace do mnoha _"kontextových poskytovatelů"_, což eliminuje problém zvaný _"Provider Hell"_ a zjednodušuje celkovou strukturu projektu.
-
-### Immutabilita a hooky
 
 Stav v úložišti je imutabilní a lze jej měnit pouze pomocí definovaných akcí. To zajišťuje, že změny v stavu jsou predikovatelné a snadno sledovatelné.
 
 Úložiště se v komponentách používá formou vlastních React hooků. To umožňuje vývojářům přistupovat k datům i k funkcím pro jejich aktualizaci pomocí intuitivního a čistého zápisu.
 
-### Selektory a optimalizace vykreslování
-
 Jednou z nejvýznamnějších vlastností knihovny Zustand, která je pro vývoj náročné webové aplikace klíčová, je nativní podpora selektorů. Selektory umožňují komponentám odebírat pouze ty části stavu, které jsou pro jejich funkci nezbytné.
 
-V praxi to znamená, že pokud se v globálním úložišti změní například pozice postavy na mapě, komponenta zajišťující zobrazení chatu na tuto změnu nereaguje a nedochází k jejímu zbytečnému překreslování. Tento mechanismus radikálně snižuje zátěž na procesor klientského zařízení, což je u real-time aplikací, kde se data mění několikrát za sekundu, naprosto nezbytné.
-
-### Integrace s asynchronními operacemi a WebSockety
-
-Zustand vyniká svou schopností snadno integrovat asynchronní logiku přímo do akcí úložiště. Toho je v projektu využito především pro synchronizaci s API a real-time aktualizace. Tato uspořádání navíc umožňuje vícero připojení nejen typu client-server, jak už formou HTTP požadavků, tak i pomocí websocketů, ale i typu peer to peer pro rychlejší komunikaci uživatelů.
-
-### Perzistence stavu
-
-Díky podpoře middleware funkcí umožňuje Zustand snadnou implementaci perzistence. Vybrané části stavu, jsou automaticky ukládány do lokálního úložiště prohlížeče. Při opětovném načtení stránky se aplikace vrací do naposledy nastaveného stavu, což zvyšuje uživatelský komfort.
-
-### Typování
-
-Díky spojení s TypeScriptem je celý Store zcela typovaný. To znamená, že jakákoliv interakce se stavem je kontrolována kompilátorem, což zabraňuje chybám v logice herních mechanik a zajišťuje integritu dat napříč celým frontendem.
+Zustand vyniká svou schopností snadno integrovat asynchronní logiku přímo do akcí úložiště. Toho je v projektu využito především pro synchronizaci s API a real-time aktualizace. Díky podpoře middleware funkcí umožňuje Zustand snadnou implementaci perzistence. Vybrané části stavu, jsou automaticky ukládány do lokálního úložiště prohlížeče.
 
