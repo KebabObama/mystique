@@ -2,7 +2,7 @@ import { Render } from "@/lib/render";
 import * as THREE from "three";
 import { create } from "zustand";
 
-export const TOOLS = ["build", "delete", "move"] as const;
+export const TOOLS = ["build", "delete"] as const;
 export const SELECTION_MODES = ["single", "area"] as const;
 
 export type Tool = (typeof TOOLS)[number];
@@ -14,7 +14,6 @@ type BuilderState = {
   tool: Tool;
   selectionMode: SelectionMode;
   firstPoint: [number, number, number] | null;
-  moveSource: [number, number, number] | null;
   color: string;
   setColor(color: string): void;
   setTool: (tool: Tool) => void;
@@ -28,15 +27,14 @@ export const useBuilder = create<BuilderState>((set, get) => ({
   tool: "build",
   selectionMode: "single",
   firstPoint: null,
-  moveSource: null,
   color: "#000000",
 
   setColor: (c) => set({ color: c }),
-  setTool: (tool) => set({ tool, firstPoint: null, moveSource: null }),
+  setTool: (tool) => set({ tool, firstPoint: null }),
   setSelectionMode: (selectionMode) => set({ selectionMode, firstPoint: null }),
   clearBlocks: () => set({ blocks: [] }),
   buildAction: (point, normal) => {
-    const { tool, selectionMode, firstPoint, blocks, moveSource } = get();
+    const { tool, selectionMode, firstPoint, blocks } = get();
     const isBuilding = tool === "build";
     const offset = isBuilding ? 0.1 : -0.1;
     const adjPoint = point.clone().add(normal.clone().multiplyScalar(offset));
@@ -89,34 +87,6 @@ export const useBuilder = create<BuilderState>((set, get) => ({
           b.position[2] <= maxZ + 1;
         return !inVolume;
       });
-    }
-
-    // --- TOOL: MOVE ---
-    else if (tool === "move") {
-      if (!moveSource) {
-        set({ moveSource: [x, y, z] });
-        return;
-      } else {
-        const dx = x - moveSource[0];
-        const dy = y - moveSource[1];
-        const dz = z - moveSource[2];
-
-        nextBlocks = nextBlocks.map((b) => {
-          const inVolume =
-            b.position[0] >= minX &&
-            b.position[0] <= maxX + 1 &&
-            b.position[1] >= minY &&
-            b.position[1] <= maxY + 1 &&
-            b.position[2] >= minZ &&
-            b.position[2] <= maxZ + 1;
-
-          if (inVolume) {
-            return { ...b, position: [b.position[0] + dx, b.position[1] + dy, b.position[2] + dz] };
-          }
-          return b;
-        });
-        set({ moveSource: null });
-      }
     }
 
     set({ blocks: nextBlocks, firstPoint: null });

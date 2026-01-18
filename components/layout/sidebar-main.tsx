@@ -41,7 +41,7 @@ export const SidebarMain = () => {
           </>
         )}
       </SidebarMenu>
-      {open && (
+      {open && !!lobbies.length && (
         <SidebarMenuSub className={`-mt-1 overflow-hidden pr-1 pl-3 transition-all duration-200`}>
           {lobbies.map((lobby) => (
             <SidebarLobbyItem key={lobby.id} lobby={lobby}>

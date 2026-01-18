@@ -1,11 +1,15 @@
 "use server";
 
-import { lobby, lobbyMember, message } from "@/db/schema";
+import { character, lobby, lobbyMember, message } from "@/db/schema";
 import { db } from "@/lib/db";
+import { Game } from "@/lib/game";
 import { and, eq } from "drizzle-orm";
 
 export namespace Lobby {
   export type Type = {
+    id: string;
+    name: string;
+    createdAt: Date;
     members: {
       id: string;
       name: string;
@@ -15,38 +19,33 @@ export namespace Lobby {
       createdAt: Date;
       updatedAt: Date;
     }[];
-    id: string;
-    name: string;
-    data: unknown;
-    createdAt: Date;
     messages: { id: string; createdAt: Date; lobbyId: string; senderId: string; content: string }[];
   };
 
-  // prettier-ignore
-  export const getAll = async (userId: string) => {
+  export const getAll = async (userId: string): Promise<Lobby.Type[]> => {
     const data = await db.query.lobbyMember.findMany({
       where: eq(lobbyMember.userId, userId),
-      with: { lobby: { with: {
-        members: { columns: {}, with: { user: true } },
-        messages: { },
-      }}},
+      with: { lobby: { with: { members: { columns: {}, with: { user: true } }, messages: true } } },
     });
+
     return data.map(({ lobby }) => ({
-      ...lobby, members: lobby.members.map((m) => m.user),
-    })) satisfies Lobby.Type[];
+      ...lobby,
+      members: lobby.members.map((m) => m.user),
+      messages: lobby.messages,
+    }));
   };
 
-  // prettier-ignore
-  export const create = async (userId: string, name: string): Promise<Type> => {
+  export const create = async (userId: string, name: string): Promise<Lobby.Type> => {
     return await db.transaction(async (tx) => {
       const [newLobby] = await tx.insert(lobby).values({ name }).returning();
-      await tx.insert(lobbyMember).values({ lobbyId: newLobby.id, userId: userId });
+      await tx.insert(lobbyMember).values({ lobbyId: newLobby.id, userId });
+
       const result = await tx.query.lobby.findFirst({
         where: eq(lobby.id, newLobby.id),
-        with: { members: { columns: {}, with: { user: true } } },
+        with: { members: { columns: {}, with: { user: true } }, messages: true },
       });
       if (!result) throw new Error("Failed to retrieve created lobby.");
-      return { ...result, members: result.members.map((m) => m.user), messages: [] } satisfies Lobby.Type;
+      return { ...result, members: result.members.map((m) => m.user), messages: [] };
     });
   };
 
@@ -60,29 +59,27 @@ export namespace Lobby {
         .from(lobbyMember)
         .where(eq(lobbyMember.lobbyId, lobbyId))
         .limit(1);
-      if (remaining.length === 0) await tx.delete(lobby).where(eq(lobby.id, lobbyId));
+      if (remaining.length === 0) {
+        await tx.delete(lobby).where(eq(lobby.id, lobbyId));
+      }
     });
   };
 
-  // prettier-ignore
-  export const join = async (userId: string, lobbyId: string) => {
-    await db.insert(lobbyMember).values({ lobbyId, userId }).onConflictDoNothing().catch(()=> {
-      throw new Error("Lobby not found or join failed.");
-    });
+  export const join = async (userId: string, lobbyId: string): Promise<Lobby.Type> => {
+    await db.insert(lobbyMember).values({ lobbyId, userId }).onConflictDoNothing();
     const result = await db.query.lobby.findFirst({
       where: eq(lobby.id, lobbyId),
-      with: {
-        members: { columns: {}, with: { user: true } },
-        messages: { },
-      },
+      with: { members: { columns: {}, with: { user: true } }, messages: true },
     });
     if (!result) throw new Error("Lobby not found.");
-    const { members, ...lobbyData } = result;
-    return { ...lobbyData, members: members.map((m) => m.user) } satisfies Lobby.Type;
+    return { ...result, members: result.members.map((m) => m.user) };
   };
 
-  // prettier-ignore
-  export const send = async (userId: string, lobbyId: string, content: string ) => {
-    return await db.insert(message).values({senderId: userId, lobbyId, content}).returning().then(e=>e[0]);
+  export const send = async (userId: string, lobbyId: string, content: string) => {
+    const [newMessage] = await db
+      .insert(message)
+      .values({ senderId: userId, lobbyId, content })
+      .returning();
+    return newMessage;
   };
 }

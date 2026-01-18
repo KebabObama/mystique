@@ -1,5 +1,5 @@
 import { Lobby } from "@/lib/lobby";
-import { NextApiResponseWithSocket } from "@/types/socket";
+import { NextApiResponseWithSocket } from "@/lib/socket";
 import type { NextApiRequest } from "next";
 import { Server } from "socket.io";
 

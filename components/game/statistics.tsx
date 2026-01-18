@@ -5,7 +5,6 @@ type StatsProps = {};
 export const Statistics = ({}: StatsProps) => {
   return (
     <>
-      <axesHelper args={[5]} />
       <Stats />
     </>
   );
