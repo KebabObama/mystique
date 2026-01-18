@@ -34,9 +34,8 @@ export const useBuilder = create<BuilderState>((set, get) => ({
   setSelectionMode: (selectionMode) => set({ selectionMode, firstPoint: null }),
   clearBlocks: () => set({ blocks: [] }),
   buildAction: (point, normal) => {
-    const { tool, selectionMode, firstPoint, blocks } = get();
-    const isBuilding = tool === "build";
-    const offset = isBuilding ? 0.1 : -0.1;
+    const { tool, selectionMode, firstPoint, blocks, color } = get();
+    const offset = tool === "build" ? 0.1 : -0.1;
     const adjPoint = point.clone().add(normal.clone().multiplyScalar(offset));
     const { x, y, z } = Render.getTilePosition(adjPoint);
 
@@ -56,36 +55,31 @@ export const useBuilder = create<BuilderState>((set, get) => ({
 
     let nextBlocks = [...blocks];
 
-    // --- TOOL: BUILD ---
+    const existingSet = new Set(nextBlocks.map((b) => `${b.position.join(",")}`));
+
     if (tool === "build") {
       for (let ix = minX; ix <= maxX; ix++) {
         for (let iy = minY; iy <= maxY; iy++) {
           for (let iz = minZ; iz <= maxZ; iz++) {
-            const pos: [number, number, number] = [ix + 0.5, iy + 0.5, iz + 0.5];
-            if (
-              !nextBlocks.some(
-                (b) =>
-                  b.position[0] === pos[0] && b.position[1] === pos[1] && b.position[2] === pos[2]
-              )
-            ) {
-              nextBlocks.push({ id: crypto.randomUUID(), position: pos, color: get().color });
+            const posKey = `${ix + 0.5},${iy + 0.5},${iz + 0.5}`;
+            if (!existingSet.has(posKey)) {
+              nextBlocks.push({
+                id: crypto.randomUUID(),
+                position: [ix + 0.5, iy + 0.5, iz + 0.5],
+                color,
+              });
+              existingSet.add(posKey);
             }
           }
         }
       }
-    }
-
-    // --- TOOL: DELETE ---
-    else if (tool === "delete") {
+    } else if (tool === "delete") {
       nextBlocks = nextBlocks.filter((b) => {
-        const inVolume =
-          b.position[0] >= minX &&
-          b.position[0] <= maxX + 1 &&
-          b.position[1] >= minY &&
-          b.position[1] <= maxY + 1 &&
-          b.position[2] >= minZ &&
-          b.position[2] <= maxZ + 1;
-        return !inVolume;
+        const [bx, by, bz] = b.position;
+        const inX = bx >= minX && bx <= maxX + 1;
+        const inY = by >= minY && by <= maxY + 1;
+        const inZ = bz >= minZ && bz <= maxZ + 1;
+        return !(inX && inY && inZ);
       });
     }
 

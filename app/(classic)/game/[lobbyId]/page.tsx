@@ -12,7 +12,6 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
   return (
     <Card className="h-full p-0">
       <GameMain lobbyId={lobbyId}>
-        <gridHelper args={[30, 30, "#ff0000", "#444444"]} position={[0, 0.01, 0]} />
         <PostProcessing />
         <GameFloor />
         <Statistics />

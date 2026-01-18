@@ -13,12 +13,15 @@ export const GameFloor = () => {
   };
 
   return (
-    <Plane
-      onClick={onSceneClick}
-      rotation={[-Math.PI / 2, 0, 0]}
-      position={[0, 0.005, 0]}
-      scale={30}
-    />
+    <>
+      <Plane
+        onClick={onSceneClick}
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, 0.001, 0]}
+        scale={50}
+      />
+      <gridHelper args={[50, 50, "#ff0000", "#444444"]} position={[0, 0.002, 0]} />
+    </>
   );
 };
 
