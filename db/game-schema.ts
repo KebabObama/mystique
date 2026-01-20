@@ -72,7 +72,7 @@ export const inventory = pgTable("inventory", {
 // prettier-ignore
 export const instance = pgTable("instance", {
   id:       uuid("id").primaryKey().defaultRandom(),
-  lobbyId:  uuid("lobby_id").notNull().unique().references(() => lobby.id, { onDelete: "cascade" }),
+  lobbyId:  uuid("lobby_id").notNull().references(() => lobby.id, { onDelete: "cascade" }),
   sequence: uuid("sequence").array().notNull().default(sql`ARRAY[]::uuid[]`),
   data:     jsonb("data").notNull().default({}),
   masterId: uuid("master_id").notNull().references(() => user.id, { onDelete: "cascade" }),

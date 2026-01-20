@@ -31,8 +31,8 @@ export const inventoryRelations = relations(inventory, ({ one }) => ({
   item: one(item, { fields: [inventory.itemId], references: [item.id] }),
 }));
 
-export const instanceRelations = relations(instance, ({ one, many }) => ({
-  lobby: one(lobby, { fields: [instance.lobbyId], references: [lobby.id] }),
+export const instanceRelations = relations(instance, ({ many }) => ({
+  lobby: many(lobby),
   entities: many(entity),
 }));
 
