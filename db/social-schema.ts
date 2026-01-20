@@ -12,8 +12,9 @@ export const lobby = pgTable("lobby", {
 export const lobbyMember = pgTable("lobby_member", {
   lobbyId:    uuid("lobby_id").notNull().references(() => lobby.id, { onDelete: "cascade" }),
   userId:     uuid("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  lastSeen:   timestamp("last_seen").notNull().defaultNow().$onUpdate(() => new Date()).notNull(),
   }, (table) => [
-    primaryKey({ columns: [table.lobbyId, table.userId] }), 
+    primaryKey({ name: "lobby_member_pk", columns: [table.lobbyId, table.userId] }), 
     index("member_user_idx").on(table.userId)
 ]);
 

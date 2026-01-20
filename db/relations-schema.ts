@@ -1,12 +1,28 @@
 import { relations } from "drizzle-orm";
 import { account, session, user } from "./auth-schema";
-import { character, gameCharacters, gameInstance, inventory, item } from "./game-schema";
+import {
+  character,
+  characterEntity,
+  entity,
+  instance,
+  inventory,
+  item,
+  monster,
+  storage,
+} from "./game-schema";
 import { lobby, lobbyMember, message } from "./social-schema";
 
-// --- CHARACTER & INVENTORY ---
+export const itemRelations = relations(item, ({ many }) => ({
+  inventories: many(inventory),
+  storages: many(storage),
+}));
+
 export const characterRelations = relations(character, ({ many, one }) => ({
   inventory: many(inventory),
-  games: many(gameCharacters),
+  characterEntity: one(characterEntity, {
+    fields: [character.id],
+    references: [characterEntity.characterId],
+  }),
   owner: one(user, { fields: [character.ownerId], references: [user.id] }),
 }));
 
@@ -15,12 +31,39 @@ export const inventoryRelations = relations(inventory, ({ one }) => ({
   item: one(item, { fields: [inventory.itemId], references: [item.id] }),
 }));
 
-// --- LOBBY & CHAT (The Fixes are here) ---
+export const instanceRelations = relations(instance, ({ one, many }) => ({
+  lobby: one(lobby, { fields: [instance.lobbyId], references: [lobby.id] }),
+  entities: many(entity),
+}));
+
+export const entityRelations = relations(entity, ({ one, many }) => ({
+  instance: one(instance, { fields: [entity.instanceId], references: [instance.id] }),
+  monster: one(monster, { fields: [entity.id], references: [monster.entityId] }),
+  storage: many(storage),
+  characterEntity: one(characterEntity, {
+    fields: [entity.id],
+    references: [characterEntity.entityId],
+  }),
+}));
+
+export const characterEntityRelations = relations(characterEntity, ({ one }) => ({
+  character: one(character, { fields: [characterEntity.characterId], references: [character.id] }),
+  entity: one(entity, { fields: [characterEntity.entityId], references: [entity.id] }),
+}));
+
+export const monsterRelations = relations(monster, ({ one }) => ({
+  entity: one(entity, { fields: [monster.entityId], references: [entity.id] }),
+}));
+
+export const storageRelations = relations(storage, ({ one }) => ({
+  entity: one(entity, { fields: [storage.entityId], references: [entity.id] }),
+  item: one(item, { fields: [storage.itemId], references: [item.id] }),
+}));
+
 export const lobbyRelations = relations(lobby, ({ one, many }) => ({
-  // Added many relationships so lobby.members and lobby.messages work
   members: many(lobbyMember),
   messages: many(message),
-  gameInstance: one(gameInstance, { fields: [lobby.id], references: [gameInstance.lobbyId] }),
+  instance: one(instance, { fields: [lobby.id], references: [instance.lobbyId] }),
 }));
 
 export const lobbyMemberRelations = relations(lobbyMember, ({ one }) => ({
@@ -29,31 +72,15 @@ export const lobbyMemberRelations = relations(lobbyMember, ({ one }) => ({
 }));
 
 export const messageRelations = relations(message, ({ one }) => ({
-  // Changed 'group' to 'lobby' to match the table name and UI logic
   lobby: one(lobby, { fields: [message.lobbyId], references: [lobby.id] }),
   sender: one(user, { fields: [message.senderId], references: [user.id] }),
 }));
 
-// --- GAME LOGIC ---
-export const gameInstanceRelations = relations(gameInstance, ({ one, many }) => ({
-  lobby: one(lobby, { fields: [gameInstance.lobbyId], references: [lobby.id] }),
-  characters: many(gameCharacters),
-}));
-
-export const gameCharactersRelations = relations(gameCharacters, ({ one }) => ({
-  gameInstance: one(gameInstance, {
-    fields: [gameCharacters.gameInstanceId],
-    references: [gameInstance.id],
-  }),
-  character: one(character, { fields: [gameCharacters.characterId], references: [character.id] }),
-}));
-
-// --- AUTH & USER ---
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
-  characters: many(character), // Added so you can find characters from user
-  lobbyMemberships: many(lobbyMember), // Added for reverse lookups
+  characters: many(character),
+  lobbyMemberships: many(lobbyMember),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
