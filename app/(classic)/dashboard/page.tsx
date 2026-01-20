@@ -3,17 +3,17 @@ import { CharacterDashboard } from "@/components/character/character-dashboard";
 import { CharacterDelete } from "@/components/character/character-delete";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { character } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Game } from "@/lib/game";
+import { schema } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { Info, Trash } from "lucide-react";
 import { headers } from "next/headers";
 
 const getCharacters = async (userId: string) => {
   const results = await db.query.character.findMany({
-    where: eq(character.ownerId, userId),
+    where: eq(schema.character.ownerId, userId),
     with: { inventory: { with: { item: true } } },
   });
 

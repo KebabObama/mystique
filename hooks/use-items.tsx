@@ -1,10 +1,10 @@
 "use client";
 
-import { item } from "@/db/schema";
+import { schema } from "@/lib/schema";
 import React from "react";
 import { create } from "zustand";
 
-export type Item = typeof item.$inferSelect;
+export type Item = typeof schema.item.$inferSelect;
 
 type GameItems = {
   items: Item[];

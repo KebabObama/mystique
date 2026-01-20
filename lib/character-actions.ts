@@ -1,14 +1,14 @@
 "use server";
 
-import { character } from "@/db/schema";
+import { db } from "@/lib/db";
+import { Game } from "@/lib/game";
+import { schema } from "@/lib/schema";
 import { eq } from "drizzle-orm";
-import { db } from "./db";
-import type { Game } from "./game";
 
 export const createCharacter = async (userId: string, data: Game.Character) => {
   try {
     const [newChar] = await db
-      .insert(character)
+      .insert(schema.character)
       .values({
         ownerId: userId,
         name: data.name,
@@ -27,7 +27,7 @@ export const createCharacter = async (userId: string, data: Game.Character) => {
 
 export const deleteCharacter = async (characterId: string) => {
   try {
-    await db.delete(character).where(eq(character.id, characterId));
+    await db.delete(schema.character).where(eq(schema.character.id, characterId));
     return { success: true };
   } catch (error) {
     return { success: false, error: "Internal Server Error" };

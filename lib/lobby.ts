@@ -1,8 +1,7 @@
 "use server";
 
-import { character, lobby, lobbyMember, message } from "@/db/schema";
 import { db } from "@/lib/db";
-import { Game } from "@/lib/game";
+import { schema } from "@/lib/schema";
 import { and, eq } from "drizzle-orm";
 
 export namespace Lobby {
@@ -24,7 +23,7 @@ export namespace Lobby {
 
   export const getAll = async (userId: string): Promise<Lobby.Type[]> => {
     const data = await db.query.lobbyMember.findMany({
-      where: eq(lobbyMember.userId, userId),
+      where: eq(schema.lobbyMember.userId, userId),
       with: { lobby: { with: { members: { columns: {}, with: { user: true } }, messages: true } } },
     });
 
@@ -37,11 +36,11 @@ export namespace Lobby {
 
   export const create = async (userId: string, name: string): Promise<Lobby.Type> => {
     return await db.transaction(async (tx) => {
-      const [newLobby] = await tx.insert(lobby).values({ name }).returning();
-      await tx.insert(lobbyMember).values({ lobbyId: newLobby.id, userId });
+      const [newLobby] = await tx.insert(schema.lobby).values({ name }).returning();
+      await tx.insert(schema.lobbyMember).values({ lobbyId: newLobby.id, userId });
 
       const result = await tx.query.lobby.findFirst({
-        where: eq(lobby.id, newLobby.id),
+        where: eq(schema.lobby.id, newLobby.id),
         with: { members: { columns: {}, with: { user: true } }, messages: true },
       });
       if (!result) throw new Error("Failed to retrieve created lobby.");
@@ -52,23 +51,23 @@ export namespace Lobby {
   export const leave = async (userId: string, lobbyId: string) => {
     return await db.transaction(async (tx) => {
       await tx
-        .delete(lobbyMember)
-        .where(and(eq(lobbyMember.userId, userId), eq(lobbyMember.lobbyId, lobbyId)));
+        .delete(schema.lobbyMember)
+        .where(and(eq(schema.lobbyMember.userId, userId), eq(schema.lobbyMember.lobbyId, lobbyId)));
       const remaining = await tx
         .select()
-        .from(lobbyMember)
-        .where(eq(lobbyMember.lobbyId, lobbyId))
+        .from(schema.lobbyMember)
+        .where(eq(schema.lobbyMember.lobbyId, lobbyId))
         .limit(1);
       if (remaining.length === 0) {
-        await tx.delete(lobby).where(eq(lobby.id, lobbyId));
+        await tx.delete(schema.lobby).where(eq(schema.lobby.id, lobbyId));
       }
     });
   };
 
   export const join = async (userId: string, lobbyId: string): Promise<Lobby.Type> => {
-    await db.insert(lobbyMember).values({ lobbyId, userId }).onConflictDoNothing();
+    await db.insert(schema.lobbyMember).values({ lobbyId, userId }).onConflictDoNothing();
     const result = await db.query.lobby.findFirst({
-      where: eq(lobby.id, lobbyId),
+      where: eq(schema.lobby.id, lobbyId),
       with: { members: { columns: {}, with: { user: true } }, messages: true },
     });
     if (!result) throw new Error("Lobby not found.");
@@ -77,7 +76,7 @@ export namespace Lobby {
 
   export const send = async (userId: string, lobbyId: string, content: string) => {
     const [newMessage] = await db
-      .insert(message)
+      .insert(schema.message)
       .values({ senderId: userId, lobbyId, content })
       .returning();
     return newMessage;

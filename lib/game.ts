@@ -1,4 +1,4 @@
-import * as schema from "@/db/schema";
+import { schema } from "@/lib/schema";
 
 // prettier-ignore
 export namespace Game {
