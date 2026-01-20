@@ -1,9 +1,9 @@
 "use client";
 
+import { Border } from "@/components/ui/border";
 import { cn } from "@/lib/utils";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import type * as React from "react";
-import { Border } from "./border";
 
 const Body = ({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) => {
   return (

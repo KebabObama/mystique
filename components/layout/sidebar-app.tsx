@@ -1,5 +1,7 @@
 "use client";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Border } from "@/components/ui/border";
 import * as Sidebar from "@/components/ui/sidebar";
 import { useUser } from "@/hooks/use-user";
 import { authClient } from "@/lib/utils";
@@ -8,8 +10,6 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Border } from "../ui/border";
 import { SidebarMain } from "./sidebar-main";
 
 export const SidebarApp = () => {

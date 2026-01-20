@@ -28,4 +28,3 @@ export const message = pgTable("message", {
   }, (table) => [
     index("message_lobby_idx").on(table.lobbyId)
 ]);
-

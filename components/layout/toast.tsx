@@ -1,11 +1,11 @@
 "use client";
 
+import { Border } from "@/components/ui/border";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import type React from "react";
 import { toast as sonnerToast } from "sonner";
-import { Border } from "../ui/border";
-import { Button } from "../ui/button";
 
 type ToastOptions = {
   message: string | React.ReactNode;

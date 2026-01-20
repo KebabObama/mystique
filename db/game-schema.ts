@@ -142,4 +142,3 @@ export const storage = pgTable("storage", {
   index("storage_entity_idx").on(table.entityId),
   primaryKey({ name: "storage_pk", columns: [table.entityId, table.itemId] }),  
 ]);
-

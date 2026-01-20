@@ -1,7 +1,7 @@
+import "@/app/globals.css";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Pixelify_Sans } from "next/font/google";
-import "./globals.css";
 
 const pixelify = Pixelify_Sans({
   variable: "--font-pixelify-sans",

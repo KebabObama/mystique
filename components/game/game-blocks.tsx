@@ -84,4 +84,3 @@ const InstancedBlockGroup = React.memo(({ color, blocks, onClick }: any) => {
     </instancedMesh>
   );
 });
-

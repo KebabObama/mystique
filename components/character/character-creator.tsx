@@ -1,17 +1,23 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Dialog } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/layout/toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useUser } from "@/hooks/use-user";
 import { createCharacter } from "@/lib/character-actions";
 import { Game } from "@/lib/game";
 import { Dices, Minus, Plus } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
-import { toast } from "../layout/toast";
-import { Button } from "../ui/button";
-import { Card } from "../ui/card";
-import { Dialog } from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 export const CharacterCreator = () => {
   const ownerId = useUser((s) => s.id);

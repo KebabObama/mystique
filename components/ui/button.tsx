@@ -1,8 +1,8 @@
+import { Border } from "@/components/ui/border";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
-import { Border } from "./border";
 
 const buttonVariants = cva(
   "rounded-none active:translate-y-1 transition-transform relative inline-flex items-center justify-center gap-1.5 border-none cursor-pointer disabled:opacity-50",

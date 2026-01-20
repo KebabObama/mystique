@@ -1,8 +1,8 @@
 "use client";
 
+import { Border } from "@/components/ui/border";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
-import { Border } from "../ui/border";
-import { SidebarTrigger } from "../ui/sidebar";
 
 export const Header = () => {
   const text = (usePathname() ?? "").split("/")[1];

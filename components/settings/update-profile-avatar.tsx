@@ -1,17 +1,17 @@
 "use client";
 
+import { toast } from "@/components/layout/toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Border } from "@/components/ui/border";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Slider } from "@/components/ui/slider";
 import { useUser } from "@/hooks/use-user";
 import { uploadFile } from "@/lib/upload-file";
 import { authClient, getCroppedImg } from "@/lib/utils";
 import { Camera, Loader2 } from "lucide-react";
 import React, { useRef, useState } from "react";
 import Cropper, { type Area } from "react-easy-crop";
-import { toast } from "../layout/toast";
-import { Border } from "../ui/border";
-import { Dialog } from "../ui/dialog";
-import { Slider } from "../ui/slider";
 
 export const UpdateUserAvatar = () => {
   const user = useUser();

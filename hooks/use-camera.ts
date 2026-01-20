@@ -38,4 +38,3 @@ export const useCamera = create<CameraState>()(
     { name: "game-storage", partialize: (state) => ({ camera: state.camera }) }
   )
 );
-

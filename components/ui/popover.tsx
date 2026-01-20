@@ -1,9 +1,9 @@
 "use client";
 
+import { Border } from "@/components/ui/border";
 import { cn } from "@/lib/utils";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import * as React from "react";
-import { Border } from "./border";
 
 const Context = React.createContext<{
   triggerWidth: number | null;

@@ -1,14 +1,14 @@
 "use client";
 
+import { toast } from "@/components/layout/toast";
+import { Border } from "@/components/ui/border";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useUser } from "@/hooks/use-user";
 import { authClient } from "@/lib/utils";
 import { User } from "better-auth";
 import { Loader2, Save } from "lucide-react";
 import React from "react";
-import { toast } from "../layout/toast";
-import { Border } from "../ui/border";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 
 export const UpdateProfileName = ({ user }: { user?: User }) => {
   const [name, setName] = React.useState<string>(user?.name || "");

@@ -1,7 +1,7 @@
+import { Border } from "@/components/ui/border";
 import { cn } from "@/lib/utils";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import * as React from "react";
-import { Border } from "./border";
 
 const Context = ContextMenuPrimitive.Root;
 const ContextTrigger = ContextMenuPrimitive.Trigger;
@@ -47,4 +47,3 @@ const Menu = Object.assign(Context, {
 });
 
 export { Menu as Context };
-

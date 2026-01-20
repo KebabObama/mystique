@@ -1,6 +1,6 @@
+import { Border } from "@/components/ui/border";
 import { cn } from "@/lib/utils";
 import type * as React from "react";
-import { Border } from "./border";
 
 export const Input = ({ className, type, ...props }: React.ComponentProps<"input">) => {
   return (

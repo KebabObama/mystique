@@ -86,4 +86,3 @@ export const useBuilder = create<BuilderState>((set, get) => ({
     set({ blocks: nextBlocks, firstPoint: null });
   },
 }));
-

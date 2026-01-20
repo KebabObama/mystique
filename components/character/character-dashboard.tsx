@@ -1,9 +1,9 @@
 "use client";
 
+import { Dialog } from "@/components/ui/dialog";
+import { ItemCard } from "@/components/ui/item-card";
 import { Game } from "@/lib/game";
 import React from "react";
-import { Dialog } from "../ui/dialog";
-import { ItemCard } from "../ui/item-card";
 
 type CharacterInfoProps = {
   character: Game.Character;
@@ -111,4 +111,3 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
     </Dialog>
   );
 };
-

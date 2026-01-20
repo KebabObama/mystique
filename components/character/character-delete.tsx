@@ -1,13 +1,13 @@
 "use client";
 
+import { toast } from "@/components/layout/toast";
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { deleteCharacter } from "@/lib/character-actions";
 import type { Game } from "@/lib/game";
 import { redirect } from "next/navigation";
 import React from "react";
-import { toast } from "../layout/toast";
-import { Button } from "../ui/button";
-import { Dialog } from "../ui/dialog";
-import { Input } from "../ui/input";
 
 type CharacaterDeleteProps = {
   character: Game.Character;
@@ -42,4 +42,3 @@ export const CharacterDelete = ({ character, children, asChild }: CharacaterDele
     </Dialog>
   );
 };
-

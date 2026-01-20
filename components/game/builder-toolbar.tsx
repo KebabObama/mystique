@@ -1,13 +1,19 @@
 "use client";
 
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   SELECTION_MODES,
   TOOLS,
   useBuilder,
   type SelectionMode,
   type Tool,
 } from "@/hooks/use-builder";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 export const BuilderToolbar = () => {
   const { tool, setTool, selectionMode, setSelectionMode } = useBuilder();
@@ -42,4 +48,3 @@ export const BuilderToolbar = () => {
     </div>
   );
 };
-

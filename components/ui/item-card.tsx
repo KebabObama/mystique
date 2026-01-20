@@ -1,5 +1,5 @@
+import { Card } from "@/components/ui/card";
 import { Game } from "@/lib/game";
-import { Card } from "../ui/card";
 
 export const ItemCard = ({ item }: { item: Game.Character["inventory"][number] }) => {
   return (
@@ -58,7 +58,7 @@ export const ItemCard = ({ item }: { item: Game.Character["inventory"][number] }
         {item.armor && <StatLabel label="Armor" value={item.armor} />}
         <StatLabel
           label="require"
-          value={Game.KEYS.ATTRIBUTES.map((attr) => item.regiments[attr] ?? 0).join("-")}
+          value={Game.KEYS.ATTRIBUTES.map((attr) => item.requiremnts[attr] ?? 0).join("-")}
         />
       </div>
     </Card>
@@ -71,4 +71,3 @@ const StatLabel = ({ label, value }: { label: string; value: React.ReactNode }) 
     <span className="text-foreground">{value}</span>
   </p>
 );
-

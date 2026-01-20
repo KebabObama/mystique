@@ -1,7 +1,7 @@
 import type * as React from "react";
 
+import { Border } from "@/components/ui/border";
 import { cn } from "@/lib/utils";
-import { Border } from "./border";
 
 const Textarea = ({ className, ...props }: React.ComponentProps<"textarea">) => {
   return (

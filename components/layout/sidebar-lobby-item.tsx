@@ -1,5 +1,11 @@
 "use client";
 
+import { toast } from "@/components/layout/toast";
+import { Border } from "@/components/ui/border";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Dialog } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { useLobby } from "@/hooks/use-lobby";
 import { useUser } from "@/hooks/use-user";
 import { Lobby } from "@/lib/lobby";
@@ -7,12 +13,6 @@ import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Code, Delete, Play, Send, Text, Users } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
-import { Border } from "../ui/border";
-import { Button } from "../ui/button";
-import { Card } from "../ui/card";
-import { Dialog } from "../ui/dialog";
-import { Input } from "../ui/input";
-import { toast } from "./toast";
 
 export const SidebarLobbyItem = ({
   children,

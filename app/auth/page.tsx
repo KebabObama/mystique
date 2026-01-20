@@ -19,7 +19,7 @@ export default () => {
         <Google loading={loading} setLoading={setLoading} />
       </div>
 
-      <div className="relative text-center my-6">
+      <div className="relative my-6 text-center">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
         </div>

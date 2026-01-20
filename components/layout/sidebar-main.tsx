@@ -1,15 +1,15 @@
 "use client";
 
-import { useLobby } from "@/hooks/use-lobby";
-import { LayoutDashboard } from "lucide-react";
-import { redirect } from "next/navigation";
 import {
   SidebarContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuSub,
   useSidebar,
-} from "../ui/sidebar";
+} from "@/components/ui/sidebar";
+import { useLobby } from "@/hooks/use-lobby";
+import { LayoutDashboard } from "lucide-react";
+import { redirect } from "next/navigation";
 import { LobbyCreate } from "./lobby-create";
 import { LobbyJoin } from "./lobby-join";
 import { SidebarLobbyItem } from "./sidebar-lobby-item";

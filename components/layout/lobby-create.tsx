@@ -1,12 +1,12 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { SidebarMenuButton } from "@/components/ui/sidebar";
 import { useLobby } from "@/hooks/use-lobby";
 import { Plus } from "lucide-react";
 import React from "react";
-import { Button } from "../ui/button";
-import { Dialog } from "../ui/dialog";
-import { Input } from "../ui/input";
-import { SidebarMenuButton } from "../ui/sidebar";
 
 export const LobbyCreate = () => {
   const createLobby = useLobby((s) => s.createLobby);

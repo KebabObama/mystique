@@ -1,6 +1,6 @@
+import { Border } from "@/components/ui/border";
 import { cn } from "@/lib/utils";
 import React from "react";
-import { Border } from "./border";
 
 type CardProps = React.ComponentPropsWithoutRef<"section">;
 

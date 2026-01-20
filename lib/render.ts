@@ -15,4 +15,3 @@ export namespace Render {
     return { x: positionX, y: positionY, z: positionZ };
   };
 }
-

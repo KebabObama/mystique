@@ -33,4 +33,3 @@ export const deleteCharacter = async (characterId: string) => {
     return { success: false, error: "Internal Server Error" };
   }
 };
-

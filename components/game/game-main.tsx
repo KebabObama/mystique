@@ -1,11 +1,11 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useBuilder } from "@/hooks/use-builder";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Canvas } from "@react-three/fiber";
 import Link from "next/link";
 import React from "react";
-import { Button } from "../ui/button";
 
 type GameProps = { children: React.ReactNode; lobbyId: string };
 
@@ -36,4 +36,3 @@ export const GameMain = ({ children, lobbyId }: GameProps) => {
     </Canvas>
   );
 };
-

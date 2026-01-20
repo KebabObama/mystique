@@ -1,9 +1,9 @@
 "use client";
 
+import { Border } from "@/components/ui/border";
 import { cn } from "@/lib/utils";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import type * as React from "react";
-import { Border } from "./border";
 
 const Avatar = ({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Root>) => {
   return (
