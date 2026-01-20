@@ -8,7 +8,6 @@ import {
   type Tool,
 } from "@/hooks/use-builder";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { ColorPicker } from "./color-picker";
 
 export const BuilderToolbar = () => {
   const { tool, setTool, selectionMode, setSelectionMode } = useBuilder();
@@ -40,8 +39,6 @@ export const BuilderToolbar = () => {
           ))}
         </SelectContent>
       </Select>
-
-      <ColorPicker />
     </div>
   );
 };

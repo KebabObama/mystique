@@ -1,29 +1,7 @@
 import { relations } from "drizzle-orm";
 import { account, session, user } from "./auth-schema";
-import {
-  ability,
-  character,
-  gameCharacters,
-  gameInstance,
-  inventory,
-  item,
-  itemToAbility,
-} from "./game-schema";
+import { character, gameCharacters, gameInstance, inventory, item } from "./game-schema";
 import { lobby, lobbyMember, message } from "./social-schema";
-
-// --- RPG CORE ---
-export const abilityRelations = relations(ability, ({ many }) => ({
-  itemAbilities: many(itemToAbility),
-}));
-
-export const itemRelations = relations(item, ({ many }) => ({
-  itemAbilities: many(itemToAbility),
-}));
-
-export const itemToAbilityRelations = relations(itemToAbility, ({ one }) => ({
-  ability: one(ability, { fields: [itemToAbility.abilityId], references: [ability.id] }),
-  item: one(item, { fields: [itemToAbility.itemId], references: [item.id] }),
-}));
 
 // --- CHARACTER & INVENTORY ---
 export const characterRelations = relations(character, ({ many, one }) => ({

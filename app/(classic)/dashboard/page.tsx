@@ -1,7 +1,6 @@
 import { CharacterCreator } from "@/components/game/character-creator";
+import { CharacterDashboard } from "@/components/game/character-dashboard";
 import { CharacterDelete } from "@/components/game/character-delete";
-import { CharacterInfo } from "@/components/game/character-info";
-import { CharacterInventory } from "@/components/game/character-inventory";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { character } from "@/db/schema";
@@ -9,7 +8,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Game } from "@/lib/game";
 import { eq } from "drizzle-orm";
-import { Backpack, Info, Trash } from "lucide-react";
+import { Info, Trash } from "lucide-react";
 import { headers } from "next/headers";
 
 const getCharacters = async (userId: string) => {
@@ -44,7 +43,7 @@ export default async () => {
               No characters avaliable
             </span>
           )}
-          <section className="relative flex grid-cols-2 flex-col gap-6 md:grid lg:grid-cols-3">
+          <section className="relative flex grid-cols-3 flex-col gap-6 md:grid lg:grid-cols-4">
             {characters.map((e) => (
               <Card key={e.id}>
                 <h1 className="text-lg">{e.name}</h1>
@@ -56,22 +55,17 @@ export default async () => {
                     Level: <span className="text-foreground">{e.level}</span>
                   </p>
                 </div>
-                <div className="mt-3 grid grid-cols-3 gap-6 p-1.5">
+                <div className="mt-3 grid grid-cols-2 gap-6 p-1.5">
                   <CharacterDelete character={e} asChild>
                     <Button className="w-full" size={"sm"} variant={"destructive"}>
                       <Trash />
                     </Button>
                   </CharacterDelete>
-                  <CharacterInventory character={e} asChild>
-                    <Button className="w-full" size={"sm"}>
-                      <Backpack />
-                    </Button>
-                  </CharacterInventory>
-                  <CharacterInfo character={e} asChild>
+                  <CharacterDashboard character={e} asChild>
                     <Button className="w-full" size={"sm"}>
                       <Info />
                     </Button>
-                  </CharacterInfo>
+                  </CharacterDashboard>
                 </div>
               </Card>
             ))}

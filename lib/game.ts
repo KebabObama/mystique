@@ -3,46 +3,45 @@ import * as schema from "@/db/schema";
 // prettier-ignore
 export namespace Game {
   export const KEYS = {
-    RESISTANCES:  ["physical", "mystical"],
-    ATTRIBUTES:   ["str", "dex", "con", "int"],
+    ATTRIBUTES:   ["strength", "dexterity", "constitution", "intelligence"],
     RACES:        ["dwarf", "elf", "human", "orc",],
-    ITEM_TYPES:   ["weapon", "armor", "misc"],
-    RESOURCES:    ["health", "actions", "memories", "weight"],
-    EFFECTS:      ["corroding", "frostbite", "burning", "shocked", "bleeding", "toxin", "stunned"],
+    ITEM_TYPES:   ["weapon", "helmet", "armor", "leggings", "ring", "misc"],
+    EFFECTS:      ["corroding", "frostbite", "burning", "shocked"],
   } as const;
 
   export const INFO = {
-    ATTRIBUTES: {
-      str: { name: "strength", description: "Physical might and raw power. Determines how much heavy gear and loot you can carry before becoming encumbered." },
-      dex: { name: "dexterity", description: "Agility, reflexes, and balance. A higher score allows you to traverse the battlefield with greater speed." },
-      con: { name: "constitution", description: "Endurance and vital force. Governs your physical resilience and total health pool." },
-      int: { name: "intelligence", description: "Cognitive capacity and mental storage. Grants 'Memories' — mental tokens required to prepare and manifest spells." },
-    } satisfies Record<Attribute, { description: string; name: string }>,
+    ATTRIBUT_DESCRIPTION: {
+      strength:     "Physical might and raw power. Determines how much heavy gear and loot you can carry before becoming encumbered.",
+      dexterity:    "Agility, reflexes, and balance. A higher score allows you to traverse the battlefield with greater speed.",
+      constitution: "Endurance and vital force. Governs your physical resilience and total health pool.",
+      intelligence: "Cognitive capacity and mental storage. Grants 'Memories' — mental tokens required to prepare and manifest spells.",
+    } satisfies Record<Attribute, string>,
 
-    RACES: {
-      dwarf: {
-        description: "Stout, resilient, and unyielding. Their dense physiology grants them supernatural endurance and the strength to carry the heaviest of mountain-forged armor.",
-        starting: { str: 6, dex: 5, con: 6, int: 4 },
-      },
-      elf: {
-        description: "Graceful beings with sharpened senses. They move with an elegance that defies natural speed and possess minds naturally attuned to the flow of ancient memories.",
-        starting: { str: 3, dex: 6, con: 4, int: 6 },
-      },
-      human: {
-        description: "Versatile and ambitious. Humans lack the specialized traits of other races but make up for it with a balanced adaptability that allows them to excel in any discipline.",
-        starting: { str: 5, dex: 5, con: 5, int: 5 },
-      },
-      orc: {
-        description: "Bound by blood and iron. Orcs are driven by an unstoppable physical momentum, possessing the raw power to shatter defenses and the stamina to endure grueling conflicts.",
-        starting: { str: 8, dex: 4, con: 8, int: 3 },
-      },
-    } satisfies Record<Race, { description: string; starting: Record<Attribute, number> }>,
+    STARTING_RACES: {
+      dwarf:  { strength: 6, dexterity: 4, constitution: 6, intelligence: 4 },
+      elf:    { strength: 3, dexterity: 5, constitution: 4, intelligence: 7 },
+      human:  { strength: 4, dexterity: 7, constitution: 4, intelligence: 5 },
+      orc:    { strength: 7, dexterity: 4, constitution: 6, intelligence: 3 },
+    } satisfies Record<Race, Record<Attribute, number>>,
   } as const;
 
   export type Attribute   = (typeof KEYS.ATTRIBUTES   )[number];
   export type Race        = (typeof KEYS.RACES        )[number];
   export type ItemType    = (typeof KEYS.ITEM_TYPES   )[number];
   export type Effect      = (typeof KEYS.EFFECTS      )[number];
+
+
+  export type Ability = {
+    name: string;
+    cost: number;
+    // Amount of tiles that ability can be used for, zero stands for self
+    range: number;
+    // Negative amount makes multiple projectiles and positive creates AoE
+    targeting: number;
+    // Negative amount is healing and positive is damage 
+    amount: [number, number];
+    effects: Record<Effect, number>;
+  }
 
   export type PartialCharacter = typeof schema.character.$inferSelect & {
     inventory: (Omit<typeof schema.inventory.$inferSelect, "itemId" | "characterId"> & {
@@ -57,19 +56,23 @@ export namespace Game {
     stamina: number;
     weight: number;
     maxWeight: number;
+    maxMemory: number;
+    armor: number;
     inventory: (Omit<typeof schema.inventory.$inferSelect, "itemId" | "characterId"> & {
       item: typeof schema.item.$inferSelect;
     })[];
   };
 
   export const completeCharacter = (c: PartialCharacter): Character => {
-    const maxHp       = Math.floor(c.attributes.con + c.attributes.str / 2 + 5);
-    const actions     = Math.floor(c.level / 4 + c.attributes.dex / 8 + c.attributes.int / 8);
-    const maxWeight   = Math.floor(10 + c.attributes.str + c.attributes.con / 2);
-    const stamina     = Math.floor(c.attributes.dex / 2 + 5);
+    const maxHp       = Math.floor(c.attributes.constitution + c.attributes.strength / 2 + 5);
+    const actions     = Math.floor(c.level / 4 + c.attributes.dexterity / 8 + c.attributes.intelligence / 8);
+    const maxWeight   = Math.floor(10 + c.attributes.strength + c.attributes.constitution / 2);
+    const maxMemory   = Math.floor(c.attributes.intelligence / 2 + c.level + 1);
     const weight      = c.inventory.reduce((acc, e) => acc + e.item.weight, 0);
+    const armor       = c.inventory.reduce((acc, e) => acc + (e.equipped? (e.item.armor || 0): 0), 0);
+    const stamina     = Math.floor((c.attributes.dexterity / 2 + 5) / (maxWeight < weight ? 2 : 1));
     return {
-      ...c, maxHp, maxWeight, stamina, weight, actions, maxActions: actions,
+      ...c, maxMemory, armor, maxHp, maxWeight, stamina, weight, actions, maxActions: actions, memory: Math.min(c.memory, maxMemory)
     } satisfies Character;
   };
 

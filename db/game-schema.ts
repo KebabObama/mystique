@@ -3,6 +3,7 @@ import {
   boolean,
   index,
   integer,
+  json,
   jsonb,
   pgTable,
   primaryKey,
@@ -14,15 +15,6 @@ import { user } from "./auth-schema";
 import { lobby } from "./social-schema";
 
 // prettier-ignore
-export const ability = pgTable("ability", {
-  id:               uuid("id").primaryKey().defaultRandom(),
-  name:             text("name").notNull().unique(),
-  cost:             integer("cost").notNull().default(0),
-  rolls:            integer("rolls").array().notNull().default([]),
-  effects:          jsonb("effects").notNull().$type<Partial<Record<Game.Effect, number>>>().default({}),
-});
-
-// prettier-ignore
 export const item = pgTable("item", {
   id:               uuid("id").primaryKey().defaultRandom(),
   name:             text("name").notNull().unique(),
@@ -30,15 +22,9 @@ export const item = pgTable("item", {
   value:            integer("value").notNull().default(0),
   weight:           integer("weight").notNull().default(0),
   armor:            integer("armor"),
+  abilities:        json("abilities").notNull().$type<Game.Ability[]>(),
+  regiments: json("regiments").notNull().$type<Partial<Record<Game.Attribute, number | null>>>().default({}),
 });
-
-// prettier-ignore
-export const itemToAbility = pgTable("item_to_ability", {
-  abilityId:      uuid("ability_id").notNull().references(() => ability.id, { onDelete: "cascade" }),
-  itemId:         uuid("item_id").notNull().references(() => item.id, { onDelete: "cascade" }),
-}, (table) => [
-  primaryKey({ columns: [table.abilityId, table.itemId] }),
-]);
 
 // prettier-ignore
 export const character = pgTable("character", {
@@ -49,7 +35,9 @@ export const character = pgTable("character", {
   level:          integer("level").notNull().default(1),
   xp:             integer("xp").notNull().default(0),
   attributes:     jsonb("attributes").notNull().$type<Record<Game.Attribute, number>>(),
+  memory:         integer("hp").notNull().default(2),
   hp:             integer("hp").notNull().default(10),
+  coins:          integer("value").notNull().default(0),
 }, (table) => [
   index("character_owner_idx").on(table.ownerId),
 ]);

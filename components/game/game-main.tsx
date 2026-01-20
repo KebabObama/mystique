@@ -1,6 +1,6 @@
 "use client";
 
-import { useBuilder } from "@/hooks/use-builder"; // Updated hook
+import { useBuilder } from "@/hooks/use-builder";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Canvas } from "@react-three/fiber";
 import Link from "next/link";
@@ -12,7 +12,6 @@ type GameProps = { children: React.ReactNode; lobbyId: string };
 export const GameMain = ({ children, lobbyId }: GameProps) => {
   const mobile = useIsMobile();
   const firstPoint = useBuilder((s) => s.firstPoint);
-  const moveSource = useBuilder((s) => s.moveSource);
 
   if (mobile) {
     return (
@@ -27,21 +26,10 @@ export const GameMain = ({ children, lobbyId }: GameProps) => {
 
   return (
     <Canvas camera={{ position: [10, 10, 10] }}>
-      {(firstPoint || moveSource) && (
-        <mesh
-          position={[
-            (firstPoint?.[0] ?? moveSource![0]) + 0.5,
-            (firstPoint?.[1] ?? moveSource![1]) + 0.5,
-            (firstPoint?.[2] ?? moveSource![2]) + 0.5,
-          ]}
-        >
+      {firstPoint && (
+        <mesh position={[firstPoint?.[0] + 0.5, firstPoint?.[1] + 0.5, firstPoint?.[2] + 0.5]}>
           <boxGeometry args={[1.05, 1.05, 1.05]} />
-          <meshBasicMaterial
-            color={moveSource ? "blue" : "lime"}
-            wireframe
-            transparent
-            opacity={0.5}
-          />
+          <meshBasicMaterial color={"lime"} wireframe transparent opacity={0.5} />
         </mesh>
       )}
       {children}

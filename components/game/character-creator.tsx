@@ -19,12 +19,14 @@ export const CharacterCreator = () => {
     Game.completeCharacter({
       id: "",
       ownerId,
+      coins: 0,
       name: "",
+      memory: 0,
       race: "human",
       level: 1,
       xp: 0,
       hp: 10,
-      attributes: { ...Game.INFO.RACES.human.starting },
+      attributes: { ...Game.INFO.STARTING_RACES.human },
       inventory: [],
     })
   );
@@ -41,7 +43,7 @@ export const CharacterCreator = () => {
   };
 
   const [attrPoints, setAttrPoints] = React.useState<number>(7);
-  const [hoveredAttr, setHoveredAttr] = React.useState<Game.Attribute>("str");
+  const [hoveredAttr, setHoveredAttr] = React.useState<Game.Attribute>("strength");
   const [open, setOpen] = React.useState(false);
 
   const syncChar = (updatedFields: Partial<Game.PartialCharacter>) => {
@@ -49,13 +51,13 @@ export const CharacterCreator = () => {
   };
 
   const handleRaceChange = (race: Game.Race) => {
-    const newBase = Game.INFO.RACES[race].starting;
+    const newBase = Game.INFO.STARTING_RACES[race];
     setAttrPoints(7);
     syncChar({ race, attributes: { ...newBase } });
   };
 
   const modifyAttribute = (attr: Game.Attribute, amount: number) => {
-    const baseValue = Game.INFO.RACES[char.race].starting[attr];
+    const baseValue = Game.INFO.STARTING_RACES[char.race][attr];
     const currentValue = char.attributes[attr];
 
     if (amount > 0 && (attrPoints <= 0 || currentValue >= baseValue + 3)) return;
@@ -78,8 +80,10 @@ export const CharacterCreator = () => {
             race: "human",
             level: 1,
             xp: 0,
+            memory: 0,
+            coins: 0,
             hp: 10,
-            attributes: { ...Game.INFO.RACES.human.starting },
+            attributes: { ...Game.INFO.STARTING_RACES.human },
             inventory: [],
           })
         );
@@ -136,7 +140,7 @@ export const CharacterCreator = () => {
         </div>
 
         {Game.KEYS.ATTRIBUTES.map((attr) => {
-          const base = Game.INFO.RACES[char.race].starting[attr];
+          const base = Game.INFO.STARTING_RACES[char.race][attr];
           const current = char.attributes[attr];
           return (
             <div
@@ -145,7 +149,7 @@ export const CharacterCreator = () => {
               onMouseEnter={() => setHoveredAttr(attr)}
             >
               <span className="group-hover:text-foreground text-muted text-lg font-black capitalize transition-colors">
-                {Game.INFO.ATTRIBUTES[attr].name}
+                {attr}
               </span>
               <div className="flex items-center gap-3">
                 <Button
@@ -176,11 +180,9 @@ export const CharacterCreator = () => {
 
         <Dialog.Footer className="flex flex-col gap-4 sm:flex-col">
           <Card className="mt-3 min-h-28 text-center">
-            <h3 className="text-lg font-black uppercase">
-              {Game.INFO.ATTRIBUTES[hoveredAttr].name}
-            </h3>
+            <h3 className="text-lg font-black uppercase">{hoveredAttr}</h3>
             <p className="leading-tight font-medium opacity-70">
-              {Game.INFO.ATTRIBUTES[hoveredAttr].description}
+              {Game.INFO.ATTRIBUT_DESCRIPTION[hoveredAttr]}
             </p>
           </Card>
 
