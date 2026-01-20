@@ -75,6 +75,7 @@ export const instance = pgTable("instance", {
   lobbyId:  uuid("lobby_id").notNull().unique().references(() => lobby.id, { onDelete: "cascade" }),
   sequence: uuid("sequence").array().notNull().default(sql`ARRAY[]::uuid[]`),
   data:     jsonb("data").notNull().default({}),
+  masterId: uuid("master_id").notNull().references(() => user.id, { onDelete: "cascade" }),
 });
 
 /* ============================================================
