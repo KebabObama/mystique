@@ -22,7 +22,7 @@ const getCharacters = async (userId: string) => {
       ...char,
       inventory: char.inventory.map(({ itemId, characterId: _, ...rest }) => ({
         ...rest,
-        item: rest.item,
+        ...rest.item,
       })),
     })
   );

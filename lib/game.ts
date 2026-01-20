@@ -44,12 +44,10 @@ export namespace Game {
   }
 
   export type PartialCharacter = typeof schema.character.$inferSelect & {
-    inventory: (Omit<typeof schema.inventory.$inferSelect, "itemId" | "characterId"> & {
-      item: typeof schema.item.$inferSelect;
-    })[];
+    inventory: (Omit<typeof schema.inventory.$inferSelect, "itemId" | "characterId"> & typeof schema.item.$inferSelect)[];
   };
 
-  export type Character = typeof schema.character.$inferSelect & {
+  export type Character = PartialCharacter & {
     maxHp: number;
     actions: number;
     maxActions: number;
@@ -58,9 +56,6 @@ export namespace Game {
     maxWeight: number;
     maxMemory: number;
     armor: number;
-    inventory: (Omit<typeof schema.inventory.$inferSelect, "itemId" | "characterId"> & {
-      item: typeof schema.item.$inferSelect;
-    })[];
   };
 
   export const completeCharacter = (c: PartialCharacter): Character => {
@@ -68,8 +63,8 @@ export namespace Game {
     const actions     = Math.floor(c.level / 4 + c.attributes.dexterity / 8 + c.attributes.intelligence / 8);
     const maxWeight   = Math.floor(10 + c.attributes.strength + c.attributes.constitution / 2);
     const maxMemory   = Math.floor(c.attributes.intelligence / 2 + c.level + 1);
-    const weight      = c.inventory.reduce((acc, e) => acc + e.item.weight, 0);
-    const armor       = c.inventory.reduce((acc, e) => acc + (e.equipped? (e.item.armor || 0): 0), 0);
+    const weight      = c.inventory.reduce((acc, e) => acc + e.weight, 0);
+    const armor       = c.inventory.reduce((acc, e) => acc + (e.equipped? (e.armor || 0): 0), 0);
     const stamina     = Math.floor((c.attributes.dexterity / 2 + 5) / (maxWeight < weight ? 2 : 1));
     return {
       ...c, maxMemory, armor, maxHp, maxWeight, stamina, weight, actions, maxActions: actions, memory: Math.min(c.memory, maxMemory)

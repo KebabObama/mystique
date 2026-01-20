@@ -76,7 +76,7 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
                 Abilitites:
                 <span className="text-foreground">
                   {character.inventory.reduce(
-                    (acc, e) => acc + (e.equipped ? e.item.abilities.length : 0),
+                    (acc, e) => acc + (e.equipped ? e.abilities.length : 0),
                     0
                   )}
                 </span>
@@ -84,19 +84,13 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
               <span className="flex w-full flex-row justify-between">
                 Castable abilitites:
                 <span className="text-foreground">
-                  {character.inventory.reduce(
-                    (acc, e) =>
-                      acc +
-                      (e.equipped &&
-                      e.item.abilities.reduce(
-                        (bcc, f) =>
-                          bcc + (f.cost <= character.memory && character.actions > 0 ? f.cost : 0),
-                        0
-                      )
-                        ? e.item.abilities.length
-                        : 0),
-                    0
-                  )}
+                  {
+                    // prettier-ignore
+                    character.inventory.reduce(
+                    (acc, item) => acc + (item.equipped && item.abilities.reduce(
+                        (bcc, ability) => bcc + (ability.cost <= character.memory && character.actions > 0 ? ability.cost : 0), 0)
+                        ? item.abilities.length : 0), 0)
+                  }
                 </span>
               </span>
             </Dialog.Description>
@@ -104,15 +98,15 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
           <section className="col-span-2 flex flex-col gap-6">
             {character.inventory.map((e) => (
               <Card
-                key={e.item.id}
+                key={e.id}
                 className={`grid w-full grid-cols-3 p-0 text-xs ${e.equipped ? "bg-background/80" : ""} shadow-sm`}
               >
                 <div className="col-span-2 flex w-full flex-col justify-between px-1.5 py-1">
                   <div className="flex items-center justify-between">
                     <h1 className="text-foreground w-full text-base font-semibold capitalize">
-                      {e.quantity}x - {e.item.name}
+                      {e.quantity}x - {e.name}
                     </h1>
-                    <span className="text-muted text-end">{e.item.type}</span>
+                    <span className="text-muted text-end">{e.type}</span>
                   </div>
                   <table className="w-full pb-2 text-left text-xs">
                     <thead>
@@ -126,7 +120,7 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
                       </tr>
                     </thead>
                     <tbody className="text-muted text-center">
-                      {e.item.abilities.map((f) => (
+                      {e.abilities.map((f) => (
                         <tr key={f.name}>
                           <td className="text-foreground text-start font-medium">{f.name}</td>
                           <td>{f.range}</td>
@@ -152,14 +146,12 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
                 </div>
 
                 <div className="text-muted flex h-full flex-col justify-center border-l-6 px-2 py-1">
-                  <StatLabel label="Value" value={e.item.value} />
-                  <StatLabel label="Weight" value={e.item.weight} />
-                  {e.item.armor && <StatLabel label="Armor" value={e.item.armor} />}
+                  <StatLabel label="Value" value={e.value} />
+                  <StatLabel label="Weight" value={e.weight} />
+                  {e.armor && <StatLabel label="Armor" value={e.armor} />}
                   <StatLabel
                     label="require"
-                    value={Game.KEYS.ATTRIBUTES.map((attr) => e.item.regiments[attr] ?? 0).join(
-                      "-"
-                    )}
+                    value={Game.KEYS.ATTRIBUTES.map((attr) => e.regiments[attr] ?? 0).join("-")}
                   />
                 </div>
               </Card>
