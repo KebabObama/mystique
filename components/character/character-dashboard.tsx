@@ -2,8 +2,8 @@
 
 import { Game } from "@/lib/game";
 import React from "react";
-import { Card } from "../ui/card";
 import { Dialog } from "../ui/dialog";
+import { ItemCard } from "../ui/item-card";
 
 type CharacterInfoProps = {
   character: Game.Character;
@@ -17,7 +17,7 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
       <Dialog.Trigger asChild={asChild}>{children}</Dialog.Trigger>
       <Dialog.Content className="text-lg select-none" onContextMenu={(e) => e.preventDefault()}>
         <Dialog.Title>Information</Dialog.Title>
-        <div className="mt-3 grid h-full grid-cols-3 gap-6">
+        <div className="gapbash-6 mt-3 grid h-full grid-cols-3">
           <section className="flex h-full flex-col justify-between gap-6">
             <Dialog.Description className="text-muted -mx-1.5 mb-1.5 flex h-full flex-col px-1.5">
               <span className="flex w-full flex-row justify-between">
@@ -32,7 +32,7 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
               <span className="flex w-full flex-row justify-between">
                 XP:
                 <span className="text-foreground">
-                  {character.xp} / {character.level * 5}
+                  {character.xp} / {character.level * 10}
                 </span>
               </span>
               <span className="flex w-full flex-row justify-between">
@@ -73,7 +73,13 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
                 </span>
               </span>
               <span className="flex w-full flex-row justify-between">
-                Abilitites:
+                Equipped items:
+                <span className="text-foreground">
+                  {character.inventory.reduce((acc, e) => (e.equipped ? acc + 1 : acc), 0)}
+                </span>
+              </span>
+              <span className="flex w-full flex-row justify-between">
+                Abilities:
                 <span className="text-foreground">
                   {character.inventory.reduce(
                     (acc, e) => acc + (e.equipped ? e.abilities.length : 0),
@@ -82,7 +88,7 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
                 </span>
               </span>
               <span className="flex w-full flex-row justify-between">
-                Castable abilitites:
+                Castable abilities:
                 <span className="text-foreground">
                   {
                     // prettier-ignore
@@ -96,65 +102,8 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
             </Dialog.Description>
           </section>
           <section className="col-span-2 flex flex-col gap-6">
-            {character.inventory.map((e) => (
-              <Card
-                key={e.id}
-                className={`grid w-full grid-cols-3 p-0 text-xs ${e.equipped ? "bg-background/80" : ""} shadow-sm`}
-              >
-                <div className="col-span-2 flex w-full flex-col justify-between px-1.5 py-1">
-                  <div className="flex items-center justify-between">
-                    <h1 className="text-foreground w-full text-base font-semibold capitalize">
-                      {e.quantity}x - {e.name}
-                    </h1>
-                    <span className="text-muted text-end">{e.type}</span>
-                  </div>
-                  <table className="w-full pb-2 text-left text-xs">
-                    <thead>
-                      <tr className="sticky text-center font-semibold">
-                        <td className="text-start">Name</td>
-                        <td>Range</td>
-                        <td>AoE / Hits</td>
-                        <td>Cost</td>
-                        <td>Damage / Heal</td>
-                        <td className="text-end">Effects</td>
-                      </tr>
-                    </thead>
-                    <tbody className="text-muted text-center">
-                      {e.abilities.map((f) => (
-                        <tr key={f.name}>
-                          <td className="text-foreground text-start font-medium">{f.name}</td>
-                          <td>{f.range}</td>
-                          <td>
-                            {f.targeting < 0 ? "A" : "H"}-{Math.abs(f.targeting)}
-                          </td>
-                          <td>{f.cost}</td>
-                          <td>
-                            <span>
-                              {f.amount[0] < 0 ? "H" : "D"}: {f.amount[0]} - {f.amount[1]}
-                            </span>
-                          </td>
-                          <td className="text-end uppercase">
-                            {Game.KEYS.EFFECTS.reduce(
-                              (acc, g) => `${acc}${g[0]}${f.effects[g] ?? 0} `,
-                              ""
-                            ).trim()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="text-muted flex h-full flex-col justify-center border-l-6 px-2 py-1">
-                  <StatLabel label="Value" value={e.value} />
-                  <StatLabel label="Weight" value={e.weight} />
-                  {e.armor && <StatLabel label="Armor" value={e.armor} />}
-                  <StatLabel
-                    label="require"
-                    value={Game.KEYS.ATTRIBUTES.map((attr) => e.regiments[attr] ?? 0).join("-")}
-                  />
-                </div>
-              </Card>
+            {character.inventory.map((item) => (
+              <ItemCard item={item} key={item.id} />
             ))}
           </section>
         </div>
@@ -162,11 +111,4 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
     </Dialog>
   );
 };
-
-const StatLabel = ({ label, value }: { label: string; value: React.ReactNode }) => (
-  <p className="flex flex-row justify-between">
-    <span className="text-muted capitalize">{label}</span>
-    <span className="text-foreground">{value}</span>
-  </p>
-);
 

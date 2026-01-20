@@ -1,6 +1,6 @@
-import { CharacterCreator } from "@/components/game/character-creator";
-import { CharacterDashboard } from "@/components/game/character-dashboard";
-import { CharacterDelete } from "@/components/game/character-delete";
+import { CharacterCreator } from "@/components/character/character-creator";
+import { CharacterDashboard } from "@/components/character/character-dashboard";
+import { CharacterDelete } from "@/components/character/character-delete";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { character } from "@/db/schema";
@@ -40,7 +40,7 @@ export default async () => {
         <>
           {characters.length === 0 && (
             <span className="absolute top-1/2 left-1/2 -translate-1/2 text-lg">
-              No characters avaliable
+              No characters available
             </span>
           )}
           <section className="relative flex grid-cols-3 flex-col gap-6 md:grid lg:grid-cols-4">
