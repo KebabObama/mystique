@@ -99,7 +99,7 @@ export const SidebarLobbyItem = ({ children, lobby }: SidebarLobbyItemProps) => 
                 <Send />
                 Send
               </Button>
-              <Button onClick={() => redirect(`/lobby/${lobby.id}`)}>
+              <Button onClick={() => redirect(`/game/${lobby.id}`)}>
                 <Play />
                 Play
               </Button>
