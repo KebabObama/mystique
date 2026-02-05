@@ -5,118 +5,113 @@ import { Instance } from "@/lib/instances";
 import { schema } from "@/lib/schema";
 import { and, eq } from "drizzle-orm";
 
-export namespace Lobby {
-  export type Type = {
+export type Lobby = {
+  id: string;
+  name: string;
+  createdAt: Date;
+  members: {
     id: string;
     name: string;
+    email: string;
+    emailVerified: boolean;
+    image: string | null;
     createdAt: Date;
-    members: {
-      id: string;
-      name: string;
-      email: string;
-      emailVerified: boolean;
-      image: string | null;
-      createdAt: Date;
-      updatedAt: Date;
-    }[];
-    messages: { id: string; createdAt: Date; lobbyId: string; senderId: string; content: string }[];
-  };
+    updatedAt: Date;
+  }[];
+  messages: { id: string; createdAt: Date; lobbyId: string; senderId: string; content: string }[];
+};
 
-  export const getAll = async (userId: string): Promise<Lobby.Type[]> => {
-    const data = await db.query.lobbyMember.findMany({
-      where: eq(schema.lobbyMember.userId, userId),
-      with: { lobby: { with: { members: { columns: {}, with: { user: true } }, messages: true } } },
-    });
+export const getAll = async (userId: string): Promise<Lobby[]> => {
+  const data = await db.query.lobbyMember.findMany({
+    where: eq(schema.lobbyMember.userId, userId),
+    with: { lobby: { with: { members: { columns: {}, with: { user: true } }, messages: true } } },
+  });
 
-    return data.map(({ lobby }) => ({
-      ...lobby,
-      members: lobby.members.map((m) => m.user),
-      messages: lobby.messages,
-    }));
-  };
+  return data.map(({ lobby }) => ({
+    ...lobby,
+    members: lobby.members.map((m) => m.user),
+    messages: lobby.messages,
+  }));
+};
 
-  export const getInstancedOne = async (lobbyId: string) => {
-    const results = await db.query.lobby.findFirst({
-      where: eq(schema.lobby.id, lobbyId),
-      with: {
-        characters: {
-          columns: {},
-          with: { character: { with: { inventory: { columns: {}, with: { item: true } } } } },
-        },
-        members: { columns: {}, with: { user: true } },
+export const getInstancedOne = async (lobbyId: string) => {
+  const results = await db.query.lobby.findFirst({
+    where: eq(schema.lobby.id, lobbyId),
+    with: {
+      characters: {
+        columns: {},
+        with: { character: { with: { inventory: { columns: {}, with: { item: true } } } } },
       },
-    });
-    if (!results) throw new Error(`Lobby with id ${lobbyId} not found`);
-    const characters = results.characters.map((e) => ({
-      ...e.character,
-      inventory: e.character.inventory.map((f) => f.item),
-    }));
-    return {
-      ...results,
-      members: results?.members.map((e) => e.user),
-      characters,
-      state: { turn: 0, isStarted: false },
-    } satisfies Instance.Type;
-  };
+      members: { columns: {}, with: { user: true } },
+    },
+  });
+  if (!results) throw new Error(`Lobby with id ${lobbyId} not found`);
+  const characters = results.characters.map((e) => ({
+    ...e.character,
+    inventory: e.character.inventory.map((f) => f.item),
+  }));
+  return {
+    ...results,
+    members: results?.members.map((e) => e.user),
+    characters,
+    state: { turn: 0, isStarted: false },
+  } satisfies Instance;
+};
 
-  export const link = async (lobbyId: string, characterId: string) => {
-    return await db.transaction(async (tx) => {
-      tx.insert(schema.lobbyCharacter).values({ lobbyId, characterId });
-      return tx.query.character.findFirst({ where: eq(schema.character.id, characterId) });
-    });
-  };
+export const link = async (lobbyId: string, characterId: string) => {
+  return await db.transaction(async (tx) => {
+    tx.insert(schema.lobbyCharacter).values({ lobbyId, characterId });
+    return tx.query.character.findFirst({ where: eq(schema.character.id, characterId) });
+  });
+};
 
-  export const create = async (userId: string, name: string): Promise<Lobby.Type> => {
-    return await db.transaction(async (tx) => {
-      const [newLobby] = await tx
-        .insert(schema.lobby)
-        .values({ name, masterId: userId })
-        .returning();
-      await tx.insert(schema.lobbyMember).values({ lobbyId: newLobby.id, userId });
+export const create = async (userId: string, name: string): Promise<Lobby> => {
+  return await db.transaction(async (tx) => {
+    const [newLobby] = await tx.insert(schema.lobby).values({ name, masterId: userId }).returning();
+    await tx.insert(schema.lobbyMember).values({ lobbyId: newLobby.id, userId });
 
-      const result = await tx.query.lobby.findFirst({
-        where: eq(schema.lobby.id, newLobby.id),
-        with: { members: { columns: {}, with: { user: true } }, messages: true },
-      });
-
-      if (!result) throw new Error("Failed to retrieve created lobby.");
-      return { ...result, members: result.members.map((m) => m.user), messages: [] };
-    });
-  };
-
-  export const leave = async (userId: string, lobbyId: string) => {
-    return await db.transaction(async (tx) => {
-      await tx
-        .delete(schema.lobbyMember)
-        .where(and(eq(schema.lobbyMember.userId, userId), eq(schema.lobbyMember.lobbyId, lobbyId)));
-
-      const remaining = await tx
-        .select()
-        .from(schema.lobbyMember)
-        .where(eq(schema.lobbyMember.lobbyId, lobbyId))
-        .limit(1);
-
-      if (remaining.length === 0) await tx.delete(schema.lobby).where(eq(schema.lobby.id, lobbyId));
-    });
-  };
-
-  export const join = async (userId: string, lobbyId: string): Promise<Lobby.Type> => {
-    await db.insert(schema.lobbyMember).values({ lobbyId, userId }).onConflictDoNothing();
-
-    const result = await db.query.lobby.findFirst({
-      where: eq(schema.lobby.id, lobbyId),
+    const result = await tx.query.lobby.findFirst({
+      where: eq(schema.lobby.id, newLobby.id),
       with: { members: { columns: {}, with: { user: true } }, messages: true },
     });
 
-    if (!result) throw new Error("Lobby not found.");
-    return { ...result, members: result.members.map((m) => m.user) };
-  };
+    if (!result) throw new Error("Failed to retrieve created lobby.");
+    return { ...result, members: result.members.map((m) => m.user), messages: [] };
+  });
+};
 
-  export const send = async (userId: string, lobbyId: string, content: string) => {
-    const [newMessage] = await db
-      .insert(schema.message)
-      .values({ senderId: userId, lobbyId, content })
-      .returning();
-    return newMessage;
-  };
-}
+export const leave = async (userId: string, lobbyId: string) => {
+  return await db.transaction(async (tx) => {
+    await tx
+      .delete(schema.lobbyMember)
+      .where(and(eq(schema.lobbyMember.userId, userId), eq(schema.lobbyMember.lobbyId, lobbyId)));
+
+    const remaining = await tx
+      .select()
+      .from(schema.lobbyMember)
+      .where(eq(schema.lobbyMember.lobbyId, lobbyId))
+      .limit(1);
+
+    if (remaining.length === 0) await tx.delete(schema.lobby).where(eq(schema.lobby.id, lobbyId));
+  });
+};
+
+export const join = async (userId: string, lobbyId: string): Promise<Lobby> => {
+  await db.insert(schema.lobbyMember).values({ lobbyId, userId }).onConflictDoNothing();
+
+  const result = await db.query.lobby.findFirst({
+    where: eq(schema.lobby.id, lobbyId),
+    with: { members: { columns: {}, with: { user: true } }, messages: true },
+  });
+
+  if (!result) throw new Error("Lobby not found.");
+  return { ...result, members: result.members.map((m) => m.user) };
+};
+
+export const send = async (userId: string, lobbyId: string, content: string) => {
+  const [newMessage] = await db
+    .insert(schema.message)
+    .values({ senderId: userId, lobbyId, content })
+    .returning();
+  return newMessage;
+};

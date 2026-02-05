@@ -7,7 +7,7 @@ import { useSocket } from "./use-socket";
 import { useUser } from "./use-user";
 
 export type LobbyStore = {
-  lobbies: Lobby.Type[];
+  lobbies: Lobby[];
   init: () => void;
   createLobby: (name: string) => void;
   joinLobby: (lobbyId: string) => void;
@@ -25,11 +25,11 @@ export const useLobby = create<LobbyStore>((set) => ({
 
     socket.emit("lobby:get", userId);
 
-    socket.on("lobby:get", (lobbies: Lobby.Type[]) => {
+    socket.on("lobby:get", (lobbies: Lobby[]) => {
       set({ lobbies });
     });
 
-    socket.on("lobby:create", (lobby: Lobby.Type) => {
+    socket.on("lobby:create", (lobby: Lobby) => {
       set((s) => ({ lobbies: [...s.lobbies, lobby] }));
     });
 
@@ -37,7 +37,7 @@ export const useLobby = create<LobbyStore>((set) => ({
       set((s) => ({ lobbies: s.lobbies.filter((l) => l.id !== lobbyId) }));
     });
 
-    socket.on("lobby:join", (updated: Lobby.Type) => {
+    socket.on("lobby:join", (updated: Lobby) => {
       set((s) => ({
         lobbies: s.lobbies.some((l) => l.id === updated.id)
           ? s.lobbies.map((l) => (l.id === updated.id ? updated : l))
@@ -45,7 +45,7 @@ export const useLobby = create<LobbyStore>((set) => ({
       }));
     });
 
-    socket.on("lobby:send", (msg: Lobby.Type["messages"][0]) => {
+    socket.on("lobby:send", (msg: Lobby["messages"][0]) => {
       const currentUserId = useUser.getState().id;
       set((s) => ({
         lobbies: s.lobbies.map((l) => {

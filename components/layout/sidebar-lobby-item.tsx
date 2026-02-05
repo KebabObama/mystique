@@ -8,13 +8,13 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useLobby } from "@/hooks/use-lobby";
 import { useUser } from "@/hooks/use-user";
-import { Lobby } from "@/lib/lobby";
+import type { Lobby } from "@/lib/lobby";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Code, Delete, Play, Send, Text, Users } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
 
-type SidebarLobbyItemProps = { lobby: Lobby.Type; readonly children: React.ReactNode };
+type SidebarLobbyItemProps = { lobby: Lobby; readonly children: React.ReactNode };
 
 export const SidebarLobbyItem = ({ children, lobby }: SidebarLobbyItemProps) => {
   const inputRef = React.useRef<HTMLInputElement>(null);

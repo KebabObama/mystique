@@ -1,4 +1,4 @@
-import { Lobby } from "@/lib/lobby";
+import * as Lobby from "@/lib/lobby";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Server as HTTPServer } from "node:http";
 import type { Socket as NetSocket } from "node:net";
