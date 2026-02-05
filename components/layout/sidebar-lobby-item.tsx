@@ -14,13 +14,9 @@ import { Code, Delete, Play, Send, Text, Users } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
 
-export const SidebarLobbyItem = ({
-  children,
-  lobby,
-}: {
-  lobby: Lobby.Type;
-  readonly children: React.ReactNode;
-}) => {
+type SidebarLobbyItemProps = { lobby: Lobby.Type; readonly children: React.ReactNode };
+
+export const SidebarLobbyItem = ({ children, lobby }: SidebarLobbyItemProps) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const user = useUser();
   const sendMessage = useLobby((s) => s.sendMessage);
@@ -103,7 +99,7 @@ export const SidebarLobbyItem = ({
                 <Send />
                 Send
               </Button>
-              <Button onClick={() => redirect(`/game/${lobby.id}`)}>
+              <Button onClick={() => redirect(`/lobby/${lobby.id}`)}>
                 <Play />
                 Play
               </Button>

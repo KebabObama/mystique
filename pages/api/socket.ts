@@ -1,8 +1,12 @@
 import { Lobby } from "@/lib/lobby";
-import { NextApiResponseWithSocket } from "@/lib/socket";
-import type { NextApiRequest } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { Server as HTTPServer } from "node:http";
+import type { Socket as NetSocket } from "node:net";
 import { Server } from "socket.io";
 
+export type SocketServer = HTTPServer & { io?: Server | undefined };
+export type SocketWithServer = NetSocket & { server: SocketServer };
+export type NextApiResponseWithSocket = NextApiResponse & { socket: SocketWithServer };
 export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
   if (res.socket.server.io) {
     res.end();
@@ -26,7 +30,7 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
     });
 
     socket.on("lobby:leave", async (userId, lobbyId) => {
-      Lobby.leave(userId, lobbyId);
+      await Lobby.leave(userId, lobbyId);
       socket.emit("lobby:leave", lobbyId);
     });
 
@@ -40,6 +44,8 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
       const result = await Lobby.send(userId, lobbyId, content);
       io.to(`lobby:${result.lobbyId}`).emit("lobby:send", result);
     });
+
+    socket.on("disconnect", () => {});
   });
 
   res.end();

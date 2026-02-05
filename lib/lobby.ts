@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { Instance } from "@/lib/instances";
 import { schema } from "@/lib/schema";
 import { and, eq } from "drizzle-orm";
 
@@ -34,15 +35,50 @@ export namespace Lobby {
     }));
   };
 
+  export const getInstancedOne = async (lobbyId: string) => {
+    const results = await db.query.lobby.findFirst({
+      where: eq(schema.lobby.id, lobbyId),
+      with: {
+        characters: {
+          columns: {},
+          with: { character: { with: { inventory: { columns: {}, with: { item: true } } } } },
+        },
+        members: { columns: {}, with: { user: true } },
+      },
+    });
+    if (!results) throw new Error(`Lobby with id ${lobbyId} not found`);
+    const characters = results.characters.map((e) => ({
+      ...e.character,
+      inventory: e.character.inventory.map((f) => f.item),
+    }));
+    return {
+      ...results,
+      members: results?.members.map((e) => e.user),
+      characters,
+      state: { turn: 0, isStarted: false },
+    } satisfies Instance.Type;
+  };
+
+  export const link = async (lobbyId: string, characterId: string) => {
+    return await db.transaction(async (tx) => {
+      tx.insert(schema.lobbyCharacter).values({ lobbyId, characterId });
+      return tx.query.character.findFirst({ where: eq(schema.character.id, characterId) });
+    });
+  };
+
   export const create = async (userId: string, name: string): Promise<Lobby.Type> => {
     return await db.transaction(async (tx) => {
-      const [newLobby] = await tx.insert(schema.lobby).values({ name }).returning();
+      const [newLobby] = await tx
+        .insert(schema.lobby)
+        .values({ name, masterId: userId })
+        .returning();
       await tx.insert(schema.lobbyMember).values({ lobbyId: newLobby.id, userId });
 
       const result = await tx.query.lobby.findFirst({
         where: eq(schema.lobby.id, newLobby.id),
         with: { members: { columns: {}, with: { user: true } }, messages: true },
       });
+
       if (!result) throw new Error("Failed to retrieve created lobby.");
       return { ...result, members: result.members.map((m) => m.user), messages: [] };
     });
@@ -53,23 +89,25 @@ export namespace Lobby {
       await tx
         .delete(schema.lobbyMember)
         .where(and(eq(schema.lobbyMember.userId, userId), eq(schema.lobbyMember.lobbyId, lobbyId)));
+
       const remaining = await tx
         .select()
         .from(schema.lobbyMember)
         .where(eq(schema.lobbyMember.lobbyId, lobbyId))
         .limit(1);
-      if (remaining.length === 0) {
-        await tx.delete(schema.lobby).where(eq(schema.lobby.id, lobbyId));
-      }
+
+      if (remaining.length === 0) await tx.delete(schema.lobby).where(eq(schema.lobby.id, lobbyId));
     });
   };
 
   export const join = async (userId: string, lobbyId: string): Promise<Lobby.Type> => {
     await db.insert(schema.lobbyMember).values({ lobbyId, userId }).onConflictDoNothing();
+
     const result = await db.query.lobby.findFirst({
       where: eq(schema.lobby.id, lobbyId),
       with: { members: { columns: {}, with: { user: true } }, messages: true },
     });
+
     if (!result) throw new Error("Lobby not found.");
     return { ...result, members: result.members.map((m) => m.user) };
   };

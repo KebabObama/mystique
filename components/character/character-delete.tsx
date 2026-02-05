@@ -6,7 +6,6 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { deleteCharacter } from "@/lib/character-actions";
 import type { Game } from "@/lib/game";
-import { redirect } from "next/navigation";
 import React from "react";
 
 type CharacaterDeleteProps = {
@@ -17,6 +16,11 @@ type CharacaterDeleteProps = {
 
 export const CharacterDelete = ({ character, children, asChild }: CharacaterDeleteProps) => {
   const [confirm, setConfirm] = React.useState("");
+  const handle = async () => {
+    const { error } = await deleteCharacter(character.id);
+    if (!error) toast.success("Character successfully deleted.");
+    else toast.error(error);
+  };
   return (
     <Dialog>
       <Dialog.Trigger asChild={asChild}>{children}</Dialog.Trigger>
@@ -29,11 +33,13 @@ export const CharacterDelete = ({ character, children, asChild }: CharacaterDele
         <Dialog.Footer>
           <Button
             disabled={confirm.length === 0 && confirm === character.name}
-            onClick={async () => {
-              const { success, error } = await deleteCharacter(character.id);
-              if (success && !error) redirect("/dashboard");
-              else toast.error(error || "Error...");
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handle();
+              }
             }}
+            onClick={handle}
           >
             DELETE
           </Button>

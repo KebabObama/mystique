@@ -14,9 +14,7 @@
     "jsx": "react-jsx",
     "incremental": true,
     "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./*"] },
-    "strictFunctionTypes": true,
-    "stripInternal": true
+    "paths": { "@/*": ["./*"] }
   },
   "include": [
     "next-env.d.ts",

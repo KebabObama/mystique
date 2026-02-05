@@ -2,28 +2,25 @@ import { relations } from "drizzle-orm";
 import { account, session, user } from "./auth-schema";
 import {
   character,
-  characterEntity,
-  entity,
-  instance,
   inventory,
   item,
-  monster,
-  storage,
-} from "./game-schema";
-import { lobby, lobbyMember, message } from "./social-schema";
+  lobby,
+  lobbyCharacter,
+  lobbyMember,
+  message,
+} from "./lobby-schema";
 
-export const itemRelations = relations(item, ({ many }) => ({
-  inventories: many(inventory),
-  storages: many(storage),
-}));
+export const itemRelations = relations(item, ({ many }) => ({ inventories: many(inventory) }));
 
 export const characterRelations = relations(character, ({ many, one }) => ({
   inventory: many(inventory),
-  characterEntity: one(characterEntity, {
-    fields: [character.id],
-    references: [characterEntity.characterId],
-  }),
+  lobbyCharacters: many(lobbyCharacter),
   owner: one(user, { fields: [character.ownerId], references: [user.id] }),
+}));
+
+export const lobbyCharacterRelations = relations(lobbyCharacter, ({ one }) => ({
+  lobby: one(lobby, { fields: [lobbyCharacter.lobbyId], references: [lobby.id] }),
+  character: one(character, { fields: [lobbyCharacter.characterId], references: [character.id] }),
 }));
 
 export const inventoryRelations = relations(inventory, ({ one }) => ({
@@ -31,39 +28,10 @@ export const inventoryRelations = relations(inventory, ({ one }) => ({
   item: one(item, { fields: [inventory.itemId], references: [item.id] }),
 }));
 
-export const instanceRelations = relations(instance, ({ many }) => ({
-  lobby: many(lobby),
-  entities: many(entity),
-}));
-
-export const entityRelations = relations(entity, ({ one, many }) => ({
-  instance: one(instance, { fields: [entity.instanceId], references: [instance.id] }),
-  monster: one(monster, { fields: [entity.id], references: [monster.entityId] }),
-  storage: many(storage),
-  characterEntity: one(characterEntity, {
-    fields: [entity.id],
-    references: [characterEntity.entityId],
-  }),
-}));
-
-export const characterEntityRelations = relations(characterEntity, ({ one }) => ({
-  character: one(character, { fields: [characterEntity.characterId], references: [character.id] }),
-  entity: one(entity, { fields: [characterEntity.entityId], references: [entity.id] }),
-}));
-
-export const monsterRelations = relations(monster, ({ one }) => ({
-  entity: one(entity, { fields: [monster.entityId], references: [entity.id] }),
-}));
-
-export const storageRelations = relations(storage, ({ one }) => ({
-  entity: one(entity, { fields: [storage.entityId], references: [entity.id] }),
-  item: one(item, { fields: [storage.itemId], references: [item.id] }),
-}));
-
 export const lobbyRelations = relations(lobby, ({ one, many }) => ({
   members: many(lobbyMember),
   messages: many(message),
-  instance: one(instance, { fields: [lobby.id], references: [instance.lobbyId] }),
+  characters: many(lobbyCharacter),
 }));
 
 export const lobbyMemberRelations = relations(lobbyMember, ({ one }) => ({

@@ -1,8 +1,10 @@
 "use client";
 
+import { Card } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
 import { ItemCard } from "@/components/ui/item-card";
 import { Game } from "@/lib/game";
+import { BookA, Coins, Heart, SearchCode, Section, Shield, Weight } from "lucide-react";
 import React from "react";
 
 type CharacterInfoProps = {
@@ -12,99 +14,121 @@ type CharacterInfoProps = {
 };
 
 export const CharacterDashboard = ({ character, children, asChild }: CharacterInfoProps) => {
+  const [hoveredAttr, setHoveredAttr] = React.useState<Game.Attribute>("strength");
+
   return (
     <Dialog fullscreen>
       <Dialog.Trigger asChild={asChild}>{children}</Dialog.Trigger>
-      <Dialog.Content className="text-lg select-none" onContextMenu={(e) => e.preventDefault()}>
-        <Dialog.Title>Information</Dialog.Title>
-        <div className="gapbash-6 mt-3 grid h-full grid-cols-3">
-          <section className="flex h-full flex-col justify-between gap-6">
-            <Dialog.Description className="text-muted -mx-1.5 mb-1.5 flex h-full flex-col px-1.5">
-              <span className="flex w-full flex-row justify-between">
-                Name: <span className="text-foreground capitalize">{character.name}</span>
-              </span>
-              <span className="flex w-full flex-row justify-between">
-                Race: <span className="text-foreground capitalize">{character.race}</span>
-              </span>
-              <span className="flex w-full flex-row justify-between">
-                Level: <span className="text-foreground">{character.level}</span>
-              </span>
-              <span className="flex w-full flex-row justify-between">
-                XP:
-                <span className="text-foreground">
-                  {character.xp} / {character.level * 10}
-                </span>
-              </span>
-              <span className="flex w-full flex-row justify-between">
-                Weight:
-                <span className="text-foreground">
-                  {character.weight} / {character.maxWeight}
-                </span>
-              </span>
-              <span className="flex w-full flex-row justify-between">
-                Actions:
-                <span className="text-foreground">
-                  {character.actions} / {character.maxActions}
-                </span>
-              </span>
-              <span className="flex w-full flex-row justify-between">
-                Armor:
-                <span className="text-foreground">{character.armor}</span>
-              </span>
-              <span className="flex w-full flex-row justify-between">
-                Memories:
-                <span className="text-foreground">
-                  {character.memory} / {character.maxMemory}
-                </span>
-              </span>
-              <span className="flex w-full flex-row justify-between">
-                Coins:
-                <span className="text-foreground">{character.coins}</span>
-              </span>
-              {Game.KEYS.ATTRIBUTES.map((e) => (
-                <span className="flex w-full flex-row justify-between" key={e}>
-                  {e}:<span className="text-foreground">{character.attributes[e]}</span>
-                </span>
-              ))}
-              <span className="flex w-full flex-row justify-between">
-                Items in inventory:
-                <span className="text-foreground">
-                  {character.inventory.reduce((acc, e) => acc + e.quantity, 0)}
-                </span>
-              </span>
-              <span className="flex w-full flex-row justify-between">
-                Equipped items:
-                <span className="text-foreground">
-                  {character.inventory.reduce((acc, e) => (e.equipped ? acc + 1 : acc), 0)}
-                </span>
-              </span>
-              <span className="flex w-full flex-row justify-between">
-                Abilities:
-                <span className="text-foreground">
-                  {character.inventory.reduce(
-                    (acc, e) => acc + (e.equipped ? e.abilities.length : 0),
-                    0
-                  )}
-                </span>
-              </span>
-              <span className="flex w-full flex-row justify-between">
-                Castable abilities:
-                <span className="text-foreground">
-                  {
-                    // prettier-ignore
-                    character.inventory.reduce(
-                    (acc, item) => acc + (item.equipped && item.abilities.reduce(
-                        (bcc, ability) => bcc + (ability.cost <= character.memory && character.actions > 0 ? ability.cost : 0), 0)
-                        ? item.abilities.length : 0), 0)
-                  }
-                </span>
+      <Dialog.Content className="p-0 text-lg select-none">
+        <div className="grid h-full grid-cols-3 gap-3">
+          <section className="flex h-full flex-col gap-6 border-r-6 p-6">
+            <Dialog.Title>{character.name}</Dialog.Title>
+            <Dialog.Description className="-mt-6 mb-0 flex flex-row justify-between capitalize">
+              <span>{character.race}</span>
+              <span>
+                level: <span>{character.level}</span>
               </span>
             </Dialog.Description>
+            <Card className="bg-background text-muted mt-auto">
+              <button className="hover:text-muted/50 flex w-full flex-row justify-between">
+                Health:
+                <span className="text-foreground flex items-center gap-2">
+                  {character.hp} / {character.maxHp}
+                  <Heart className="text-muted size-4" />
+                </span>
+              </button>
+              <button className="hover:text-muted/50 mt-auto flex w-full flex-row justify-between">
+                Weight:
+                <span className="text-foreground flex items-center gap-2">
+                  {character.weight} / {character.maxWeight}
+                  <Weight className="text-muted size-4" />
+                </span>
+              </button>
+              <button className="hover:text-muted/50 flex w-full flex-row justify-between">
+                Actions:
+                <span className="text-foreground flex items-center gap-2">
+                  {character.actions} / {character.maxActions}
+                  <Section className="text-muted size-4" />
+                </span>
+              </button>
+              <span className="mt-auto flex w-full flex-row justify-between">
+                XP:
+                <span className="text-foreground flex items-center gap-2">
+                  {character.xp} / {character.level * 10}
+                  <SearchCode className="text-muted size-4" />
+                </span>
+              </span>
+              <button className="hover:text-muted/50 flex w-full flex-row justify-between">
+                Memories:
+                <span className="text-foreground flex items-center gap-2">
+                  {character.memory} / {character.maxMemory} <BookA className="text-muted size-4" />
+                </span>
+              </button>
+              <button className="hover:text-muted/50 flex w-full flex-row justify-between">
+                Armor:
+                <span className="text-foreground flex items-center gap-2">
+                  {character.armor}
+                  <Shield className="text-muted size-4" />
+                </span>
+              </button>
+              <button className="hover:text-muted/50 flex w-full flex-row justify-between">
+                Coins:
+                <span className="text-foreground flex items-center gap-2">
+                  {character.coins}
+                  <Coins className="text-muted size-4" />
+                </span>
+              </button>
+            </Card>
+            <Card className="text-muted bg-background h-full"></Card>
+            <div className="bg-border -mx-6 h-9 w-[100%+2rem]" />
+            <Card className="text-muted bg-background py-1">
+              <span className="-mx-3 mb-1.5 flex items-center justify-between border-b-6 px-3 pb-1.5 text-center">
+                {(() => {
+                  let availablePoints = character.xp;
+                  let currentLevel = character.level;
+                  let levelsGained = 0;
+                  let costToNext = currentLevel * 10;
+                  while (availablePoints >= costToNext) {
+                    availablePoints -= costToNext;
+                    levelsGained++;
+                    costToNext = (currentLevel + levelsGained) * 10;
+                  }
+                  return `Available to level up ${levelsGained} times`;
+                })()}
+              </span>
+              {Game.ATTRIBUTES.map((e) => (
+                <button
+                  onMouseOver={() => setHoveredAttr(e)}
+                  className="hover:text-muted/50 flex w-full flex-row justify-between capitalize"
+                  key={e}
+                >
+                  {e}:
+                  <span className="text-foreground flex items-center gap-2">
+                    {character.attributes[e]}
+                    {React.createElement(Game.ATTRIBUTE_ICON[e], {
+                      className: "size-4 text-muted",
+                    })}
+                  </span>
+                </button>
+              ))}
+            </Card>
+            <Card className="bg-background min-h-42 text-center">
+              <h3 className="text-lg font-black uppercase">{hoveredAttr}</h3>
+              {hoveredAttr && (
+                <p className="leading-tight font-medium opacity-70">
+                  {Game.ATTRIBUTE_DESCRIPTION[hoveredAttr]}
+                </p>
+              )}
+            </Card>
           </section>
-          <section className="col-span-2 flex flex-col gap-6">
-            {character.inventory.map((item) => (
-              <ItemCard item={item} key={item.id} />
-            ))}
+          <section
+            className={`col-span-2 flex flex-col items-center gap-6 ${!character.inventory.length && "justify-center"}`}
+          >
+            {character.inventory.length > 0 ? (
+              character.inventory.map((item) => <ItemCard item={item} key={item.id} />)
+            ) : (
+              <div>No items in inventory</div>
+            )}
           </section>
         </div>
       </Dialog.Content>

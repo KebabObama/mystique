@@ -40,10 +40,7 @@ export const ItemCard = ({ item }: { item: Game.Character["inventory"][number] }
                   </span>
                 </td>
                 <td className="text-end uppercase">
-                  {
-                    // prettier-ignore
-                    Game.KEYS.EFFECTS.reduce((acc, g) => `${acc}${g[0]}${f.effects[g] ?? 0} `, "").trim()
-                  }
+                  {Game.EFFECTS.reduce((acc, g) => `${acc}${g[0]}${f.effects[g] ?? 0} `, "").trim()}
                 </td>
               </tr>
             ))}
@@ -58,7 +55,7 @@ export const ItemCard = ({ item }: { item: Game.Character["inventory"][number] }
         {item.armor && <StatLabel label="Armor" value={item.armor} />}
         <StatLabel
           label="require"
-          value={Game.KEYS.ATTRIBUTES.map((attr) => item.requiremnts[attr] ?? 0).join("-")}
+          value={Game.ATTRIBUTES.map((attr) => item.requiremnts[attr] ?? 0).join("-")}
         />
       </div>
     </Card>

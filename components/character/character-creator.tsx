@@ -1,10 +1,10 @@
 "use client";
 
+import { toast } from "@/components/layout/toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/layout/toast";
 import {
   Select,
   SelectContent,
@@ -16,7 +16,6 @@ import { useUser } from "@/hooks/use-user";
 import { createCharacter } from "@/lib/character-actions";
 import { Game } from "@/lib/game";
 import { Dices, Minus, Plus } from "lucide-react";
-import { redirect } from "next/navigation";
 import React from "react";
 
 export const CharacterCreator = () => {
@@ -32,7 +31,7 @@ export const CharacterCreator = () => {
       level: 1,
       xp: 0,
       hp: 10,
-      attributes: { ...Game.INFO.STARTING_RACES.human },
+      attributes: { ...Game.STARTING_RACES.human },
       inventory: [],
     })
   );
@@ -45,7 +44,6 @@ export const CharacterCreator = () => {
     }
     toast.success("Character forged!");
     setOpen(false);
-    redirect("/dashboard");
   };
 
   const [attrPoints, setAttrPoints] = React.useState<number>(7);
@@ -57,13 +55,13 @@ export const CharacterCreator = () => {
   };
 
   const handleRaceChange = (race: Game.Race) => {
-    const newBase = Game.INFO.STARTING_RACES[race];
+    const newBase = Game.STARTING_RACES[race];
     setAttrPoints(7);
     syncChar({ race, attributes: { ...newBase } });
   };
 
   const modifyAttribute = (attr: Game.Attribute, amount: number) => {
-    const baseValue = Game.INFO.STARTING_RACES[char.race][attr];
+    const baseValue = Game.STARTING_RACES[char.race][attr];
     const currentValue = char.attributes[attr];
 
     if (amount > 0 && (attrPoints <= 0 || currentValue >= baseValue + 3)) return;
@@ -89,7 +87,7 @@ export const CharacterCreator = () => {
             memory: 0,
             coins: 0,
             hp: 10,
-            attributes: { ...Game.INFO.STARTING_RACES.human },
+            attributes: { ...Game.STARTING_RACES.human },
             inventory: [],
           })
         );
@@ -131,7 +129,7 @@ export const CharacterCreator = () => {
               <SelectValue placeholder="CHOOSE RACE" />
             </SelectTrigger>
             <SelectContent>
-              {Game.KEYS.RACES.map((r) => (
+              {Game.RACES.map((r) => (
                 <SelectItem key={r} value={r}>
                   {r.toUpperCase()}
                 </SelectItem>
@@ -145,8 +143,8 @@ export const CharacterCreator = () => {
           <span className="text-muted-foreground text-sm">Points remaining: {attrPoints}</span>
         </div>
 
-        {Game.KEYS.ATTRIBUTES.map((attr) => {
-          const base = Game.INFO.STARTING_RACES[char.race][attr];
+        {Game.ATTRIBUTES.map((attr) => {
+          const base = Game.STARTING_RACES[char.race][attr];
           const current = char.attributes[attr];
           return (
             <div
@@ -188,7 +186,7 @@ export const CharacterCreator = () => {
           <Card className="mt-3 min-h-28 text-center">
             <h3 className="text-lg font-black uppercase">{hoveredAttr}</h3>
             <p className="leading-tight font-medium opacity-70">
-              {Game.INFO.ATTRIBUT_DESCRIPTION[hoveredAttr]}
+              {Game.ATTRIBUTE_DESCRIPTION[hoveredAttr]}
             </p>
           </Card>
 
