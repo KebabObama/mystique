@@ -18,9 +18,10 @@ export const lobby = pgTable("lobby", {
   id:           uuid("id").primaryKey().defaultRandom(),
   name:         text("name").notNull(),
   createdAt:    timestamp("created_at").defaultNow().notNull(),
-  game:        jsonb("game").notNull().default({}),
+  game:         jsonb("game").notNull().default({}),
   sequence:     uuid("sequence").array().notNull().default([]),
   masterId:     uuid("master_id").notNull().references(()=> user.id, { onDelete:"cascade" }),
+  turn:         integer("turn").notNull().default(0),
 });
 
 // prettier-ignore
