@@ -14,7 +14,7 @@ const ContextContent = React.forwardRef<
     <ContextMenuPrimitive.Content
       ref={ref}
       className={cn(
-        "z-50 min-w-32 overflow-hidden rounded-md border p-1 shadow-md",
+        "bg-card z-50 min-w-32 overflow-hidden rounded-md border p-1 shadow-md",
         "animate-in fade-in-80 data-[state=open]:scale-in-95",
         className
       )}
@@ -33,7 +33,7 @@ const ContextItem = React.forwardRef<
   <ContextMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-xs outline-none select-none",
+      "relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-xs outline-none select-none disabled:opacity-60",
       className
     )}
     {...props}
