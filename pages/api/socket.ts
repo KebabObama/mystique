@@ -4,9 +4,10 @@ import type { Server as HTTPServer } from "node:http";
 import type { Socket as NetSocket } from "node:net";
 import { Server } from "socket.io";
 
-export type SocketServer = HTTPServer & { io?: Server | undefined };
-export type SocketWithServer = NetSocket & { server: SocketServer };
-export type NextApiResponseWithSocket = NextApiResponse & { socket: SocketWithServer };
+type NextApiResponseWithSocket = NextApiResponse & {
+  socket: NetSocket & { server: HTTPServer & { io?: Server } };
+};
+
 export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
   if (res.socket.server.io) {
     res.end();
