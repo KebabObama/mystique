@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { Instance } from "@/lib/instances";
 import { schema } from "@/lib/schema";
+import { Instance } from "@/pages/api/socket";
 import { and, eq } from "drizzle-orm";
 
 export type Lobby = {
@@ -34,8 +34,9 @@ export const getAll = async (userId: string): Promise<Lobby[]> => {
   }));
 };
 
-export const getInstancedOne = async (lobbyId: string) => {
-  const results = await db.query.lobby.findFirst({
+export const getInstance = async (lobbyId: string, tx?: typeof db) => {
+  const q = tx ?? db;
+  const results = await q.query.lobby.findFirst({
     where: eq(schema.lobby.id, lobbyId),
     with: {
       characters: {
@@ -54,7 +55,7 @@ export const getInstancedOne = async (lobbyId: string) => {
     ...results,
     members: results?.members.map((e) => e.user),
     characters,
-    state: { turn: 0, isStarted: false },
+    turn: 0,
   } satisfies Instance;
 };
 
