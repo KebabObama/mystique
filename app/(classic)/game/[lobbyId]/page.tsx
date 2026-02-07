@@ -1,8 +1,14 @@
+import { AddCharacter } from "@/app/(classic)/game/[lobbyId]/add-character";
+import { EndTurn } from "@/app/(classic)/game/[lobbyId]/end-turm";
+import { GameProvider } from "@/app/(classic)/game/[lobbyId]/game-provider";
+import { Sequence } from "@/app/(classic)/game/[lobbyId]/sequence";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { schema } from "@/lib/schema";
 import { eq } from "drizzle-orm";
+import { Plus } from "lucide-react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -14,12 +20,31 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
 
   const data = await db.query.lobby.findFirst({
     where: eq(schema.lobby.id, lobbyId),
-    with: { members: true, characters: true },
+    with: { members: true },
   });
 
   const isMember = data?.members.some((e) => e.userId === session.user.id);
   if (!data || !isMember) redirect("/dashboard");
 
-  return <Card className="size-full p-0"></Card>;
+  const characters = await db.query.character.findMany({
+    where: eq(schema.character.ownerId, session.user.id),
+  });
+
+  return (
+    <Card className="size-full p-0">
+      <GameProvider lobbyId={lobbyId}>
+        <div className="absolute top-4 left-0 flex w-full justify-between px-4">
+          <Sequence>
+            <AddCharacter characters={characters}>
+              <Button className="h-8">
+                <Plus /> Add
+              </Button>
+            </AddCharacter>
+          </Sequence>
+          <EndTurn />
+        </div>
+      </GameProvider>
+    </Card>
+  );
 };
 
