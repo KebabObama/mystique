@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "@/components/layout/toast";
 import { useSocket } from "@/hooks/use-socket";
 import { useUser } from "@/hooks/use-user";
 import { Instance } from "@/pages/api/socket";
@@ -22,6 +23,15 @@ export const useGame = create<GameStore>((set, get) => ({
 
     socket.on("game:state", (instance: Instance) => {
       set({ instance });
+    });
+
+    socket.on("game:sequence:next", (turn: number) => {
+      const inst = get().instance;
+      const userId = useUser.getState().id;
+      if (!inst || !userId) return;
+      set({ instance: { ...inst, turn } });
+      const char = inst.characters.find((c) => c.id === inst.sequence[turn]);
+      if (char?.ownerId === userId) toast.show(`Your character ${char.name} is currently playing.`);
     });
 
     socket.on("disconnect", () => {

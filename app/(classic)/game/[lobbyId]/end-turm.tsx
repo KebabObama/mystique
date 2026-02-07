@@ -24,10 +24,7 @@ export const EndTurn = () => {
   const canEndTurn = (isRoundStart && isMaster) || (!isRoundStart && ownsActiveCharacter);
 
   return (
-    <Button
-      onClick={() => (isRoundStart ? send("turn:end") : send("turn:end", activeCharacterId))}
-      disabled={!canEndTurn}
-    >
+    <Button onClick={() => send("sequence:next", activeCharacterId)} disabled={!canEndTurn}>
       <SendHorizonal /> End turn
     </Button>
   );

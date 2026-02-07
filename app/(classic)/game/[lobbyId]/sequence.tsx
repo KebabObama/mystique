@@ -1,15 +1,19 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Context } from "@/components/ui/context";
 import { useGame } from "@/hooks/use-game";
 import { useUser } from "@/hooks/use-user";
-import { ArrowDown, ArrowUp, DraftingCompassIcon } from "lucide-react";
-import React from "react";
+import { cn } from "@/lib/utils";
+import { ArrowDown, ArrowUp, ChevronDown } from "lucide-react";
+import * as React from "react";
 
 type SequenceProps = { children?: React.ReactNode };
 
 export const Sequence = ({ children }: SequenceProps) => {
+  const [open, setOpen] = React.useState(false);
+
   const instance = useGame((s) => s.instance);
   const send = useGame((s) => s.send);
   const userId = useUser((s) => s.id);
@@ -17,56 +21,80 @@ export const Sequence = ({ children }: SequenceProps) => {
   if (!instance) return null;
 
   const isMaster = instance.masterId === userId;
+  const activeId = instance.turn >= 0 ? instance.sequence[instance.turn] : null;
+
+  const Tile = ({ name, plays }: { name: React.ReactNode; plays: boolean }) => (
+    <span className={`${plays ? "opacity-100" : "opacity-60"} truncate text-lg`}>{name}</span>
+  );
 
   return (
-    <div className="flex flex-col gap-6" onContextMenu={(e) => e.preventDefault()}>
-      {instance.sequence.map((id) => {
-        const char = instance.characters.find((c) => c.id === id);
-        if (!char) return null;
-
-        const index = instance.sequence.indexOf(id);
-        const plays = instance.turn !== -1 && instance.sequence[instance.turn] === id;
-
-        const card = (
-          <Card
-            className={`flex flex-col justify-between gap-0 px-4 py-1 ${plays ? "opacity-100" : "opacity-60"}`}
-          >
-            {char.name}
-          </Card>
-        );
-
-        if (!isMaster || instance.turn !== -1)
-          return <React.Fragment key={char.id}>{card}</React.Fragment>;
-
-        return (
-          <Context key={char.id}>
-            <Context.Trigger>{card}</Context.Trigger>
-            <Context.Content>
-              <Context.Item
-                onClick={() => send("sequence:move", char.id, -1)}
-                disabled={index === 0}
-              >
-                <ArrowUp /> Move up
-              </Context.Item>
-              <Context.Item
-                onClick={() => send("sequence:move", char.id, +1)}
-                disabled={index === instance.sequence.length - 1}
-              >
-                <ArrowDown /> Move down
-              </Context.Item>
-            </Context.Content>
-          </Context>
-        );
-      })}
-
-      <Card
-        className={`justify-between flex flex-row gap-3 text-lg px-4 py-1 ${instance.turn === -1 ? "opacity-100" : "opacity-60"}`}
+    <div className="flex max-w-48 min-w-48 flex-col">
+      <div
+        className={cn(
+          "flex flex-col gap-4.5 overflow-hidden transition-all duration-300",
+          open ? "max-h-250 pr-1.5 pb-1.5 opacity-100" : "max-h-0 p-0 opacity-0"
+        )}
       >
-        <DraftingCompassIcon className="size-6" />
-        Dungeon Master
-      </Card>
+        <Card className="flex h-full flex-col">
+          {instance.sequence.map((id, index) => {
+            const char = instance.characters.find((c) => c.id === id);
+            if (!char) return null;
+            const plays = activeId === id;
 
-      {children}
+            const name = (
+              <div className="flex flex-row items-center justify-between gap-3">
+                <span className="text-lg">{index}</span>
+                <span className="truncate">{char.name}</span>
+              </div>
+            );
+
+            if (!isMaster || instance.turn !== -1) {
+              return (
+                <div key={char.id}>
+                  <Tile name={name} plays={plays} />
+                </div>
+              );
+            }
+
+            return (
+              <Context key={char.id}>
+                <Context.Trigger>
+                  <Tile name={name} plays={plays} />
+                </Context.Trigger>
+                <Context.Content>
+                  <Context.Item
+                    onClick={() => send("sequence:move", char.id, -1)}
+                    disabled={index === 0}
+                  >
+                    <ArrowUp className="mr-2 h-4 w-4" />
+                    Move up
+                  </Context.Item>
+                  <Context.Item
+                    onClick={() => send("sequence:move", char.id, 1)}
+                    disabled={index === instance.sequence.length - 1}
+                  >
+                    <ArrowDown className="mr-2 h-4 w-4" />
+                    Move down
+                  </Context.Item>
+                </Context.Content>
+              </Context>
+            );
+          })}
+          <Tile
+            name={
+              <span className="flex flex-row items-center justify-end gap-3">Dungeon Master</span>
+            }
+            plays={instance.turn === -1}
+          />
+        </Card>
+
+        {children}
+      </div>
+
+      <Button className={`${open ? "mt-3" : "mt-0"} mr-1.5`} onClick={() => setOpen((v) => !v)}>
+        <ChevronDown className={cn("h-4 w-4 transition-transform", open && "rotate-180")} />
+        {open ? "Hide order" : "Show order"}
+      </Button>
     </div>
   );
 };

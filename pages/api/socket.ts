@@ -49,10 +49,10 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
       return inst;
     };
 
-    const update = async (fresh: Instance) => {
+    const update = async (fresh: Instance, event?: string) => {
       await db.update(schema.lobby).set(fresh).where(eq(schema.lobby.id, fresh.id));
       instances.set(fresh.id, fresh);
-      io.to(`game:${fresh.id}`).emit("game:state", fresh);
+      io.to(`game:${fresh.id}`).emit(event ?? "game:state", fresh);
     };
 
     socket.on("lobby:get", async (userId) => {
@@ -115,22 +115,24 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
       io.to(`game:${lobbyId}`).emit("game:leave", userId);
     });
 
-    socket.on("game:turn:end", async (userId, lobbyId, characterId) => {
+    socket.on("game:sequence:next", async (userId, lobbyId, characterId) => {
       const inst = await exists(userId, lobbyId);
       if (!inst) return;
       if (inst.turn === -1) {
         if (userId !== inst.masterId) return;
         const fresh = { ...inst, turn: 0 };
         instances.set(lobbyId, fresh);
-        io.to(`game:${lobbyId}`).emit("game:state", fresh);
+        io.to(`game:${lobbyId}`).emit("game:sequence:next", fresh.turn);
         return;
       }
       const activeCharacterId = inst.sequence[inst.turn];
-      console.log("game:turn:end", characterId, activeCharacterId);
       if (activeCharacterId !== characterId) return;
       const nextTurn = inst.turn + 1;
       const turn = nextTurn >= inst.sequence.length ? -1 : nextTurn;
-      update({ ...inst, turn });
+      const fresh = { ...inst, turn };
+      await db.update(schema.lobby).set(fresh).where(eq(schema.lobby.id, fresh.id));
+      instances.set(fresh.id, fresh);
+      io.to(`game:${fresh.id}`).emit("game:sequence:next", fresh.turn);
     });
 
     socket.on("game:sequence:move", async (userId, lobbyId, characterId, delta) => {

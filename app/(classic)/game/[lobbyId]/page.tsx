@@ -33,7 +33,7 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
   return (
     <Card className="size-full p-0">
       <GameProvider lobbyId={lobbyId}>
-        <div className="absolute top-4 left-0 flex w-full justify-between px-4">
+        <div className="absolute top-0 left-0 flex w-full justify-between">
           <Sequence>
             <AddCharacter characters={characters}>
               <Button className="h-8">
