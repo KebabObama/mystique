@@ -26,6 +26,13 @@ services:
     volumes:
       - minio_data:/data
 
+  redis:
+    image: redis:alpine
+    container_name: mystique_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
 volumes:
   postgres_data:
   minio_data:

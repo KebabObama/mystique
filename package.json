@@ -26,6 +26,7 @@
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.8",
     "drizzle-orm": "^0.45.1",
+    "ioredis": "^5.9.2",
     "lucide-react": "^0.562.0",
     "mime-types": "^3.0.2",
     "minio": "^8.0.6",
