@@ -19,4 +19,9 @@
     "**/gameplay/**": true,
     ".next/**":true
   },
+  "files.associations": {
+    "*.css":  "tailwindcss",
+    "*.tsx":  "typescriptreact",
+    "*.ts":   "typescript",
+  },
 }
