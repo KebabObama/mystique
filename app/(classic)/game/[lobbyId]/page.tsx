@@ -1,6 +1,10 @@
 import { AddCharacter } from "@/app/(classic)/game/[lobbyId]/add-character";
+import { CameraController } from "@/app/(classic)/game/[lobbyId]/camera-controller";
 import { EndTurn } from "@/app/(classic)/game/[lobbyId]/end-turm";
+import { Floor } from "@/app/(classic)/game/[lobbyId]/floor";
 import { GameProvider } from "@/app/(classic)/game/[lobbyId]/game-provider";
+import { Main } from "@/app/(classic)/game/[lobbyId]/main";
+import { PostProcessing } from "@/app/(classic)/game/[lobbyId]/post-processing";
 import { Sequence } from "@/app/(classic)/game/[lobbyId]/sequence";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -32,7 +36,7 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
   return (
     <Card className="size-full p-0">
       <GameProvider lobbyId={lobbyId}>
-        <div className="absolute top-0 left-0 flex w-full justify-between">
+        <div className="absolute top-0 left-0 z-10 flex w-full justify-between">
           <Sequence>
             <AddCharacter characters={characters}>
               <Button className="h-8">
@@ -42,6 +46,13 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
           </Sequence>
           <EndTurn />
         </div>
+        <Main lobbyId={lobbyId}>
+          <Floor />
+          <PostProcessing />
+          <directionalLight position={[0, 10, 0]} intensity={1} />
+          <ambientLight position={[0, 10, 0]} intensity={0.1} />
+          <CameraController />
+        </Main>
       </GameProvider>
     </Card>
   );
