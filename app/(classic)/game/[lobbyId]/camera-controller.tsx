@@ -2,7 +2,7 @@
 
 import { useCamera } from "@/hooks/use-camera";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useRef } from "react";
+import React from "react";
 import * as THREE from "three";
 
 const CONSTANTS = {
@@ -15,35 +15,23 @@ const CONSTANTS = {
 
 export const CameraController = () => {
   const { camera: threeCamera, gl } = useThree();
-  const keys = useRef<Record<string, boolean>>({});
+  const keys = React.useRef<Record<string, boolean>>({});
   const { target, distance, azimuth, elevation } = useCamera((s) => s.camera);
   const setCameraAzimuth = useCamera((s) => s.setCameraAzimuth);
   const setCameraTarget = useCamera((s) => s.setCameraTarget);
   const setCameraDistance = useCamera((s) => s.setCameraDistance);
-  const tempVec3 = useRef(new THREE.Vector3());
-  const tempSpherical = useRef(new THREE.Spherical());
+  const tempVec3 = React.useRef(new THREE.Vector3());
+  const tempSpherical = React.useRef(new THREE.Spherical());
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const key = e.key.toLowerCase();
-      keys.current[key] = true;
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      const key = e.key.toLowerCase();
-      keys.current[key] = false;
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
+  // prettier-ignore
+  React.useEffect(() => {
+    const { signal, abort } = new AbortController();
+    window.addEventListener("keydown", (e) => (keys.current[e.key.toLowerCase()] = true),  { signal, passive: true });
+    window.addEventListener("keyup",   (e) => (keys.current[e.key.toLowerCase()] = false), { signal, passive: true });
+    return () => abort();
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     tempSpherical.current.set(distance, Math.PI / 2 - elevation, azimuth);
     tempVec3.current.setFromSpherical(tempSpherical.current);
     tempVec3.current.add(new THREE.Vector3(...target));
