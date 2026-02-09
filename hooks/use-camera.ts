@@ -17,7 +17,7 @@ type CameraState = {
 
 const INITIAL_CAMERA_STATE: CameraState["camera"] = {
   target: [0, 0, 0],
-  distance: 3,
+  distance: 10,
   azimuth: 0,
   elevation: Math.PI / 4,
 };
