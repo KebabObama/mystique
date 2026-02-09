@@ -15,13 +15,12 @@ export type LobbyStore = {
   sendMessage: (lobbyId: string, content: string) => void;
 };
 
-const userId = useUser.getState()?.id;
-const socket = useSocket.getState().socket;
-
 export const useLobby = create<LobbyStore>((set) => ({
   lobbies: [],
 
   init: () => {
+    const userId = useUser.getState()?.id;
+    const socket = useSocket.getState().socket;
     if (!socket || !userId) return;
 
     socket.emit("lobby:get", userId);
@@ -61,21 +60,29 @@ export const useLobby = create<LobbyStore>((set) => ({
   },
 
   createLobby: (name) => {
+    const userId = useUser.getState()?.id;
+    const socket = useSocket.getState().socket;
     if (!socket || !userId) return;
     socket.emit("lobby:create", userId, name);
   },
 
   joinLobby: (lobbyId) => {
+    const userId = useUser.getState()?.id;
+    const socket = useSocket.getState().socket;
     if (!socket || !userId) return;
     socket.emit("lobby:join", userId, lobbyId);
   },
 
   leaveLobby: (lobbyId) => {
+    const userId = useUser.getState()?.id;
+    const socket = useSocket.getState().socket;
     if (!socket || !userId) return;
     socket.emit("lobby:leave", userId, lobbyId);
   },
 
   sendMessage: (lobbyId, content) => {
+    const userId = useUser.getState()?.id;
+    const socket = useSocket.getState().socket;
     if (!socket || !userId) return;
     socket.emit("lobby:send", userId, lobbyId, content);
   },
