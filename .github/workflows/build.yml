@@ -48,16 +48,27 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
-      - name: Cache Docker Layers
+      - name: Cache Docker Images
+        id: cache-docker
         uses: actions/cache@v4
         with:
-          path: /var/lib/docker
+          path: ~/docker-cache
           key: ${{ runner.os }}-docker-${{ hashFiles('docker-compose.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
+
+      - name: Load Cached Docker Images
+        if: steps.cache-docker.outputs.cache-hit == 'true'
+        run: |
+          if [ -f ~/docker-cache/images.tar ]; then
+            docker load -i ~/docker-cache/images.tar
+          fi
 
       - name: Pull Docker Images
-        run: docker compose pull
+        if: steps.cache-docker.outputs.cache-hit != 'true'
+        run: |
+          docker compose pull
+          mkdir -p ~/docker-cache
+          # Save images to a single tarball for the cache
+          docker save $(docker compose config --images) -o ~/docker-cache/images.tar
 
       - name: Start Docker Services
         run: docker compose up -d
