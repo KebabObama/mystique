@@ -3,4 +3,3 @@ node_modules
 .next
 .vscode
 .github
-bun.lock
