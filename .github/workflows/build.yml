@@ -1,14 +1,14 @@
-name: Auto Format
+name: Build
 
 on:
   push:
-    branches: [ master ] 
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
-  format:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write 
 
     steps:
       - name: Checkout Code
@@ -28,12 +28,7 @@ jobs:
             ${{ runner.os }}-bun-
 
       - name: Install Dependencies
-        run: bun install --only=dev
+        run: bun ci
 
-      - name: Run Formatter
-        run: bun run lint
-
-      - name: Commit Changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore: format code [skip ci]"
+      - name: Run Build
+        run: bun run build
