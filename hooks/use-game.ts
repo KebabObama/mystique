@@ -14,6 +14,9 @@ export type GameStore = {
   send: (event: string, ...args: any[]) => void;
 };
 
+const userId = useUser.getState()?.id;
+const socket = useSocket.getState().socket;
+
 export const useGame = create<GameStore>((set, get) => ({
   instance: null,
 
@@ -27,7 +30,6 @@ export const useGame = create<GameStore>((set, get) => ({
 
     socket.on("game:sequence:next", (turn: number) => {
       const inst = get().instance;
-      const userId = useUser.getState().id;
       if (!inst || !userId) return;
       set({ instance: { ...inst, turn } });
       const char = inst.characters.find((c) => c.id === inst.sequence[turn]);
@@ -40,16 +42,12 @@ export const useGame = create<GameStore>((set, get) => ({
   },
 
   joinInstance: (instanceId: string) => {
-    const socket = useSocket.getState().socket;
-    const userId = useUser.getState().id;
     if (!socket || !userId) return;
     set({ instance: null });
     socket.emit("game:join", userId, instanceId);
   },
 
   leaveInstance: () => {
-    const socket = useSocket.getState().socket;
-    const userId = useUser.getState().id;
     const inst = get().instance;
     if (!socket || !userId || !inst) return;
     socket.emit("game:leave", userId, inst.id);
@@ -57,8 +55,6 @@ export const useGame = create<GameStore>((set, get) => ({
   },
 
   send: (event: string, ...payload: any[]) => {
-    const socket = useSocket.getState().socket;
-    const userId = useUser.getState().id;
     const inst = get().instance;
     if (!socket || !userId || !inst) return;
     socket.emit(`game:${event}`, userId, inst.id, ...payload);

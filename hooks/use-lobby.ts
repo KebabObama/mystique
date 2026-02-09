@@ -15,12 +15,13 @@ export type LobbyStore = {
   sendMessage: (lobbyId: string, content: string) => void;
 };
 
+const userId = useUser.getState()?.id;
+const socket = useSocket.getState().socket;
+
 export const useLobby = create<LobbyStore>((set) => ({
   lobbies: [],
 
   init: () => {
-    const socket = useSocket.getState().socket;
-    const userId = useUser.getState().id;
     if (!socket || !userId) return;
 
     socket.emit("lobby:get", userId);
@@ -46,13 +47,12 @@ export const useLobby = create<LobbyStore>((set) => ({
     });
 
     socket.on("lobby:send", (msg: Lobby["messages"][0]) => {
-      const currentUserId = useUser.getState().id;
       set((s) => ({
         lobbies: s.lobbies.map((l) => {
           if (l.id !== msg.lobbyId) return l;
           const sender = l.members.find((m) => m.id === msg.senderId);
           const exists = l.messages.some((m) => m.id === msg.id);
-          if (sender && sender.id !== currentUserId)
+          if (sender && sender.id !== userId)
             toast({ title: `New message from ${sender.name}`, message: msg.content });
           return exists ? l : { ...l, messages: [...l.messages, msg] };
         }),
@@ -61,26 +61,22 @@ export const useLobby = create<LobbyStore>((set) => ({
   },
 
   createLobby: (name) => {
-    const socket = useSocket.getState().socket;
-    const userId = useUser.getState().id;
-    socket?.emit("lobby:create", userId, name);
+    if (!socket || !userId) return;
+    socket.emit("lobby:create", userId, name);
   },
 
   joinLobby: (lobbyId) => {
-    const socket = useSocket.getState().socket;
-    const userId = useUser.getState().id;
-    socket?.emit("lobby:join", userId, lobbyId);
+    if (!socket || !userId) return;
+    socket.emit("lobby:join", userId, lobbyId);
   },
 
   leaveLobby: (lobbyId) => {
-    const socket = useSocket.getState().socket;
-    const userId = useUser.getState().id;
-    socket?.emit("lobby:leave", userId, lobbyId);
+    if (!socket || !userId) return;
+    socket.emit("lobby:leave", userId, lobbyId);
   },
 
   sendMessage: (lobbyId, content) => {
-    const socket = useSocket.getState().socket;
-    const userId = useUser.getState().id;
-    socket?.emit("lobby:send", userId, lobbyId, content);
+    if (!socket || !userId) return;
+    socket.emit("lobby:send", userId, lobbyId, content);
   },
 }));

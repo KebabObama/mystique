@@ -16,7 +16,7 @@ export const Sequence = ({ children }: SequenceProps) => {
 
   const instance = useGame((s) => s.instance);
   const send = useGame((s) => s.send);
-  const userId = useUser((s) => s.id);
+  const userId = useUser((s) => s?.id);
 
   if (!instance) return null;
 

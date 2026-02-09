@@ -2,7 +2,6 @@
 
 import { useGame } from "@/hooks/use-game";
 import { useLobby } from "@/hooks/use-lobby";
-import React from "react";
 import { io, type Socket } from "socket.io-client";
 import { create } from "zustand";
 import { useUser } from "./use-user";
@@ -19,7 +18,7 @@ export const useSocket = create<SocketStore>((set, get) => ({
   connected: false,
 
   connect: () => {
-    const userId = useUser.getState().id;
+    const userId = useUser.getState()?.id;
     if (!userId) return;
     if (get().socket) return;
 
@@ -45,18 +44,3 @@ export const useSocket = create<SocketStore>((set, get) => ({
     set({ socket: null, connected: false });
   },
 }));
-
-export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-  const connect = useSocket((s) => s.connect);
-  const disconnect = useSocket((s) => s.disconnect);
-  const userId = useUser((s) => s.id);
-  React.useEffect(() => {
-    if (!userId) return;
-    (async () => {
-      await fetch("/api/socket");
-      connect();
-    })();
-    return () => disconnect();
-  }, [userId, connect, disconnect]);
-  return <>{children}</>;
-};

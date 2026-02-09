@@ -19,7 +19,7 @@ import { Dices, Minus, Plus } from "lucide-react";
 import React from "react";
 
 export const CharacterCreator = () => {
-  const ownerId = useUser((s) => s.id);
+  const ownerId = useUser((s) => s?.id) as string;
   const [char, setChar] = React.useState<Game.Character>(() =>
     Game.completeCharacter({
       id: "",

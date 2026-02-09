@@ -42,7 +42,7 @@ export const UpdateUserAvatar = () => {
       const blob = await getCroppedImg(imageSrc, pixels);
       const formData = new FormData();
       formData.append("file", blob, "avatar.png");
-      const res = await uploadFile("avatars-bucket", formData, user.id);
+      const res = await uploadFile("avatars-bucket", formData, user?.id);
       if (res.success) {
         await authClient.updateUser({ image: res.url });
         useUser.setState((prev) => ({ ...prev, image: `${res.url}?t=${Date.now()}` }));

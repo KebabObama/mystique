@@ -8,7 +8,7 @@ import { SendHorizonal } from "lucide-react";
 export const EndTurn = () => {
   const send = useGame((s) => s.send);
   const inst = useGame((s) => s.instance);
-  const userId = useUser((s) => s.id);
+  const userId = useUser((s) => s?.id);
 
   if (!inst || !userId) return null;
 

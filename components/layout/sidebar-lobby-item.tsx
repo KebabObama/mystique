@@ -66,15 +66,15 @@ export const SidebarLobbyItem = ({ children, lobby }: SidebarLobbyItemProps) => 
             {lobby.messages.map((e) => (
               <div
                 key={e.id}
-                className={`flex w-full justify-between gap-1 ${user.id === e.senderId ? "flex-row" : "flex-row-reverse"}`}
+                className={`flex w-full justify-between gap-1 ${user?.id === e.senderId ? "flex-row" : "flex-row-reverse"}`}
               >
                 <span
-                  className={`text-muted/90 flex w-1/5 flex-col truncate overflow-hidden text-xs ${user.id !== e.senderId ? "text-end" : "text-start"}`}
+                  className={`text-muted/90 flex w-1/5 flex-col truncate overflow-hidden text-xs ${user?.id !== e.senderId ? "text-end" : "text-start"}`}
                 >
                   <span>{lobby.members.find((f) => f.id === e.senderId)?.name}</span>
                   <span>{getDate(e.createdAt)}</span>
                 </span>
-                <span className={`${user.id === e.senderId ? "text-end" : "text-start"} grow`}>
+                <span className={`${user?.id === e.senderId ? "text-end" : "text-start"} grow`}>
                   {e.content}
                 </span>
               </div>

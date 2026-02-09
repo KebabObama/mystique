@@ -1,8 +1,8 @@
 import { Header } from "@/components/layout/header";
 import { SidebarApp } from "@/components/layout/sidebar-app";
+import { SocketProvider } from "@/components/providers/socket-provider";
+import { UserProvider } from "@/components/providers/user-provider";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { SocketProvider } from "@/hooks/use-socket";
-import { UserProvider } from "@/hooks/use-user";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { Toaster } from "sonner";
