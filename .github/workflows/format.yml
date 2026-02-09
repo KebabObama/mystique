@@ -2,7 +2,7 @@ name: Auto Format
 
 on:
   push:
-    branches: [ main ] # Or your default branch
+    branches: [ master ] 
 
 jobs:
   format:
@@ -13,8 +13,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
