@@ -106,4 +106,9 @@ export namespace Game {
     const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
     return prefix + suffix;
   };
+
+  export type Positions = Record<string, [number, number]>;
+  export type Walls = [number, number][];
+
+  export type Data = { walls: Walls; positions: Positions };
 }
