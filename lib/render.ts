@@ -17,4 +17,25 @@ export namespace Render {
     const { x, y, z } = parseCoords(point);
     return { x: Math.floor(x), y: Math.floor(y), z: Math.floor(z) };
   };
+
+  export type DistanceType = "euclidean" | "manhattan" | "chebyshev";
+
+  export const distance = (a: PointerType, b: PointerType, type: DistanceType = "euclidean") => {
+    const p1 = parseCoords(a);
+    const p2 = parseCoords(b);
+
+    const dx = Math.abs(p1.x - p2.x);
+    const dy = Math.abs(p1.y - p2.y);
+    const dz = Math.abs(p1.z - p2.z);
+
+    switch (type) {
+      case "manhattan":
+        return dx + dy + dz;
+      case "chebyshev":
+        return Math.max(dx, dy, dz);
+      case "euclidean":
+      default:
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+  };
 }
