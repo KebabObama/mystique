@@ -34,4 +34,3 @@ export const useCamera = create<CameraState>()(
     resetCamera:        (         ) => set({ camera: INITIAL_CAMERA_STATE }),
   }),
 );
-

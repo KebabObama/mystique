@@ -18,4 +18,3 @@ export namespace Render {
     return { x: Math.floor(x), y: Math.floor(y), z: Math.floor(z) };
   };
 }
-

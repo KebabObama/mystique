@@ -24,4 +24,3 @@ export const Main = ({ children, lobbyId }: GameProps) => {
 
   return <Canvas camera={{ position: [10, 10, 10] }}>{children}</Canvas>;
 };
-

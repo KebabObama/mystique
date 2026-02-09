@@ -11,4 +11,3 @@ export const UserProvider = ({ children, user }: { children: React.ReactNode; us
 
   return <>{children}</>;
 };
-
