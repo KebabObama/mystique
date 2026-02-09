@@ -1,6 +1,5 @@
-import { db } from "@/lib/db";
+import { db, schema } from "@/lib/db";
 import * as Lobby from "@/lib/lobby";
-import { schema } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Server as HTTPServer } from "node:http";

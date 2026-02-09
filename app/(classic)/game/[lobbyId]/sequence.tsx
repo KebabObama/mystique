@@ -98,4 +98,3 @@ export const Sequence = ({ children }: SequenceProps) => {
     </div>
   );
 };
-

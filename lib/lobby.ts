@@ -1,7 +1,6 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { schema } from "@/lib/schema";
+import { db, schema } from "@/lib/db";
 import { Instance } from "@/pages/api/socket";
 import { and, eq } from "drizzle-orm";
 

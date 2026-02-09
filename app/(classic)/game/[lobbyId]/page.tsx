@@ -5,8 +5,7 @@ import { Sequence } from "@/app/(classic)/game/[lobbyId]/sequence";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { schema } from "@/lib/schema";
+import { db, schema } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { Plus } from "lucide-react";
 import { headers } from "next/headers";
@@ -47,4 +46,3 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
     </Card>
   );
 };
-

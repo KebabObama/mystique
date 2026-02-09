@@ -1,4 +1,4 @@
-import { schema } from "@/lib/schema";
+import { schema } from "@/lib/db";
 import { BicepsFlexed, Bone, Brain, LucideIcon, Rabbit } from "lucide-react";
 
 export namespace Game {

@@ -21,4 +21,3 @@ export const GameProvider = ({ children, lobbyId }: GameProviderProps) => {
 
   return <>{children}</>;
 };
-

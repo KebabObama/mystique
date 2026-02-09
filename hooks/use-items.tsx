@@ -1,6 +1,6 @@
 "use client";
 
-import { schema } from "@/lib/schema";
+import { schema } from "@/lib/db";
 import React from "react";
 import { create } from "zustand";
 

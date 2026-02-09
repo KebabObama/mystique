@@ -48,4 +48,3 @@ export const AddCharacter = ({ characters, children }: AddCharacterProps) => {
     </Dialog>
   );
 };
-

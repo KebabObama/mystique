@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "prettier -w ."
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
@@ -24,9 +25,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
-    "drizzle-kit": "^0.31.8",
     "drizzle-orm": "^0.45.1",
-    "ioredis": "^5.9.2",
     "lucide-react": "^0.562.0",
     "mime-types": "^3.0.2",
     "minio": "^8.0.6",
@@ -46,6 +45,7 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "drizzle-kit": "^0.31.8",
     "@tailwindcss/postcss": "^4",
     "@types/mime-types": "^3.0.1",
     "@types/node": "^20",

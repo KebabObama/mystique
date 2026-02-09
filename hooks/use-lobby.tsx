@@ -84,4 +84,3 @@ export const useLobby = create<LobbyStore>((set) => ({
     socket?.emit("lobby:send", userId, lobbyId, content);
   },
 }));
-

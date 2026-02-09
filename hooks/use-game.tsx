@@ -64,4 +64,3 @@ export const useGame = create<GameStore>((set, get) => ({
     socket.emit(`game:${event}`, userId, inst.id, ...payload);
   },
 }));
-
