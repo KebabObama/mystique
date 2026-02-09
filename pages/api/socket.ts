@@ -1,4 +1,5 @@
 import { db, schema } from "@/lib/db";
+import { Game } from "@/lib/game";
 import * as Lobby from "@/lib/lobby";
 import { eq } from "drizzle-orm";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -12,7 +13,7 @@ export type NextApiResponseWithSocket = NextApiResponse & {
 
 export type Instance = typeof schema.lobby.$inferSelect & {
   members: (typeof schema.user.$inferSelect)[];
-  characters: (typeof schema.character.$inferSelect)[];
+  characters: Game.Character[];
 };
 
 const instances = new Map<string, Instance>();
@@ -101,7 +102,10 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
         await tx.insert(schema.lobbyCharacter).values({ lobbyId, characterId });
         await tx
           .update(schema.lobby)
-          .set({ sequence: [...inst.sequence, characterId] })
+          .set({
+            sequence: [...inst.sequence, characterId],
+            game: { ...inst.game, positions: { ...inst.game.positions, [characterId]: [0, 0] } },
+          })
           .where(eq(schema.lobby.id, inst.id));
         return await Lobby.getInstance(lobbyId, tx as any);
       });

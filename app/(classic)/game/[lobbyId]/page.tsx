@@ -3,6 +3,7 @@ import { CameraController } from "@/app/(classic)/game/[lobbyId]/camera-controll
 import { EndTurn } from "@/app/(classic)/game/[lobbyId]/end-turm";
 import { Floor } from "@/app/(classic)/game/[lobbyId]/floor";
 import { GameProvider } from "@/app/(classic)/game/[lobbyId]/game-provider";
+import { LogEffect } from "@/app/(classic)/game/[lobbyId]/log-effect";
 import { Main } from "@/app/(classic)/game/[lobbyId]/main";
 import { PostProcessing } from "@/app/(classic)/game/[lobbyId]/post-processing";
 import { Sequence } from "@/app/(classic)/game/[lobbyId]/sequence";
@@ -36,6 +37,7 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
   return (
     <Card className="size-full p-0">
       <GameProvider lobbyId={lobbyId}>
+        <LogEffect />
         <div className="absolute top-0 left-0 z-10 flex w-full justify-between">
           <Sequence>
             <AddCharacter characters={characters}>

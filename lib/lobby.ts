@@ -1,6 +1,7 @@
 "use server";
 
 import { db, schema } from "@/lib/db";
+import { Game } from "@/lib/game";
 import { Instance } from "@/pages/api/socket";
 import { and, eq } from "drizzle-orm";
 
@@ -40,20 +41,18 @@ export const getInstance = async (lobbyId: string, tx?: typeof db) => {
     with: {
       characters: {
         columns: {},
-        with: { character: { with: { inventory: { columns: {}, with: { item: true } } } } },
+        with: { character: { with: { inventory: { with: { item: true } } } } },
       },
       members: { columns: {}, with: { user: true } },
     },
   });
   if (!results) throw new Error(`Lobby with id ${lobbyId} not found`);
-  const characters = results.characters.map((e) => ({
-    ...e.character,
-    inventory: e.character.inventory.map((f) => f.item),
-  }));
   return {
     ...results,
-    members: results?.members.map((e) => e.user),
-    characters,
+    members: results.members.map((e) => e.user),
+    characters: results.characters.map((e) =>
+      Game.completeCharacter(e.character as Game.PartialCharacter)
+    ),
     turn: 0,
   } satisfies Instance;
 };
