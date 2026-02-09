@@ -12,4 +12,3 @@ export const LogEffect = () => {
 
   return null;
 };
-

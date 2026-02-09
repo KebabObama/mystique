@@ -34,4 +34,3 @@ export namespace Gameplay {
     return possible;
   };
 }
-
