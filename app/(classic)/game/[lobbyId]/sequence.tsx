@@ -37,8 +37,9 @@ export const Sequence = ({ children }: SequenceProps) => {
       >
         <Card className="flex h-full flex-col">
           {instance.sequence.map((id, index) => {
-            const char = instance.characters.find((c) => c.id === id);
-            if (!char) return null;
+            const charWrapper = instance.characters.find((c) => c.id === id);
+            if (!charWrapper) return null;
+            const char = charWrapper;
             const plays = activeId === id;
 
             const name = (

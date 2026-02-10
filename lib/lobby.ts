@@ -1,7 +1,6 @@
 "use server";
 
 import { db, schema } from "@/lib/db";
-import { Game } from "@/lib/game";
 import { Instance } from "@/pages/api/socket";
 import { and, eq } from "drizzle-orm";
 
@@ -50,9 +49,7 @@ export const getInstance = async (lobbyId: string, tx?: typeof db) => {
   return {
     ...results,
     members: results.members.map((e) => e.user),
-    characters: results.characters.map((e) =>
-      Game.completeCharacter(e.character as Game.PartialCharacter)
-    ),
+    characters: results.characters.map((c) => c.character),
     turn: 0,
   } satisfies Instance;
 };

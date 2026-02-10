@@ -31,7 +31,8 @@ export const useGame = create<GameStore>((set, get) => ({
       if (!inst || !userId) return;
       set({ instance: { ...inst, turn } });
       const char = inst.characters.find((c) => c.id === inst.sequence[turn]);
-      if (char?.ownerId === userId) toast.show(`Your character ${char.name} is currently playing.`);
+      if (char?.ownerId === userId)
+        toast.show(`Your character ${char.id} is currently playing.`);
     });
 
     socket.on("disconnect", () => {

@@ -4,13 +4,13 @@ import { Game } from "@/lib/game";
 export const ItemCard = ({ item }: { item: Game.Character["inventory"][number] }) => {
   return (
     <Card
-      key={item.id}
+      key={item.item.id}
       className={`grid w-full grid-cols-3 p-0 text-xs ${item.equipped ? "bg-background/80" : ""} shadow-sm`}
     >
       <div className="col-span-2 flex w-full flex-col justify-between px-1.5 py-1">
         <div className="flex items-center justify-between">
           <h1 className="text-foreground text-base font-semibold capitalize">
-            {item.quantity}x - {item.name}
+            {item.quantity}x - {item.item.name}
           </h1>
           <span className={`text-muted text-end`}>{item.equipped && "Equipped"}</span>
         </div>
@@ -26,7 +26,7 @@ export const ItemCard = ({ item }: { item: Game.Character["inventory"][number] }
             </tr>
           </thead>
           <tbody className="text-muted text-center">
-            {item.abilities.map((f) => (
+            {item.item.abilities.map((f) => (
               <tr key={f.name}>
                 <td className="text-foreground text-start font-medium">{f.name}</td>
                 <td>{f.range}</td>
@@ -49,13 +49,13 @@ export const ItemCard = ({ item }: { item: Game.Character["inventory"][number] }
       </div>
 
       <div className="text-muted flex h-full flex-col justify-center border-l-6 px-2 py-1">
-        <StatLabel label="Type" value={item.type} />
-        <StatLabel label="Value" value={item.value} />
-        <StatLabel label="Weight" value={item.weight} />
-        {item.armor && <StatLabel label="Armor" value={item.armor} />}
+        <StatLabel label="Type" value={item.item.type} />
+        <StatLabel label="Value" value={item.item.value} />
+        <StatLabel label="Weight" value={item.item.weight} />
+        {item.item.armor && <StatLabel label="Armor" value={item.item.armor} />}
         <StatLabel
           label="require"
-          value={Game.ATTRIBUTES.map((attr) => item.requiremnts[attr] ?? 0).join("-")}
+          value={Game.ATTRIBUTES.map((attr) => item.item.requiremnts[attr] ?? 0).join("-")}
         />
       </div>
     </Card>

@@ -20,21 +20,25 @@ import React from "react";
 
 export const CharacterCreator = () => {
   const ownerId = useUser((s) => s?.id) as string;
-  const [char, setChar] = React.useState<Game.Character>(() =>
-    Game.completeCharacter({
+  const createInitialChar = () => {
+    const attributes = { ...Game.STARTING_RACES.human };
+    const stats = Game.calculateCharacterStats({ attributes, level: 1, memory: 0 });
+    return {
       id: "",
       ownerId,
       coins: 0,
       name: "",
       memory: 0,
-      race: "human",
+      race: "human" as const,
       level: 1,
       xp: 0,
-      hp: 10,
-      attributes: { ...Game.STARTING_RACES.human },
+      hp: stats.maxHp,
+      attributes,
       inventory: [],
-    })
-  );
+      ...stats,
+    } as Game.Character;
+  };
+  const [char, setChar] = React.useState<Game.Character>(createInitialChar);
 
   const handleCreate = async () => {
     const { error, success } = await createCharacter(ownerId, char);
@@ -50,8 +54,10 @@ export const CharacterCreator = () => {
   const [hoveredAttr, setHoveredAttr] = React.useState<Game.Attribute>("strength");
   const [open, setOpen] = React.useState(false);
 
-  const syncChar = (updatedFields: Partial<Game.PartialCharacter>) => {
-    setChar(Game.completeCharacter({ ...char, ...updatedFields }));
+  const syncChar = (updatedFields: Partial<Game.Character>) => {
+    const updated = { ...char, ...updatedFields } as Game.Character;
+    const stats = Game.calculateCharacterStats(updated, { weight: 0, armor: 0 });
+    setChar({ ...updated, ...stats });
   };
 
   const handleRaceChange = (race: Game.Race) => {
@@ -76,21 +82,7 @@ export const CharacterCreator = () => {
       open={open}
       onOpenChange={(e) => {
         setAttrPoints(7);
-        setChar(
-          Game.completeCharacter({
-            id: "",
-            ownerId,
-            name: "",
-            race: "human",
-            level: 1,
-            xp: 0,
-            memory: 0,
-            coins: 0,
-            hp: 10,
-            attributes: { ...Game.STARTING_RACES.human },
-            inventory: [],
-          })
-        );
+        setChar(createInitialChar());
         setOpen(e);
       }}
     >

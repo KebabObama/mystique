@@ -12,9 +12,9 @@ export namespace Gameplay {
   export const getValidMoves = (characterId: string, currentPos: [number, number]) => {
     const instance = useGame.getState().instance;
     if (!instance) return [];
-    const char = instance.characters.find((c) => c.id === characterId);
-    if (!char) return [];
-    const { stamina } = char;
+    const charWrapper = instance.characters.find((c) => c.id === characterId);
+    if (!charWrapper) return [];
+    const { stamina } = charWrapper;
     const { walls, positions } = instance.game;
     const possible: [number, number][] = [];
     for (let dx = -stamina; dx <= stamina; dx++) {

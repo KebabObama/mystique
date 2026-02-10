@@ -11,6 +11,7 @@ export const createCharacter = async (
   options?: { path?: string }
 ) => {
   try {
+    const stats = Game.calculateCharacterStats(data, { weight: 0, armor: 0 });
     const [newChar] = await db
       .insert(schema.character)
       .values({
@@ -18,7 +19,15 @@ export const createCharacter = async (
         name: data.name,
         race: data.race,
         attributes: data.attributes,
-        hp: data.maxHp,
+        hp: stats.maxHp,
+        maxHp: stats.maxHp,
+        actions: stats.actions,
+        maxActions: stats.maxActions,
+        stamina: stats.stamina,
+        weight: 0,
+        maxWeight: stats.maxWeight,
+        maxMemory: stats.maxMemory,
+        armor: 0,
       })
       .returning();
     revalidatePath(options?.path || "/dashboard");

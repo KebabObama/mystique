@@ -15,7 +15,10 @@ const getCharacters = async (userId: string) => {
     where: eq(schema.character.ownerId, userId),
     with: { inventory: { with: { item: true } } },
   });
-  return results.map((char) => Game.completeCharacter(char as Game.PartialCharacter));
+  return results.map((char) => ({
+    ...char,
+    inventory: char.inventory.map((i) => ({ ...i, ...i.item })),
+  })) as Game.Character[];
 };
 
 export default async () => {
