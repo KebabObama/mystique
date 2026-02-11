@@ -22,26 +22,23 @@ export type GameStore = {
     readonly current: Game.Entity | undefined;
     readonly isOnMasterTurn: boolean;
   };
+  actions: {
+    normalMode?: Game.Ability;
+    masterMode: "wall:place" | "wall:destroy";
+    setNormalMode: (ability?: Game.Ability) => void;
+    setMasterMode: (mode: "wall:place" | "wall:destroy") => void;
+  };
 };
 
 export const useGame = create<GameStore>((set, get) => ({
   instance: null,
 
   init: () => {
-    const userId = useUser.getState()?.id;
     const socket = useSocket.getState().socket;
     if (!socket) return;
 
     socket.on("game:state", (instance: Game.Instance) => {
       set({ instance });
-    });
-
-    socket.on("game:sequence:next", (turn: number) => {
-      const inst = get().instance;
-      if (!inst || !userId) return;
-      set({ instance: { ...inst, data: { ...inst.data, turn: turn } } });
-      const canEnd = get().sequence.canEnd;
-      if (canEnd) toast.show(`It's your turn`);
     });
 
     socket.on("disconnect", () => {
@@ -58,11 +55,10 @@ export const useGame = create<GameStore>((set, get) => ({
   },
 
   leaveInstance: () => {
-    const inst = get().instance;
     const userId = useUser.getState()?.id;
-    const send = get().send;
-    if (!userId || !inst) return;
-    send("leave");
+    const socket = useSocket.getState().socket;
+    if (!userId || !socket) return;
+    socket.send("disconnect", userId);
     set({ instance: null });
   },
 
@@ -73,6 +69,13 @@ export const useGame = create<GameStore>((set, get) => ({
     if (!socket || !userId || !inst) return;
     socket.emit(`game:${event}`, userId, inst.id, ...payload);
     console.log(`game:${event}`, userId, inst.id, ...payload);
+  },
+
+  actions: {
+    normalMode: undefined,
+    masterMode: "wall:place",
+    setNormalMode: (normalMode) => set({ actions: { ...get().actions, normalMode } }),
+    setMasterMode: (masterMode) => set({ actions: { ...get().actions, masterMode } }),
   },
 
   movement: {

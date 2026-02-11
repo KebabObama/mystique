@@ -112,11 +112,6 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
       io.to(`game:${inst.id}`).emit("game:state", fresh);
     });
 
-    socket.on("game:leave", async (userId, lobbyId) => {
-      socket.leave(`game:${lobbyId}`);
-      io.to(`game:${lobbyId}`).emit("game:leave", userId);
-    });
-
     socket.on("game:sequence:next", async (userId, lobbyId) => {
       const inst = await exists(userId, lobbyId);
       if (!inst) return;
@@ -128,10 +123,7 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
         const next = turn + 1;
         turn = next >= inst.data.sequence.length ? -1 : next;
       }
-      const freshData: Game.Data = { ...inst.data, turn };
-      await db.update(schema.lobby).set({ data: freshData }).where(eq(schema.lobby.id, lobbyId));
-      instances.set(lobbyId, { ...inst, data: freshData });
-      io.to(`game:${lobbyId}`).emit("game:sequence:next", turn);
+      await update({ ...inst, data: { ...inst.data, turn } });
     });
 
     socket.on("game:sequence:move", async (userId, lobbyId, entityId, delta) => {
@@ -148,15 +140,16 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
       await update(fresh);
     });
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", (userId) => {
       for (const room of socket.rooms) {
         if (!room.startsWith("game:")) continue;
         const lobbyId = room.replace("game:", "");
         const inst = instances.get(lobbyId);
         if (!inst) continue;
-        socket.to(room).emit("game:leave");
+        if (inst.members.every((i) => i.id !== userId)) continue;
         const roomSize = io.sockets.adapter.rooms.get(room)?.size ?? 0;
         if (roomSize === 0) instances.delete(lobbyId);
+        console.log(roomSize);
       }
     });
   });
