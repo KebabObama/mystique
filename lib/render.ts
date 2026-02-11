@@ -1,11 +1,11 @@
 import * as THREE from "three";
 
 export namespace Render {
-  type PointerType = THREE.Vector3 | { x: number; y: number; z: number } | number[];
+  export type PointerType = THREE.Vector3 | { x: number; y?: number | null; z: number } | number[];
 
   const parseCoords = (point: PointerType) => {
-    if (Array.isArray(point)) return { x: point[0], y: point[1], z: point[2] };
-    return { x: point.x, y: point.y, z: point.z };
+    if (Array.isArray(point)) return { x: point[0] ?? 0, y: point[1] ?? 0, z: point[2] ?? 0 };
+    return { x: point.x ?? 0, y: point.y ?? 0, z: point.z ?? 0 };
   };
 
   export const getTileCenter = (point: PointerType) => {

@@ -1,7 +1,7 @@
 "use server";
 
 import { db, schema } from "@/lib/db";
-import { Instance } from "@/pages/api/socket";
+import { Game } from "@/lib/game";
 import { and, eq } from "drizzle-orm";
 
 export type Lobby = {
@@ -33,31 +33,41 @@ export const getAll = async (userId: string): Promise<Lobby[]> => {
   }));
 };
 
-export const getInstance = async (lobbyId: string, tx?: typeof db) => {
+export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game.Instance> => {
   const q = tx ?? db;
   const results = await q.query.lobby.findFirst({
     where: eq(schema.lobby.id, lobbyId),
     with: {
-      characters: {
-        columns: {},
-        with: { character: { with: { inventory: { with: { item: true } } } } },
+      entities: {
+        with: { character: { with: { inventory: { with: { item: true } } } }, monster: true },
       },
       members: { columns: {}, with: { user: true } },
     },
   });
   if (!results) throw new Error(`Lobby with id ${lobbyId} not found`);
-  return {
-    ...results,
-    members: results.members.map((e) => e.user),
-    characters: results.characters.map((c) => c.character),
-    turn: 0,
-  } satisfies Instance;
+
+  const entities = results.entities.map((e) => {
+    return e.type === "character"
+      ? { ...e, type: "character", playable: e.character! }
+      : { ...e, type: "monster", playable: e.monster! };
+  }) satisfies Game.Entity[];
+
+  return { ...results, entities, members: results.members.map((m) => m.user) };
 };
 
 export const link = async (lobbyId: string, characterId: string) => {
   return await db.transaction(async (tx) => {
-    tx.insert(schema.lobbyCharacter).values({ lobbyId, characterId });
-    return tx.query.character.findFirst({ where: eq(schema.character.id, characterId) });
+    const character = await tx.query.character.findFirst({
+      where: eq(schema.character.id, characterId),
+    });
+    if (!character) throw new Error("Character not found");
+
+    const [entity] = await tx
+      .insert(schema.lobbyEntity)
+      .values({ lobbyId, characterId, type: "character" })
+      .returning();
+
+    return character;
   });
 };
 

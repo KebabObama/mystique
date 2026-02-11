@@ -25,10 +25,11 @@ export const CameraController = () => {
 
   // prettier-ignore
   React.useEffect(() => {
-    const { signal, abort } = new AbortController();
-    window.addEventListener("keydown", (e) => (keys.current[e.key.toLowerCase()] = true),  { signal, passive: true });
-    window.addEventListener("keyup",   (e) => (keys.current[e.key.toLowerCase()] = false), { signal, passive: true });
-    return () => abort();
+    const controller = new AbortController();
+    window.addEventListener("keydown", (e) => keys.current[e.key.toLowerCase()] = true , { signal: controller.signal, passive: true });
+    window.addEventListener("keyup",   (e) => keys.current[e.key.toLowerCase()] = false, { signal: controller.signal, passive: true });
+    window.addEventListener("blur",    ( ) => keys.current = {}                        , { signal: controller.signal, passive: true }); 
+    return () => controller.abort();
   }, []);
 
   React.useEffect(() => {

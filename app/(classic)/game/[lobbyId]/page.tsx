@@ -1,7 +1,7 @@
 import { AddCharacter } from "@/app/(classic)/game/[lobbyId]/add-character";
 import { CameraController } from "@/app/(classic)/game/[lobbyId]/camera-controller";
-import { Characters } from "@/app/(classic)/game/[lobbyId]/characters";
 import { EndTurn } from "@/app/(classic)/game/[lobbyId]/end-turm";
+import { Entities } from "@/app/(classic)/game/[lobbyId]/entities";
 import { Floor } from "@/app/(classic)/game/[lobbyId]/floor";
 import { GameProvider } from "@/app/(classic)/game/[lobbyId]/game-provider";
 import { LogEffect } from "@/app/(classic)/game/[lobbyId]/log-effect";
@@ -50,7 +50,7 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
           <EndTurn />
         </div>
         <Main lobbyId={lobbyId}>
-          <Characters />
+          <Entities />
           <Floor />
           <PostProcessing />
           <directionalLight position={[0, 10, 0]} intensity={1} />

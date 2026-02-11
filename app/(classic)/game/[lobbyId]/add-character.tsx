@@ -9,13 +9,17 @@ type AddCharacterProps = { characters: Partial<Game.Character>[]; children?: Rea
 
 export const AddCharacter = ({ characters, children }: AddCharacterProps) => {
   const send = useGame((s) => s.send);
-  const instance = useGame((s) => s.instance);
+  const entities = useGame((s) => s.instance?.entities);
+
+  if (!entities) return;
 
   const onAdd = (characterId: string) => {
     send("character:add", characterId);
   };
 
-  const chars = characters.filter((c) => !instance?.characters.some((d) => d.id === c.id));
+  const chars = characters.filter(
+    (c) => !entities.some((d) => d.type === "character" && d.playable.id === c.id)
+  );
 
   return (
     <Dialog>

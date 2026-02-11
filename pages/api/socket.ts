@@ -11,12 +11,7 @@ export type NextApiResponseWithSocket = NextApiResponse & {
   socket: NetSocket & { server: HTTPServer & { io?: Server } };
 };
 
-export type Instance = typeof schema.lobby.$inferSelect & {
-  members: (typeof schema.user.$inferSelect)[];
-  characters: Game.Character[];
-};
-
-const instances = new Map<string, Instance>();
+const instances = new Map<string, Game.Instance>();
 
 export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
   if (res.socket.server.io) {
@@ -28,9 +23,13 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
   res.socket.server.io = io;
 
   io.on("connection", (socket) => {
-    const exists = async (userId: string, lobbyId: string): Promise<Instance | null> => {
+    const exists = async (
+      userId: string,
+      lobbyId: string,
+      check = false
+    ): Promise<Game.Instance | null> => {
       let inst = instances.get(lobbyId);
-      if (!inst) {
+      if (!inst || check) {
         inst = await Lobby.getInstance(lobbyId);
         if (!inst) {
           socket.emit("error", "Lobby does not exist");
@@ -49,8 +48,8 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
       return inst;
     };
 
-    const update = async (fresh: Instance, event?: string) => {
-      await db.update(schema.lobby).set(fresh).where(eq(schema.lobby.id, fresh.id));
+    const update = async (fresh: Game.Instance, event?: string) => {
+      await db.update(schema.lobby).set({ data: fresh.data }).where(eq(schema.lobby.id, fresh.id));
       instances.set(fresh.id, fresh);
       io.to(`game:${fresh.id}`).emit(event ?? "game:state", fresh);
     };
@@ -84,7 +83,7 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
     });
 
     socket.on("game:join", async (userId, lobbyId) => {
-      const inst = await exists(userId, lobbyId);
+      const inst = await exists(userId, lobbyId, true);
       if (!inst) return;
       socket.join(`game:${inst.id}`);
       io.to(`game:${inst.id}`).emit("game:join", userId);
@@ -94,18 +93,18 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
     socket.on("game:character:add", async (userId, lobbyId, characterId) => {
       const inst = await exists(userId, lobbyId);
       if (!inst) return;
-      if (inst.characters.some((e) => e.id === characterId)) {
+      if (inst.entities.some((e) => e.type === "character" && e.playable.id === characterId)) {
         socket.emit("error", "Character already exists within this instance.");
         return;
       }
       const fresh = await db.transaction(async (tx) => {
-        await tx.insert(schema.lobbyCharacter).values({ lobbyId, characterId });
+        const [entity] = await tx
+          .insert(schema.lobbyEntity)
+          .values({ lobbyId, characterId, type: "character" })
+          .returning();
         await tx
           .update(schema.lobby)
-          .set({
-            sequence: [...inst.sequence, characterId],
-            game: { ...inst.game, positions: { ...inst.game.positions, [characterId]: [0, 0] } },
-          })
+          .set({ data: { ...inst.data, sequence: [...inst.data.sequence, entity.id] } })
           .where(eq(schema.lobby.id, inst.id));
         return await Lobby.getInstance(lobbyId, tx as any);
       });
@@ -118,37 +117,35 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
       io.to(`game:${lobbyId}`).emit("game:leave", userId);
     });
 
-    socket.on("game:sequence:next", async (userId, lobbyId, characterId) => {
+    socket.on("game:sequence:next", async (userId, lobbyId) => {
       const inst = await exists(userId, lobbyId);
       if (!inst) return;
-      if (inst.turn === -1) {
+      let turn = inst.data.turn;
+      if (turn === -1) {
         if (userId !== inst.masterId) return;
-        const fresh = { ...inst, turn: 0 };
-        instances.set(lobbyId, fresh);
-        io.to(`game:${lobbyId}`).emit("game:sequence:next", fresh.turn);
-        return;
+        turn = 0;
+      } else {
+        const next = turn + 1;
+        turn = next >= inst.data.sequence.length ? -1 : next;
       }
-      const activeCharacterId = inst.sequence[inst.turn];
-      if (activeCharacterId !== characterId) return;
-      const nextTurn = inst.turn + 1;
-      const turn = nextTurn >= inst.sequence.length ? -1 : nextTurn;
-      const fresh = { ...inst, turn };
-      await db.update(schema.lobby).set(fresh).where(eq(schema.lobby.id, fresh.id));
-      instances.set(fresh.id, fresh);
-      io.to(`game:${fresh.id}`).emit("game:sequence:next", fresh.turn);
+      const freshData: Game.Data = { ...inst.data, turn };
+      await db.update(schema.lobby).set({ data: freshData }).where(eq(schema.lobby.id, lobbyId));
+      instances.set(lobbyId, { ...inst, data: freshData });
+      io.to(`game:${lobbyId}`).emit("game:sequence:next", turn);
     });
 
-    socket.on("game:sequence:move", async (userId, lobbyId, characterId, delta) => {
+    socket.on("game:sequence:move", async (userId, lobbyId, entityId, delta) => {
       const inst = await exists(userId, lobbyId);
       if (!inst) return;
       if (inst.masterId !== userId) return;
-      if (inst.turn !== -1) return;
-      const index = inst.sequence.indexOf(characterId);
+      if (inst.data.turn !== -1) return;
+      const index = inst.data.sequence.findIndex((s) => s === entityId);
       const next = index + delta;
-      if (next < 0 || next >= inst.sequence.length) return;
-      const sequence = [...inst.sequence];
+      if (index === -1 || next < 0 || next >= inst.data.sequence.length) return;
+      const sequence = [...inst.data.sequence];
       [sequence[index], sequence[next]] = [sequence[next], sequence[index]];
-      update({ ...inst, sequence });
+      const fresh = { ...inst, data: { ...inst.data, sequence } } as Game.Instance;
+      await update(fresh);
     });
 
     socket.on("disconnect", () => {

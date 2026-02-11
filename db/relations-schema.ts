@@ -5,22 +5,24 @@ import {
   inventory,
   item,
   lobby,
-  lobbyCharacter,
+  lobbyEntity,
   lobbyMember,
   message,
+  monster,
 } from "./lobby-schema";
 
 export const itemRelations = relations(item, ({ many }) => ({ inventories: many(inventory) }));
 
 export const characterRelations = relations(character, ({ many, one }) => ({
   inventory: many(inventory),
-  lobbyCharacters: many(lobbyCharacter),
+  lobbyEntities: many(lobbyEntity),
   owner: one(user, { fields: [character.ownerId], references: [user.id] }),
 }));
 
-export const lobbyCharacterRelations = relations(lobbyCharacter, ({ one }) => ({
-  lobby: one(lobby, { fields: [lobbyCharacter.lobbyId], references: [lobby.id] }),
-  character: one(character, { fields: [lobbyCharacter.characterId], references: [character.id] }),
+export const lobbyEntityRelations = relations(lobbyEntity, ({ one }) => ({
+  lobby: one(lobby, { fields: [lobbyEntity.lobbyId], references: [lobby.id] }),
+  character: one(character, { fields: [lobbyEntity.characterId], references: [character.id] }),
+  monster: one(monster, { fields: [lobbyEntity.monsterId], references: [monster.id] }),
 }));
 
 export const inventoryRelations = relations(inventory, ({ one }) => ({
@@ -31,7 +33,7 @@ export const inventoryRelations = relations(inventory, ({ one }) => ({
 export const lobbyRelations = relations(lobby, ({ one, many }) => ({
   members: many(lobbyMember),
   messages: many(message),
-  characters: many(lobbyCharacter),
+  entities: many(lobbyEntity),
 }));
 
 export const lobbyMemberRelations = relations(lobbyMember, ({ one }) => ({
@@ -57,4 +59,8 @@ export const sessionRelations = relations(session, ({ one }) => ({
 
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, { fields: [account.userId], references: [user.id] }),
+}));
+
+export const monsterRelations = relations(monster, ({ many }) => ({
+  lobbyEntities: many(lobbyEntity),
 }));

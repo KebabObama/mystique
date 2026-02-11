@@ -18,10 +18,8 @@ export const lobby = pgTable("lobby", {
   id:           uuid("id").primaryKey().defaultRandom(),
   name:         text("name").notNull(),
   createdAt:    timestamp("created_at").defaultNow().notNull(),
-  game:         jsonb("game").notNull().$type<Game.Data>().default({walls:[], positions:{}}),
-  sequence:     uuid("sequence").array().notNull().default([]),
+  data:         jsonb("data").notNull().$type<Game.Data>().default({walls:[], sequence:[], turn: -1}),
   masterId:     uuid("master_id").notNull().references(()=> user.id, { onDelete:"cascade" }),
-  turn:         integer("turn").notNull().default(0),
 });
 
 // prettier-ignore
@@ -46,12 +44,15 @@ export const message = pgTable("message", {
 ]);
 
 // prettier-ignore
-export const lobbyCharacter = pgTable("lobby_character", {
-  characterId:uuid("character_id").notNull().references(() => character.id, { onDelete: "cascade" }),
-  lobbyId:    uuid("item_id").notNull().references(() => lobby.id, { onDelete: "cascade" }),
+export const lobbyEntity = pgTable("lobby_entity", {
+  id:           uuid("id").primaryKey().defaultRandom(),
+  lobbyId:      uuid("lobby_id").notNull().references(() => lobby.id, { onDelete: "cascade" }),
+  type:         text("type", { enum: ["character", "monster"] }).notNull(),
+  characterId:  uuid("character_id").references(() => character.id, { onDelete: "cascade" }),
+  monsterId:    uuid("monster_id").references(() => monster.id, { onDelete: "cascade" }),
+  position:     jsonb("position").notNull().$type<Game.Position>().default({ x: 0, z: 0 }),
 }, (table) => [
-  index("lobby_character_idx").on(table.characterId),
-  primaryKey({ name: "lobby_character_pk", columns: [table.characterId, table.lobbyId] }),
+  index("lobby_entity_lobby_idx").on(table.lobbyId),
 ]);
 
 // prettier-ignore
@@ -100,3 +101,17 @@ export const inventory = pgTable("inventory", {
   index("inventory_char_idx").on(table.characterId),
   primaryKey({ name: "inventory_pk", columns: [table.characterId, table.itemId] }),
 ]);
+
+// prettier-ignore
+export const monster = pgTable("monster", {
+  id:           uuid("id").primaryKey().defaultRandom(),
+  name:         text("name").notNull(),
+  level:        integer("level").notNull().default(1),
+  hp:           integer("hp").notNull().default(10),
+  maxHp:        integer("max_hp").notNull().default(10),
+  armor:        integer("armor").notNull().default(0),
+  stamina:      integer("stamina").notNull().default(5),
+  actions:      integer("actions").notNull().default(0),
+  maxActions:   integer("max_actions").notNull().default(0),
+  memory:       integer("memory").notNull().default(2),
+});

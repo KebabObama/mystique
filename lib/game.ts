@@ -52,21 +52,22 @@ export namespace Game {
     })[];
   };
 
-  export interface CharacterStats {
-    maxHp: number;
-    actions: number;
-    maxActions: number;
-    stamina: number;
-    weight: number;
-    maxWeight: number;
-    maxMemory: number;
-    armor: number;
-  }
+  export type Monster = typeof schema.monster.$inferSelect;
+  export type Entity = Omit<
+    typeof schema.lobbyEntity.$inferSelect,
+    "characterId" | "monsterId" | "lobbyId"
+  > &
+    ({ type: "character"; playable: Character } | { type: "monster"; playable: Monster });
+
+  export type Instance = typeof schema.lobby.$inferSelect & {
+    members: (typeof schema.user.$inferSelect)[];
+    entities: Entity[];
+  };
 
   export const calculateCharacterStats = (
     c: { attributes: Record<Attribute, number>; level: number; memory: number },
     inventory: { weight: number; armor: number } = { weight: 0, armor: 0 }
-  ): CharacterStats => {
+  ) => {
     const maxHp = Math.floor(c.attributes.constitution + c.attributes.strength / 2 + 5);
     const actions = Math.floor(
       c.level / 4 + c.attributes.dexterity / 8 + c.attributes.intelligence / 8
@@ -109,8 +110,7 @@ export namespace Game {
     return prefix + suffix;
   };
 
-  export type Positions = Record<string, [number, number]>;
-  export type Walls = [number, number][];
+  export type Position = { x: number; z: number };
 
-  export type Data = { walls: Walls; positions: Positions };
+  export type Data = { walls: Position[]; sequence: string[]; turn: number };
 }
