@@ -45,9 +45,9 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
                 </span>
               </button>
               <button className="hover:text-muted/50 flex w-full flex-row justify-between">
-                Actions:
+                Actions per turn:
                 <span className="text-foreground flex items-center gap-2">
-                  {character.actions} / {character.maxActions}
+                  {character.maxActions}
                   <Section className="text-muted size-4" />
                 </span>
               </button>

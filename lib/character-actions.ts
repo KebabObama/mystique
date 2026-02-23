@@ -21,7 +21,6 @@ export const createCharacter = async (
         attributes: data.attributes,
         hp: stats.maxHp,
         maxHp: stats.maxHp,
-        actions: stats.actions,
         maxActions: stats.maxActions,
         stamina: stats.stamina,
         weight: 0,
