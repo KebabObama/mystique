@@ -4,6 +4,12 @@ import { db, schema } from "@/lib/db";
 import { Game } from "@/lib/game";
 import { and, eq } from "drizzle-orm";
 
+const normalizeData = (data: Partial<Game.Data> & Record<string, unknown>): Game.Data => ({
+  turn: typeof data.turn === "number" ? data.turn : -1,
+  walls: Array.isArray(data.walls) ? data.walls : [],
+  sequence: Array.isArray(data.sequence) ? data.sequence : [],
+});
+
 export type Lobby = {
   id: string;
   name: string;
@@ -46,13 +52,19 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
   });
   if (!results) throw new Error(`Lobby with id ${lobbyId} not found`);
 
+  const data = normalizeData(results.data as any);
+
   const entities = results.entities.map((e) => {
-    return e.type === "character"
-      ? { ...e, type: "character", playable: e.character! }
-      : { ...e, type: "monster", playable: e.monster! };
+    if (e.type === "character") {
+      const playable = e.character!;
+      return { ...e, actions: e.actions ?? playable.maxActions ?? 0, type: "character", playable };
+    }
+
+    const playable = e.monster!;
+    return { ...e, actions: e.actions ?? playable.maxActions ?? 0, type: "monster", playable };
   }) satisfies Game.Entity[];
 
-  return { ...results, entities, members: results.members.map((m) => m.user) };
+  return { ...results, data, entities, members: results.members.map((m) => m.user) };
 };
 
 export const link = async (lobbyId: string, characterId: string) => {

@@ -69,7 +69,7 @@ export namespace Game {
     inventory: { weight: number; armor: number } = { weight: 0, armor: 0 }
   ) => {
     const maxHp = Math.floor(c.attributes.constitution + c.attributes.strength / 2 + 5);
-    const actions = Math.floor(
+    const maxActions = Math.floor(
       c.level / 4 + c.attributes.dexterity / 8 + c.attributes.intelligence / 8
     );
     const maxWeight = Math.floor(10 + c.attributes.strength + c.attributes.constitution / 2);
@@ -79,8 +79,7 @@ export namespace Game {
     );
     return {
       maxHp,
-      actions,
-      maxActions: actions,
+      maxActions,
       stamina,
       weight: inventory.weight,
       maxWeight,

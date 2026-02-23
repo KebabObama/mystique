@@ -25,8 +25,10 @@ export type GameStore = {
   actions: {
     normalMode?: Game.Ability;
     masterMode: "wall:place" | "wall:destroy";
+    moveMode: boolean;
     setNormalMode: (ability?: Game.Ability) => void;
     setMasterMode: (mode: "wall:place" | "wall:destroy") => void;
+    setMoveMode: (mode: boolean) => void;
   };
 };
 
@@ -74,17 +76,18 @@ export const useGame = create<GameStore>((set, get) => ({
   actions: {
     normalMode: undefined,
     masterMode: "wall:place",
+    moveMode: false,
     setNormalMode: (normalMode) => set({ actions: { ...get().actions, normalMode } }),
     setMasterMode: (masterMode) => set({ actions: { ...get().actions, masterMode } }),
+    setMoveMode: (moveMode) => set({ actions: { ...get().actions, moveMode } }),
   },
 
   movement: {
     moveTo: (entityId: Game.Entity["id"], position: Game.Position) => {
       const instance = get().instance;
       const send = get().send;
-      if (!instance) return;
-      const entity = instance.entities.find((e) => e.id === entityId);
-      if (!entity || (entity.position.x === position.x && entity.position.z === position.z)) return;
+      if (!instance || !instance.entities.find((e) => e.id === entityId)) return;
+      console.log("character:move", entityId, position);
       send("character:move", entityId, position);
     },
     getViable: (entityId: Game.Entity["id"]) => {

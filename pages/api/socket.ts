@@ -98,9 +98,16 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
         return;
       }
       const fresh = await db.transaction(async (tx) => {
+        const character = await tx.query.character.findFirst({
+          where: eq(schema.character.id, characterId),
+        });
+        if (!character) {
+          socket.emit("error", "Character not found");
+          return;
+        }
         const [entity] = await tx
           .insert(schema.lobbyEntity)
-          .values({ lobbyId, characterId, type: "character" })
+          .values({ lobbyId, characterId, type: "character", actions: character.maxActions })
           .returning();
         await tx
           .update(schema.lobby)
@@ -108,6 +115,7 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
           .where(eq(schema.lobby.id, inst.id));
         return await Lobby.getInstance(lobbyId, tx as any);
       });
+      if (!fresh) return;
       instances.set(lobbyId, fresh);
       io.to(`game:${inst.id}`).emit("game:state", fresh);
     });
@@ -123,7 +131,26 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
         const next = turn + 1;
         turn = next >= inst.data.sequence.length ? -1 : next;
       }
-      await update({ ...inst, data: { ...inst.data, turn } });
+
+      await db
+        .update(schema.lobby)
+        .set({ data: { ...inst.data, turn } })
+        .where(eq(schema.lobby.id, inst.id));
+
+      if (turn >= 0) {
+        const currentEntity = inst.entities.find((e) => e.id === inst.data.sequence[turn]);
+        if (currentEntity) {
+          const maxActions = currentEntity.playable.maxActions ?? 0;
+          await db
+            .update(schema.lobbyEntity)
+            .set({ actions: maxActions })
+            .where(eq(schema.lobbyEntity.id, currentEntity.id));
+        }
+      }
+
+      const fresh = await Lobby.getInstance(lobbyId);
+      instances.set(lobbyId, fresh);
+      io.to(`game:${fresh.id}`).emit("game:state", fresh);
     });
 
     socket.on("game:sequence:move", async (userId, lobbyId, entityId, delta) => {
@@ -137,6 +164,40 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
       const sequence = [...inst.data.sequence];
       [sequence[index], sequence[next]] = [sequence[next], sequence[index]];
       const fresh = { ...inst, data: { ...inst.data, sequence } } as Game.Instance;
+      await update(fresh);
+    });
+
+    socket.on("game:character:move", async (userId, lobbyId, entityId, position) => {
+      const inst = await exists(userId, lobbyId);
+      if (!inst) return;
+      const entity = inst.entities.find((e) => e.id === entityId);
+      if (!entity) return;
+      if (entity.type === "character" && entity.playable.ownerId !== userId) return;
+      if (entity.type === "monster" && userId !== inst.masterId) return;
+      const currentActions = entity.actions ?? entity.playable.maxActions ?? 0;
+      if (currentActions <= 0) return;
+
+      const positions = inst.entities.map((e) => e.position);
+      const { stamina } = entity.playable;
+      const possible: Game.Position[] = [];
+      for (let dx = -stamina; dx <= stamina; dx++) {
+        for (let dz = -stamina; dz <= stamina; dz++) {
+          if (Math.abs(dx) + Math.abs(dz) > stamina) continue;
+          const targetX = entity.position.x + dx;
+          const targetZ = entity.position.z + dz;
+          const isWall = inst.data.walls.some(({ x, z }) => x === targetX && z === targetZ);
+          const isOccupied = positions.some((pos) => pos.x === targetX && pos.z === targetZ);
+          if (!isWall && !isOccupied) possible.push({ x: targetX, z: targetZ });
+        }
+      }
+      if (!possible.some((p) => p.x === position.x && p.z === position.z)) return;
+
+      const newActions = currentActions - 1;
+      await db
+        .update(schema.lobbyEntity)
+        .set({ position, actions: newActions })
+        .where(eq(schema.lobbyEntity.id, entityId));
+      const fresh = await Lobby.getInstance(lobbyId);
       await update(fresh);
     });
 

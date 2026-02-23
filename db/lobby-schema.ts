@@ -51,6 +51,7 @@ export const lobbyEntity = pgTable("lobby_entity", {
   characterId:  uuid("character_id").references(() => character.id, { onDelete: "cascade" }),
   monsterId:    uuid("monster_id").references(() => monster.id, { onDelete: "cascade" }),
   position:     jsonb("position").notNull().$type<Game.Position>().default({ x: 0, z: 0 }),
+  actions:      integer("actions").notNull().default(0),
 }, (table) => [
   index("lobby_entity_lobby_idx").on(table.lobbyId),
 ]);
@@ -80,7 +81,6 @@ export const character = pgTable("character", {
   hp:           integer("hp").notNull().default(10),
   coins:        integer("coins").notNull().default(0),
   maxHp:        integer("max_hp").notNull().default(10),
-  actions:      integer("actions").notNull().default(0),
   maxActions:   integer("max_actions").notNull().default(0),
   stamina:      integer("stamina").notNull().default(5),
   weight:       integer("weight").notNull().default(0),
@@ -111,7 +111,6 @@ export const monster = pgTable("monster", {
   maxHp:        integer("max_hp").notNull().default(10),
   armor:        integer("armor").notNull().default(0),
   stamina:      integer("stamina").notNull().default(5),
-  actions:      integer("actions").notNull().default(0),
-  maxActions:   integer("max_actions").notNull().default(0),
+  maxActions:   integer("max_actions").notNull().default(1),
   memory:       integer("memory").notNull().default(2),
 });

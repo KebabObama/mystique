@@ -1,3 +1,4 @@
+import { ActionsDisplay } from "@/app/(classic)/game/[lobbyId]/actions-display";
 import { AddCharacter } from "@/app/(classic)/game/[lobbyId]/add-character";
 import { CameraController } from "@/app/(classic)/game/[lobbyId]/camera-controller";
 import { EndTurn } from "@/app/(classic)/game/[lobbyId]/end-turm";
@@ -6,6 +7,7 @@ import { Floor } from "@/app/(classic)/game/[lobbyId]/floor";
 import { GameProvider } from "@/app/(classic)/game/[lobbyId]/game-provider";
 import { LogEffect } from "@/app/(classic)/game/[lobbyId]/log-effect";
 import { Main } from "@/app/(classic)/game/[lobbyId]/main";
+import { MoveButton } from "@/app/(classic)/game/[lobbyId]/move-button";
 import { PostProcessing } from "@/app/(classic)/game/[lobbyId]/post-processing";
 import { Sequence } from "@/app/(classic)/game/[lobbyId]/sequence";
 import { Button } from "@/components/ui/button";
@@ -47,7 +49,13 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
               </Button>
             </AddCharacter>
           </Sequence>
-          <EndTurn />
+          <div className="flex items-start gap-1.5">
+            <MoveButton />
+            <EndTurn />
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 z-10">
+          <ActionsDisplay />
         </div>
         <Main lobbyId={lobbyId}>
           <Entities />

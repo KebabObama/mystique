@@ -16,7 +16,6 @@
     "vaul"
   ],
   "files.watcherExclude": {
-    "**/gameplay/**": true,
     ".next/**":true
   },
   "files.associations": {
