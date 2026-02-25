@@ -89,4 +89,3 @@ export const focusBolt = (min: number, max: number): Game.Ability => ({
   amount: [min, max],
   effects: Game.withEffects({ shocked: 1 }),
 });
-

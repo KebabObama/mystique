@@ -70,4 +70,3 @@ export const seed = async () => {
     `[seed] Added ${inserted.length} new item(s), skipped ${ITEMS.length - inserted.length} existing item(s).`
   );
 };
-
