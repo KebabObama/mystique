@@ -16,9 +16,14 @@ export type GameStore = {
     moveTo: (entityId: Game.Entity["id"], position: Game.Position) => void;
     getViable: (entityId: Game.Entity["id"]) => Game.Position[];
   };
+  abilities: {
+    useAt: (position: Game.Position) => void;
+    getViable: (entityId: Game.Entity["id"], ability: Game.Ability) => Game.Position[];
+  };
   sequence: {
     next: () => void;
     readonly canEnd: boolean;
+    readonly canControl: boolean;
     readonly current: Game.Entity | undefined;
     readonly isOnMasterTurn: boolean;
   };
@@ -77,9 +82,23 @@ export const useGame = create<GameStore>((set, get) => ({
     normalMode: undefined,
     masterMode: "wall:place",
     moveMode: false,
-    setNormalMode: (normalMode) => set({ actions: { ...get().actions, normalMode } }),
+    setNormalMode: (normalMode) =>
+      set({
+        actions: {
+          ...get().actions,
+          normalMode,
+          moveMode: normalMode ? false : get().actions.moveMode,
+        },
+      }),
     setMasterMode: (masterMode) => set({ actions: { ...get().actions, masterMode } }),
-    setMoveMode: (moveMode) => set({ actions: { ...get().actions, moveMode } }),
+    setMoveMode: (moveMode) =>
+      set({
+        actions: {
+          ...get().actions,
+          moveMode,
+          normalMode: moveMode ? undefined : get().actions.normalMode,
+        },
+      }),
   },
 
   movement: {
@@ -112,6 +131,83 @@ export const useGame = create<GameStore>((set, get) => ({
     },
   },
 
+  abilities: {
+    useAt: (position: Game.Position) => {
+      const instance = get().instance;
+      const current = get().sequence.current;
+      const ability = get().actions.normalMode;
+      const send = get().send;
+
+      if (!instance || !current || !ability) return;
+
+      const actions = current.actions ?? current.playable.maxActions ?? 0;
+      if (actions < ability.cost) {
+        toast.error("Not enough actions.");
+        return;
+      }
+
+      const viable = get().abilities.getViable(current.id, ability);
+      const canUse = viable.some((target) => target.x === position.x && target.z === position.z);
+      if (!canUse) {
+        toast.error("Target is out of range.");
+        return;
+      }
+
+      send("ability:use", ability.name, position);
+      set({ actions: { ...get().actions, normalMode: undefined } });
+    },
+    getViable: (entityId: Game.Entity["id"], ability: Game.Ability) => {
+      const instance = get().instance;
+      if (!instance) return [];
+
+      const entity = instance.entities.find((entry) => entry.id === entityId);
+      if (!entity) return [];
+
+      const maxRange = Math.max(0, ability.range);
+      const possible: Game.Position[] = [];
+
+      for (let dx = -maxRange; dx <= maxRange; dx++) {
+        for (let dz = -maxRange; dz <= maxRange; dz++) {
+          if (Math.abs(dx) + Math.abs(dz) > maxRange) continue;
+          const target = { x: entity.position.x + dx, z: entity.position.z + dz };
+
+          const impactTiles =
+            ability.targeting <= 0
+              ? [target]
+              : Array.from({ length: ability.targeting * 2 + 1 }).flatMap((_, txIndex) => {
+                  const tx = txIndex - ability.targeting;
+                  return Array.from({ length: ability.targeting * 2 + 1 }).flatMap(
+                    (__, tzIndex) => {
+                      const tz = tzIndex - ability.targeting;
+                      if (Math.abs(tx) + Math.abs(tz) > ability.targeting) return [];
+                      return [{ x: target.x + tx, z: target.z + tz }];
+                    }
+                  );
+                });
+
+          const canHitEntity =
+            ability.targeting < 0
+              ? instance.entities.some((targetEntity) => {
+                  const dist =
+                    Math.abs(targetEntity.position.x - target.x) +
+                    Math.abs(targetEntity.position.z - target.z);
+                  return dist <= Math.abs(ability.targeting);
+                })
+              : instance.entities.some((targetEntity) =>
+                  impactTiles.some(
+                    (tile) =>
+                      tile.x === targetEntity.position.x && tile.z === targetEntity.position.z
+                  )
+                );
+
+          if (canHitEntity) possible.push(target);
+        }
+      }
+
+      return possible;
+    },
+  },
+
   sequence: {
     get canEnd() {
       const userId = useUser.getState()?.id;
@@ -129,6 +225,16 @@ export const useGame = create<GameStore>((set, get) => ({
       const canEnd = get().sequence.canEnd;
       if (canEnd) send("sequence:next");
       else toast.error("Cannot end turn.");
+    },
+    get canControl() {
+      const userId = useUser.getState()?.id;
+      const instance = get().instance;
+      const current = get().sequence.current;
+      if (!userId || !instance || !current) return false;
+      return (
+        (current.type === "character" && current.playable.ownerId === userId) ||
+        (current.type === "monster" && instance.masterId === userId)
+      );
     },
     get current() {
       const instance = get().instance;

@@ -23,6 +23,12 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
   res.socket.server.io = io;
 
   io.on("connection", (socket) => {
+    const isPosition = (value: unknown): value is Game.Position => {
+      if (!value || typeof value !== "object") return false;
+      const point = value as Partial<Game.Position>;
+      return typeof point.x === "number" && typeof point.z === "number";
+    };
+
     const exists = async (
       userId: string,
       lobbyId: string,
@@ -197,6 +203,100 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
         .update(schema.lobbyEntity)
         .set({ position, actions: newActions })
         .where(eq(schema.lobbyEntity.id, entityId));
+      const fresh = await Lobby.getInstance(lobbyId);
+      await update(fresh);
+    });
+
+    socket.on("game:ability:use", async (userId, lobbyId, abilityName, target) => {
+      const inst = await exists(userId, lobbyId);
+      if (!inst) return;
+      if (typeof abilityName !== "string" || !isPosition(target)) return;
+      if (inst.data.turn < 0) return;
+
+      const currentId = inst.data.sequence[inst.data.turn];
+      if (!currentId) return;
+
+      const caster = inst.entities.find((entity) => entity.id === currentId);
+      if (!caster) return;
+
+      if (caster.type === "character" && caster.playable.ownerId !== userId) return;
+      if (caster.type === "monster" && inst.masterId !== userId) return;
+
+      const abilities = Game.getEntityAbilities(caster);
+      const ability = abilities.find((entry) => entry.name === abilityName);
+      if (!ability) return;
+
+      const currentActions = caster.actions ?? caster.playable.maxActions ?? 0;
+      if (currentActions < ability.cost) return;
+
+      const origin = caster.position;
+      const distance = Math.abs(origin.x - target.x) + Math.abs(origin.z - target.z);
+      if (distance > ability.range) return;
+
+      const selectedTiles: Game.Position[] =
+        ability.targeting <= 0
+          ? [{ x: target.x, z: target.z }]
+          : Array.from({ length: ability.targeting * 2 + 1 }).flatMap((_, dxIndex) => {
+              const dx = dxIndex - ability.targeting;
+              return Array.from({ length: ability.targeting * 2 + 1 }).flatMap((__, dzIndex) => {
+                const dz = dzIndex - ability.targeting;
+                if (Math.abs(dx) + Math.abs(dz) > ability.targeting) return [];
+                return [{ x: target.x + dx, z: target.z + dz }];
+              });
+            });
+
+      const victims =
+        ability.targeting < 0
+          ? inst.entities
+              .map((entity) => ({
+                entity,
+                distance:
+                  Math.abs(entity.position.x - target.x) + Math.abs(entity.position.z - target.z),
+              }))
+              .filter((entry) => entry.distance <= Math.abs(ability.targeting))
+              .sort((a, b) => a.distance - b.distance)
+              .slice(0, Math.abs(ability.targeting))
+              .map((entry) => entry.entity)
+          : inst.entities.filter((entity) =>
+              selectedTiles.some(
+                (tile) => tile.x === entity.position.x && tile.z === entity.position.z
+              )
+            );
+
+      if (victims.length === 0) return;
+
+      const rollMin = Math.min(ability.amount[0], ability.amount[1]);
+      const rollMax = Math.max(ability.amount[0], ability.amount[1]);
+
+      await db.transaction(async (tx) => {
+        for (const victim of victims) {
+          const rawAmount = Math.floor(Math.random() * (rollMax - rollMin + 1)) + rollMin;
+          const adjustedAmount =
+            rawAmount > 0 ? Math.max(rawAmount - (victim.playable.armor ?? 0), 0) : rawAmount;
+
+          const currentHp = victim.playable.hp ?? victim.playable.maxHp ?? 0;
+          const maxHp = victim.playable.maxHp ?? currentHp;
+          const nextHp = Math.max(0, Math.min(maxHp, currentHp - adjustedAmount));
+
+          if (victim.type === "character") {
+            await tx
+              .update(schema.character)
+              .set({ hp: nextHp })
+              .where(eq(schema.character.id, victim.playable.id));
+          } else {
+            await tx
+              .update(schema.monster)
+              .set({ hp: nextHp })
+              .where(eq(schema.monster.id, victim.playable.id));
+          }
+        }
+
+        await tx
+          .update(schema.lobbyEntity)
+          .set({ actions: currentActions - ability.cost })
+          .where(eq(schema.lobbyEntity.id, caster.id));
+      });
+
       const fresh = await Lobby.getInstance(lobbyId);
       await update(fresh);
     });

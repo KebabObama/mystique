@@ -1,3 +1,4 @@
+import { AbilitiesDrawer } from "@/app/(classic)/game/[lobbyId]/abilities-drawer";
 import { ActionsDisplay } from "@/app/(classic)/game/[lobbyId]/actions-display";
 import { AddCharacter } from "@/app/(classic)/game/[lobbyId]/add-character";
 import { CameraController } from "@/app/(classic)/game/[lobbyId]/camera-controller";
@@ -49,13 +50,14 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
               </Button>
             </AddCharacter>
           </Sequence>
-          <div className="flex items-start gap-1.5">
-            <MoveButton />
-            <EndTurn />
-          </div>
+          <EndTurn />
         </div>
-        <div className="absolute bottom-0 left-0 z-10">
+        <div className="absolute bottom-0 left-0 z-10 flex w-full items-end justify-between gap-1.5">
           <ActionsDisplay />
+          <div className="flex flex-col gap-3">
+            <MoveButton />
+            <AbilitiesDrawer />
+          </div>
         </div>
         <Main lobbyId={lobbyId}>
           <Entities />

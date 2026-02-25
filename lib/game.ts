@@ -46,6 +46,17 @@ export namespace Game {
     effects: Record<Effect, number>;
   };
 
+  export const EMPTY_EFFECTS: Record<Effect, number> = {
+    corroding: 0,
+    frostbite: 0,
+    burning: 0,
+    shocked: 0,
+  } as const;
+
+  export const withEffects = (
+    effects: Partial<Record<Effect, number>> = {}
+  ): Record<Effect, number> => ({ ...EMPTY_EFFECTS, ...effects });
+
   export type Character = typeof schema.character.$inferSelect & {
     inventory: (Omit<typeof schema.inventory.$inferSelect, "itemId" | "characterId"> & {
       item: typeof schema.item.$inferSelect;
@@ -62,6 +73,14 @@ export namespace Game {
   export type Instance = typeof schema.lobby.$inferSelect & {
     members: (typeof schema.user.$inferSelect)[];
     entities: Entity[];
+  };
+
+  export const getEntityAbilities = (entity: Entity): Ability[] => {
+    if (entity.type === "monster") return entity.playable.abilities;
+
+    return entity.playable.inventory
+      .filter((entry) => entry.equipped && entry.item.type === "weapon")
+      .flatMap((entry) => entry.item.abilities);
   };
 
   export const calculateCharacterStats = (

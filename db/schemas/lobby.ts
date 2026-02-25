@@ -113,4 +113,5 @@ export const monster = pgTable("monster", {
   stamina:      integer("stamina").notNull().default(5),
   maxActions:   integer("max_actions").notNull().default(1),
   memory:       integer("memory").notNull().default(2),
+  abilities:    jsonb("abilities").notNull().$type<Game.Ability[]>().default([]),
 });
