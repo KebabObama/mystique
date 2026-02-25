@@ -23,4 +23,5 @@
     "*.tsx":  "typescriptreact",
     "*.ts":   "typescript",
   },
+  "typescript.tsdk": "node_modules/typescript/lib",
 }
