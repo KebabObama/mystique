@@ -1,68 +1,5 @@
 import { db, schema } from "../../lib/db";
-import { Game } from "../../lib/game";
-
-const bite = (min: number, max: number): Game.Ability => ({
-  name: "Bite",
-  cost: 1,
-  range: 1,
-  targeting: 0,
-  amount: [min, max],
-  effects: Game.withEffects(),
-});
-
-const slash = (min: number, max: number): Game.Ability => ({
-  name: "Slash",
-  cost: 1,
-  range: 1,
-  targeting: 0,
-  amount: [min, max],
-  effects: Game.withEffects(),
-});
-
-const smite = (min: number, max: number): Game.Ability => ({
-  name: "Smite",
-  cost: 2,
-  range: 1,
-  targeting: 1,
-  amount: [min, max],
-  effects: Game.withEffects(),
-});
-
-const bolt = (min: number, max: number): Game.Ability => ({
-  name: "Bolt",
-  cost: 1,
-  range: 6,
-  targeting: 0,
-  amount: [min, max],
-  effects: Game.withEffects({ shocked: 1 }),
-});
-
-const frost = (min: number, max: number): Game.Ability => ({
-  name: "Frost",
-  cost: 2,
-  range: 5,
-  targeting: 1,
-  amount: [min, max],
-  effects: Game.withEffects({ frostbite: 2 }),
-});
-
-const flame = (min: number, max: number): Game.Ability => ({
-  name: "Flame",
-  cost: 2,
-  range: 4,
-  targeting: 1,
-  amount: [min, max],
-  effects: Game.withEffects({ burning: 2 }),
-});
-
-const rot = (min: number, max: number): Game.Ability => ({
-  name: "Corrode",
-  cost: 2,
-  range: 4,
-  targeting: 0,
-  amount: [min, max],
-  effects: Game.withEffects({ corroding: 2 }),
-});
+import { bite, bolt, flame, frost, rot, slash, smite } from "./abilities";
 
 // prettier-ignore
 const MONSTERS: (typeof schema.monster.$inferInsert)[] = [
@@ -91,15 +28,12 @@ const MONSTERS: (typeof schema.monster.$inferInsert)[] = [
   { name: "Clockwork Sentinel", level: 8, hp: 36, maxHp: 36, armor: 5, stamina: 6, maxActions: 1, memory: 2, abilities: [smite(8, 13), bolt(5, 8)] }, 
 ];
 
-try {
-  await db.transaction(async (tx) => {
-    await tx.delete(schema.monster);
-    await tx.insert(schema.monster).values(MONSTERS);
-  });
-  console.info(`[seed] Re-seeded ${MONSTERS.length} monster(s).`);
-} catch (error) {
-  console.error("[seed] Failed to seed monsters:", error);
-  process.exitCode = 1;
-} finally {
-  await db.$client.end();
-}
+export const seed = async () => {
+  const existing = await db.select({ name: schema.monster.name }).from(schema.monster);
+  const existingNames = new Set(existing.map((monster) => monster.name));
+  const missingMonsters = MONSTERS.filter((monster) => !existingNames.has(monster.name));
+  if (missingMonsters.length > 0) await db.insert(schema.monster).values(missingMonsters);
+  console.info(
+    `[seed] Added ${missingMonsters.length} new monster(s), skipped ${MONSTERS.length - missingMonsters.length} existing monster(s).`
+  );
+};
