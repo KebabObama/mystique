@@ -11,7 +11,7 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { user } from "./auth-schema";
+import { user } from "./auth";
 
 // prettier-ignore
 export const lobby = pgTable("lobby", {

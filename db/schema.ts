@@ -1,3 +1,3 @@
-export * from "./auth-schema";
-export * from "./lobby-schema";
-export * from "./relations-schema";
+export * from "./schemas/auth";
+export * from "./schemas/lobby";
+export * from "./schemas/relations";

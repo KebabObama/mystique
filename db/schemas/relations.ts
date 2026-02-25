@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { account, session, user } from "./auth-schema";
+import { account, session, user } from "./auth";
 import {
   character,
   inventory,
@@ -9,7 +9,7 @@ import {
   lobbyMember,
   message,
   monster,
-} from "./lobby-schema";
+} from "./lobby";
 
 export const itemRelations = relations(item, ({ many }) => ({ inventories: many(inventory) }));
 
