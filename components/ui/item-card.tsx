@@ -1,11 +1,17 @@
 import { Card } from "@/components/ui/card";
 import { Game } from "@/lib/game";
 
-export const ItemCard = ({ item }: { item: Game.Character["inventory"][number] }) => {
+type ItemEntry = {
+  quantity: number;
+  equipped?: boolean;
+  item: Game.Character["inventory"][number]["item"];
+};
+
+export const ItemCard = ({ item }: { item: ItemEntry }) => {
   return (
     <Card
       key={item.item.id}
-      className={`grid w-full grid-cols-3 p-0 text-xs ${item.equipped ? "bg-background/80" : ""} shadow-sm`}
+      className={`grid w-full grid-cols-3 p-0 text-xs ${item.equipped ? "bg-background" : "bg-background/60"} shadow-sm`}
     >
       <div className="col-span-2 flex w-full flex-col justify-between px-1.5 py-1">
         <div className="flex items-center justify-between">

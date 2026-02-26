@@ -9,20 +9,40 @@ import React from "react";
 
 export const Floor = React.memo(() => {
   const target = useCamera((s) => s.camera.target);
-  const moveMode = useGame((s) => s.actions.moveMode);
-  const normalMode = useGame((s) => s.actions.normalMode);
-  const setMoveMode = useGame((s) => s.actions.setMoveMode);
-  const setNormalMode = useGame((s) => s.actions.setNormalMode);
+  const mode = useGame((s) => s.mode);
+  const setMode = useGame((s) => s.setMode);
+  const addChestAt = useGame((s) => s.chest.addAt);
+  const moveChestTo = useGame((s) => s.chest.moveTo);
+  const addMonsterAt = useGame((s) => s.monster.addAt);
   const current = useGame((s) => s.sequence.current);
   const moveTo = useGame((s) => s.movement.moveTo);
   const castAbility = useGame((s) => s.abilities.useAt);
-  const actions = current?.actions ?? current?.playable.maxActions ?? 0;
+  const ability = mode.type === "ability" ? mode.ability : undefined;
+  const actions =
+    current?.actions ??
+    (current && current.type !== "chest" ? current.playable.maxActions : 0) ??
+    0;
 
   const position = Render.getTilePosition(target);
 
   const handle = (e: ThreeEvent<MouseEvent>) => {
     const point = Render.getTilePosition(e.point);
-    if (normalMode && current && actions > 0) castAbility({ x: point.x, z: point.z });
+    if (mode.type === "monster:place") {
+      addMonsterAt(mode.monsterId, { x: point.x, z: point.z });
+      setMode({ type: "normal" });
+      return;
+    }
+    if (mode.type === "chest:place") {
+      addChestAt({ x: point.x, z: point.z });
+      setMode({ type: "normal" });
+      return;
+    }
+    if (mode.type === "chest:move") {
+      moveChestTo(mode.entityId, { x: point.x, z: point.z });
+      setMode({ type: "normal" });
+      return;
+    }
+    if (ability && current && actions > 0) castAbility({ x: point.x, z: point.z });
   };
 
   const viable = React.useMemo(() => {
@@ -31,9 +51,9 @@ export const Floor = React.memo(() => {
   }, [current]);
 
   const viableAbility = React.useMemo(() => {
-    if (!current || !normalMode) return [];
-    return useGame.getState().abilities.getViable(current.id, normalMode);
-  }, [current, normalMode]);
+    if (!current || !ability) return [];
+    return useGame.getState().abilities.getViable(current.id, ability);
+  }, [current, ability]);
 
   return (
     <>
@@ -43,7 +63,7 @@ export const Floor = React.memo(() => {
         position={[position.x, position.y, position.z]}
         scale={50}
       />
-      {moveMode &&
+      {mode.type === "character:move" &&
         viable.map((pos, i) => (
           <Plane
             key={i}
@@ -51,7 +71,7 @@ export const Floor = React.memo(() => {
               e.stopPropagation();
               if (current && actions > 0) {
                 moveTo(current.id, pos);
-                setMoveMode(false);
+                setMode({ type: "normal" });
               }
             }}
             rotation={[-Math.PI / 2, 0, 0]}
@@ -62,7 +82,7 @@ export const Floor = React.memo(() => {
           </Plane>
         ))}
 
-      {normalMode &&
+      {ability &&
         viableAbility.map((pos, i) => (
           <Plane
             key={`ability-${i}`}
@@ -79,9 +99,9 @@ export const Floor = React.memo(() => {
           </Plane>
         ))}
 
-      {normalMode && (
+      {ability && (
         <Plane
-          onClick={() => setNormalMode(undefined)}
+          onClick={() => setMode({ type: "normal" })}
           rotation={[-Math.PI / 2, 0, 0]}
           position={[position.x, position.y + 0.001, position.z]}
           scale={60}

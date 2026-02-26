@@ -45,7 +45,11 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
     where: eq(schema.lobby.id, lobbyId),
     with: {
       entities: {
-        with: { character: { with: { inventory: { with: { item: true } } } }, monster: true },
+        with: {
+          character: { with: { inventory: { with: { item: true } } } },
+          monster: true,
+          chest: { with: { inventory: { with: { item: true } } } },
+        },
       },
       members: { columns: {}, with: { user: true } },
     },
@@ -58,6 +62,11 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
     if (e.type === "character") {
       const playable = e.character!;
       return { ...e, actions: e.actions ?? playable.maxActions ?? 0, type: "character", playable };
+    }
+
+    if (e.type === "chest") {
+      const playable = e.chest!;
+      return { ...e, actions: 0, type: "chest", playable };
     }
 
     const playable = e.monster!;

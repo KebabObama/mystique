@@ -7,23 +7,16 @@ import { useGame } from "@/hooks/use-game";
 import { Game } from "@/lib/game";
 import { cn } from "@/lib/utils";
 
-type AbilityCardProps = {
-  ability: Game.Ability;
-  selected: boolean;
-  disabled: boolean;
-  onSelect: () => void;
-};
+type AbilityCardProps = { ability: Game.Ability; selected: boolean; onSelect: () => void };
 
-const AbilityCard = ({ ability, selected, disabled, onSelect }: AbilityCardProps) => {
+const AbilityCard = ({ ability, selected, onSelect }: AbilityCardProps) => {
   return (
     <button
       type="button"
       onClick={onSelect}
-      disabled={disabled}
       className={cn(
         "flex w-full flex-col rounded-md border p-2 text-left transition",
-        selected && "border-primary bg-primary/10",
-        disabled && "opacity-60"
+        selected && "border-primary bg-primary/10"
       )}
     >
       <div className="flex items-center justify-between">
@@ -44,19 +37,17 @@ const AbilityCard = ({ ability, selected, disabled, onSelect }: AbilityCardProps
 export const AbilitiesDrawer = () => {
   const current = useGame((s) => s.sequence.current);
   const canControlCurrent = useGame((s) => s.sequence.canControl);
-  const normalMode = useGame((s) => s.actions.normalMode);
-  const moveMode = useGame((s) => s.actions.moveMode);
-  const setNormalMode = useGame((s) => s.actions.setNormalMode);
-  const setMoveMode = useGame((s) => s.actions.setMoveMode);
-  const actions = current?.actions ?? current?.playable.maxActions ?? 0;
+  const mode = useGame((s) => s.mode);
+  const setMode = useGame((s) => s.setMode);
 
   if (!canControlCurrent || !current) return null;
   const abilities = Game.getEntityAbilities(current);
+  const selectedAbility = mode.type === "ability" ? mode.ability : undefined;
 
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button>{normalMode ? `Ability: ${normalMode.name}` : "Abilities"}</Button>
+        <Button>{selectedAbility ? `Ability: ${selectedAbility.name}` : "Abilities"}</Button>
       </SheetTrigger>
       <SheetContent side="bottom" className="absolute mx-auto mb-4 max-h-[40vh] max-w-2xl">
         <Border />
@@ -68,21 +59,18 @@ export const AbilitiesDrawer = () => {
             <div className="text-muted text-center text-sm">No abilities available.</div>
           )}
           {abilities.map((ability, index) => {
-            const disabled = actions < ability.cost;
-            const selected = normalMode?.name === ability.name;
+            const selected = selectedAbility?.name === ability.name;
             return (
               <AbilityCard
                 key={`${ability.name}-${index}`}
                 ability={ability}
                 selected={selected}
-                disabled={disabled}
                 onSelect={() => {
                   if (selected) {
-                    setNormalMode(undefined);
+                    setMode({ type: "normal" });
                     return;
                   }
-                  if (moveMode) setMoveMode(false);
-                  setNormalMode(ability);
+                  setMode({ type: "ability", ability });
                 }}
               />
             );

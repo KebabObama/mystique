@@ -2,6 +2,8 @@ import { relations } from "drizzle-orm";
 import { account, session, user } from "./auth";
 import {
   character,
+  chest,
+  chestInventory,
   inventory,
   item,
   lobby,
@@ -11,7 +13,10 @@ import {
   monster,
 } from "./lobby";
 
-export const itemRelations = relations(item, ({ many }) => ({ inventories: many(inventory) }));
+export const itemRelations = relations(item, ({ many }) => ({
+  inventories: many(inventory),
+  chestInventories: many(chestInventory),
+}));
 
 export const characterRelations = relations(character, ({ many, one }) => ({
   inventory: many(inventory),
@@ -23,11 +28,22 @@ export const lobbyEntityRelations = relations(lobbyEntity, ({ one }) => ({
   lobby: one(lobby, { fields: [lobbyEntity.lobbyId], references: [lobby.id] }),
   character: one(character, { fields: [lobbyEntity.characterId], references: [character.id] }),
   monster: one(monster, { fields: [lobbyEntity.monsterId], references: [monster.id] }),
+  chest: one(chest, { fields: [lobbyEntity.chestId], references: [chest.id] }),
 }));
 
 export const inventoryRelations = relations(inventory, ({ one }) => ({
   character: one(character, { fields: [inventory.characterId], references: [character.id] }),
   item: one(item, { fields: [inventory.itemId], references: [item.id] }),
+}));
+
+export const chestRelations = relations(chest, ({ many }) => ({
+  inventory: many(chestInventory),
+  lobbyEntities: many(lobbyEntity),
+}));
+
+export const chestInventoryRelations = relations(chestInventory, ({ one }) => ({
+  chest: one(chest, { fields: [chestInventory.chestId], references: [chest.id] }),
+  item: one(item, { fields: [chestInventory.itemId], references: [item.id] }),
 }));
 
 export const lobbyRelations = relations(lobby, ({ one, many }) => ({

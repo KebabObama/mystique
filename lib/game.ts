@@ -64,11 +64,20 @@ export namespace Game {
   };
 
   export type Monster = typeof schema.monster.$inferSelect;
+  export type Chest = typeof schema.chest.$inferSelect & {
+    inventory: (Omit<typeof schema.chestInventory.$inferSelect, "itemId" | "chestId"> & {
+      item: typeof schema.item.$inferSelect;
+    })[];
+  };
   export type Entity = Omit<
     typeof schema.lobbyEntity.$inferSelect,
-    "characterId" | "monsterId" | "lobbyId"
+    "characterId" | "monsterId" | "chestId" | "lobbyId"
   > &
-    ({ type: "character"; playable: Character } | { type: "monster"; playable: Monster });
+    (
+      | { type: "character"; playable: Character }
+      | { type: "monster"; playable: Monster }
+      | { type: "chest"; playable: Chest }
+    );
 
   export type Instance = typeof schema.lobby.$inferSelect & {
     members: (typeof schema.user.$inferSelect)[];
@@ -77,6 +86,7 @@ export namespace Game {
 
   export const getEntityAbilities = (entity: Entity): Ability[] => {
     if (entity.type === "monster") return entity.playable.abilities;
+    if (entity.type === "chest") return [];
 
     return entity.playable.inventory
       .filter((entry) => entry.equipped && entry.item.type === "weapon")

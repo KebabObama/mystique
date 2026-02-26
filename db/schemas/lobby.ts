@@ -44,12 +44,21 @@ export const message = pgTable("message", {
 ]);
 
 // prettier-ignore
+export const chest = pgTable("chest", {
+  id:         uuid("id").primaryKey().defaultRandom(),
+  name:       text("name").notNull().default("Chest"),
+}, (table) => [
+  index("chest_name_idx").on(table.name),
+]);
+
+// prettier-ignore
 export const lobbyEntity = pgTable("lobby_entity", {
   id:           uuid("id").primaryKey().defaultRandom(),
   lobbyId:      uuid("lobby_id").notNull().references(() => lobby.id, { onDelete: "cascade" }),
-  type:         text("type", { enum: ["character", "monster"] }).notNull(),
+  type:         text("type", { enum: ["character", "monster", "chest"] }).notNull(),
   characterId:  uuid("character_id").references(() => character.id, { onDelete: "cascade" }),
   monsterId:    uuid("monster_id").references(() => monster.id, { onDelete: "cascade" }),
+  chestId:      uuid("chest_id").references(() => chest.id, { onDelete: "cascade" }),
   position:     jsonb("position").notNull().$type<Game.Position>().default({ x: 0, z: 0 }),
   actions:      integer("actions").notNull().default(0),
 }, (table) => [
@@ -100,6 +109,16 @@ export const inventory = pgTable("inventory", {
 }, (table) => [
   index("inventory_char_idx").on(table.characterId),
   primaryKey({ name: "inventory_pk", columns: [table.characterId, table.itemId] }),
+]);
+
+// prettier-ignore
+export const chestInventory = pgTable("chest_inventory", {
+  chestId:    uuid("chest_id").notNull().references(() => chest.id, { onDelete: "cascade" }),
+  itemId:     uuid("item_id").notNull().references(() => item.id, { onDelete: "cascade" }),
+  quantity:   integer("quantity").notNull().default(1),
+}, (table) => [
+  index("chest_inventory_chest_idx").on(table.chestId),
+  primaryKey({ name: "chest_inventory_pk", columns: [table.chestId, table.itemId] }),
 ]);
 
 // prettier-ignore

@@ -2,15 +2,19 @@ import { AbilitiesDrawer } from "@/app/(classic)/game/[lobbyId]/abilities-drawer
 import { ActionsDisplay } from "@/app/(classic)/game/[lobbyId]/actions-display";
 import { AddCharacter } from "@/app/(classic)/game/[lobbyId]/add-character";
 import { CameraController } from "@/app/(classic)/game/[lobbyId]/camera-controller";
+import { ChestControls } from "@/app/(classic)/game/[lobbyId]/chest-controls";
 import { EndTurn } from "@/app/(classic)/game/[lobbyId]/end-turm";
 import { Entities } from "@/app/(classic)/game/[lobbyId]/entities";
 import { Floor } from "@/app/(classic)/game/[lobbyId]/floor";
 import { GameProvider } from "@/app/(classic)/game/[lobbyId]/game-provider";
 import { LogEffect } from "@/app/(classic)/game/[lobbyId]/log-effect";
 import { Main } from "@/app/(classic)/game/[lobbyId]/main";
+import { MonsterControls } from "@/app/(classic)/game/[lobbyId]/monster-controls";
 import { MoveButton } from "@/app/(classic)/game/[lobbyId]/move-button";
 import { PostProcessing } from "@/app/(classic)/game/[lobbyId]/post-processing";
 import { Sequence } from "@/app/(classic)/game/[lobbyId]/sequence";
+import { InventoryButton } from "@/components/inventory/inventory-button";
+import { InventoryPanel } from "@/components/inventory/inventory-panel";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
@@ -38,10 +42,15 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
     where: eq(schema.character.ownerId, session.user.id),
   });
 
+  const items = await db.query.item.findMany({ columns: { id: true, name: true } });
+
+  const monsters = await db.query.monster.findMany();
+
   return (
     <Card className="size-full p-0">
       <GameProvider lobbyId={lobbyId}>
         <LogEffect />
+        <InventoryPanel items={items} />
         <div className="absolute top-0 left-0 z-10 flex w-full justify-between">
           <Sequence>
             <AddCharacter characters={characters}>
@@ -57,6 +66,9 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
           <div className="flex flex-col gap-3">
             <MoveButton />
             <AbilitiesDrawer />
+            <ChestControls />
+            <MonsterControls monsters={monsters} />
+            <InventoryButton />
           </div>
         </div>
         <Main lobbyId={lobbyId}>

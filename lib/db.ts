@@ -1,4 +1,5 @@
 import * as sch from "@/db/schema";
+import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 
 export const schema = sch;
