@@ -12,6 +12,8 @@ export type GameMode =
   | { type: "ability"; ability: Game.Ability }
   | { type: "wall:place" }
   | { type: "wall:destroy" }
+  | { type: "wall:place-area"; start?: Game.Position }
+  | { type: "wall:destroy-area"; start?: Game.Position }
   | { type: "chest:place" }
   | { type: "chest:move"; entityId: Game.Entity["id"] }
   | { type: "monster:place"; monsterId: string };
@@ -43,6 +45,12 @@ export type GameStore = {
   monster: {
     addAt: (monsterId: string, position: Game.Position) => void;
     deleteById: (entityId: Game.Entity["id"]) => void;
+  };
+  wall: {
+    addAt: (position: Game.Position) => void;
+    deleteAt: (position: Game.Position) => void;
+    addArea: (start: Game.Position, end: Game.Position) => void;
+    deleteArea: (start: Game.Position, end: Game.Position) => void;
   };
   inventory: {
     panelMode: "view" | "storage" | "inspect" | "master" | null;
@@ -198,6 +206,14 @@ export const useGame = create<GameStore>((set, get) => ({
     addAt: (monsterId: string, position: Game.Position) =>
       get().send("monster:add", monsterId, position),
     deleteById: (entityId: Game.Entity["id"]) => get().send("monster:delete", entityId),
+  },
+
+  wall: {
+    addAt: (position: Game.Position) => get().send("wall:add", position),
+    deleteAt: (position: Game.Position) => get().send("wall:delete", position),
+    addArea: (start: Game.Position, end: Game.Position) => get().send("wall:add-area", start, end),
+    deleteArea: (start: Game.Position, end: Game.Position) =>
+      get().send("wall:delete-area", start, end),
   },
 
   inventory: {

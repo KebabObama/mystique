@@ -13,6 +13,7 @@ import { MonsterControls } from "@/app/(classic)/game/[lobbyId]/monster-controls
 import { MoveButton } from "@/app/(classic)/game/[lobbyId]/move-button";
 import { PostProcessing } from "@/app/(classic)/game/[lobbyId]/post-processing";
 import { Sequence } from "@/app/(classic)/game/[lobbyId]/sequence";
+import { WallControls } from "@/app/(classic)/game/[lobbyId]/wall-controls";
 import { InventoryButton } from "@/components/inventory/inventory-button";
 import { InventoryPanel } from "@/components/inventory/inventory-panel";
 import { Button } from "@/components/ui/button";
@@ -63,7 +64,8 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
         </div>
         <div className="absolute bottom-0 left-0 z-10 flex w-full items-end justify-between gap-1.5">
           <ActionsDisplay />
-          <div className="flex flex-col gap-3">
+          <div className="flex min-w-sm flex-col gap-3">
+            <WallControls />
             <MoveButton />
             <AbilitiesDrawer />
             <ChestControls />
