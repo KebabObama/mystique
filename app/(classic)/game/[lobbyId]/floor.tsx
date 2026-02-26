@@ -2,18 +2,20 @@
 
 import { useCamera } from "@/hooks/use-camera";
 import { useGame } from "@/hooks/use-game";
+import { Game } from "@/lib/game";
 import { Render } from "@/lib/render";
-import { Plane } from "@react-three/drei";
 import { ThreeEvent } from "@react-three/fiber";
 import React from "react";
-import * as THREE from "three";
+import { AbilityTiles } from "./floor/ability-tiles";
+import { AreaPreview } from "./floor/area-preview";
+import { FloorPlane } from "./floor/floor-plane";
+import { MoveTiles } from "./floor/move-tiles";
+import { WallsMesh } from "./floor/walls-mesh";
 
 const EMPTY_WALLS: any[] = [];
+const RENDER_DISTANCE = 25;
 
 export const Floor = React.memo(() => {
-  const wallsRef = React.useRef<THREE.InstancedMesh>(null);
-  const wallDummy = React.useMemo(() => new THREE.Object3D(), []);
-
   const target = useCamera((s) => s.camera.target);
   const walls = useGame((s) => s.instance?.data.walls ?? EMPTY_WALLS);
 
@@ -37,6 +39,11 @@ export const Floor = React.memo(() => {
     0;
 
   const position = Render.getTilePosition(target);
+  const isWithinRenderDistance = React.useCallback(
+    (point: { x: number; z: number }) =>
+      Render.distance(position, point, "chebyshev") <= RENDER_DISTANCE,
+    [position]
+  );
 
   const [hoverPos, setHoverPos] = React.useState<{ x: number; z: number } | null>(null);
 
@@ -107,30 +114,35 @@ export const Floor = React.memo(() => {
     return tiles;
   }, [areaStart, hoverPos]);
 
+  const visibleAreaPreview = React.useMemo(
+    () => areaPreview.filter((point) => isWithinRenderDistance(point)),
+    [areaPreview, isWithinRenderDistance]
+  );
+
   const viable = React.useMemo(() => {
     if (!current) return [];
     return useGame.getState().movement.getViable(current.id);
   }, [current]);
+
+  const visibleViable = React.useMemo(
+    () => viable.filter((point) => isWithinRenderDistance(point)),
+    [viable, isWithinRenderDistance]
+  );
 
   const viableAbility = React.useMemo(() => {
     if (!current || !ability) return [];
     return useGame.getState().abilities.getViable(current.id, ability);
   }, [current, ability]);
 
-  React.useLayoutEffect(() => {
-    const mesh = wallsRef.current;
-    if (!mesh) return;
+  const visibleViableAbility = React.useMemo(
+    () => viableAbility.filter((point) => isWithinRenderDistance(point)),
+    [viableAbility, isWithinRenderDistance]
+  );
 
-    for (let index = 0; index < walls.length; index++) {
-      const wall = walls[index];
-      wallDummy.position.set(wall.x + 0.5, 1, wall.z + 0.5);
-      wallDummy.updateMatrix();
-      mesh.setMatrixAt(index, wallDummy.matrix);
-    }
-
-    mesh.count = walls.length;
-    mesh.instanceMatrix.needsUpdate = true;
-  }, [walls, wallDummy]);
+  const visibleWalls = React.useMemo(
+    () => walls.filter((wall) => isWithinRenderDistance(wall)),
+    [walls, isWithinRenderDistance]
+  );
 
   const handleWallClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
@@ -141,8 +153,8 @@ export const Floor = React.memo(() => {
         addWallAt(point);
         break;
       case "wall:destroy":
-        if (index !== undefined && walls[index]) {
-          deleteWallAt(walls[index]);
+        if (index !== undefined && visibleWalls[index]) {
+          deleteWallAt(visibleWalls[index]);
         } else deleteWallAt(point);
         break;
       default:
@@ -153,83 +165,39 @@ export const Floor = React.memo(() => {
 
   return (
     <>
-      <Plane
-        onClick={handleFloorClick}
-        onPointerMove={handleFloorMove}
-        rotation={[-Math.PI / 2, 0, 0]}
-        position={[position.x, position.y, position.z]}
-        scale={50}
-      />
+      <FloorPlane position={position} onClick={handleFloorClick} onPointerMove={handleFloorMove} />
 
-      {mode.type === "character:move" &&
-        viable.map((pos, i) => (
-          <Plane
-            key={i}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (current && actions > 0) {
-                moveTo(current.id, pos);
-                setMode({ type: "normal" });
-              }
-            }}
-            rotation={[-Math.PI / 2, 0, 0]}
-            position={[pos.x + 0.5, position.y + 0.01, pos.z + 0.5]}
-            scale={0.9}
-          >
-            <meshBasicMaterial color="green" transparent opacity={0.5} />
-          </Plane>
-        ))}
-
-      {ability &&
-        viableAbility.map((pos, i) => (
-          <Plane
-            key={`ability-${i}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (!current || actions <= 0) return;
-              castAbility(pos);
-            }}
-            rotation={[-Math.PI / 2, 0, 0]}
-            position={[pos.x + 0.5, position.y + 0.015, pos.z + 0.5]}
-            scale={0.9}
-          >
-            <meshBasicMaterial color="orange" transparent opacity={0.35} />
-          </Plane>
-        ))}
-
-      {ability && (
-        <Plane
-          onClick={() => setMode({ type: "normal" })}
-          rotation={[-Math.PI / 2, 0, 0]}
-          position={[position.x, position.y + 0.001, position.z]}
-          scale={60}
-        >
-          <meshBasicMaterial transparent opacity={0} />
-        </Plane>
+      {mode.type === "character:move" && (
+        <MoveTiles
+          tiles={visibleViable}
+          current={current as Game.Entity | undefined}
+          actions={actions}
+          y={position.y}
+          onMoveAction={moveTo}
+          onEndModeAction={() => setMode({ type: "normal" })}
+        />
       )}
 
-      {areaPreview.length > 0 &&
-        areaPreview.map((pos, i) => (
-          <Plane
-            key={`area-${i}`}
-            rotation={[-Math.PI / 2, 0, 0]}
-            position={[pos.x + 0.5, position.y + 0.02, pos.z + 0.5]}
-            scale={0.9}
-          >
-            <meshBasicMaterial
-              color={mode.type === "wall:destroy-area" ? "red" : "cyan"}
-              transparent
-              opacity={0.4}
-            />
-          </Plane>
-        ))}
+      <AbilityTiles
+        active={Boolean(ability)}
+        tiles={visibleViableAbility}
+        current={current as Game.Entity | undefined}
+        actions={actions}
+        y={position.y}
+        onCastAction={castAbility}
+        onCancelAction={() => setMode({ type: "normal" })}
+        center={position}
+      />
+
+      <AreaPreview
+        tiles={visibleAreaPreview}
+        y={position.y}
+        isDestroy={mode.type === "wall:destroy-area"}
+      />
 
       <gridHelper args={[50, 50, "#444444"]} position={[position.x, position.y, position.z]} />
 
-      <instancedMesh ref={wallsRef} args={[undefined, undefined, 1000]} onClick={handleWallClick}>
-        <boxGeometry args={[1, 2, 1]} />
-        <meshStandardMaterial color="#6b7280" />
-      </instancedMesh>
+      <WallsMesh walls={visibleWalls} onClickAction={handleWallClick} />
     </>
   );
 });
