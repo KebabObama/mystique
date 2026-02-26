@@ -24,4 +24,5 @@
     "*.ts":   "typescript",
   },
   "typescript.tsdk": "node_modules/typescript/lib",
+  "biome.enabled": false
 }
