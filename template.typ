@@ -43,18 +43,18 @@
       top: 3cm,
       bottom: 3cm,
     ),
-  );
+  )
 
-  set text(font: "Times New Roman", size: 12pt, lang: "cs");
-  show heading: set block(below: 20pt, above: 20pt);
-  show math.equation: set text(size: 16pt);
-  set figure(gap: 1.5em);
-  show figure: set block(below: 16pt, above: 16pt);
-  set par(leading: 1em, spacing: 0.75em + 18pt, justify: true);
-  show heading.where(level: 1): set text(size: 20pt, weight: "bold");
-  show heading.where(level: 2): set text(size: 16pt, weight: "bold");
-  show heading.where(level: 3): set text(size: 14pt, weight: "bold");
-  show figure.where(kind: "raw"): set figure(supplement: "Výpis");
+  set text(font: "Times New Roman", size: 12pt, lang: "cs")
+  show heading: set block(below: 20pt, above: 20pt)
+  show math.equation: set text(size: 16pt)
+  set figure(gap: 1.5em)
+  show figure: set block(below: 16pt, above: 16pt)
+  set par(leading: 1em, spacing: 0.75em + 18pt, justify: true)
+  show heading.where(level: 1): set text(size: 20pt, weight: "bold")
+  show heading.where(level: 2): set text(size: 16pt, weight: "bold")
+  show heading.where(level: 3): set text(size: 14pt, weight: "bold")
+  show figure.where(kind: "raw"): set figure(supplement: "Výpis")
   set align(center)
 
   grid(
