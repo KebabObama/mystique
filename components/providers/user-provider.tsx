@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "@/hooks/use-user";
+import { useUser } from "@/lib/hooks/use-user";
 import { User } from "better-auth";
 import React from "react";
 

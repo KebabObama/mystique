@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useGame } from "@/hooks/use-game";
+import { useGame } from "@/lib/hooks/use-game";
 import { SendHorizonal } from "lucide-react";
 
 export const EndTurn = () => {

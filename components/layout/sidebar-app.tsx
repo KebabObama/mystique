@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Border } from "@/components/ui/border";
 import * as Sidebar from "@/components/ui/sidebar";
-import { useUser } from "@/hooks/use-user";
+import { useUser } from "@/lib/hooks/use-user";
 import { authClient } from "@/lib/utils";
 import { ChevronDown, LogOut, Moon, Settings, SidebarIcon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";

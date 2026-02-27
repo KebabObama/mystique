@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useGame } from "@/hooks/use-game";
-import { useUser } from "@/hooks/use-user";
+import { useGame } from "@/lib/hooks/use-game";
+import { useUser } from "@/lib/hooks/use-user";
 import { Backpack } from "lucide-react";
 
 export const InventoryButton = () => {

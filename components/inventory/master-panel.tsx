@@ -1,6 +1,6 @@
 import { Dialog } from "@/components/ui/dialog";
-import { useGame } from "@/hooks/use-game";
 import { Game } from "@/lib/game";
+import { useGame } from "@/lib/hooks/use-game";
 import { getEntityLabel, InventoryItem } from "@/lib/inventory-panel";
 import React from "react";
 import {

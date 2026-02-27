@@ -1,8 +1,8 @@
 "use client";
 
 import { Context } from "@/components/ui/context";
-import { useGame } from "@/hooks/use-game";
-import { useUser } from "@/hooks/use-user";
+import { useGame } from "@/lib/hooks/use-game";
+import { useUser } from "@/lib/hooks/use-user";
 import { Render } from "@/lib/render";
 import React from "react";
 

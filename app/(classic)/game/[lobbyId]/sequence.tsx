@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Context } from "@/components/ui/context";
-import { useGame } from "@/hooks/use-game";
+import { useGame } from "@/lib/hooks/use-game";
 import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp, ChevronDown } from "lucide-react";
 import * as React from "react";

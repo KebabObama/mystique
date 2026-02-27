@@ -1,9 +1,9 @@
 "use client";
 
-import { useCamera } from "@/hooks/use-camera";
-import { useGame } from "@/hooks/use-game";
-import { useUser } from "@/hooks/use-user";
 import { Game } from "@/lib/game";
+import { useCamera } from "@/lib/hooks/use-camera";
+import { useGame } from "@/lib/hooks/use-game";
+import { useUser } from "@/lib/hooks/use-user";
 import { Render } from "@/lib/render";
 import { animated, useSpring } from "@react-spring/three";
 import { ThreeEvent } from "@react-three/fiber";

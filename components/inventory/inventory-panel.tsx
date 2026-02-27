@@ -2,7 +2,7 @@
 
 import { StoragePanel } from "@/components/inventory/storage-panel";
 import { ViewPanel } from "@/components/inventory/view-panel";
-import { useGame } from "@/hooks/use-game";
+import { useGame } from "@/lib/hooks/use-game";
 import type { InventoryItem } from "@/lib/inventory-panel";
 import { MasterPanel } from "./master-panel";
 

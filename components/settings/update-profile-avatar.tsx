@@ -6,7 +6,7 @@ import { Border } from "@/components/ui/border";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
-import { useUser } from "@/hooks/use-user";
+import { useUser } from "@/lib/hooks/use-user";
 import { uploadFile } from "@/lib/upload-file";
 import { authClient, getCroppedImg } from "@/lib/utils";
 import { Camera, Loader2 } from "lucide-react";

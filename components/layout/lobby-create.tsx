@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
-import { useLobby } from "@/hooks/use-lobby";
+import { useLobby } from "@/lib/hooks/use-lobby";
 import { Plus } from "lucide-react";
 import React from "react";
 

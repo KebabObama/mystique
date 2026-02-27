@@ -1,6 +1,6 @@
 "use client";
 
-import { useGame } from "@/hooks/use-game";
+import { useGame } from "@/lib/hooks/use-game";
 import React from "react";
 
 export const LogEffect = () => {

@@ -12,9 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useUser } from "@/hooks/use-user";
 import { createCharacter } from "@/lib/character-actions";
 import { Game } from "@/lib/game";
+import { useUser } from "@/lib/hooks/use-user";
 import { Dices, Minus, Plus } from "lucide-react";
 import React from "react";
 

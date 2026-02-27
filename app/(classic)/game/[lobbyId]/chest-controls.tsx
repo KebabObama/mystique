@@ -4,8 +4,8 @@ import { Border } from "@/components/ui/border";
 import { Button } from "@/components/ui/button";
 import { Context } from "@/components/ui/context";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { useGame } from "@/hooks/use-game";
-import { useUser } from "@/hooks/use-user";
+import { useGame } from "@/lib/hooks/use-game";
+import { useUser } from "@/lib/hooks/use-user";
 import { Box } from "lucide-react";
 
 export const ChestControls = () => {

@@ -1,7 +1,7 @@
 "use client";
 
-import { useGame } from "@/hooks/use-game";
-import { useSocket } from "@/hooks/use-socket";
+import { useGame } from "@/lib/hooks/use-game";
+import { useSocket } from "@/lib/hooks/use-socket";
 import React from "react";
 
 type GameProviderProps = { children?: React.ReactNode; lobbyId: string };

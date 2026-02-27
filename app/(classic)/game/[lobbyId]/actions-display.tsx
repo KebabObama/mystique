@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { useGame } from "@/hooks/use-game";
+import { useGame } from "@/lib/hooks/use-game";
 
 export const ActionsDisplay = () => {
   const current = useGame((s) => s.sequence.current);

@@ -3,8 +3,8 @@
 import { Border } from "@/components/ui/border";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { useGame } from "@/hooks/use-game";
 import { Game } from "@/lib/game";
+import { useGame } from "@/lib/hooks/use-game";
 import { cn } from "@/lib/utils";
 
 type AbilityCardProps = { ability: Game.Ability; selected: boolean; onSelect: () => void };

@@ -1,7 +1,7 @@
 "use client";
 
 import { Border } from "@/components/ui/border";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/lib/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as React from "react";

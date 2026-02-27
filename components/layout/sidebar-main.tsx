@@ -7,7 +7,7 @@ import {
   SidebarMenuSub,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useLobby } from "@/hooks/use-lobby";
+import { useLobby } from "@/lib/hooks/use-lobby";
 import { LayoutDashboard } from "lucide-react";
 import { redirect } from "next/navigation";
 import { LobbyCreate } from "./lobby-create";
