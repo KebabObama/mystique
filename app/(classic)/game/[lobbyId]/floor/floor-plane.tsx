@@ -20,4 +20,3 @@ export const FloorPlane = ({ position, onClick, onPointerMove }: Props) => {
     />
   );
 };
-

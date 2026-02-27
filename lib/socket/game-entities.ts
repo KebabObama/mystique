@@ -268,4 +268,3 @@ export const register = (ctx: SocketContext) => {
     io.to(`game:${inst.id}`).emit("game:state", fresh);
   });
 };
-

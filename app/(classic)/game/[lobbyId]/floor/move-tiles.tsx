@@ -34,4 +34,3 @@ export const MoveTiles = ({ tiles, current, actions, y, onMoveAction, onEndModeA
     </>
   );
 };
-

@@ -32,4 +32,3 @@ export const register = (ctx: SocketContext) => {
     io.to(`lobby:${result.lobbyId}`).emit("lobby:send", result);
   });
 };
-

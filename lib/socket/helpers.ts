@@ -95,4 +95,3 @@ export const upsertChestInventory = async (
       and(eq(schema.chestInventory.chestId, chestId), eq(schema.chestInventory.itemId, itemId))
     );
 };
-

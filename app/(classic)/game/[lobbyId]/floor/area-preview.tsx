@@ -22,4 +22,3 @@ export const AreaPreview = ({ tiles, y, isDestroy }: Props) => {
     </>
   );
 };
-
