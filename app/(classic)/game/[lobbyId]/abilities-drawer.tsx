@@ -58,11 +58,11 @@ export const AbilitiesDrawer = () => {
           {abilities.length === 0 && (
             <div className="text-muted text-center text-sm">No abilities available.</div>
           )}
-          {abilities.map((ability, index) => {
+          {abilities.map((ability) => {
             const selected = selectedAbility?.name === ability.name;
             return (
               <AbilityCard
-                key={`${ability.name}-${index}`}
+                key={`${ability.name}-${ability.effects}`}
                 ability={ability}
                 selected={selected}
                 onSelect={() => {

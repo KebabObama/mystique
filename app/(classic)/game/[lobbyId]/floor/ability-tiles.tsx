@@ -28,9 +28,9 @@ export const AbilityTiles = ({
 
   return (
     <>
-      {tiles.map((pos, i) => (
+      {tiles.map((pos) => (
         <Plane
-          key={`ability-${i}`}
+          key={`ability-${pos.x}-${pos.z}`}
           onClick={(e) => {
             e.stopPropagation();
             if (!current || actions <= 0) return;
