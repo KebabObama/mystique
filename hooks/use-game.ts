@@ -72,6 +72,14 @@ export type GameStore = {
     dropItem: (entityId: Game.Entity["id"], itemId: string, quantity?: number) => void;
     toggleEquip: (entityId: Game.Entity["id"], itemId: string) => void;
   };
+  entityContextMenu: {
+    open: boolean;
+    entityId?: Game.Entity["id"];
+    x: number;
+    y: number;
+    openAt: (entityId: Game.Entity["id"], x: number, y: number) => void;
+    close: () => void;
+  };
   abilities: {
     useAt: (position: Game.Position) => void;
     getViable: (entityId: Game.Entity["id"], ability: Game.Ability) => Game.Position[];
@@ -175,22 +183,52 @@ export const useGame = create<GameStore>((set, get) => ({
     getViable: (entityId: Game.Entity["id"]) => {
       const instance = get().instance;
       if (!instance) return [];
-      const positions = instance.entities.map((e) => e.position);
+
       const entity = instance.entities.find((e) => e.id === entityId);
       if (!entity || !entity.position) return [];
       if (entity.type === "chest") return [];
+
       const { stamina } = entity.playable;
+      if (stamina <= 0) return [];
+
+      const wallSet = new Set(instance.data.walls.map(({ x, z }) => `${x}:${z}`));
+      const occupiedSet = new Set(
+        instance.entities
+          .filter((entry) => entry.id !== entityId)
+          .map((entry) => `${entry.position.x}:${entry.position.z}`)
+      );
+
+      const start = entity.position;
+      const startKey = `${start.x}:${start.z}`;
+      const queue: Array<{ pos: Game.Position; dist: number }> = [{ pos: start, dist: 0 }];
+      const visited = new Set<string>([startKey]);
       const possible: Game.Position[] = [];
-      for (let dx = -stamina; dx <= stamina; dx++) {
-        for (let dz = -stamina; dz <= stamina; dz++) {
-          if (Math.abs(dx) + Math.abs(dz) > stamina) continue;
-          const targetX = entity.position.x + dx;
-          const targetZ = entity.position.z + dz;
-          const isWall = instance.data.walls.some(({ x, z }) => x === targetX && z === targetZ);
-          const isOccupied = positions.some((pos) => pos.x === targetX && pos.z === targetZ);
-          if (!isWall && !isOccupied) possible.push({ x: targetX, z: targetZ });
+
+      while (queue.length > 0) {
+        const current = queue.shift();
+        if (!current) continue;
+
+        if (current.dist >= stamina) continue;
+
+        const neighbors: Game.Position[] = [
+          { x: current.pos.x + 1, z: current.pos.z },
+          { x: current.pos.x - 1, z: current.pos.z },
+          { x: current.pos.x, z: current.pos.z + 1 },
+          { x: current.pos.x, z: current.pos.z - 1 },
+        ];
+
+        for (const next of neighbors) {
+          const key = `${next.x}:${next.z}`;
+          if (visited.has(key)) continue;
+          if (wallSet.has(key)) continue;
+          if (occupiedSet.has(key)) continue;
+
+          visited.add(key);
+          possible.push(next);
+          queue.push({ pos: next, dist: current.dist + 1 });
         }
       }
+
       return possible;
     },
   },
@@ -238,6 +276,17 @@ export const useGame = create<GameStore>((set, get) => ({
     dropItem: (entityId, itemId, quantity = 1) =>
       get().send("inventory:drop", entityId, itemId, quantity),
     toggleEquip: (entityId, itemId) => get().send("inventory:equip", entityId, itemId),
+  },
+
+  entityContextMenu: {
+    open: false,
+    entityId: undefined,
+    x: 0,
+    y: 0,
+    openAt: (entityId, x, y) =>
+      set({ entityContextMenu: { ...get().entityContextMenu, open: true, entityId, x, y } }),
+    close: () =>
+      set({ entityContextMenu: { ...get().entityContextMenu, open: false, entityId: undefined } }),
   },
 
   abilities: {

@@ -6,14 +6,15 @@ import { useUser } from "@/hooks/use-user";
 import { Game } from "@/lib/game";
 import { Render } from "@/lib/render";
 import { animated, useSpring } from "@react-spring/three";
+import { ThreeEvent } from "@react-three/fiber";
 import React from "react";
 
 const EntityMesh = ({
   entity,
-  onOpenInventory,
+  onOpenMenu,
 }: {
   entity: Game.Entity;
-  onOpenInventory: (entityId: string) => void;
+  onOpenMenu: (entityId: string, event: ThreeEvent<PointerEvent>) => void;
 }) => {
   const currentId = useGame((s) => s.sequence.current?.id);
   const mode = useGame((s) => s.mode);
@@ -39,9 +40,11 @@ const EntityMesh = ({
     <animated.mesh
       position={position as any}
       visible={visible}
-      onClick={() => {
+      onContextMenu={(event) => {
+        event.stopPropagation();
+        event.nativeEvent.preventDefault();
         if (mode.type !== "normal") return;
-        onOpenInventory(entity.id);
+        onOpenMenu(entity.id, event as ThreeEvent<PointerEvent>);
       }}
     >
       {entity.type === "chest" ? (
@@ -56,10 +59,7 @@ const EntityMesh = ({
 
 export const Entities = () => {
   const instance = useGame((s) => s.instance);
-  const openPanel = useGame((s) => s.inventory.openPanel);
-  const isOnMasterTurn = useGame((s) => s.sequence.isOnMasterTurn);
-  const isUsersEntity = useGame((s) => s.isUsersEntity);
-  const userId = useUser((s) => s?.id);
+  const openAt = useGame((s) => s.entityContextMenu.openAt);
 
   const sortedEntities = React.useMemo(
     () => instance?.entities.slice().sort((a, b) => a.id.localeCompare(b.id)),
@@ -70,39 +70,9 @@ export const Entities = () => {
     <EntityMesh
       key={entity.id}
       entity={entity}
-      onOpenInventory={(entityId) => {
-        if (!instance || !userId) return;
-        const targetEntity = instance.entities.find((entry) => entry.id === entityId);
-        if (!targetEntity) return;
-
-        if (isOnMasterTurn) {
-          openPanel("master", entityId);
-          return;
-        }
-
-        switch (targetEntity.type) {
-          case "character": {
-            const isOwnAndActive = isUsersEntity(targetEntity);
-            openPanel(isOwnAndActive ? "view" : "inspect", entityId);
-            return;
-          }
-
-          case "chest": {
-            const nearbyOwnCharacter = instance.entities.find(
-              (e) =>
-                e.type === "character" &&
-                isUsersEntity(targetEntity) &&
-                Render.distance(e.position, targetEntity.position, "manhattan") <= 1
-            );
-            if (!nearbyOwnCharacter) return;
-            openPanel("storage", entityId, nearbyOwnCharacter.id);
-            return;
-          }
-
-          case "monster":
-          default:
-            return;
-        }
+      onOpenMenu={(entityId, event) => {
+        if (!instance) return;
+        openAt(entityId, event.nativeEvent.clientX, event.nativeEvent.clientY);
       }}
     />
   ));
