@@ -6,6 +6,7 @@
 .pnp.*
 .yarn/*
 .direnv/*
+/.direnv/
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
