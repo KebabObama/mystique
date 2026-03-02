@@ -32,7 +32,7 @@ export const WallsMesh = ({ walls, onClickAction }: Props) => {
 
   return (
     <instancedMesh ref={wallsRef} args={[undefined, undefined, 1000]} onClick={onClickAction}>
-      <boxGeometry args={[1, 2, 1]} />
+      <boxGeometry args={[1, 2, 1]} scale={1.05} />
       <meshStandardMaterial color="#6b7280" />
     </instancedMesh>
   );

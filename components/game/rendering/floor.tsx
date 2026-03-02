@@ -1,40 +1,36 @@
 "use client";
 
 import { Game } from "@/lib/game";
-import { useCamera } from "@/lib/hooks/use-camera";
 import { useGame } from "@/lib/hooks/use-game";
-import { Render } from "@/lib/render";
-import { ThreeEvent } from "@react-three/fiber";
 import React from "react";
-import { AbilityTiles } from "./floor/ability-tiles";
-import { AreaPreview } from "./floor/area-preview";
-import { FloorPlane } from "./floor/floor-plane";
-import { MoveTiles } from "./floor/move-tiles";
-import { WallsMesh } from "./floor/walls-mesh";
+import { FloorClickHandler } from "./floor/floor-click-handler";
+import { FloorGrid } from "./floor/floor-grid";
+import { FloorSurface } from "./floor/floor-surface";
+import { FloorTilesRenderer } from "./floor/floor-tiles-renderer";
+import { useFloorPosition } from "./floor/use-floor-position";
+import { useFloorTiles } from "./floor/use-floor-tiles";
+import { WallClickHandler } from "./floor/wall-click-handler";
 
 const EMPTY_WALLS: any[] = [];
-const RENDER_DISTANCE = 25;
 
 export const Floor = React.memo(() => {
-  const target = useCamera((s) => s.camera.target);
+  const { position, isWithinRenderDistance } = useFloorPosition();
   const walls = useGame((s) => s.instance?.data.walls ?? EMPTY_WALLS);
 
   const mode = useGame((s) => s.mode);
   const setMode = useGame((s) => s.setMode);
-  const addChestAt = useGame((s) => s.chest.addAt);
-  const moveChestTo = useGame((s) => s.chest.moveTo);
-  const addCampfireAt = useGame((s) => s.campfire.addAt);
-  const moveCampfireTo = useGame((s) => s.campfire.moveTo);
-  const addMonsterAt = useGame((s) => s.monster.addAt);
-  const addWallAt = useGame((s) => s.wall.addAt);
-  const deleteWallAt = useGame((s) => s.wall.deleteAt);
-  const addWallArea = useGame((s) => s.wall.addArea);
-  const deleteWallArea = useGame((s) => s.wall.deleteArea);
   const current = useGame((s) => s.sequence.current);
   const moveTo = useGame((s) => s.movement.moveTo);
+
+  const [hoverPos, setHoverPos] = React.useState<{ x: number; z: number } | null>(null);
+
+  // Determine ability mode and wall area start
   const abilityMode = mode.type === "ability" ? mode : undefined;
   const ability = abilityMode?.ability;
   const selectedAbilityTarget = abilityMode?.target;
+  const wallAreaStart =
+    mode.type === "wall:place-area" || mode.type === "wall:destroy-area" ? mode.start : undefined;
+
   const actions =
     current?.actions ??
     (current && (current.type === "character" || current?.type === "monster")
@@ -42,192 +38,45 @@ export const Floor = React.memo(() => {
       : 0) ??
     0;
 
-  const position = Render.getTilePosition(target);
-  const isWithinRenderDistance = React.useCallback(
-    (point: { x: number; z: number }) =>
-      Render.distance(position, point, "chebyshev") <= RENDER_DISTANCE,
-    [position]
-  );
+  // Calculate all tiles
+  const tiles = useFloorTiles({
+    floorPosition: { position, isWithinRenderDistance },
+    current,
+    ability,
+    selectedAbilityTarget,
+    wallAreaStart,
+    hoverPos,
+  });
 
-  const [hoverPos, setHoverPos] = React.useState<{ x: number; z: number } | null>(null);
-
-  const handleFloorClick = (e: ThreeEvent<MouseEvent>) => {
-    const point = Render.getTilePosition(e.point);
-
-    switch (mode.type) {
-      case "monster:place":
-        addMonsterAt(mode.monsterId, { x: point.x, z: point.z });
-        setMode({ type: "normal" });
-        break;
-      case "chest:place":
-        addChestAt({ x: point.x, z: point.z });
-        setMode({ type: "normal" });
-        break;
-      case "chest:move":
-        moveChestTo(mode.entityId, { x: point.x, z: point.z });
-        setMode({ type: "normal" });
-        break;
-      case "campfire:place":
-        addCampfireAt({ x: point.x, z: point.z });
-        setMode({ type: "normal" });
-        break;
-      case "campfire:move":
-        moveCampfireTo(mode.entityId, { x: point.x, z: point.z });
-        setMode({ type: "normal" });
-        break;
-      case "wall:place":
-        addWallAt(Render.getTilePosition(point));
-        break;
-      case "wall:place-area":
-        if (!mode.start) {
-          setMode({ type: "wall:place-area", start: { x: point.x, z: point.z } });
-        } else {
-          addWallArea(mode.start, { x: point.x, z: point.z });
-          setMode({ type: "normal" });
-        }
-        break;
-      case "wall:destroy-area":
-        if (!mode.start) {
-          setMode({ type: "wall:destroy-area", start: { x: point.x, z: point.z } });
-        } else {
-          deleteWallArea(mode.start, { x: point.x, z: point.z });
-          setMode({ type: "normal" });
-        }
-        break;
-      default:
-        if (!ability || !current || actions <= 0) return;
-        if (!viableAbility.some((tile) => tile.x === point.x && tile.z === point.z)) return;
-        setMode({ type: "ability", ability, target: { x: point.x, z: point.z } });
-        break;
-    }
-  };
-
-  const handleFloorMove = (e: ThreeEvent<PointerEvent>) => {
-    if (mode.type === "wall:place-area" || mode.type === "wall:destroy-area") {
-      const point = Render.getTilePosition(e.point);
-      setHoverPos({ x: point.x, z: point.z });
-    }
-  };
-
-  const areaStart =
-    mode.type === "wall:place-area" || mode.type === "wall:destroy-area" ? mode.start : undefined;
-  const areaPreview = React.useMemo(() => {
-    const corner = areaStart;
-    const hover = hoverPos;
-    if (!corner || !hover) return [];
-    const minX = Math.min(corner.x, hover.x);
-    const maxX = Math.max(corner.x, hover.x);
-    const minZ = Math.min(corner.z, hover.z);
-    const maxZ = Math.max(corner.z, hover.z);
-    const tiles: { x: number; z: number }[] = [];
-    for (let x = minX; x <= maxX; x++) {
-      for (let z = minZ; z <= maxZ; z++) {
-        tiles.push({ x, z });
-      }
-    }
-    return tiles;
-  }, [areaStart, hoverPos]);
-
-  const visibleAreaPreview = React.useMemo(
-    () => areaPreview.filter((point) => isWithinRenderDistance(point)),
-    [areaPreview, isWithinRenderDistance]
-  );
-
-  const viable = React.useMemo(() => {
-    if (!current) return [];
-    return useGame.getState().movement.getViable(current.id);
-  }, [current]);
-
-  const visibleViable = React.useMemo(
-    () => viable.filter((point) => isWithinRenderDistance(point)),
-    [viable, isWithinRenderDistance]
-  );
-
-  const viableAbility = React.useMemo(() => {
-    if (!current || !ability) return [];
-    return useGame.getState().abilities.getViable(current.id, ability);
-  }, [current, ability]);
-
-  const visibleViableAbility = React.useMemo(
-    () => viableAbility.filter((point) => isWithinRenderDistance(point)),
-    [viableAbility, isWithinRenderDistance]
-  );
-
-  const abilityImpactTiles = React.useMemo(() => {
-    if (!ability || !selectedAbilityTarget || ability.targeting <= 0) return [];
-    return Game.getAbilityImpactTiles(selectedAbilityTarget, ability.targeting);
-  }, [ability, selectedAbilityTarget]);
-
-  const visibleAbilityImpactTiles = React.useMemo(
-    () => abilityImpactTiles.filter((point) => isWithinRenderDistance(point)),
-    [abilityImpactTiles, isWithinRenderDistance]
-  );
-
+  // Filter visible walls
   const visibleWalls = React.useMemo(
     () => walls.filter((wall) => isWithinRenderDistance(wall)),
     [walls, isWithinRenderDistance]
   );
 
-  const handleWallClick = (e: ThreeEvent<MouseEvent>) => {
-    e.stopPropagation();
-    const index = e.instanceId;
-    const point = Render.getTilePosition(e.point);
-    switch (mode.type) {
-      case "wall:place":
-        addWallAt(point);
-        break;
-      case "wall:destroy":
-        if (index !== undefined && visibleWalls[index]) {
-          deleteWallAt(visibleWalls[index]);
-        } else deleteWallAt(point);
-        break;
-      default:
-        handleFloorClick(e);
-        break;
-    }
-  };
-
   return (
     <>
-      <FloorPlane position={position} onClick={handleFloorClick} onPointerMove={handleFloorMove} />
+      {/* Click handlers */}
+      <FloorClickHandler viableAbility={tiles.viableAbility} />
+      <WallClickHandler visibleWalls={visibleWalls} />
 
-      {mode.type === "character:move" && (
-        <MoveTiles
-          tiles={visibleViable}
-          current={current as Game.Entity | undefined}
-          actions={actions}
-          y={position.y}
-          onMoveAction={moveTo}
-          onEndModeAction={() => setMode({ type: "normal" })}
-        />
-      )}
+      {/* Rendered surfaces */}
+      <FloorSurface position={position} walls={visibleWalls} onHoverPosChange={setHoverPos} />
 
-      <AbilityTiles
-        active={Boolean(ability)}
-        tiles={visibleViableAbility}
-        selectedTarget={selectedAbilityTarget}
+      {/* Tile overlays */}
+      <FloorTilesRenderer
+        mode={mode}
+        setModeAction={setMode}
         current={current as Game.Entity | undefined}
+        moveToAction={moveTo}
         actions={actions}
-        y={position.y}
-        onSelectAction={(target) => {
-          if (!ability) return;
-          setMode({ type: "ability", ability, target });
-        }}
-        onCancelAction={() => setMode({ type: "normal" })}
-        center={position}
+        tiles={tiles}
+        floorPositionY={position.y}
+        floorCenter={position}
       />
 
-      <AreaPreview tiles={visibleAbilityImpactTiles} y={position.y} color="orange" />
-
-      <AreaPreview
-        tiles={visibleAreaPreview}
-        y={position.y}
-        isDestroy={mode.type === "wall:destroy-area"}
-      />
-
-      <gridHelper args={[50, 50, "#444444"]} position={[position.x, position.y, position.z]} />
-
-      <WallsMesh walls={visibleWalls} onClickAction={handleWallClick} />
+      {/* Grid */}
+      <FloorGrid position={position} />
     </>
   );
 });

@@ -12,10 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createCharacter } from "@/lib/character-actions";
+import { createCharacter, getAllItems } from "@/lib/character-actions";
 import { Game } from "@/lib/game";
 import { useUser } from "@/lib/hooks/use-user";
-import { Dices, Minus, Plus } from "lucide-react";
+import { Dices, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import React from "react";
 
 export const CharacterCreator = () => {
@@ -26,7 +26,7 @@ export const CharacterCreator = () => {
     return {
       id: "",
       ownerId,
-      coins: 0,
+      coins: 100,
       name: "",
       memory: 0,
       race: "human" as const,
@@ -53,6 +53,54 @@ export const CharacterCreator = () => {
   const [attrPoints, setAttrPoints] = React.useState<number>(7);
   const [hoveredAttr, setHoveredAttr] = React.useState<Game.Attribute>("strength");
   const [open, setOpen] = React.useState(false);
+  const [allItems, setAllItems] = React.useState<any[]>([]);
+  const [selectedItems, setSelectedItems] = React.useState<Map<string, number>>(new Map());
+  const [coins, setCoins] = React.useState(100);
+
+  const fetchItems = async () => {
+    try {
+      const result = await getAllItems();
+      if (result.success) {
+        setAllItems(result.items);
+      }
+    } catch (error) {
+      console.error("Failed to fetch items:", error);
+    }
+  };
+
+  React.useEffect(() => {
+    if (open) {
+      fetchItems();
+    }
+  }, [open]);
+
+  const buyItem = (itemId: string, itemCost: number) => {
+    if (coins >= itemCost) {
+      setCoins(coins - itemCost);
+      setSelectedItems((prev) => {
+        const newMap = new Map(prev);
+        const current = newMap.get(itemId) || 0;
+        newMap.set(itemId, current + 1);
+        return newMap;
+      });
+    } else {
+      toast.error("Not enough coins!");
+    }
+  };
+
+  const removeBoughtItem = (itemId: string, itemCost: number) => {
+    const quantity = selectedItems.get(itemId) || 0;
+    if (quantity > 0) {
+      setCoins(coins + itemCost);
+      const newMap = new Map(selectedItems);
+      if (quantity === 1) {
+        newMap.delete(itemId);
+      } else {
+        newMap.set(itemId, quantity - 1);
+      }
+      setSelectedItems(newMap);
+    }
+  };
 
   const syncChar = (updatedFields: Partial<Game.Character>) => {
     const updated = { ...char, ...updatedFields } as Game.Character;
@@ -79,10 +127,13 @@ export const CharacterCreator = () => {
 
   return (
     <Dialog
+      fullscreen={true}
       open={open}
       onOpenChange={(e) => {
         setAttrPoints(7);
         setChar(createInitialChar());
+        setSelectedItems(new Map());
+        setCoins(100);
         setOpen(e);
       }}
     >
@@ -92,123 +143,209 @@ export const CharacterCreator = () => {
         </Button>
       </Dialog.Trigger>
 
-      <Dialog.Content className="flex flex-col gap-6">
-        <Dialog.Title>Forge Your Hero</Dialog.Title>
-        <Dialog.Description className="-mt-6">
-          Allocate 7 points (max +3 per attribute).
-        </Dialog.Description>
+      <Dialog.Content className="flex flex-col gap-0 p-0">
+        <div className="grid flex-1 grid-cols-2 gap-0 overflow-hidden">
+          {/* Left Column - Character Creation */}
+          <div className="flex flex-col gap-6 overflow-y-auto border-r p-6">
+            <div>
+              <Dialog.Title>Forge Your Hero</Dialog.Title>
+              <Dialog.Description className="mt-2">
+                Allocate 7 points (max +3 per attribute).
+              </Dialog.Description>
+            </div>
 
-        <div className="-mt-6 flex flex-col gap-4">
-          <div className="flex gap-4">
-            <Input
-              className="grow"
-              value={char.name}
-              onChange={(e) => setChar({ ...char, name: e.target.value })}
-              placeholder="CHARACTER NAME"
-            />
+            <div className="flex gap-4">
+              <Input
+                className="grow"
+                value={char.name}
+                onChange={(e) => setChar({ ...char, name: e.target.value })}
+                placeholder="CHARACTER NAME"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => setChar({ ...char, name: Game.generateRandomName(char) })}
+              >
+                <Dices className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <Select value={char.race} onValueChange={handleRaceChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="CHOOSE RACE" />
+              </SelectTrigger>
+              <SelectContent>
+                {Game.RACES.map((r) => (
+                  <SelectItem key={r} value={r}>
+                    {r.toUpperCase()}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <div className="flex items-center justify-between border-b pb-2">
+              <span className="text-xl">Attributes</span>
+              <span className="text-muted-foreground text-sm">Points remaining: {attrPoints}</span>
+            </div>
+
+            {Game.ATTRIBUTES.map((attr) => {
+              const base = Game.STARTING_RACES[char.race][attr];
+              const current = char.attributes[attr];
+              return (
+                <div
+                  key={attr}
+                  className="group flex items-center justify-between"
+                  onMouseEnter={() => setHoveredAttr(attr)}
+                >
+                  <span className="group-hover:text-foreground text-muted text-lg font-black capitalize transition-colors">
+                    {attr}
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8"
+                      disabled={current <= base}
+                      onClick={() => modifyAttribute(attr, -1)}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <span className="w-6 text-center text-xl">{current}</span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8"
+                      disabled={attrPoints === 0 || current >= base + 3}
+                      onClick={() => modifyAttribute(attr, 1)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+
+            <Card className="mt-3 min-h-28 text-center">
+              <h3 className="text-lg font-black uppercase">{hoveredAttr}</h3>
+              <p className="leading-tight font-medium opacity-70">
+                {Game.ATTRIBUTE_DESCRIPTION[hoveredAttr]}
+              </p>
+            </Card>
+
+            <Card className="grid grid-cols-2 gap-x-6 gap-y-2 p-4 text-lg">
+              <div className="flex justify-between">
+                <span className="opacity-60">Health</span> <span>{char.maxHp}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="opacity-60">Actions</span> <span>{char.maxActions}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="opacity-60">Stamina</span> <span>{char.stamina}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="opacity-60">Carry Cap.</span> <span>{char.maxWeight} kg</span>
+              </div>
+            </Card>
+
             <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={() => setChar({ ...char, name: Game.generateRandomName(char) })}
+              disabled={char.name.length === 0 || attrPoints !== 0}
+              className="mt-auto w-full py-6 text-lg"
+              onClick={handleCreate}
             >
-              <Dices className="h-4 w-4" />
+              {attrPoints > 0
+                ? `${attrPoints} Points Left`
+                : char.name.length === 0
+                  ? "Enter Name"
+                  : "Begin Quest"}
             </Button>
           </div>
 
-          <Select value={char.race} onValueChange={handleRaceChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="CHOOSE RACE" />
-            </SelectTrigger>
-            <SelectContent>
-              {Game.RACES.map((r) => (
-                <SelectItem key={r} value={r}>
-                  {r.toUpperCase()}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+          {/* Right Column - Store */}
+          <div className="flex flex-col gap-4 overflow-y-auto p-6">
+            <div className="bg-background sticky top-0 border-b pb-4">
+              <h2 className="text-2xl font-black">Starting Store</h2>
+              <p className="text-muted-foreground text-sm">Coins: {coins}</p>
+            </div>
 
-        <div className="flex items-center justify-between border-b pb-2">
-          <span className="text-xl">Attributes</span>
-          <span className="text-muted-foreground text-sm">Points remaining: {attrPoints}</span>
-        </div>
+            <div className="flex-1 space-y-3">
+              {allItems.map((item: any) => {
+                const boughtQty = selectedItems.get(item.id) || 0;
+                return (
+                  <Card key={item.id} className="p-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1">
+                        <h4 className="font-bold">{item.name}</h4>
+                        <p className="text-muted-foreground text-sm">{item.type}</p>
+                        <p className="mt-1 text-lg font-black text-yellow-500">
+                          {item.value} coins
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Button
+                          size="sm"
+                          variant="default"
+                          disabled={coins < item.value}
+                          onClick={() => buyItem(item.id, item.value)}
+                          className="whitespace-nowrap"
+                        >
+                          <ShoppingCart className="mr-1 h-3 w-3" />
+                          Buy
+                        </Button>
+                        {boughtQty > 0 && (
+                          <div className="flex items-center justify-center gap-2 text-xs">
+                            <span className="font-bold">{boughtQty}x</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => removeBoughtItem(item.id, item.value)}
+                              className="h-6 w-6 p-0"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
 
-        {Game.ATTRIBUTES.map((attr) => {
-          const base = Game.STARTING_RACES[char.race][attr];
-          const current = char.attributes[attr];
-          return (
-            <div
-              key={attr}
-              className="group flex items-center justify-between"
-              onMouseEnter={() => setHoveredAttr(attr)}
-            >
-              <span className="group-hover:text-foreground text-muted text-lg font-black capitalize transition-colors">
-                {attr}
-              </span>
-              <div className="flex items-center gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  disabled={current <= base}
-                  onClick={() => modifyAttribute(attr, -1)}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <span className="w-6 text-center text-xl">{current}</span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  disabled={attrPoints === 0 || current >= base + 3}
-                  onClick={() => modifyAttribute(attr, 1)}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
+            {selectedItems.size > 0 && (
+              <div className="bg-background sticky bottom-0 border-t pt-4">
+                <Card className="bg-muted p-3">
+                  <h3 className="mb-2 text-sm font-black">Purchased Items</h3>
+                  <div className="space-y-1">
+                    {Array.from(selectedItems.entries()).map(([itemId, qty]) => {
+                      const item = allItems.find((i: any) => i.id === itemId);
+                      return (
+                        <div key={itemId} className="flex justify-between text-xs">
+                          <span>
+                            {item?.name} x{qty}
+                          </span>
+                          <span>{item?.value! * qty} coins</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-2 flex justify-between border-t pt-2 text-sm font-bold">
+                    <span>Total Cost:</span>
+                    <span>
+                      {Array.from(selectedItems.entries()).reduce((sum, [itemId, qty]) => {
+                        const item = allItems.find((i: any) => i.id === itemId);
+                        return sum + (item?.value || 0) * qty;
+                      }, 0)}{" "}
+                      coins
+                    </span>
+                  </div>
+                </Card>
               </div>
-            </div>
-          );
-        })}
-
-        <Dialog.Footer className="flex flex-col gap-4 sm:flex-col">
-          <Card className="mt-3 min-h-28 text-center">
-            <h3 className="text-lg font-black uppercase">{hoveredAttr}</h3>
-            <p className="leading-tight font-medium opacity-70">
-              {Game.ATTRIBUTE_DESCRIPTION[hoveredAttr]}
-            </p>
-          </Card>
-
-          <Card className="grid grid-cols-2 gap-x-6 gap-y-2 p-4 text-lg">
-            <div className="flex justify-between">
-              <span className="opacity-60">Health</span> <span>{char.maxHp}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="opacity-60">Actions</span> <span>{char.maxActions}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="opacity-60">Stamina</span> <span>{char.stamina}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="opacity-60">Carry Cap.</span> <span>{char.maxWeight} kg</span>
-            </div>
-          </Card>
-
-          <Button
-            disabled={char.name.length === 0 || attrPoints !== 0}
-            className="w-full py-6 text-lg"
-            onClick={handleCreate}
-          >
-            {attrPoints > 0
-              ? `${attrPoints} Points Left`
-              : char.name.length === 0
-                ? "Enter Name"
-                : "Begin Quest"}
-          </Button>
-        </Dialog.Footer>
+            )}
+          </div>
+        </div>
       </Dialog.Content>
     </Dialog>
   );

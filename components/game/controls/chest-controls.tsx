@@ -60,12 +60,7 @@ export const ChestControls = () => {
           {chests.map((chest) => (
             <Context key={chest.id}>
               <Context.Trigger>
-                <Button
-                  size="sm"
-                  variant={"outline"}
-                  className="w-full"
-                  onClick={() => openPanel("master", chest.id)}
-                >
+                <Button size="sm" variant={"outline"} className="w-full">
                   <span>{chest.playable.name}</span>
                   <span className="text-muted-foreground text-xs">
                     ({chest.position.x},{chest.position.z})

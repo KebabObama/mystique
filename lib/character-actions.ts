@@ -5,6 +5,15 @@ import { Game } from "@/lib/game";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
+export const getAllItems = async () => {
+  try {
+    const items = await db.select().from(schema.item);
+    return { success: true, items };
+  } catch (error) {
+    return { success: false, items: [], error: "Failed to fetch items" };
+  }
+};
+
 export const createCharacter = async (
   userId: string,
   data: Game.Character,
@@ -27,8 +36,26 @@ export const createCharacter = async (
         maxWeight: stats.maxWeight,
         maxMemory: stats.maxMemory,
         armor: 0,
+        coins: 100,
       })
       .returning();
+
+    // Add all items to the character's inventory
+    const allItems = await db.select().from(schema.item);
+    if (allItems.length > 0) {
+      await db
+        .insert(schema.inventory)
+        .values(
+          allItems.map((item) => ({
+            characterId: newChar.id,
+            itemId: item.id,
+            quantity: 1,
+            equipped: false,
+          }))
+        )
+        .onConflictDoNothing();
+    }
+
     revalidatePath(options?.path || "/dashboard");
     return { success: true, character: newChar };
   } catch (error) {
