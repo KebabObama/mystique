@@ -27,8 +27,11 @@ export const register = (ctx: SocketContext) => {
       .where(eq(schema.lobby.id, inst.id));
 
     if (turn >= 0) {
-      const currentEntity = inst.entities.find((e) => e.id === inst.data.sequence[turn]);
-      if (currentEntity && currentEntity.type !== "chest") {
+      const currentEntity = Game.getEntityById(inst, inst.data.sequence[turn]);
+      if (
+        currentEntity &&
+        (currentEntity.type === "character" || currentEntity.type === "monster")
+      ) {
         const maxActions = currentEntity.playable.maxActions ?? 0;
         await db
           .update(schema.lobbyEntity)
@@ -61,15 +64,15 @@ export const register = (ctx: SocketContext) => {
   socket.on("game:character:move", async (userId, lobbyId, entityId, position) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
-    const entity = inst.entities.find((e) => e.id === entityId);
+    const entity = Game.getEntityById(inst, entityId);
     if (!entity) return;
-    if (entity.type === "chest") return;
+    if (entity.type === "chest" || entity.type === "campfire") return;
     if (entity.type === "character" && entity.playable.ownerId !== userId) return;
     if (entity.type === "monster" && userId !== inst.masterId) return;
     const currentActions = entity.actions ?? entity.playable.maxActions ?? 0;
     if (currentActions <= 0) return;
 
-    const positions = inst.entities.map((e) => e.position);
+    const positions = Game.getEntities(inst).map((e) => e.position);
     const { stamina } = entity.playable;
     const possible: Game.Position[] = [];
     for (let dx = -stamina; dx <= stamina; dx++) {
@@ -104,9 +107,9 @@ export const register = (ctx: SocketContext) => {
     const currentId = inst.data.sequence[inst.data.turn];
     if (!currentId) return;
 
-    const caster = inst.entities.find((entity) => entity.id === currentId);
+    const caster = Game.getEntityById(inst, currentId);
     if (!caster) return;
-    if (caster.type === "chest") return;
+    if (caster.type === "chest" || caster.type === "campfire") return;
 
     if (caster.type === "character" && caster.playable.ownerId !== userId) return;
     if (caster.type === "monster" && inst.masterId !== userId) return;
@@ -122,7 +125,7 @@ export const register = (ctx: SocketContext) => {
     const distance = Math.abs(origin.x - target.x) + Math.abs(origin.z - target.z);
     if (distance > ability.range) return;
 
-    const victims = Game.getAbilityVictims(inst.entities, ability, target);
+    const victims = Game.getAbilityVictims(Game.getEntities(inst), ability, target);
 
     if (victims.length === 0) return;
 

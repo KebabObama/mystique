@@ -11,7 +11,7 @@ type AddCharacterProps = {
 
 export const AddCharacter = ({ characters, children }: AddCharacterProps) => {
   const send = useGame((s) => s.send);
-  const entities = useGame((s) => s.instance?.entities);
+  const entities = useGame((s) => s.instance?.characters);
 
   if (!entities) return;
 
@@ -21,7 +21,7 @@ export const AddCharacter = ({ characters, children }: AddCharacterProps) => {
 
   // Filter out characters already in lobbies or already in this game
   const availableChars = characters.filter(
-    (c) => !c.lobbyId && !entities.some((d) => d.type === "character" && d.playable.id === c.id)
+    (c) => !c.lobbyId && !entities.some((entry) => entry.playable.id === c.id)
   );
 
   return (

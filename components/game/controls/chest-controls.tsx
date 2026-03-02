@@ -20,7 +20,7 @@ export const ChestControls = () => {
 
   if (!instance || !userId || instance.masterId !== userId || !isOnMasterTurn) return null;
 
-  const chests = instance.entities.filter((entity) => entity.type === "chest");
+  const chests = instance.chests;
   const placeMode = mode.type === "chest:place";
   const movingEntityId = mode.type === "chest:move" ? mode.entityId : undefined;
 

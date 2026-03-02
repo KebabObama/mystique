@@ -7,11 +7,11 @@ export type Permissions = { canView: boolean; canEdit: boolean; canTransfer: boo
 export const NO_PERMISSIONS: Permissions = { canView: false, canEdit: false, canTransfer: false };
 
 export const getEntries = (entity: Game.Entity): ListEntry[] => {
-  if (entity.type === "monster") return [];
+  if (entity.type === "monster" || entity.type === "campfire") return [];
 
   return entity.playable.inventory
-    .map((entry) => ({ item: entry.item, quantity: entry.quantity }))
-    .sort((a, b) => a.item.name.localeCompare(b.item.name));
+    .map((entry): ListEntry => ({ item: entry.item, quantity: entry.quantity }))
+    .sort((a: ListEntry, b: ListEntry) => a.item.name.localeCompare(b.item.name));
 };
 
 export const getEntityLabel = (entity: Game.Entity) => {
@@ -29,7 +29,7 @@ export const getManhattanDistance = (a: Game.Position, b: Game.Position) =>
   Render.distance(a, b, "manhattan");
 
 export const getEntityInventory = (entity: Game.Entity) => {
-  if (entity.type === "monster") return [];
+  if (entity.type === "monster" || entity.type === "campfire") return [];
   return entity.playable.inventory;
 };
 
@@ -40,6 +40,10 @@ export const getPermissions = (
   isOnTurn: boolean
 ): Permissions => {
   if (entity.type === "monster") {
+    return { canView: false, canEdit: false, canTransfer: false };
+  }
+
+  if (entity.type === "campfire") {
     return { canView: false, canEdit: false, canTransfer: false };
   }
 

@@ -66,8 +66,13 @@ export const Entities = () => {
   const openAt = useGame((s) => s.entityContextMenu.openAt);
 
   const sortedEntities = React.useMemo(
-    () => instance?.entities.slice().sort((a, b) => a.id.localeCompare(b.id)),
-    [instance?.entities]
+    () =>
+      instance
+        ? Game.getEntities(instance)
+            .slice()
+            .sort((a, b) => a.id.localeCompare(b.id))
+        : undefined,
+    [instance]
   );
 
   return sortedEntities?.map((entity) => (

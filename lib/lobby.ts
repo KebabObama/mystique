@@ -2,6 +2,7 @@
 
 import { db, schema } from "@/lib/db";
 import { Game } from "@/lib/game";
+import type { Lobby } from "@/lib/types/lobby";
 import { and, eq } from "drizzle-orm";
 
 const normalizeData = (data: Partial<Game.Data> & Record<string, unknown>): Game.Data => ({
@@ -10,23 +11,7 @@ const normalizeData = (data: Partial<Game.Data> & Record<string, unknown>): Game
   sequence: Array.isArray(data.sequence) ? data.sequence : [],
 });
 
-export type Lobby = {
-  id: string;
-  name: string;
-  createdAt: Date;
-  members: {
-    id: string;
-    name: string;
-    email: string;
-    emailVerified: boolean;
-    image: string | null;
-    createdAt: Date;
-    updatedAt: Date | null;
-  }[];
-  messages: { id: string; createdAt: Date; lobbyId: string; senderId: string; content: string }[];
-};
-
-export const getAll = async (userId: string): Promise<Lobby[]> => {
+export const getAll = async (userId: string): Promise<Array<Lobby>> => {
   const data = await db.query.lobbyMember.findMany({
     where: eq(schema.lobbyMember.userId, userId),
     with: { lobby: { with: { members: { columns: {}, with: { user: true } }, messages: true } } },
@@ -59,27 +44,59 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
 
   const data = normalizeData(results.data as any);
 
-  const entities = results.entities.map((e) => {
+  const entities: Array<Game.Entity> = results.entities.map((e): Game.Entity => {
     if (e.type === "character") {
       const playable = e.character!;
-      return { ...e, actions: e.actions ?? playable.maxActions ?? 0, type: "character", playable };
+      return {
+        id: e.id,
+        position: e.position,
+        actions: e.actions ?? playable.maxActions ?? 0,
+        type: "character",
+        playable,
+      };
     }
 
     if (e.type === "chest") {
       const playable = e.chest!;
-      return { ...e, actions: 0, type: "chest", playable };
+      return { id: e.id, position: e.position, actions: 0, type: "chest", playable };
     }
 
     if (e.type === "campfire") {
       const playable = e.campfire!;
-      return { ...e, actions: 0, type: "campfire", playable };
+      return { id: e.id, position: e.position, actions: 0, type: "campfire", playable };
     }
 
     const playable = e.monster!;
-    return { ...e, actions: e.actions ?? playable.maxActions ?? 0, type: "monster", playable };
-  }) satisfies Game.Entity[];
+    return {
+      id: e.id,
+      position: e.position,
+      actions: e.actions ?? playable.maxActions ?? 0,
+      type: "monster",
+      playable,
+    };
+  });
 
-  return { ...results, data, entities, members: results.members.map((m) => m.user) };
+  const characters = entities.filter(
+    (entity): entity is Game.CharacterEntity => entity.type === "character"
+  );
+  const monsters = entities.filter(
+    (entity): entity is Game.MonsterEntity => entity.type === "monster"
+  );
+  const chests = entities.filter((entity): entity is Game.ChestEntity => entity.type === "chest");
+  const campfires = entities.filter(
+    (entity): entity is Game.CampfireEntity => entity.type === "campfire"
+  );
+
+  return {
+    ...results,
+    data,
+    entities,
+    characters,
+    monsters,
+    chests,
+    campfires,
+    members: results.members.map((m) => m.user),
+  };
 };
 
 export const link = async (lobbyId: string, characterId: string) => {

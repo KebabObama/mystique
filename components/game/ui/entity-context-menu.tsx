@@ -1,6 +1,7 @@
 "use client";
 
 import { Context } from "@/components/ui/context";
+import { Game } from "@/lib/game";
 import { useGame } from "@/lib/hooks/use-game";
 import { useUser } from "@/lib/hooks/use-user";
 import { Render } from "@/lib/render";
@@ -26,7 +27,7 @@ export const EntityContextMenu = () => {
   const actions = React.useMemo<MenuAction[]>(() => {
     if (!instance || !userId || !entityId) return [];
 
-    const targetEntity = instance.entities.find((entry) => entry.id === entityId);
+    const targetEntity = Game.getEntityById(instance, entityId);
     if (!targetEntity) return [];
 
     if (isOnMasterTurn) {
@@ -35,8 +36,9 @@ export const EntityContextMenu = () => {
 
     switch (targetEntity.type) {
       case "character": {
-        const activeEntity = instance.entities.find(
-          (entry) => entry.id === instance.data.sequence[instance.data.turn]
+        const activeEntity = Game.getEntityById(
+          instance,
+          instance.data.sequence[instance.data.turn]
         );
         const activeCharacter = activeEntity?.type === "character" ? activeEntity : null;
         const controlsActiveCharacter =
@@ -67,9 +69,8 @@ export const EntityContextMenu = () => {
       }
 
       case "chest": {
-        const nearbyOwnCharacter = instance.entities.find(
+        const nearbyOwnCharacter = instance.characters.find(
           (entry) =>
-            entry.type === "character" &&
             isUsersEntity(entry) &&
             Render.distance(entry.position, targetEntity.position, "manhattan") <= 1
         );
@@ -85,9 +86,8 @@ export const EntityContextMenu = () => {
       }
 
       case "campfire": {
-        const nearbyOwnCharacter = instance.entities.find(
+        const nearbyOwnCharacter = instance.characters.find(
           (entry) =>
-            entry.type === "character" &&
             isUsersEntity(entry) &&
             Render.distance(entry.position, targetEntity.position, "manhattan") <= 1
         );

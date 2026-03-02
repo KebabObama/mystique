@@ -1,4 +1,5 @@
 import { db, schema } from "@/lib/db";
+import { Game } from "@/lib/game";
 import * as Lobby from "@/lib/lobby";
 import { eq } from "drizzle-orm";
 import { type SocketContext, exists, isPosition, update } from "./helpers";
@@ -51,9 +52,7 @@ export const register = (ctx: SocketContext) => {
     if (!inst) return;
     if (inst.masterId !== userId || inst.data.turn !== -1) return;
 
-    const chestEntity = inst.entities.find(
-      (entity) => entity.id === entityId && entity.type === "chest"
-    );
+    const chestEntity = inst.chests.find((entity) => entity.id === entityId);
     if (!chestEntity) return;
 
     await db.delete(schema.lobbyEntity).where(eq(schema.lobbyEntity.id, chestEntity.id));
@@ -67,9 +66,7 @@ export const register = (ctx: SocketContext) => {
     if (inst.masterId !== userId || inst.data.turn !== -1) return;
     if (!isPosition(position)) return;
 
-    const chestEntity = inst.entities.find(
-      (entity) => entity.id === entityId && entity.type === "chest"
-    );
+    const chestEntity = inst.chests.find((entity) => entity.id === entityId);
     if (!chestEntity) return;
 
     const blockedByWall = inst.data.walls.some(
@@ -144,9 +141,7 @@ export const register = (ctx: SocketContext) => {
     if (inst.masterId !== userId || inst.data.turn !== -1) return;
     if (typeof entityId !== "string") return;
 
-    const monsterEntity = inst.entities.find(
-      (entity) => entity.id === entityId && entity.type === "monster"
-    );
+    const monsterEntity = inst.monsters.find((entity) => entity.id === entityId);
     if (!monsterEntity) return;
 
     const sequence = inst.data.sequence.filter((id) => id !== monsterEntity.id);
@@ -174,7 +169,7 @@ export const register = (ctx: SocketContext) => {
     if (inst.masterId !== userId || inst.data.turn !== -1) return;
     if (!isPosition(position)) return;
 
-    const blockedByEntity = inst.entities.some(
+    const blockedByEntity = Game.getEntities(inst).some(
       (entity) => entity.position.x === position.x && entity.position.z === position.z
     );
     if (blockedByEntity) return;
@@ -213,7 +208,7 @@ export const register = (ctx: SocketContext) => {
     const newWalls: { x: number; z: number }[] = [];
     for (let x = minX; x <= maxX; x++) {
       for (let z = minZ; z <= maxZ; z++) {
-        const blockedByEntity = inst.entities.some(
+        const blockedByEntity = Game.getEntities(inst).some(
           (entity) => entity.position.x === x && entity.position.z === z
         );
         const alreadyWall = inst.data.walls.some((wall) => wall.x === x && wall.z === z);
@@ -252,7 +247,7 @@ export const register = (ctx: SocketContext) => {
   socket.on("game:character:add", async (userId, lobbyId, characterId) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
-    if (inst.entities.some((e) => e.type === "character" && e.playable.id === characterId)) {
+    if (inst.characters.some((entity) => entity.playable.id === characterId)) {
       socket.emit("error", "Character already exists within this instance.");
       return;
     }

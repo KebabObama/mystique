@@ -1,19 +1,45 @@
-import {
-  campfire,
-  campfireShopItem,
-  character,
-  chest,
-  chestInventory,
-  inventory,
-  item,
-  lobby,
-  lobbyEntity,
-  monster,
-  user,
-} from "@/db/schema";
+import type {
+  GameAbility,
+  GameAttribute,
+  GameCampfire,
+  GameCampfireEntity,
+  GameCharacter,
+  GameCharacterEntity,
+  GameChest,
+  GameChestEntity,
+  GameCombatEntity,
+  GameData,
+  GameEffect,
+  GameEntity,
+  GameInstance,
+  GameItemType,
+  GameMonster,
+  GameMonsterEntity,
+  GamePosition,
+  GameRace,
+} from "@/lib/types/game";
 import { BicepsFlexed, Bone, Brain, LucideIcon, Rabbit } from "lucide-react";
 
 export namespace Game {
+  // Re-export types
+  export type Race = GameRace;
+  export type Attribute = GameAttribute;
+  export type ItemType = GameItemType;
+  export type Effect = GameEffect;
+  export type Ability = GameAbility;
+  export type Character = GameCharacter;
+  export type Monster = GameMonster;
+  export type Chest = GameChest;
+  export type Campfire = GameCampfire;
+  export type Entity = GameEntity;
+  export type CharacterEntity = GameCharacterEntity;
+  export type MonsterEntity = GameMonsterEntity;
+  export type ChestEntity = GameChestEntity;
+  export type CampfireEntity = GameCampfireEntity;
+  export type Instance = GameInstance;
+  export type Position = GamePosition;
+  export type Data = GameData;
+  export type CombatEntity = GameCombatEntity;
   // prettier-ignore
   export const ATTRIBUTE_DESCRIPTION: Record<Game.Attribute, string>  = {
     strength:     "Physical might and raw power. Determines how much heavy gear and loot you can carry before becoming encumbered.",
@@ -41,24 +67,7 @@ export namespace Game {
   export const ITEM_TYPES = ["weapon", "helmet", "armor", "leggings", "ring", "misc"] as const;
   export const EFFECTS = ["corroding", "frostbite", "burning", "shocked"] as const;
 
-  export type Race = (typeof Game.RACES)[number];
-  export type Attribute = (typeof Game.ATTRIBUTES)[number];
-  export type ItemType = (typeof Game.ITEM_TYPES)[number];
-  export type Effect = (typeof Game.EFFECTS)[number];
-
-  export type Ability = {
-    name: string;
-    cost: number;
-    // Amount of tiles that ability can be used for, zero stands for self
-    range: number;
-    // Negative amount makes multiple projectiles and positive creates AoE
-    targeting: number;
-    // Negative amount is healing and positive is damage
-    amount: [number, number];
-    effects: Record<Effect, number>;
-  };
-
-  export const EMPTY_EFFECTS: Record<Effect, number> = {
+  export const EMPTY_EFFECTS: Record<Game.Effect, number> = {
     corroding: 0,
     frostbite: 0,
     burning: 0,
@@ -66,43 +75,22 @@ export namespace Game {
   } as const;
 
   export const withEffects = (
-    effects: Partial<Record<Effect, number>> = {}
-  ): Record<Effect, number> => ({ ...EMPTY_EFFECTS, ...effects });
+    effects: Partial<Record<Game.Effect, number>> = {}
+  ): Record<Game.Effect, number> => ({ ...EMPTY_EFFECTS, ...effects });
 
-  export type Character = typeof character.$inferSelect & {
-    inventory: (Omit<typeof inventory.$inferSelect, "itemId" | "characterId"> & {
-      item: typeof item.$inferSelect;
-    })[];
-  };
+  export const getEntities = (instance: Game.Instance): Array<Game.Entity> => [
+    ...instance.characters,
+    ...instance.monsters,
+    ...instance.chests,
+    ...instance.campfires,
+  ];
 
-  export type Monster = typeof monster.$inferSelect;
-  export type Chest = typeof chest.$inferSelect & {
-    inventory: (Omit<typeof chestInventory.$inferSelect, "itemId" | "chestId"> & {
-      item: typeof item.$inferSelect;
-    })[];
-  };
-  export type Campfire = typeof campfire.$inferSelect & {
-    shopItems: (Omit<typeof campfireShopItem.$inferSelect, "itemId" | "campfireId"> & {
-      item: typeof item.$inferSelect;
-    })[];
-  };
-  export type Entity = Omit<
-    typeof lobbyEntity.$inferSelect,
-    "characterId" | "monsterId" | "chestId" | "campfireId" | "lobbyId"
-  > &
-    (
-      | { type: "character"; playable: Character }
-      | { type: "monster"; playable: Monster }
-      | { type: "chest"; playable: Chest }
-      | { type: "campfire"; playable: Campfire }
-    );
+  export const getEntityById = (
+    instance: Game.Instance,
+    entityId: Game.Entity["id"]
+  ): Game.Entity | undefined => getEntities(instance).find((entity) => entity.id === entityId);
 
-  export type Instance = typeof lobby.$inferSelect & {
-    members: (typeof user.$inferSelect)[];
-    entities: Entity[];
-  };
-
-  export const getEntityAbilities = (entity: Entity): Ability[] => {
+  export const getEntityAbilities = (entity: Game.Entity): Array<Game.Ability> => {
     if (entity.type === "monster") return entity.playable.abilities;
     if (entity.type === "chest" || entity.type === "campfire") return [];
 
@@ -112,7 +100,7 @@ export namespace Game {
   };
 
   export const calculateCharacterStats = (
-    c: { attributes: Record<Attribute, number>; level: number; memory: number },
+    c: { attributes: Record<Game.Attribute, number>; level: number; memory: number },
     inventory: { weight: number; armor: number } = { weight: 0, armor: 0 }
   ) => {
     const maxHp = Math.floor(c.attributes.constitution + c.attributes.strength / 2 + 5);
@@ -135,15 +123,15 @@ export namespace Game {
     };
   };
 
-  export const generateRandomName = (c: { race: Race }) => {
-    const NAME_PREFIXES: Record<Game.Race, string[]> = {
+  export const generateRandomName = (c: { race: Game.Race }) => {
+    const NAME_PREFIXES: Record<Game.Race, Array<string>> = {
       dwarf: ["Thor", "Brom", "Gim", "Dwa", "Bal", "Krag", "Dum", "Thrain"],
       elf: ["Gala", "Lego", "Ara", "Cele", "Thran", "Elro", "Fea", "Luth"],
       human: ["Ara", "Bran", "Cath", "Dun", "Eri", "Finn", "Gwen", "Hal"],
       orc: ["Grom", "Thrak", "Durg", "Mog", "Grak", "Urg", "Brok", "Skar"],
     };
 
-    const NAME_SUFFIXES: Record<Game.Race, string[]> = {
+    const NAME_SUFFIXES: Record<Game.Race, Array<string>> = {
       dwarf: ["in", "li", "dur", "nar", "rim", "dan", "bur", "rik"],
       elf: ["driel", "las", "wen", "born", "duil", "ion", "nor", "ien"],
       human: ["gorn", "wen", "ric", "ley", "ton", "wyn", "dor", "ian"],
@@ -156,13 +144,10 @@ export namespace Game {
     return prefix + suffix;
   };
 
-  export type Position = { x: number; z: number };
-
-  export type Data = { walls: Position[]; sequence: string[]; turn: number };
-
-  export type CombatEntity = Extract<Game.Entity, { type: "character" | "monster" }>;
-
-  export const getAbilityImpactTiles = (target: Position, targeting: number): Position[] => {
+  export const getAbilityImpactTiles = (
+    target: Game.Position,
+    targeting: number
+  ): Array<Game.Position> => {
     if (targeting <= 0) return [{ x: target.x, z: target.z }];
 
     return Array.from({ length: targeting * 2 + 1 }).flatMap((_, dxIndex) => {
@@ -176,12 +161,13 @@ export namespace Game {
   };
 
   export const getAbilityVictims = (
-    entities: Entity[],
-    ability: Ability,
-    target: Position
-  ): CombatEntity[] => {
+    entities: Array<Game.Entity>,
+    ability: Game.Ability,
+    target: Game.Position
+  ): Array<Game.CombatEntity> => {
     const combatEntities = entities.filter(
-      (entity): entity is CombatEntity => entity.type === "character" || entity.type === "monster"
+      (entity): entity is Game.CombatEntity =>
+        entity.type === "character" || entity.type === "monster"
     );
 
     if (ability.targeting < 0) {
@@ -203,12 +189,12 @@ export namespace Game {
   };
 
   export const getAbilityViableTargets = (
-    caster: Entity,
-    ability: Ability,
-    entities: Entity[]
-  ): Position[] => {
+    caster: Game.Entity,
+    ability: Game.Ability,
+    entities: Array<Game.Entity>
+  ): Array<Game.Position> => {
     const maxRange = Math.max(0, ability.range);
-    const possible: Position[] = [];
+    const possible: Array<Position> = [];
 
     for (let dx = -maxRange; dx <= maxRange; dx++) {
       for (let dz = -maxRange; dz <= maxRange; dz++) {
@@ -222,7 +208,7 @@ export namespace Game {
     return possible;
   };
 
-  export const canEquipItem = (character: Character, itemType: ItemType): boolean => {
+  export const canEquipItem = (character: Game.Character, itemType: Game.ItemType): boolean => {
     // Misc items cannot be equipped
     if (itemType === "misc") return false;
 
@@ -241,7 +227,7 @@ export namespace Game {
   // ────────────────────────────────────────────────────────────────────────────
 
   export const calculateRestHealing = (
-    character: { level: number; maxHp: number; attributes: Record<Attribute, number> },
+    character: { level: number; maxHp: number; attributes: Record<Game.Attribute, number> },
     actionsSpentResting: number
   ): number => {
     // Base healing: 1 HP per action spent resting

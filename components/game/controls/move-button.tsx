@@ -10,10 +10,8 @@ export const MoveButton = () => {
   const instance = useGame((s) => s.instance);
   const current = useGame((s) => s.sequence.current);
   const setMode = useGame((s) => s.setMode);
-  const actions =
-    current?.actions ??
-    (current && current.type !== "chest" ? current.playable.maxActions : 0) ??
-    0;
+  const canHaveActions = current?.type === "character" || current?.type === "monster";
+  const actions = current?.actions ?? (canHaveActions ? current.playable.maxActions : 0) ?? 0;
 
   const isMyTurn = current?.type === "character" && current.playable.ownerId === userId;
   const canMoveMonster = current?.type === "monster" && instance?.masterId === userId;

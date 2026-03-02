@@ -19,7 +19,7 @@ export const register = (ctx: SocketContext) => {
     if (!inst) return;
     if (inst.masterId !== userId) return;
 
-    const target = inst.entities.find((entity) => entity.id === targetEntityId);
+    const target = Game.getEntityById(inst, targetEntityId);
     if (!target || target.type === "monster") return;
 
     const item = await db.query.item.findFirst({ where: eq(schema.item.id, itemId) });
@@ -49,8 +49,8 @@ export const register = (ctx: SocketContext) => {
       if (fromEntityId === toEntityId) return;
 
       const quantity = normalizeQuantity(qty);
-      const fromEntity = inst.entities.find((entity) => entity.id === fromEntityId);
-      const toEntity = inst.entities.find((entity) => entity.id === toEntityId);
+      const fromEntity = Game.getEntityById(inst, fromEntityId);
+      const toEntity = Game.getEntityById(inst, toEntityId);
       if (!fromEntity || !toEntity) return;
       if (fromEntity.type === "monster" || toEntity.type === "monster") return;
 
@@ -147,7 +147,7 @@ export const register = (ctx: SocketContext) => {
     if (typeof itemId !== "string") return;
 
     const quantity = normalizeQuantity(qty);
-    const entity = inst.entities.find((entry) => entry.id === entityId);
+    const entity = Game.getEntityById(inst, entityId);
     if (!entity || entity.type === "monster") return;
 
     await db.transaction(async (tx) => {
@@ -222,7 +222,7 @@ export const register = (ctx: SocketContext) => {
     if (typeof itemId !== "string" || typeof entityId !== "string") return;
 
     const quantity = normalizeQuantity(qty);
-    const entity = inst.entities.find((e) => e.id === entityId);
+    const entity = inst.characters.find((entry) => entry.id === entityId);
     if (!entity || entity.type !== "character") return;
 
     const isOwner = entity.playable.ownerId === userId;
@@ -272,7 +272,7 @@ export const register = (ctx: SocketContext) => {
     if (!inst) return;
     if (typeof itemId !== "string" || typeof entityId !== "string") return;
 
-    const entity = inst.entities.find((e) => e.id === entityId);
+    const entity = inst.characters.find((entry) => entry.id === entityId);
     if (!entity || entity.type !== "character") return;
 
     const isOwner = entity.playable.ownerId === userId;

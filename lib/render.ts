@@ -1,7 +1,8 @@
-import * as THREE from "three";
+import type { RenderDistanceType, RenderPointerType } from "@/lib/types/render";
 
 export namespace Render {
-  export type PointerType = THREE.Vector3 | { x: number; y?: number | null; z: number } | number[];
+  export type PointerType = RenderPointerType;
+  export type DistanceType = RenderDistanceType;
 
   const parseCoords = (point: PointerType) => {
     if (Array.isArray(point)) return { x: point[0] ?? 0, y: point[1] ?? 0, z: point[2] ?? 0 };
@@ -17,8 +18,6 @@ export namespace Render {
     const { x, y, z } = parseCoords(point);
     return { x: Math.floor(x), y: Math.floor(y), z: Math.floor(z) };
   };
-
-  export type DistanceType = "euclidean" | "manhattan" | "chebyshev";
 
   export const distance = (a: PointerType, b: PointerType, type: DistanceType = "euclidean") => {
     const p1 = parseCoords(a);

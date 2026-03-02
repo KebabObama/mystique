@@ -249,7 +249,7 @@ export const useGame = create<GameStore>((set, get) => ({
     moveTo: (entityId: Game.Entity["id"], position: Game.Position) => {
       const instance = get().instance;
       const send = get().send;
-      if (!instance || !instance.entities.find((e) => e.id === entityId)) return;
+      if (!instance || !Game.getEntityById(instance, entityId)) return;
       console.log("character:move", entityId, position);
       send("character:move", entityId, position);
     },
@@ -257,7 +257,7 @@ export const useGame = create<GameStore>((set, get) => ({
       const instance = get().instance;
       if (!instance) return [];
 
-      const entity = instance.entities.find((e) => e.id === entityId);
+      const entity = Game.getEntityById(instance, entityId);
       if (!entity || !entity.position) return [];
       if (entity.type === "chest" || entity.type === "campfire") return [];
 
@@ -265,8 +265,9 @@ export const useGame = create<GameStore>((set, get) => ({
       if (stamina <= 0) return [];
 
       const wallSet = new Set(instance.data.walls.map(({ x, z }) => `${x}:${z}`));
+      const allEntities = Game.getEntities(instance);
       const occupiedSet = new Set(
-        instance.entities
+        allEntities
           .filter((entry) => entry.id !== entityId)
           .map((entry) => `${entry.position.x}:${entry.position.z}`)
       );
@@ -513,10 +514,10 @@ export const useGame = create<GameStore>((set, get) => ({
       const instance = get().instance;
       if (!instance) return [];
 
-      const entity = instance.entities.find((entry) => entry.id === entityId);
+      const entity = Game.getEntityById(instance, entityId);
       if (!entity) return [];
 
-      return Game.getAbilityViableTargets(entity, ability, instance.entities);
+      return Game.getAbilityViableTargets(entity, ability, Game.getEntities(instance));
     },
   },
 
@@ -558,7 +559,7 @@ export const useGame = create<GameStore>((set, get) => ({
     get current() {
       const instance = get().instance;
       if (!instance) return undefined;
-      return instance.entities.find((e) => e.id === instance.data.sequence[instance.data.turn]);
+      return Game.getEntityById(instance, instance.data.sequence[instance.data.turn]);
     },
     get isOnMasterTurn() {
       const instance = get().instance;

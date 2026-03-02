@@ -28,7 +28,7 @@ export const MonsterControls = ({ monsters }: { monsters: MonsterDef[] }) => {
 
   if (!instance || !userId || instance.masterId !== userId || !isOnMasterTurn) return null;
 
-  const placedMonsters = instance.entities.filter((entity) => entity.type === "monster");
+  const placedMonsters = instance.monsters;
   const placingMode = mode.type === "monster:place";
 
   const filtered = monsters.filter((m) => m.name.toLowerCase().includes(search.toLowerCase()));

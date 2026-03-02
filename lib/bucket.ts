@@ -1,7 +1,9 @@
+import type { BucketNames } from "@/lib/types/bucket";
 import { lookup } from "mime-types";
 import { Client } from "minio";
 
 export namespace Bucket {
+  export type Names = BucketNames;
   export const connection = {
     endPoint: process.env.S3_ENDPOINT || "localhost",
     port: Number(process.env.S3_PORT) || 9000,
@@ -16,8 +18,6 @@ export namespace Bucket {
     "avatars-bucket": true,
     "documents-private": false,
   } as const satisfies Record<string, boolean>;
-
-  export type Names = keyof typeof names;
 
   export const bootstrap = async (bucket: Names) => {
     const exists = await client.bucketExists(bucket);

@@ -2,6 +2,7 @@
 
 import { StoragePanel } from "@/components/inventory/storage-panel";
 import { ViewPanel } from "@/components/inventory/view-panel";
+import { Game } from "@/lib/game";
 import { useGame } from "@/lib/hooks/use-game";
 import type { InventoryItem } from "@/lib/inventory-panel";
 import { MasterPanel } from "./master-panel";
@@ -17,7 +18,7 @@ export const InventoryPanel = ({ items }: InventoryPanelProps) => {
 
   if (!instance || !panelMode || !openedEntityId) return null;
 
-  const entity = instance.entities.find((e) => e.id === openedEntityId);
+  const entity = Game.getEntityById(instance, openedEntityId);
   if (!entity) return null;
 
   switch (panelMode) {
@@ -33,7 +34,7 @@ export const InventoryPanel = ({ items }: InventoryPanelProps) => {
       return <ViewPanel character={entity} onClose={closePanel} readonly />;
 
     case "storage": {
-      const source = instance.entities.find((e) => e.id === sourceEntityId);
+      const source = sourceEntityId ? Game.getEntityById(instance, sourceEntityId) : undefined;
       if (!source || source.type === "monster" || entity.type === "monster") return null;
       return <StoragePanel sourceEntity={source} targetEntity={entity} onClose={closePanel} />;
     }

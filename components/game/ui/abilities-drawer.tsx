@@ -43,8 +43,8 @@ export const AbilitiesDrawer = () => {
   const getViableTargets = useGame((s) => s.abilities.getViable);
 
   if (!canControlCurrent || !current) return null;
-  const actions =
-    current.actions ?? (current.type !== "chest" ? current.playable.maxActions : 0) ?? 0;
+  const canHaveActions = current.type === "character" || current.type === "monster";
+  const actions = current.actions ?? (canHaveActions ? current.playable.maxActions : 0) ?? 0;
   const abilities = Game.getEntityAbilities(current);
   const selectedAbility = mode.type === "ability" ? mode.ability : undefined;
   const selectedTarget = mode.type === "ability" ? mode.target : undefined;
