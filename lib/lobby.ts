@@ -21,7 +21,7 @@ export type Lobby = {
     emailVerified: boolean;
     image: string | null;
     createdAt: Date;
-    updatedAt: Date;
+    updatedAt: Date | null;
   }[];
   messages: { id: string; createdAt: Date; lobbyId: string; senderId: string; content: string }[];
 };
