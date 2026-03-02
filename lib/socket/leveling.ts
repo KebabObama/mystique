@@ -113,4 +113,3 @@ export const register = (ctx: SocketContext) => {
     await update(ctx, fresh, "game:character:xp:awarded");
   });
 };
-
