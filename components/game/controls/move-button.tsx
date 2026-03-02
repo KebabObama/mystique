@@ -20,7 +20,7 @@ export const MoveButton = () => {
 
   if (!isMyTurn && !canMoveMonster) return null;
   return (
-    <Button disabled={actions <= 0} onClick={() => setMode({ type: "character:move" })}>
+    <Button size="sm" disabled={actions <= 0} onClick={() => setMode({ type: "character:move" })}>
       <Move /> Move
     </Button>
   );

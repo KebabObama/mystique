@@ -15,7 +15,7 @@ export const InventoryButton = () => {
     return null;
 
   return (
-    <Button onClick={() => openPanel("view", current.id)}>
+    <Button size="sm" onClick={() => openPanel("view", current.id)}>
       <Backpack />
       Inventory
     </Button>

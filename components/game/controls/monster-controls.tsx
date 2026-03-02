@@ -43,7 +43,7 @@ export const MonsterControls = ({ monsters }: { monsters: MonsterDef[] }) => {
     <>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen} fullscreen>
         <Dialog.Trigger asChild>
-          <Button>
+          <Button size="sm">
             <Skull /> {placingMode ? "Placing..." : "Monsters"}
           </Button>
         </Dialog.Trigger>
@@ -157,7 +157,7 @@ export const MonsterControls = ({ monsters }: { monsters: MonsterDef[] }) => {
                   )}
 
                   <div className="mt-auto flex justify-end pt-4">
-                    <Button onClick={startPlacing} disabled={!selectedMonster}>
+                    <Button size="sm" onClick={startPlacing} disabled={!selectedMonster}>
                       <Skull /> Place Monster
                     </Button>
                   </div>
@@ -174,7 +174,7 @@ export const MonsterControls = ({ monsters }: { monsters: MonsterDef[] }) => {
           {placedMonsters.map((monster) => (
             <Context key={monster.id}>
               <Context.Trigger>
-                <Button variant="outline" className="w-full text-xs">
+                <Button size="sm" variant="outline" className="w-full text-xs">
                   <Skull className="size-3" />
                   <span className="truncate">{monster.playable.name}</span>
                   <span className="text-muted-foreground text-[10px]">

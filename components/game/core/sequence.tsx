@@ -11,7 +11,7 @@ import * as React from "react";
 type SequenceProps = { children?: React.ReactNode };
 
 export const Sequence = ({ children }: SequenceProps) => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const instance = useGame((s) => s.instance);
   const send = useGame((s) => s.send);
@@ -21,18 +21,18 @@ export const Sequence = ({ children }: SequenceProps) => {
   if (!instance) return null;
 
   const Tile = ({ name, plays }: { name: React.ReactNode; plays: boolean }) => (
-    <span className={`${plays ? "opacity-100" : "opacity-60"} truncate text-lg`}>{name}</span>
+    <span className={`${plays ? "opacity-100" : "opacity-60"} truncate text-sm`}>{name}</span>
   );
 
   return (
-    <div className="flex max-w-48 min-w-48 flex-col">
+    <div className="flex max-w-40 min-w-40 flex-col">
       <div
         className={cn(
-          "flex flex-col gap-4.5 overflow-hidden transition-all duration-300",
+          "flex flex-col gap-1.5 overflow-hidden transition-all duration-300",
           open ? "max-h-250 pr-1.5 pb-1.5 opacity-100" : "max-h-0 p-0 opacity-0"
         )}
       >
-        <Card className="flex h-full flex-col">
+        <Card className="flex h-full flex-col p-2">
           {instance.data.sequence.map((entityId, index) => {
             const wrapper = instance.entities.find((e) => e.id === entityId);
             if (!wrapper) return null;
@@ -41,8 +41,8 @@ export const Sequence = ({ children }: SequenceProps) => {
             const displayName = wrapper.playable.name || "";
 
             const name = (
-              <div className="flex flex-row items-center justify-between gap-3">
-                <span className="text-lg">{index}</span>
+              <div className="flex flex-row items-center justify-between gap-2">
+                <span className="text-sm">{index}</span>
                 <span className="truncate">{displayName}</span>
               </div>
             );
@@ -77,7 +77,7 @@ export const Sequence = ({ children }: SequenceProps) => {
           })}
           <Tile
             name={
-              <span className="flex flex-row items-center justify-end gap-3">Dungeon Master</span>
+              <span className="flex flex-row items-center justify-end gap-1.5">Dungeon Master</span>
             }
             plays={instance.data.turn === -1}
           />
@@ -86,7 +86,7 @@ export const Sequence = ({ children }: SequenceProps) => {
         {children}
       </div>
 
-      <Button className={`${open ? "mt-3" : "mt-0"} mr-1.5`} onClick={() => setOpen((v) => !v)}>
+      <Button size="sm" className={`mr-1.5 text-sm`} onClick={() => setOpen((v) => !v)}>
         <ChevronDown className={cn("h-4 w-4 transition-transform", open && "rotate-180")} />
         {open ? "Hide order" : "Show order"}
       </Button>

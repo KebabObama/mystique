@@ -62,7 +62,9 @@ export const AbilitiesDrawer = () => {
     <div className="flex flex-col gap-2">
       <Sheet>
         <SheetTrigger asChild>
-          <Button>{selectedAbility ? `Ability: ${selectedAbility.name}` : "Abilities"}</Button>
+          <Button size="sm">
+            {selectedAbility ? `Ability: ${selectedAbility.name}` : "Abilities"}
+          </Button>
         </SheetTrigger>
         <SheetContent side="bottom" className="absolute mx-auto mb-4 max-h-[40vh] max-w-2xl">
           <Border />
@@ -96,6 +98,7 @@ export const AbilitiesDrawer = () => {
 
       {selectedAbility && (
         <Button
+          size="sm"
           variant="outline"
           disabled={!canCastSelected}
           onClick={() => {

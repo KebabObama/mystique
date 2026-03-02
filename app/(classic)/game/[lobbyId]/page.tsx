@@ -58,7 +58,7 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
         <div className="absolute top-0 left-0 z-10 flex w-full justify-between">
           <Sequence>
             <AddCharacter characters={characters}>
-              <Button className="h-8">
+              <Button size="sm" className="h-8">
                 <Plus /> Add
               </Button>
             </AddCharacter>
@@ -67,7 +67,7 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
         </div>
         <div className="absolute bottom-0 left-0 z-10 flex w-full items-end justify-between gap-1.5">
           <ActionsDisplay />
-          <div className="flex min-w-sm flex-col gap-3">
+          <div className="flex min-w-2xs flex-col gap-1.5">
             <WallControls />
             <MoveButton />
             <AbilitiesDrawer />

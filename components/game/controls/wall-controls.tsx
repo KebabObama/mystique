@@ -22,24 +22,28 @@ export const WallControls = () => {
   return (
     <div className="grid grid-cols-2 gap-3">
       <Button
+        size="sm"
         variant={placing ? "default" : "outline"}
         onClick={() => setMode(placing ? { type: "normal" } : { type: "wall:place" })}
       >
         <BrickWall /> {placing ? "Cancel" : "Add wall"}
       </Button>
       <Button
+        size="sm"
         variant={deleting ? "default" : "outline"}
         onClick={() => setMode(deleting ? { type: "normal" } : { type: "wall:destroy" })}
       >
         <Eraser /> {deleting ? "Cancel" : "Delete wall"}
       </Button>
       <Button
+        size="sm"
         variant={placingArea ? "default" : "outline"}
         onClick={() => setMode(placingArea ? { type: "normal" } : { type: "wall:place-area" })}
       >
         <Grid2X2Plus /> {placingArea ? "Cancel" : "Add area"}
       </Button>
       <Button
+        size="sm"
         variant={deletingArea ? "default" : "outline"}
         onClick={() => setMode(deletingArea ? { type: "normal" } : { type: "wall:destroy-area" })}
       >

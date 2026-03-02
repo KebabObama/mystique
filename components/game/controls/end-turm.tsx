@@ -9,7 +9,7 @@ export const EndTurn = () => {
   const next = useGame((s) => s.sequence.next);
 
   return (
-    <Button disabled={!canEnd} onClick={next}>
+    <Button size="sm" disabled={!canEnd} onClick={next}>
       <SendHorizonal /> End turn
     </Button>
   );

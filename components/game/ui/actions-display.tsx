@@ -8,5 +8,9 @@ export const ActionsDisplay = () => {
   const canControl = useGame((s) => s.sequence.canControl);
   // @ts-ignore
   const actions = current?.actions ?? current?.playable.maxActions ?? 0;
-  return canControl && <Card className="text-lg font-bold">Remaining actions: {actions}</Card>;
+  return (
+    canControl && (
+      <Card className="px-2 py-1.5 text-sm font-semibold">Remaining actions: {actions}</Card>
+    )
+  );
 };

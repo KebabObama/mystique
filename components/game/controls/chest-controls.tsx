@@ -27,7 +27,7 @@ export const ChestControls = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button>
+        <Button size="sm">
           <Box /> {placeMode ? "Cancel" : movingEntityId ? "Moving..." : "Chests"}
         </Button>
       </SheetTrigger>
@@ -47,6 +47,7 @@ export const ChestControls = () => {
           )}
 
           <Button
+            size="sm"
             onClick={() => {
               if (placeMode) setMode({ type: "normal" });
               else setMode({ type: "chest:place" });
@@ -60,6 +61,7 @@ export const ChestControls = () => {
             <Context key={chest.id}>
               <Context.Trigger>
                 <Button
+                  size="sm"
                   variant={"outline"}
                   className="w-full"
                   onClick={() => openPanel("master", chest.id)}
