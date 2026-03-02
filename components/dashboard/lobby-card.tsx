@@ -75,4 +75,3 @@ export const LobbyCard = ({ lobby }: LobbyCardProps) => {
     </Card>
   );
 };
-

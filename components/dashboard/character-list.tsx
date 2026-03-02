@@ -131,4 +131,3 @@ export const CharacterList = ({ characters }: CharacterListProps) => {
     </div>
   );
 };
-

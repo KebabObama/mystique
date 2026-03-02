@@ -61,4 +61,3 @@ export const CharacterCard = ({ character }: CharacterCardProps) => {
     </Card>
   );
 };
-

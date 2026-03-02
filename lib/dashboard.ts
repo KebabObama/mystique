@@ -67,4 +67,3 @@ export const getAvailableLobbies = async (userId: string): Promise<LobbyInfo[]> 
   const allLobbies = await getLobbies(userId);
   return allLobbies.filter((lobby) => !lobby.isMember);
 };
-
