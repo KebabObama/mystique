@@ -54,7 +54,12 @@ export const InventoryList = ({
     <div className="flex flex-col gap-3 overflow-y-auto p-1.5">
       {entries.length === 0 && <div className="text-muted text-center text-sm">Empty</div>}
       {entries.map((entry) => {
-        const canEquip = onEquip && entity.type === "character" && entry.item.type !== "misc";
+        const canEquip =
+          onEquip &&
+          entity.type === "character" &&
+          entry.item.type !== "misc" &&
+          (("equipped" in entry && entry.equipped) ||
+            Game.canEquipItem(entity.playable, entry.item.type));
         if (!hasActions) return <ItemCard key={entry.item.id} item={entry} />;
         return (
           <InventoryItemWithActions

@@ -39,44 +39,75 @@ export const AbilitiesDrawer = () => {
   const canControlCurrent = useGame((s) => s.sequence.canControl);
   const mode = useGame((s) => s.mode);
   const setMode = useGame((s) => s.setMode);
+  const castAbilityAt = useGame((s) => s.abilities.useAt);
+  const getViableTargets = useGame((s) => s.abilities.getViable);
 
   if (!canControlCurrent || !current) return null;
+  const actions =
+    current.actions ?? (current.type !== "chest" ? current.playable.maxActions : 0) ?? 0;
   const abilities = Game.getEntityAbilities(current);
   const selectedAbility = mode.type === "ability" ? mode.ability : undefined;
+  const selectedTarget = mode.type === "ability" ? mode.target : undefined;
+  const hasActionsForSelected = selectedAbility ? actions >= selectedAbility.cost : false;
+  const viableSelectedTargets = selectedAbility
+    ? getViableTargets(current.id, selectedAbility)
+    : [];
+  const canCastSelected =
+    Boolean(selectedAbility && selectedTarget && hasActionsForSelected) &&
+    viableSelectedTargets.some(
+      (tile) => tile.x === selectedTarget?.x && tile.z === selectedTarget?.z
+    );
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button>{selectedAbility ? `Ability: ${selectedAbility.name}` : "Abilities"}</Button>
-      </SheetTrigger>
-      <SheetContent side="bottom" className="absolute mx-auto mb-4 max-h-[40vh] max-w-2xl">
-        <Border />
-        <SheetHeader className="px-2 pb-2">
-          <SheetTitle>Abilities</SheetTitle>
-        </SheetHeader>
-        <div className="grid gap-2 overflow-auto px-2 pb-6">
-          {abilities.length === 0 && (
-            <div className="text-muted text-center text-sm">No abilities available.</div>
-          )}
-          {abilities.map((ability) => {
-            const selected = selectedAbility?.name === ability.name;
-            return (
-              <AbilityCard
-                key={`${ability.name}-${ability.effects}`}
-                ability={ability}
-                selected={selected}
-                onSelect={() => {
-                  if (selected) {
-                    setMode({ type: "normal" });
-                    return;
-                  }
-                  setMode({ type: "ability", ability });
-                }}
-              />
-            );
-          })}
-        </div>
-      </SheetContent>
-    </Sheet>
+    <div className="flex flex-col gap-2">
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button>{selectedAbility ? `Ability: ${selectedAbility.name}` : "Abilities"}</Button>
+        </SheetTrigger>
+        <SheetContent side="bottom" className="absolute mx-auto mb-4 max-h-[40vh] max-w-2xl">
+          <Border />
+          <SheetHeader className="px-2 pb-2">
+            <SheetTitle>Abilities</SheetTitle>
+          </SheetHeader>
+          <div className="grid gap-2 overflow-auto px-2 pb-6">
+            {abilities.length === 0 && (
+              <div className="text-muted text-center text-sm">No abilities available.</div>
+            )}
+            {abilities.map((ability) => {
+              const selected = selectedAbility?.name === ability.name;
+              return (
+                <AbilityCard
+                  key={`${ability.name}-${ability.effects}`}
+                  ability={ability}
+                  selected={selected}
+                  onSelect={() => {
+                    if (selected) {
+                      setMode({ type: "normal" });
+                      return;
+                    }
+                    setMode({ type: "ability", ability });
+                  }}
+                />
+              );
+            })}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {selectedAbility && (
+        <Button
+          variant="outline"
+          disabled={!canCastSelected}
+          onClick={() => {
+            if (!selectedTarget) return;
+            castAbilityAt(selectedTarget);
+          }}
+        >
+          {selectedTarget
+            ? `Cast ${selectedAbility.name} at (${selectedTarget.x}, ${selectedTarget.z})`
+            : `Select target for ${selectedAbility.name}`}
+        </Button>
+      )}
+    </div>
   );
 };

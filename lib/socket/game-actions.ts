@@ -122,44 +122,7 @@ export const register = (ctx: SocketContext) => {
     const distance = Math.abs(origin.x - target.x) + Math.abs(origin.z - target.z);
     if (distance > ability.range) return;
 
-    const selectedTiles: Game.Position[] =
-      ability.targeting <= 0
-        ? [{ x: target.x, z: target.z }]
-        : Array.from({ length: ability.targeting * 2 + 1 }).flatMap((_, dxIndex) => {
-            const dx = dxIndex - ability.targeting;
-            return Array.from({ length: ability.targeting * 2 + 1 }).flatMap((__, dzIndex) => {
-              const dz = dzIndex - ability.targeting;
-              if (Math.abs(dx) + Math.abs(dz) > ability.targeting) return [];
-              return [{ x: target.x + dx, z: target.z + dz }];
-            });
-          });
-
-    const victims =
-      ability.targeting < 0
-        ? inst.entities
-            .filter(
-              (entity): entity is Extract<Game.Entity, { type: "character" | "monster" }> =>
-                entity.type === "character" || entity.type === "monster"
-            )
-            .map((entity) => ({
-              entity,
-              distance:
-                Math.abs(entity.position.x - target.x) + Math.abs(entity.position.z - target.z),
-            }))
-            .filter((entry) => entry.distance <= Math.abs(ability.targeting))
-            .sort((a, b) => a.distance - b.distance)
-            .slice(0, Math.abs(ability.targeting))
-            .map((entry) => entry.entity)
-        : inst.entities
-            .filter(
-              (entity): entity is Extract<Game.Entity, { type: "character" | "monster" }> =>
-                entity.type === "character" || entity.type === "monster"
-            )
-            .filter((entity) =>
-              selectedTiles.some(
-                (tile) => tile.x === entity.position.x && tile.z === entity.position.z
-              )
-            );
+    const victims = Game.getAbilityVictims(inst.entities, ability, target);
 
     if (victims.length === 0) return;
 

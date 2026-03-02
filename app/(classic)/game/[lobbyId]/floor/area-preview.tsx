@@ -2,9 +2,11 @@
 
 import { Plane } from "@react-three/drei";
 
-type Props = { tiles: { x: number; z: number }[]; y: number; isDestroy: boolean };
+type Props = { tiles: { x: number; z: number }[]; y: number; isDestroy?: boolean };
 
-export const AreaPreview = ({ tiles, y, isDestroy }: Props) => {
+type OptionalProps = { color?: string };
+
+export const AreaPreview = ({ tiles, y, isDestroy, color }: Props & OptionalProps) => {
   if (tiles.length === 0) return null;
 
   return tiles.map((pos) => (
@@ -14,7 +16,7 @@ export const AreaPreview = ({ tiles, y, isDestroy }: Props) => {
       position={[pos.x + 0.5, y + 0.02, pos.z + 0.5]}
       scale={0.9}
     >
-      <meshBasicMaterial color={isDestroy ? "red" : "cyan"} transparent opacity={0.4} />
+      <meshBasicMaterial color={color ?? (isDestroy ? "red" : "cyan")} transparent opacity={0.4} />
     </Plane>
   ));
 };

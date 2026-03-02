@@ -26,6 +26,8 @@ export const WallsMesh = ({ walls, onClickAction }: Props) => {
 
     mesh.count = walls.length;
     mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingBox();
+    mesh.computeBoundingSphere();
   }, [walls, wallDummy]);
 
   return (

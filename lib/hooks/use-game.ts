@@ -9,7 +9,7 @@ import { create } from "zustand";
 export type GameMode =
   | { type: "normal" }
   | { type: "character:move" }
-  | { type: "ability"; ability: Game.Ability }
+  | { type: "ability"; ability: Game.Ability; target?: Game.Position }
   | { type: "wall:place" }
   | { type: "wall:destroy" }
   | { type: "wall:place-area"; start?: Game.Position }
@@ -323,48 +323,7 @@ export const useGame = create<GameStore>((set, get) => ({
       const entity = instance.entities.find((entry) => entry.id === entityId);
       if (!entity) return [];
 
-      const maxRange = Math.max(0, ability.range);
-      const possible: Game.Position[] = [];
-
-      for (let dx = -maxRange; dx <= maxRange; dx++) {
-        for (let dz = -maxRange; dz <= maxRange; dz++) {
-          if (Math.abs(dx) + Math.abs(dz) > maxRange) continue;
-          const target = { x: entity.position.x + dx, z: entity.position.z + dz };
-
-          const impactTiles =
-            ability.targeting <= 0
-              ? [target]
-              : Array.from({ length: ability.targeting * 2 + 1 }).flatMap((_, txIndex) => {
-                  const tx = txIndex - ability.targeting;
-                  return Array.from({ length: ability.targeting * 2 + 1 }).flatMap(
-                    (__, tzIndex) => {
-                      const tz = tzIndex - ability.targeting;
-                      if (Math.abs(tx) + Math.abs(tz) > ability.targeting) return [];
-                      return [{ x: target.x + tx, z: target.z + tz }];
-                    }
-                  );
-                });
-
-          const canHitEntity =
-            ability.targeting < 0
-              ? instance.entities.some((targetEntity) => {
-                  const dist =
-                    Math.abs(targetEntity.position.x - target.x) +
-                    Math.abs(targetEntity.position.z - target.z);
-                  return dist <= Math.abs(ability.targeting);
-                })
-              : instance.entities.some((targetEntity) =>
-                  impactTiles.some(
-                    (tile) =>
-                      tile.x === targetEntity.position.x && tile.z === targetEntity.position.z
-                  )
-                );
-
-          if (canHitEntity) possible.push(target);
-        }
-      }
-
-      return possible;
+      return Game.getAbilityViableTargets(entity, ability, instance.entities);
     },
   },
 

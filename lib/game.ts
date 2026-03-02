@@ -141,4 +141,80 @@ export namespace Game {
   export type Position = { x: number; z: number };
 
   export type Data = { walls: Position[]; sequence: string[]; turn: number };
+
+  export type CombatEntity = Extract<Game.Entity, { type: "character" | "monster" }>;
+
+  export const getAbilityImpactTiles = (target: Position, targeting: number): Position[] => {
+    if (targeting <= 0) return [{ x: target.x, z: target.z }];
+
+    return Array.from({ length: targeting * 2 + 1 }).flatMap((_, dxIndex) => {
+      const dx = dxIndex - targeting;
+      return Array.from({ length: targeting * 2 + 1 }).flatMap((__, dzIndex) => {
+        const dz = dzIndex - targeting;
+        if (Math.abs(dx) + Math.abs(dz) > targeting) return [];
+        return [{ x: target.x + dx, z: target.z + dz }];
+      });
+    });
+  };
+
+  export const getAbilityVictims = (
+    entities: Entity[],
+    ability: Ability,
+    target: Position
+  ): CombatEntity[] => {
+    const combatEntities = entities.filter(
+      (entity): entity is CombatEntity => entity.type === "character" || entity.type === "monster"
+    );
+
+    if (ability.targeting < 0) {
+      return combatEntities
+        .map((entity) => ({
+          entity,
+          distance: Math.abs(entity.position.x - target.x) + Math.abs(entity.position.z - target.z),
+        }))
+        .filter((entry) => entry.distance <= Math.abs(ability.targeting))
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, Math.abs(ability.targeting))
+        .map((entry) => entry.entity);
+    }
+
+    const selectedTiles = getAbilityImpactTiles(target, ability.targeting);
+    return combatEntities.filter((entity) =>
+      selectedTiles.some((tile) => tile.x === entity.position.x && tile.z === entity.position.z)
+    );
+  };
+
+  export const getAbilityViableTargets = (
+    caster: Entity,
+    ability: Ability,
+    entities: Entity[]
+  ): Position[] => {
+    const maxRange = Math.max(0, ability.range);
+    const possible: Position[] = [];
+
+    for (let dx = -maxRange; dx <= maxRange; dx++) {
+      for (let dz = -maxRange; dz <= maxRange; dz++) {
+        if (Math.abs(dx) + Math.abs(dz) > maxRange) continue;
+        const target = { x: caster.position.x + dx, z: caster.position.z + dz };
+        const victims = getAbilityVictims(entities, ability, target);
+        if (victims.length > 0) possible.push(target);
+      }
+    }
+
+    return possible;
+  };
+
+  export const canEquipItem = (character: Character, itemType: ItemType): boolean => {
+    // Misc items cannot be equipped
+    if (itemType === "misc") return false;
+
+    // Count equipped items of this type
+    const equippedOfType = character.inventory.filter(
+      (inv) => inv.equipped && inv.item.type === itemType
+    ).length;
+
+    // Enforce slot limits: 2 for rings, 1 for everything else
+    const maxSlots = itemType === "ring" ? 2 : 1;
+    return equippedOfType < maxSlots;
+  };
 }

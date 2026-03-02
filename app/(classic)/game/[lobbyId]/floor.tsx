@@ -30,9 +30,9 @@ export const Floor = React.memo(() => {
   const deleteWallArea = useGame((s) => s.wall.deleteArea);
   const current = useGame((s) => s.sequence.current);
   const moveTo = useGame((s) => s.movement.moveTo);
-  const castAbility = useGame((s) => s.abilities.useAt);
-
-  const ability = mode.type === "ability" ? mode.ability : undefined;
+  const abilityMode = mode.type === "ability" ? mode : undefined;
+  const ability = abilityMode?.ability;
+  const selectedAbilityTarget = abilityMode?.target;
   const actions =
     current?.actions ??
     (current && current.type !== "chest" ? current.playable.maxActions : 0) ??
@@ -83,7 +83,9 @@ export const Floor = React.memo(() => {
         }
         break;
       default:
-        if (ability && current && actions > 0) castAbility({ x: point.x, z: point.z });
+        if (!ability || !current || actions <= 0) return;
+        if (!viableAbility.some((tile) => tile.x === point.x && tile.z === point.z)) return;
+        setMode({ type: "ability", ability, target: { x: point.x, z: point.z } });
         break;
     }
   };
@@ -139,6 +141,16 @@ export const Floor = React.memo(() => {
     [viableAbility, isWithinRenderDistance]
   );
 
+  const abilityImpactTiles = React.useMemo(() => {
+    if (!ability || !selectedAbilityTarget || ability.targeting <= 0) return [];
+    return Game.getAbilityImpactTiles(selectedAbilityTarget, ability.targeting);
+  }, [ability, selectedAbilityTarget]);
+
+  const visibleAbilityImpactTiles = React.useMemo(
+    () => abilityImpactTiles.filter((point) => isWithinRenderDistance(point)),
+    [abilityImpactTiles, isWithinRenderDistance]
+  );
+
   const visibleWalls = React.useMemo(
     () => walls.filter((wall) => isWithinRenderDistance(wall)),
     [walls, isWithinRenderDistance]
@@ -181,13 +193,19 @@ export const Floor = React.memo(() => {
       <AbilityTiles
         active={Boolean(ability)}
         tiles={visibleViableAbility}
+        selectedTarget={selectedAbilityTarget}
         current={current as Game.Entity | undefined}
         actions={actions}
         y={position.y}
-        onCastAction={castAbility}
+        onSelectAction={(target) => {
+          if (!ability) return;
+          setMode({ type: "ability", ability, target });
+        }}
         onCancelAction={() => setMode({ type: "normal" })}
         center={position}
       />
+
+      <AreaPreview tiles={visibleAbilityImpactTiles} y={position.y} color="orange" />
 
       <AreaPreview
         tiles={visibleAreaPreview}
