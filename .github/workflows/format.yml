@@ -20,24 +20,18 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
-
-      - name: Cache Bun Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        run: bun install --only=dev --frozen-lockfile
+        run: npm ci
 
       - name: Run Formatter
-        run: bun run lint
+        run: npm run lint
 
       - name: Commit Changes
         uses: stefanzweifel/git-auto-commit-action@v5
