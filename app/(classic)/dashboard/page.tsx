@@ -1,70 +1,61 @@
 import { CharacterCreator } from "@/components/character/character-creator";
-import { CharacterDashboard } from "@/components/character/character-dashboard";
-import { CharacterDelete } from "@/components/character/character-delete";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { CharacterList } from "@/components/dashboard/character-list";
+import { LobbyList } from "@/components/dashboard/lobby-list";
+import { LobbyCreate } from "@/components/layout/lobby-create";
 import { auth } from "@/lib/auth";
-import { db, schema } from "@/lib/db";
-import { Game } from "@/lib/game";
-import { eq } from "drizzle-orm";
-import { Info, Trash } from "lucide-react";
+import { getCharacters, getLobbies } from "@/lib/dashboard";
 import { headers } from "next/headers";
 
-const getCharacters = async (userId: string) => {
-  const results = await db.query.character.findMany({
-    where: eq(schema.character.ownerId, userId),
-    with: { inventory: { with: { item: true } } },
-  });
-  return results.map((char) => ({
-    ...char,
-    inventory: char.inventory.map((i) => ({ ...i, ...i.item })),
-  })) as Game.Character[];
-};
-
 export default async () => {
-  const data = await auth.api.getSession({ headers: await headers() });
-  if (!data) return null;
-  const characters = await getCharacters(data.user.id);
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return null;
+
+  const [characters, lobbies] = await Promise.all([
+    getCharacters(session.user.id),
+    getLobbies(session.user.id),
+  ]);
+
+  const myLobbies = lobbies.filter((l) => l.isMember);
+  const availableLobbies = lobbies.filter((l) => !l.isMember);
 
   return (
-    <>
-      <CharacterCreator />
-      {data && (
-        <>
-          {characters.length === 0 && (
-            <span className="absolute top-1/2 left-1/2 -translate-1/2 text-lg">
-              No characters available
-            </span>
-          )}
-          <section className="relative flex grid-cols-3 flex-col gap-6 md:grid lg:grid-cols-4">
-            {characters.map((e) => (
-              <Card key={e.id}>
-                <h1 className="text-lg">{e.name}</h1>
-                <div className="flex flex-row justify-between">
-                  <p className="text-muted">
-                    Race: <span className="text-foreground capitalize">{e.race}</span>
-                  </p>
-                  <p className="text-muted">
-                    Level: <span className="text-foreground">{e.level}</span>
-                  </p>
-                </div>
-                <div className="mt-3 grid grid-cols-2 gap-6 p-1.5">
-                  <CharacterDelete character={e} asChild>
-                    <Button className="w-full" size={"sm"} variant={"destructive"}>
-                      <Trash />
-                    </Button>
-                  </CharacterDelete>
-                  <CharacterDashboard character={e} asChild>
-                    <Button className="w-full" size={"sm"}>
-                      <Info />
-                    </Button>
-                  </CharacterDashboard>
-                </div>
-              </Card>
-            ))}
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="hidden md:block">
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-muted text-sm">Manage characters and join lobbies</p>
+        </div>
+        <div className="flex flex-col gap-6 sm:flex-row">
+          <CharacterCreator />
+          <LobbyCreate sidebar={false} />
+        </div>
+      </div>
+
+      <div className="h-screen-minus-header flex flex-col">
+        <section className="pb-8">
+          <h2 className="mb-4 text-center text-xl font-semibold">
+            My Characters ({characters.length})
+          </h2>
+          <CharacterList characters={characters} />
+        </section>
+
+        <div className="bg-border relative left-1/2 h-1.5 w-screen -translate-x-1/2" />
+        <div className="grid flex-1 grid-cols-1 items-stretch gap-8 lg:grid-cols-[1fr_1.5px_1fr] lg:gap-0 lg:overflow-hidden">
+          <section className="overflow-y-auto px-4">
+            <h2 className="mb-4 text-center text-xl font-semibold">
+              My Lobbies ({myLobbies.length})
+            </h2>
+            <LobbyList lobbies={myLobbies} />
           </section>
-        </>
-      )}
-    </>
+          <div className="bg-border mx-4 hidden h-full w-1.5 lg:block" />
+          <section className="overflow-y-auto lg:pl-4">
+            <h2 className="mb-4 text-center text-xl font-semibold">
+              Available Lobbies ({availableLobbies.length})
+            </h2>
+            <LobbyList lobbies={availableLobbies} />
+          </section>
+        </div>
+      </div>
+    </div>
   );
 };

@@ -55,3 +55,8 @@
     @apply bg-background text-foreground;
   }
 }
+@layer utilities {
+  .h-screen-minus-header {
+    height: calc(100vh - 8rem);
+  }
+}

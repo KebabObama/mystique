@@ -42,6 +42,7 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
 
   const characters = await db.query.character.findMany({
     where: eq(schema.character.ownerId, session.user.id),
+    columns: { id: true, name: true, race: true, level: true, lobbyId: true },
   });
 
   const items = await db.query.item.findMany({ columns: { id: true, name: true } });

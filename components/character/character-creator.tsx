@@ -36,7 +36,7 @@ export const CharacterCreator = () => {
       attributes,
       inventory: [],
       ...stats,
-    } as Game.Character;
+    } as unknown as Game.Character;
   };
   const [char, setChar] = React.useState<Game.Character>(createInitialChar);
 
@@ -87,8 +87,8 @@ export const CharacterCreator = () => {
       }}
     >
       <Dialog.Trigger asChild>
-        <Button variant="outline">
-          <Plus /> Create Character
+        <Button variant="outline" className="w-full">
+          <Plus /> Character
         </Button>
       </Dialog.Trigger>
 

@@ -8,7 +8,7 @@ import { useLobby } from "@/lib/hooks/use-lobby";
 import { Plus } from "lucide-react";
 import React from "react";
 
-export const LobbyCreate = () => {
+export const LobbyCreate = ({ sidebar = true }: { sidebar?: boolean }) => {
   const createLobby = useLobby((s) => s.createLobby);
   const [name, setName] = React.useState("");
   const [open, setOpen] = React.useState(false);
@@ -17,10 +17,16 @@ export const LobbyCreate = () => {
   return (
     <Dialog open={open} onOpenChange={(e) => setOpen(e)}>
       <Dialog.Trigger asChild>
-        <SidebarMenuButton className="flex items-center truncate text-lg">
-          <Plus />
-          Create lobby
-        </SidebarMenuButton>
+        {sidebar ? (
+          <SidebarMenuButton className="flex items-center truncate text-lg">
+            <Plus />
+            Create lobby
+          </SidebarMenuButton>
+        ) : (
+          <Button className="w-full">
+            <Plus /> Lobby
+          </Button>
+        )}
       </Dialog.Trigger>
       <Dialog.Content>
         <Dialog.Title>Create new lobby</Dialog.Title>

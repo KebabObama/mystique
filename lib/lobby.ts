@@ -78,17 +78,27 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
 
 export const link = async (lobbyId: string, characterId: string) => {
   return await db.transaction(async (tx) => {
+    // Check if character already in another lobby
     const character = await tx.query.character.findFirst({
       where: eq(schema.character.id, characterId),
     });
     if (!character) throw new Error("Character not found");
+    if (character.lobbyId) throw new Error("Character already in a lobby");
 
-    const [entity] = await tx
+    // Update character with lobby reference
+    const [updated] = await tx
+      .update(schema.character)
+      .set({ lobbyId })
+      .where(eq(schema.character.id, characterId))
+      .returning();
+
+    // Create lobby entity for game mechanics
+    await tx
       .insert(schema.lobbyEntity)
       .values({ lobbyId, characterId, type: "character" })
       .returning();
 
-    return character;
+    return updated;
   });
 };
 
@@ -109,6 +119,13 @@ export const create = async (userId: string, name: string): Promise<Lobby> => {
 
 export const leave = async (userId: string, lobbyId: string) => {
   return await db.transaction(async (tx) => {
+    // Unlink all characters owned by this user from this lobby
+    await tx
+      .update(schema.character)
+      .set({ lobbyId: null })
+      .where(and(eq(schema.character.ownerId, userId), eq(schema.character.lobbyId, lobbyId)));
+
+    // Remove lobby member
     await tx
       .delete(schema.lobbyMember)
       .where(and(eq(schema.lobbyMember.userId, userId), eq(schema.lobbyMember.lobbyId, lobbyId)));

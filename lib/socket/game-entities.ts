@@ -253,6 +253,17 @@ export const register = (ctx: SocketContext) => {
         socket.emit("error", "Character not found");
         return;
       }
+      if (character.lobbyId && character.lobbyId !== lobbyId) {
+        socket.emit("error", "Character is already in another lobby");
+        return;
+      }
+
+      // Update character's lobby reference
+      await tx
+        .update(schema.character)
+        .set({ lobbyId })
+        .where(eq(schema.character.id, characterId));
+
       const [entity] = await tx
         .insert(schema.lobbyEntity)
         .values({ lobbyId, characterId, type: "character", actions: character.maxActions })

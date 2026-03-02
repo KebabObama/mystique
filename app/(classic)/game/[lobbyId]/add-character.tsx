@@ -2,10 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { Game } from "@/lib/game";
 import { useGame } from "@/lib/hooks/use-game";
 
-type AddCharacterProps = { characters: Partial<Game.Character>[]; children?: React.ReactNode };
+type AddCharacterProps = {
+  characters: { id: string; name: string; race: string; level: number; lobbyId: string | null }[];
+  children?: React.ReactNode;
+};
 
 export const AddCharacter = ({ characters, children }: AddCharacterProps) => {
   const send = useGame((s) => s.send);
@@ -17,8 +19,9 @@ export const AddCharacter = ({ characters, children }: AddCharacterProps) => {
     send("character:add", characterId);
   };
 
-  const chars = characters.filter(
-    (c) => !entities.some((d) => d.type === "character" && d.playable.id === c.id)
+  // Filter out characters already in lobbies or already in this game
+  const availableChars = characters.filter(
+    (c) => !c.lobbyId && !entities.some((d) => d.type === "character" && d.playable.id === c.id)
   );
 
   return (
@@ -27,13 +30,16 @@ export const AddCharacter = ({ characters, children }: AddCharacterProps) => {
 
       <Dialog.Content>
         <Dialog.Title>Select a Character</Dialog.Title>
-        <Dialog.Description></Dialog.Description>
+        <Dialog.Description>Only characters not in other lobbies can be added.</Dialog.Description>
 
         <div className="flex flex-col gap-2">
-          {!chars.length ? (
-            <>You do not have any characters. Return to dashboard in order to create one.</>
+          {!availableChars.length ? (
+            <p className="text-muted text-sm">
+              You do not have any available characters. Characters in other lobbies cannot be added.
+              Return to dashboard to create a new one.
+            </p>
           ) : (
-            chars.map((c) => (
+            availableChars.map((c) => (
               <Button
                 key={c.id}
                 variant="outline"

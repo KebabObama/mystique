@@ -2,7 +2,7 @@
 
 import { db, schema } from "@/lib/db";
 import { Game } from "@/lib/game";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export const createCharacter = async (
@@ -39,6 +39,35 @@ export const createCharacter = async (
 export const deleteCharacter = async (characterId: string, options?: { path?: string }) => {
   try {
     await db.delete(schema.character).where(eq(schema.character.id, characterId));
+    revalidatePath(options?.path || "/dashboard");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: "Internal Server Error" };
+  }
+};
+
+export const unlinkCharacterFromLobby = async (
+  characterId: string,
+  options?: { path?: string }
+) => {
+  try {
+    await db.transaction(async (tx) => {
+      // Remove character from lobby
+      await tx
+        .update(schema.character)
+        .set({ lobbyId: null })
+        .where(eq(schema.character.id, characterId));
+
+      // Remove associated lobby entity
+      await tx
+        .delete(schema.lobbyEntity)
+        .where(
+          and(
+            eq(schema.lobbyEntity.characterId, characterId),
+            eq(schema.lobbyEntity.type, "character")
+          )
+        );
+    });
     revalidatePath(options?.path || "/dashboard");
     return { success: true };
   } catch (error) {
