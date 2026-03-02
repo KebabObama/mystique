@@ -60,4 +60,3 @@ export const useFloorClick = create<FloorClickStore>((set, get) => ({
     callbacks.forEach((callback) => callback(e, point, instanceId));
   },
 }));
-

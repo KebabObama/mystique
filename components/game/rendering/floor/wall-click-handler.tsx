@@ -49,4 +49,3 @@ export const WallClickHandler = ({ visibleWalls }: Props) => {
 
   return null;
 };
-

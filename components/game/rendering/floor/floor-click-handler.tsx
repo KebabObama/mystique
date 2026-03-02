@@ -107,4 +107,3 @@ export const FloorClickHandler = ({ viableAbility }: Props) => {
 
   return null;
 };
-
