@@ -23,6 +23,8 @@ export const Floor = React.memo(() => {
   const setMode = useGame((s) => s.setMode);
   const addChestAt = useGame((s) => s.chest.addAt);
   const moveChestTo = useGame((s) => s.chest.moveTo);
+  const addCampfireAt = useGame((s) => s.campfire.addAt);
+  const moveCampfireTo = useGame((s) => s.campfire.moveTo);
   const addMonsterAt = useGame((s) => s.monster.addAt);
   const addWallAt = useGame((s) => s.wall.addAt);
   const deleteWallAt = useGame((s) => s.wall.deleteAt);
@@ -35,7 +37,9 @@ export const Floor = React.memo(() => {
   const selectedAbilityTarget = abilityMode?.target;
   const actions =
     current?.actions ??
-    (current && current.type !== "chest" ? current.playable.maxActions : 0) ??
+    (current && (current.type === "character" || current?.type === "monster")
+      ? current.playable.maxActions
+      : 0) ??
     0;
 
   const position = Render.getTilePosition(target);
@@ -61,6 +65,14 @@ export const Floor = React.memo(() => {
         break;
       case "chest:move":
         moveChestTo(mode.entityId, { x: point.x, z: point.z });
+        setMode({ type: "normal" });
+        break;
+      case "campfire:place":
+        addCampfireAt({ x: point.x, z: point.z });
+        setMode({ type: "normal" });
+        break;
+      case "campfire:move":
+        moveCampfireTo(mode.entityId, { x: point.x, z: point.z });
         setMode({ type: "normal" });
         break;
       case "wall:place":

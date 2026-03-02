@@ -34,7 +34,9 @@ const EntityMesh = ({
         : "blue"
       : entity.type === "monster"
         ? "red"
-        : "#8b5a2b";
+        : entity.type === "chest"
+          ? "#8b5a2b"
+          : "#ffa500"; // orange for campfire
 
   return (
     <animated.mesh
@@ -49,6 +51,8 @@ const EntityMesh = ({
     >
       {entity.type === "chest" ? (
         <boxGeometry args={[0.8, 0.8, 0.8]} />
+      ) : entity.type === "campfire" ? (
+        <coneGeometry args={[0.5, 1, 32]} />
       ) : (
         <sphereGeometry args={[0.4, 32, 32]} />
       )}

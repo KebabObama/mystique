@@ -35,13 +35,35 @@ export const EntityContextMenu = () => {
 
     switch (targetEntity.type) {
       case "character": {
+        const activeEntity = instance.entities.find(
+          (entry) => entry.id === instance.data.sequence[instance.data.turn]
+        );
+        const activeCharacter = activeEntity?.type === "character" ? activeEntity : null;
+        const controlsActiveCharacter =
+          !!activeCharacter &&
+          (activeCharacter.playable.ownerId === userId || instance.masterId === userId);
+        const canTradeWithTarget =
+          !!activeCharacter &&
+          controlsActiveCharacter &&
+          activeCharacter.id !== targetEntity.id &&
+          Render.distance(activeCharacter.position, targetEntity.position, "manhattan") <= 1;
+
         const isOwnAndActive = isUsersEntity(targetEntity);
-        return [
+        const actions: MenuAction[] = [
           {
             label: isOwnAndActive ? "Open inventory" : "Inspect",
             run: () => openPanel(isOwnAndActive ? "view" : "inspect", targetEntity.id),
           },
         ];
+
+        if (canTradeWithTarget && activeCharacter) {
+          actions.push({
+            label: "Trade",
+            run: () => useGame.getState().trading.openDialog(activeCharacter.id, targetEntity.id),
+          });
+        }
+
+        return actions;
       }
 
       case "chest": {
@@ -58,6 +80,28 @@ export const EntityContextMenu = () => {
           {
             label: "Open chest",
             run: () => openPanel("storage", targetEntity.id, nearbyOwnCharacter.id),
+          },
+        ];
+      }
+
+      case "campfire": {
+        const nearbyOwnCharacter = instance.entities.find(
+          (entry) =>
+            entry.type === "character" &&
+            isUsersEntity(entry) &&
+            Render.distance(entry.position, targetEntity.position, "manhattan") <= 1
+        );
+
+        if (!nearbyOwnCharacter) return [];
+
+        return [
+          {
+            label: "Rest & Heal",
+            run: () => useGame.getState().campfire.openRest(targetEntity.id, nearbyOwnCharacter.id),
+          },
+          {
+            label: "Shop",
+            run: () => useGame.getState().campfire.openShop(targetEntity.id, nearbyOwnCharacter.id),
           },
         ];
       }

@@ -1,3 +1,4 @@
+import { CampfireControls } from "@/components/game/controls/campfire-controls";
 import { ChestControls } from "@/components/game/controls/chest-controls";
 import { EndTurn } from "@/components/game/controls/end-turm";
 import { MonsterControls } from "@/components/game/controls/monster-controls";
@@ -13,8 +14,12 @@ import { PostProcessing } from "@/components/game/rendering/post-processing";
 import { AbilitiesDrawer } from "@/components/game/ui/abilities-drawer";
 import { ActionsDisplay } from "@/components/game/ui/actions-display";
 import { AddCharacter } from "@/components/game/ui/add-character";
+import { CampfireRestDialog } from "@/components/game/ui/campfire-rest-dialog";
+import { CampfireShopDialog } from "@/components/game/ui/campfire-shop-dialog";
 import { EntityContextMenu } from "@/components/game/ui/entity-context-menu";
+import { LevelUpDialog } from "@/components/game/ui/level-up-dialog";
 import { LogEffect } from "@/components/game/ui/log-effect";
+import { TradingDialog } from "@/components/game/ui/trading-dialog";
 import { InventoryButton } from "@/components/inventory/inventory-button";
 import { InventoryPanel } from "@/components/inventory/inventory-panel";
 import { Button } from "@/components/ui/button";
@@ -54,6 +59,10 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
       <GameProvider lobbyId={lobbyId}>
         <LogEffect />
         <EntityContextMenu />
+        <CampfireRestDialog />
+        <CampfireShopDialog />
+        <TradingDialog />
+        <LevelUpDialog />
         <InventoryPanel items={items} />
         <div className="absolute top-0 left-0 z-10 flex w-full justify-between">
           <Sequence>
@@ -72,6 +81,7 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
             <MoveButton />
             <AbilitiesDrawer />
             <ChestControls />
+            <CampfireControls />
             <MonsterControls monsters={monsters} />
             <InventoryButton />
           </div>

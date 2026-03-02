@@ -47,7 +47,8 @@ export const InventoryList = ({
 }: InventoryListProps) => {
   if (entity.type === "monster") return null;
 
-  const entries = entity.playable.inventory;
+  const entries =
+    entity.type === "character" || entity.type === "chest" ? (entity.playable.inventory ?? []) : [];
   const hasActions = Boolean(onTransfer || onDrop || onEquip);
 
   return (
@@ -266,7 +267,7 @@ export const CharacterInfo = ({ character }: { character: Game.Character }) => (
 export const ChestInfo = ({ chest }: { chest: Game.Chest }) => (
   <Card className="bg-background text-muted">
     <StatRow label="Name" value={chest.name} />
-    <StatRow label="Items" value={chest.inventory.length} />
+    <StatRow label="Items" value={chest.inventory?.length} />
   </Card>
 );
 

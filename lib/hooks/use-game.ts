@@ -16,11 +16,25 @@ export type GameMode =
   | { type: "wall:destroy-area"; start?: Game.Position }
   | { type: "chest:place" }
   | { type: "chest:move"; entityId: Game.Entity["id"] }
+  | { type: "campfire:place" }
+  | { type: "campfire:move"; entityId: Game.Entity["id"] }
   | { type: "monster:place"; monsterId: string };
 
 export type MessageData = {
   message: string;
   variant?: "default" | "success" | "error" | "warning";
+};
+
+export type TradeOffer = { items: Array<{ itemId: string; quantity: number }>; currency: number };
+
+export type TradeSession = {
+  id: string;
+  lobbyId: string;
+  entityAId: Game.Entity["id"];
+  entityBId: Game.Entity["id"];
+  offers: Record<string, TradeOffer>;
+  confirmed: Record<string, boolean>;
+  updatedAt: number;
 };
 
 export type GameStore = {
@@ -41,6 +55,22 @@ export type GameStore = {
     addAt: (position: Game.Position) => void;
     moveTo: (entityId: Game.Entity["id"], position: Game.Position) => void;
     deleteById: (entityId: Game.Entity["id"]) => void;
+  };
+  campfire: {
+    addAt: (position: Game.Position) => void;
+    moveTo: (entityId: Game.Entity["id"], position: Game.Position) => void;
+    deleteById: (entityId: Game.Entity["id"]) => void;
+    openRest: (campfireEntityId: Game.Entity["id"], characterEntityId: Game.Entity["id"]) => void;
+    closeRest: () => void;
+    openTrade: (campfireEntityId: Game.Entity["id"], characterEntityId: Game.Entity["id"]) => void;
+    closeTrade: () => void;
+    openShop: (campfireEntityId: Game.Entity["id"], characterEntityId: Game.Entity["id"]) => void;
+    closeShop: () => void;
+    restDialogOpen: boolean;
+    tradeDialogOpen: boolean;
+    shopDialogOpen: boolean;
+    selectedCampfireId?: Game.Entity["id"];
+    selectedCharacterId?: Game.Entity["id"];
   };
   monster: {
     addAt: (monsterId: string, position: Game.Position) => void;
@@ -79,6 +109,28 @@ export type GameStore = {
     y: number;
     openAt: (entityId: Game.Entity["id"], x: number, y: number) => void;
     close: () => void;
+  };
+  trading: {
+    dialogOpen: boolean;
+    selectedCharacterId?: Game.Entity["id"];
+    activeSession: TradeSession | null;
+    openDialog: (fromEntityId: Game.Entity["id"], toEntityId: Game.Entity["id"]) => void;
+    closeDialog: () => void;
+    startTrade: (
+      toEntityId: Game.Entity["id"],
+      items: Array<{ itemId: string; quantity: number }>,
+      currency: number
+    ) => void;
+    updateOffer: (sessionId: string, actorEntityId: Game.Entity["id"], offer: TradeOffer) => void;
+    setConfirmed: (sessionId: string, actorEntityId: Game.Entity["id"], ready: boolean) => void;
+    cancelTrade: (sessionId: string) => void;
+  };
+  leveling: {
+    dialogOpen: boolean;
+    selectedCharacterId?: string;
+    openDialog: (characterId: string) => void;
+    closeDialog: () => void;
+    levelUp: (characterId: string, attributePoints: Record<Game.Attribute, number>) => void;
   };
   abilities: {
     useAt: (position: Game.Position) => void;
@@ -124,7 +176,27 @@ export const useGame = create<GameStore>((set, get) => ({
     });
 
     socket.on("disconnect", () => {
-      set({ instance: null });
+      set({ instance: null, trading: { ...get().trading, activeSession: null } });
+    });
+
+    socket.on("game:trade:session", (session: TradeSession) => {
+      const selectedCharacterId = get().trading.selectedCharacterId;
+      if (
+        selectedCharacterId &&
+        session.entityAId !== selectedCharacterId &&
+        session.entityBId !== selectedCharacterId
+      ) {
+        return;
+      }
+
+      set({ trading: { ...get().trading, activeSession: session, dialogOpen: true } });
+    });
+
+    socket.on("game:trade:session:closed", ({ sessionId }: { sessionId: string }) => {
+      const current = get().trading.activeSession;
+      if (!current || current.id !== sessionId) return;
+
+      set({ trading: { ...get().trading, activeSession: null } });
     });
   },
 
@@ -187,7 +259,7 @@ export const useGame = create<GameStore>((set, get) => ({
 
       const entity = instance.entities.find((e) => e.id === entityId);
       if (!entity || !entity.position) return [];
-      if (entity.type === "chest") return [];
+      if (entity.type === "chest" || entity.type === "campfire") return [];
 
       const { stamina } = entity.playable;
       if (stamina <= 0) return [];
@@ -241,6 +313,79 @@ export const useGame = create<GameStore>((set, get) => ({
     deleteById: (entityId: Game.Entity["id"]) => get().send("chest:delete", entityId),
   },
 
+  campfire: {
+    restDialogOpen: false,
+    tradeDialogOpen: false,
+    shopDialogOpen: false,
+    selectedCampfireId: undefined,
+    selectedCharacterId: undefined,
+    addAt: (position: Game.Position) => get().send("campfire:add", position),
+    moveTo: (entityId: Game.Entity["id"], position: Game.Position) =>
+      get().send("campfire:move", entityId, position),
+    deleteById: (entityId: Game.Entity["id"]) => get().send("campfire:delete", entityId),
+    openRest: (campfireEntityId, characterEntityId) =>
+      set({
+        campfire: {
+          ...get().campfire,
+          restDialogOpen: true,
+          selectedCampfireId: campfireEntityId,
+          selectedCharacterId: characterEntityId,
+        },
+      }),
+    closeRest: () =>
+      set({
+        campfire: {
+          ...get().campfire,
+          restDialogOpen: false,
+          selectedCampfireId: undefined,
+          selectedCharacterId: undefined,
+        },
+      }),
+    openTrade: (campfireEntityId, characterEntityId) =>
+      set({
+        campfire: {
+          ...get().campfire,
+          tradeDialogOpen: true,
+          selectedCampfireId: campfireEntityId,
+          selectedCharacterId: characterEntityId,
+        },
+        trading: { ...get().trading, dialogOpen: true, selectedCharacterId: characterEntityId },
+      }),
+    closeTrade: () =>
+      set({
+        campfire: {
+          ...get().campfire,
+          tradeDialogOpen: false,
+          selectedCampfireId: undefined,
+          selectedCharacterId: undefined,
+        },
+        trading: {
+          ...get().trading,
+          dialogOpen: false,
+          selectedCharacterId: undefined,
+          activeSession: null,
+        },
+      }),
+    openShop: (campfireEntityId, characterEntityId) =>
+      set({
+        campfire: {
+          ...get().campfire,
+          shopDialogOpen: true,
+          selectedCampfireId: campfireEntityId,
+          selectedCharacterId: characterEntityId,
+        },
+      }),
+    closeShop: () =>
+      set({
+        campfire: {
+          ...get().campfire,
+          shopDialogOpen: false,
+          selectedCampfireId: undefined,
+          selectedCharacterId: undefined,
+        },
+      }),
+  },
+
   monster: {
     addAt: (monsterId: string, position: Game.Position) =>
       get().send("monster:add", monsterId, position),
@@ -290,6 +435,53 @@ export const useGame = create<GameStore>((set, get) => ({
       set({ entityContextMenu: { ...get().entityContextMenu, open: false, entityId: undefined } }),
   },
 
+  trading: {
+    dialogOpen: false,
+    selectedCharacterId: undefined,
+    activeSession: null,
+    openDialog: (fromEntityId, toEntityId) => {
+      set({
+        trading: {
+          ...get().trading,
+          dialogOpen: true,
+          selectedCharacterId: fromEntityId,
+          activeSession: null,
+        },
+      });
+      get().send("trade:request", fromEntityId, toEntityId, { items: [], currency: 0 });
+    },
+    closeDialog: () =>
+      set({
+        trading: {
+          ...get().trading,
+          dialogOpen: false,
+          selectedCharacterId: undefined,
+          activeSession: null,
+        },
+      }),
+    startTrade: (toEntityId, items, currency) => {
+      const fromEntityId = get().trading.selectedCharacterId;
+      if (!fromEntityId) return;
+      get().send("trade:request", fromEntityId, toEntityId, { items, currency });
+    },
+    updateOffer: (sessionId, actorEntityId, offer) =>
+      get().send("trade:update", sessionId, actorEntityId, offer),
+    setConfirmed: (sessionId, actorEntityId, ready) =>
+      get().send("trade:confirm", sessionId, actorEntityId, ready),
+    cancelTrade: (sessionId) => get().send("trade:cancel", sessionId),
+  },
+
+  leveling: {
+    dialogOpen: false,
+    selectedCharacterId: undefined,
+    openDialog: (characterId) =>
+      set({ leveling: { ...get().leveling, dialogOpen: true, selectedCharacterId: characterId } }),
+    closeDialog: () =>
+      set({ leveling: { ...get().leveling, dialogOpen: false, selectedCharacterId: undefined } }),
+    levelUp: (characterId, attributePoints) =>
+      get().send("character:levelup", characterId, attributePoints),
+  },
+
   abilities: {
     useAt: (position: Game.Position) => {
       const instance = get().instance;
@@ -300,7 +492,7 @@ export const useGame = create<GameStore>((set, get) => ({
       if (!instance || !current || mode.type !== "ability") return;
       const ability = mode.ability;
 
-      if (current.type === "chest") return;
+      if (current.type === "chest" || current.type === "campfire") return;
       const actions = current.actions ?? current.playable.maxActions ?? 0;
       if (actions < ability.cost) {
         toast.error("Not enough actions.");

@@ -49,6 +49,7 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
           character: { with: { inventory: { with: { item: true } } } },
           monster: true,
           chest: { with: { inventory: { with: { item: true } } } },
+          campfire: { with: { shopItems: { with: { item: true } } } },
         },
       },
       members: { columns: {}, with: { user: true } },
@@ -67,6 +68,11 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
     if (e.type === "chest") {
       const playable = e.chest!;
       return { ...e, actions: 0, type: "chest", playable };
+    }
+
+    if (e.type === "campfire") {
+      const playable = e.campfire!;
+      return { ...e, actions: 0, type: "campfire", playable };
     }
 
     const playable = e.monster!;

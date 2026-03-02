@@ -1,4 +1,16 @@
-import { schema } from "@/lib/db";
+import {
+  campfire,
+  campfireShopItem,
+  character,
+  chest,
+  chestInventory,
+  inventory,
+  item,
+  lobby,
+  lobbyEntity,
+  monster,
+  user,
+} from "@/db/schema";
 import { BicepsFlexed, Bone, Brain, LucideIcon, Rabbit } from "lucide-react";
 
 export namespace Game {
@@ -57,36 +69,42 @@ export namespace Game {
     effects: Partial<Record<Effect, number>> = {}
   ): Record<Effect, number> => ({ ...EMPTY_EFFECTS, ...effects });
 
-  export type Character = typeof schema.character.$inferSelect & {
-    inventory: (Omit<typeof schema.inventory.$inferSelect, "itemId" | "characterId"> & {
-      item: typeof schema.item.$inferSelect;
+  export type Character = typeof character.$inferSelect & {
+    inventory: (Omit<typeof inventory.$inferSelect, "itemId" | "characterId"> & {
+      item: typeof item.$inferSelect;
     })[];
   };
 
-  export type Monster = typeof schema.monster.$inferSelect;
-  export type Chest = typeof schema.chest.$inferSelect & {
-    inventory: (Omit<typeof schema.chestInventory.$inferSelect, "itemId" | "chestId"> & {
-      item: typeof schema.item.$inferSelect;
+  export type Monster = typeof monster.$inferSelect;
+  export type Chest = typeof chest.$inferSelect & {
+    inventory: (Omit<typeof chestInventory.$inferSelect, "itemId" | "chestId"> & {
+      item: typeof item.$inferSelect;
+    })[];
+  };
+  export type Campfire = typeof campfire.$inferSelect & {
+    shopItems: (Omit<typeof campfireShopItem.$inferSelect, "itemId" | "campfireId"> & {
+      item: typeof item.$inferSelect;
     })[];
   };
   export type Entity = Omit<
-    typeof schema.lobbyEntity.$inferSelect,
-    "characterId" | "monsterId" | "chestId" | "lobbyId"
+    typeof lobbyEntity.$inferSelect,
+    "characterId" | "monsterId" | "chestId" | "campfireId" | "lobbyId"
   > &
     (
       | { type: "character"; playable: Character }
       | { type: "monster"; playable: Monster }
       | { type: "chest"; playable: Chest }
+      | { type: "campfire"; playable: Campfire }
     );
 
-  export type Instance = typeof schema.lobby.$inferSelect & {
-    members: (typeof schema.user.$inferSelect)[];
+  export type Instance = typeof lobby.$inferSelect & {
+    members: (typeof user.$inferSelect)[];
     entities: Entity[];
   };
 
   export const getEntityAbilities = (entity: Entity): Ability[] => {
     if (entity.type === "monster") return entity.playable.abilities;
-    if (entity.type === "chest") return [];
+    if (entity.type === "chest" || entity.type === "campfire") return [];
 
     return entity.playable.inventory
       .filter((entry) => entry.equipped && entry.item.type === "weapon")
@@ -216,5 +234,31 @@ export namespace Game {
     // Enforce slot limits: 2 for rings, 1 for everything else
     const maxSlots = itemType === "ring" ? 2 : 1;
     return equippedOfType < maxSlots;
+  };
+
+  // ────────────────────────────────────────────────────────────────────────────
+  // Rest & Leveling System
+  // ────────────────────────────────────────────────────────────────────────────
+
+  export const calculateRestHealing = (
+    character: { level: number; maxHp: number; attributes: Record<Attribute, number> },
+    actionsSpentResting: number
+  ): number => {
+    // Base healing: 1 HP per action spent resting
+    const baseHealing = actionsSpentResting;
+
+    // Constitution modifier: +0.15% per level in constitution
+    const constitutionBonus = Math.floor(
+      (baseHealing * (character.attributes.constitution * 0.15)) / 100
+    );
+
+    // Level scaling: 5% per level above 1
+    const levelBonus = Math.floor(baseHealing * (character.level - 1) * 0.05);
+
+    // Total healing cannot exceed missing HP or 20% of maxHp per action spent
+    const maxHealingPerAction = Math.ceil(character.maxHp * 0.2);
+    const totalHealing = baseHealing + constitutionBonus + levelBonus;
+
+    return Math.min(totalHealing, actionsSpentResting * maxHealingPerAction);
   };
 }

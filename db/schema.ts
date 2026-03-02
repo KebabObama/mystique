@@ -255,6 +255,28 @@ export const chestInventory = pgTable(
 // LOBBY ENTITIES (for monsters & chests in lobbies)
 // ============================================================================
 
+export const campfire = pgTable("campfire", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull().default("Campfire"),
+});
+
+export const campfireShopItem = pgTable(
+  "campfire_shop_item",
+  {
+    campfireId: uuid("campfire_id")
+      .notNull()
+      .references(() => campfire.id, { onDelete: "cascade" }),
+    itemId: uuid("item_id")
+      .notNull()
+      .references(() => item.id, { onDelete: "cascade" }),
+    cost: integer("cost").notNull(), // Cost in currency
+  },
+  (table) => [
+    index("campfire_shop_item_campfire_idx").on(table.campfireId),
+    primaryKey({ name: "campfire_shop_item_pk", columns: [table.campfireId, table.itemId] }),
+  ]
+);
+
 export const lobbyEntity = pgTable(
   "lobby_entity",
   {
@@ -262,10 +284,11 @@ export const lobbyEntity = pgTable(
     lobbyId: uuid("lobby_id")
       .notNull()
       .references(() => lobby.id, { onDelete: "cascade" }),
-    type: text("type", { enum: ["character", "monster", "chest"] }).notNull(),
+    type: text("type", { enum: ["character", "monster", "chest", "campfire"] }).notNull(),
     characterId: uuid("character_id").references(() => character.id, { onDelete: "cascade" }),
     monsterId: uuid("monster_id").references(() => monster.id, { onDelete: "cascade" }),
     chestId: uuid("chest_id").references(() => chest.id, { onDelete: "cascade" }),
+    campfireId: uuid("campfire_id").references(() => campfire.id, { onDelete: "cascade" }),
     position: jsonb("position").notNull().$type<Game.Position>().default({ x: 0, z: 0 }),
     actions: integer("actions").notNull().default(0),
   },
@@ -335,6 +358,16 @@ export const chestRelations = relations(chest, ({ many }) => ({
   lobbyEntities: many(lobbyEntity),
 }));
 
+export const campfireRelations = relations(campfire, ({ many }) => ({
+  shopItems: many(campfireShopItem),
+  lobbyEntities: many(lobbyEntity),
+}));
+
+export const campfireShopItemRelations = relations(campfireShopItem, ({ one }) => ({
+  campfire: one(campfire, { fields: [campfireShopItem.campfireId], references: [campfire.id] }),
+  item: one(item, { fields: [campfireShopItem.itemId], references: [item.id] }),
+}));
+
 export const chestInventoryRelations = relations(chestInventory, ({ one }) => ({
   chest: one(chest, { fields: [chestInventory.chestId], references: [chest.id] }),
   item: one(item, { fields: [chestInventory.itemId], references: [item.id] }),
@@ -345,4 +378,5 @@ export const lobbyEntityRelations = relations(lobbyEntity, ({ one }) => ({
   character: one(character, { fields: [lobbyEntity.characterId], references: [character.id] }),
   monster: one(monster, { fields: [lobbyEntity.monsterId], references: [monster.id] }),
   chest: one(chest, { fields: [lobbyEntity.chestId], references: [chest.id] }),
+  campfire: one(campfire, { fields: [lobbyEntity.campfireId], references: [campfire.id] }),
 }));
