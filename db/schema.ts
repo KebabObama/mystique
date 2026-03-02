@@ -97,6 +97,7 @@ export const item = pgTable("item", {
   value: integer("value").notNull().default(0),
   weight: integer("weight").notNull().default(0),
   armor: integer("armor"),
+  meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
   abilities: json("abilities").notNull().$type<Game.Ability[]>(),
   requiremnts: json("regiments")
     .notNull()
@@ -171,6 +172,7 @@ export const character = pgTable(
     race: text("race", { enum: Game.RACES }).notNull(),
     level: integer("level").notNull().default(1),
     xp: integer("xp").notNull().default(0),
+    meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
     attributes: jsonb("attributes").notNull().$type<Record<Game.Attribute, number>>(),
     memory: integer("memory").notNull().default(2),
     hp: integer("hp").notNull().default(10),
@@ -218,6 +220,7 @@ export const monster = pgTable("monster", {
   hp: integer("hp").notNull().default(10),
   maxHp: integer("max_hp").notNull().default(10),
   armor: integer("armor").notNull().default(0),
+  meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
   stamina: integer("stamina").notNull().default(5),
   maxActions: integer("max_actions").notNull().default(1),
   memory: integer("memory").notNull().default(2),
@@ -230,7 +233,11 @@ export const monster = pgTable("monster", {
 
 export const chest = pgTable(
   "chest",
-  { id: uuid("id").primaryKey().defaultRandom(), name: text("name").notNull().default("Chest") },
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull().default("Chest"),
+    meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
+  },
   (table) => [index("chest_name_idx").on(table.name)]
 );
 
@@ -258,6 +265,7 @@ export const chestInventory = pgTable(
 export const campfire = pgTable("campfire", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull().default("Campfire"),
+  meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
 });
 
 export const campfireShopItem = pgTable(

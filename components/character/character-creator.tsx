@@ -145,8 +145,7 @@ export const CharacterCreator = () => {
 
       <Dialog.Content className="flex flex-col gap-0 p-0">
         <div className="grid flex-1 grid-cols-2 gap-0 overflow-hidden">
-          {/* Left Column - Character Creation */}
-          <div className="flex flex-col gap-6 overflow-y-auto border-r p-6">
+          <div className="flex flex-col gap-6 overflow-x-hidden overflow-y-auto border-r-6 p-6">
             <div>
               <Dialog.Title>Forge Your Hero</Dialog.Title>
               <Dialog.Description className="mt-2">
@@ -263,14 +262,13 @@ export const CharacterCreator = () => {
             </Button>
           </div>
 
-          {/* Right Column - Store */}
-          <div className="flex flex-col gap-4 overflow-y-auto p-6">
-            <div className="bg-background sticky top-0 border-b pb-4">
+          <div className="flex flex-col gap-4 overflow-x-hidden overflow-y-auto">
+            <div className="bg-card sticky top-0 z-5 px-6 py-3">
               <h2 className="text-2xl font-black">Starting Store</h2>
               <p className="text-muted-foreground text-sm">Coins: {coins}</p>
             </div>
 
-            <div className="flex-1 space-y-3">
+            <div className="flex-1 space-y-6 px-6 py-3">
               {allItems.map((item: any) => {
                 const boughtQty = selectedItems.get(item.id) || 0;
                 return (

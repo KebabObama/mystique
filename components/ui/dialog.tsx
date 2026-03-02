@@ -43,7 +43,7 @@ const Content = ({
         >
           <Border />
           {children}
-          <DialogPrimitive.Close className="absolute top-3 right-4 text-2xl opacity-70 transition-opacity hover:opacity-100">
+          <DialogPrimitive.Close className="absolute top-3 right-4 z-20 text-2xl opacity-70 transition-opacity hover:opacity-100">
             ✕
           </DialogPrimitive.Close>
         </DialogPrimitive.Content>
