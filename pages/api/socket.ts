@@ -31,16 +31,16 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
     registerInventory(ctx);
     registerGameActions(ctx);
 
-    socket.on("disconnect", (userId) => {
+    socket.on("disconnect", () => {
       for (const room of socket.rooms) {
         if (!room.startsWith("game:")) continue;
         const lobbyId = room.replace("game:", "");
-        const inst = instances.get(lobbyId);
-        if (!inst) continue;
-        if (inst.members.every((i) => i.id !== userId)) continue;
+        socket.leave(room);
+        io.to(room).emit("game:leave", socket.id);
         const roomSize = io.sockets.adapter.rooms.get(room)?.size ?? 0;
-        if (roomSize === 0) instances.delete(lobbyId);
-        console.log(roomSize);
+        if (roomSize === 0) {
+          instances.delete(lobbyId);
+        }
       }
     });
   });

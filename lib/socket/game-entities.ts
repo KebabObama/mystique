@@ -16,6 +16,17 @@ export const register = (ctx: SocketContext) => {
     socket.emit("game:state", inst);
   });
 
+  socket.on("game:leave", async (userId, lobbyId) => {
+    socket.leave(`game:${lobbyId}`);
+    io.to(`game:${lobbyId}`).emit("game:leave", userId);
+
+    // Clean up instance if no one is in the room
+    const roomSize = io.sockets.adapter.rooms.get(`game:${lobbyId}`)?.size ?? 0;
+    if (roomSize === 0) {
+      ctx.instances.delete(lobbyId);
+    }
+  });
+
   // ── Chests ────────────────────────────────────────────────────────────
 
   socket.on("game:chest:add", async (userId, lobbyId, position) => {

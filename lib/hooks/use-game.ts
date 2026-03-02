@@ -139,8 +139,9 @@ export const useGame = create<GameStore>((set, get) => ({
   leaveInstance: () => {
     const userId = useUser.getState()?.id;
     const socket = useSocket.getState().socket;
-    if (!userId || !socket) return;
-    socket.send("disconnect", userId);
+    const instance = get().instance;
+    if (!userId || !socket || !instance) return;
+    socket.emit("game:leave", userId, instance.id);
     set({ instance: null });
   },
 
