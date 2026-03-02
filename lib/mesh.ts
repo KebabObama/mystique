@@ -181,4 +181,3 @@ export namespace Mesh {
     await Promise.all(validPaths.map((path) => loadModel(path)));
   };
 }
-

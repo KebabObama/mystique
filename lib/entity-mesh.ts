@@ -283,4 +283,3 @@ export namespace EntityMesh {
     return result?.meshPath || null;
   };
 }
-
