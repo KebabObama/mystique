@@ -4,7 +4,6 @@ import { SidebarLobbyItem } from "@/components/layout/sidebar-lobby-item";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useLobby } from "@/lib/hooks/use-lobby";
-import { useUser } from "@/lib/hooks/use-user";
 import { LogIn, MessageSquare, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -22,18 +21,10 @@ type LobbyCardProps = { lobby: LobbyInfo };
 
 export const LobbyCard = ({ lobby }: LobbyCardProps) => {
   const router = useRouter();
-  const userId = useUser((s) => s?.id);
-  const joinLobby = useLobby((s) => s?.joinLobby);
   const fullLobby = useLobby((s) => s.lobbies.find((entry) => entry.id === lobby.id));
 
   const handleAction = () => {
-    if (lobby.isMember) {
-      router.push(`/game/${lobby.id}`);
-    } else if (userId) {
-      joinLobby(lobby.id);
-      // Wait a moment for the join to process, then navigate
-      setTimeout(() => router.push(`/game/${lobby.id}`), 500);
-    }
+    if (lobby.isMember) router.push(`/game/${lobby.id}`);
   };
 
   return (
@@ -72,7 +63,7 @@ export const LobbyCard = ({ lobby }: LobbyCardProps) => {
 
       <div className="mt-4">
         {lobby.isMember ? (
-          <div className="flex gap-2">
+          <div className="flex gap-6">
             <Button className="flex-1" size="sm" onClick={handleAction}>
               <LogIn className="size-4" />
               Enter Game

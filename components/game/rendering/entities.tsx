@@ -27,7 +27,6 @@ const EntityMesh = ({
   const [loadedModel, setLoadedModel] = useState<THREE.Group | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Flattening the spring prevents the TS2589 "Excessively Deep" error
   const { x, z } = useSpring({
     x: tileCenter.x,
     z: tileCenter.z,
@@ -73,7 +72,6 @@ const EntityMesh = ({
     onOpenMenu(entity.id, event);
   };
 
-  // Common props for both primitive and mesh
   const animatedProps = {
     "position-x": x,
     "position-y": 0.5,
@@ -85,14 +83,7 @@ const EntityMesh = ({
   if (loadedModel && !isLoading) {
     return (
       // @ts-expect-error - React Three Fiber doesn't have built-in types for animated.primitive
-      <animated.primitive
-        object={loadedModel}
-        position-x={x}
-        position-y={0.5}
-        position-z={z}
-        visible={visible}
-        onContextMenu={handleContextMenu}
-      />
+      <animated.primitive object={loadedModel} {...animatedProps} />
     );
   }
 

@@ -42,7 +42,7 @@ export const CharacterList = ({ characters }: CharacterListProps) => {
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
-      const scrollAmount = 300;
+      const scrollAmount = 500;
       scrollRef.current.scrollBy({
         left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
@@ -77,27 +77,28 @@ export const CharacterList = ({ characters }: CharacterListProps) => {
 
   return (
     <div className="group relative">
-      {/* Left Chevron */}
       {showLeftChevron && (
         <Button
-          size={"icon"}
-          variant={"outline"}
-          onClick={() => scroll("left")}
-          className="bg-background absolute top-1/2 left-0 z-10 -translate-y-1/2"
+          variant={"ghost"}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            scroll("left");
+          }}
+          className="absolute top-1/2 left-0 z-50 -translate-y-1/2 hover:scale-110"
           aria-label="Scroll left"
         >
-          <ChevronLeft className="h-5 w-5" />
+          <ChevronLeft className="size-10" />
         </Button>
       )}
 
-      {/* Scrollable Container */}
       <div
         ref={scrollRef}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        className="overflow-x-auto scroll-smooth -full"
+        className="w-full overflow-x-auto scroll-smooth"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         <div className="flex w-max flex-nowrap gap-6 px-2 py-2 select-none">
@@ -109,16 +110,18 @@ export const CharacterList = ({ characters }: CharacterListProps) => {
         </div>
       </div>
 
-      {/* Right Chevron */}
       {showRightChevron && (
         <Button
-          size={"icon"}
-          variant={"outline"}
-          onClick={() => scroll("right")}
-          className="bg-background absolute top-1/2 right-0 z-10 -translate-y-1/2"
+          variant={"ghost"}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            scroll("right");
+          }}
+          className="absolute top-1/2 right-0 z-50 -translate-y-1/2 hover:scale-110"
           aria-label="Scroll right"
         >
-          <ChevronRight className="h-5 w-5" />
+          <ChevronRight className="size-10" />
         </Button>
       )}
 
