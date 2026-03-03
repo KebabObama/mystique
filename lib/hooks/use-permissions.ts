@@ -91,4 +91,3 @@ export const usePermissions = create<PermissionsStore>((set, get) => ({
     return get().isEntityActive(entity) && get().canControlEntity(entity);
   },
 }));
-
