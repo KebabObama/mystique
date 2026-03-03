@@ -47,18 +47,17 @@ export type GameStore = {
   send: (event: string, ...args: any[]) => void;
   mode: GameMode;
   setMode: (mode: GameMode) => void;
+  entity: { moveTo: (entityId: Game.Entity["id"], position: Game.Position) => void };
   movement: {
     moveTo: (entityId: Game.Entity["id"], position: Game.Position) => void;
     getViable: (entityId: Game.Entity["id"]) => Game.Position[];
   };
   chest: {
     addAt: (position: Game.Position) => void;
-    moveTo: (entityId: Game.Entity["id"], position: Game.Position) => void;
     deleteById: (entityId: Game.Entity["id"]) => void;
   };
   campfire: {
     addAt: (position: Game.Position) => void;
-    moveTo: (entityId: Game.Entity["id"], position: Game.Position) => void;
     deleteById: (entityId: Game.Entity["id"]) => void;
   };
   monster: {
@@ -199,24 +198,39 @@ export const useGame = create<GameStore>((set, get) => ({
   mode: { type: "normal" } as GameMode,
   setMode: (mode: GameMode) => set({ mode }),
 
-  movement: {
+  entity: {
     moveTo: (entityId: Game.Entity["id"], position: Game.Position) => {
       const instance = get().instance;
       const send = get().send;
-      if (!instance || !Game.getEntityById(instance, entityId)) return;
-      console.log("character:move", entityId, position);
-      send("character:move", entityId, position);
+      if (!instance) return;
+
+      const entity = Game.getEntityById(instance, entityId);
+      if (!entity) return;
+
+      switch (entity.type) {
+        case "character":
+        case "monster":
+          send("character:move", entityId, position);
+          break;
+        case "chest":
+          send("chest:move", entityId, position);
+          break;
+        case "campfire":
+          send("campfire:move", entityId, position);
+          break;
+      }
     },
+  },
+
+  movement: {
+    moveTo: (entityId: Game.Entity["id"], position: Game.Position) =>
+      get().entity.moveTo(entityId, position),
     getViable: (entityId: Game.Entity["id"]) => {
       const instance = get().instance;
       if (!instance) return [];
 
       const entity = Game.getEntityById(instance, entityId);
       if (!entity || !entity.position) return [];
-      if (entity.type === "chest" || entity.type === "campfire") return [];
-
-      const { stamina } = entity.playable;
-      if (stamina <= 0) return [];
 
       const wallSet = new Set(instance.data.walls.map(({ x, z }) => `${x}:${z}`));
       const allEntities = Game.getEntities(instance);
@@ -225,6 +239,25 @@ export const useGame = create<GameStore>((set, get) => ({
           .filter((entry) => entry.id !== entityId)
           .map((entry) => `${entry.position.x}:${entry.position.z}`)
       );
+
+      // For chests and campfires, allow movement to any empty tile on the board
+      if (entity.type === "chest" || entity.type === "campfire") {
+        const possible: Game.Position[] = [];
+        const bounds = { x: [0, 20], z: [0, 20] }; // Adjust based on your board size
+        for (let x = bounds.x[0]; x < bounds.x[1]; x++) {
+          for (let z = bounds.z[0]; z < bounds.z[1]; z++) {
+            const key = `${x}:${z}`;
+            if (!wallSet.has(key) && !occupiedSet.has(key)) {
+              possible.push({ x, z });
+            }
+          }
+        }
+        return possible;
+      }
+
+      // For characters and monsters, use stamina-based movement
+      const { stamina } = entity.playable;
+      if (stamina <= 0) return [];
 
       const start = entity.position;
       const startKey = `${start.x}:${start.z}`;
@@ -263,15 +296,11 @@ export const useGame = create<GameStore>((set, get) => ({
 
   chest: {
     addAt: (position: Game.Position) => get().send("chest:add", position),
-    moveTo: (entityId: Game.Entity["id"], position: Game.Position) =>
-      get().send("chest:move", entityId, position),
     deleteById: (entityId: Game.Entity["id"]) => get().send("chest:delete", entityId),
   },
 
   campfire: {
     addAt: (position: Game.Position) => get().send("campfire:add", position),
-    moveTo: (entityId: Game.Entity["id"], position: Game.Position) =>
-      get().send("campfire:move", entityId, position),
     deleteById: (entityId: Game.Entity["id"]) => get().send("campfire:delete", entityId),
   },
 

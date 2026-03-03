@@ -35,7 +35,9 @@ export const FloorTilesRenderer = ({
 
   return (
     <>
-      {mode.type === "character:move" && (
+      {(mode.type === "character:move" ||
+        mode.type === "chest:move" ||
+        mode.type === "campfire:move") && (
         <MoveTiles
           tiles={tiles.visibleViable}
           current={current}

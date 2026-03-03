@@ -20,7 +20,7 @@ export const Floor = React.memo(() => {
   const mode = useGame((s) => s.mode);
   const setMode = useGame((s) => s.setMode);
   const current = useGame((s) => s.sequence.current);
-  const moveTo = useGame((s) => s.movement.moveTo);
+  const moveTo = useGame((s) => s.entity.moveTo);
 
   const [hoverPos, setHoverPos] = React.useState<{ x: number; z: number } | null>(null);
 

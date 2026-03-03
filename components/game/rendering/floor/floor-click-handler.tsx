@@ -11,10 +11,9 @@ type Props = { viableAbility: Array<{ x: number; z: number }> };
 export const FloorClickHandler = ({ viableAbility }: Props) => {
   const mode = useGame((s) => s.mode);
   const setMode = useGame((s) => s.setMode);
+  const moveEntityTo = useGame((s) => s.entity.moveTo);
   const addChestAt = useGame((s) => s.chest.addAt);
-  const moveChestTo = useGame((s) => s.chest.moveTo);
   const addCampfireAt = useGame((s) => s.campfire.addAt);
-  const moveCampfireTo = useGame((s) => s.campfire.moveTo);
   const addMonsterAt = useGame((s) => s.monster.addAt);
   const addWallAt = useGame((s) => s.wall.addAt);
   const addWallArea = useGame((s) => s.wall.addArea);
@@ -42,7 +41,7 @@ export const FloorClickHandler = ({ viableAbility }: Props) => {
           setMode({ type: "normal" });
           break;
         case "chest:move":
-          moveChestTo(mode.entityId, { x: point.x, z: point.z });
+          moveEntityTo(mode.entityId, { x: point.x, z: point.z });
           setMode({ type: "normal" });
           break;
         case "campfire:place":
@@ -50,7 +49,7 @@ export const FloorClickHandler = ({ viableAbility }: Props) => {
           setMode({ type: "normal" });
           break;
         case "campfire:move":
-          moveCampfireTo(mode.entityId, { x: point.x, z: point.z });
+          moveEntityTo(mode.entityId, { x: point.x, z: point.z });
           setMode({ type: "normal" });
           break;
         case "wall:place":
@@ -91,11 +90,10 @@ export const FloorClickHandler = ({ viableAbility }: Props) => {
   }, [
     mode,
     setMode,
+    moveEntityTo,
     addMonsterAt,
     addChestAt,
-    moveChestTo,
     addCampfireAt,
-    moveCampfireTo,
     addWallAt,
     addWallArea,
     deleteWallArea,

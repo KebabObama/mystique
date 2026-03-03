@@ -13,6 +13,9 @@ type Props = {
 };
 
 export const MoveTiles = ({ tiles, current, actions, y, onMoveAction, onEndModeAction }: Props) => {
+  const canMove =
+    current && (current.type === "chest" || current.type === "campfire" || actions > 0);
+
   return (
     <>
       {tiles.map((pos, i) => (
@@ -20,7 +23,7 @@ export const MoveTiles = ({ tiles, current, actions, y, onMoveAction, onEndModeA
           key={i}
           onClick={(e) => {
             e.stopPropagation();
-            if (!current || actions <= 0) return;
+            if (!canMove) return;
             onMoveAction(current.id, pos);
             onEndModeAction();
           }}
