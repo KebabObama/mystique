@@ -13,6 +13,7 @@ export type LobbyStore = {
   joinLobby: (lobbyId: string) => void;
   leaveLobby: (lobbyId: string) => void;
   sendMessage: (lobbyId: string, content: string) => void;
+  markAsRead: (lobbyId: string) => void;
 };
 
 export const useLobby = create<LobbyStore>((set) => ({
@@ -57,6 +58,26 @@ export const useLobby = create<LobbyStore>((set) => ({
         }),
       }));
     });
+
+    socket.on(
+      "lobby:markRead",
+      (payload: { lobbyId: string; userId: string; lastReadAt: string | Date }) => {
+        const { lobbyId, userId: targetUserId, lastReadAt } = payload;
+        set((s) => ({
+          lobbies: s.lobbies.map((lobby) => {
+            if (lobby.id !== lobbyId) return lobby;
+            return {
+              ...lobby,
+              members: lobby.members.map((member) =>
+                member.id === targetUserId
+                  ? { ...member, lastReadAt: new Date(lastReadAt) }
+                  : member
+              ),
+            };
+          }),
+        }));
+      }
+    );
   },
 
   createLobby: (name) => {
@@ -85,5 +106,12 @@ export const useLobby = create<LobbyStore>((set) => ({
     const socket = useSocket.getState().socket;
     if (!socket || !userId) return;
     socket.emit("lobby:send", userId, lobbyId, content);
+  },
+
+  markAsRead: (lobbyId) => {
+    const userId = useUser.getState()?.id;
+    const socket = useSocket.getState().socket;
+    if (!socket || !userId) return;
+    socket.emit("lobby:markRead", userId, lobbyId);
   },
 }));

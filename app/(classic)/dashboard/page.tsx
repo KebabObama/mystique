@@ -1,22 +1,35 @@
+"use client";
+
 import { CharacterCreator } from "@/components/character/character-creator";
 import { CharacterList } from "@/components/dashboard/character-list";
+import type { LobbyInfo } from "@/components/dashboard/lobby-card";
 import { LobbyList } from "@/components/dashboard/lobby-list";
 import { LobbyCreate } from "@/components/layout/lobby-create";
-import { auth } from "@/lib/auth";
-import { getCharacters, getLobbies } from "@/lib/dashboard";
-import { headers } from "next/headers";
+import { getCharacters } from "@/lib/dashboard";
+import { useLobby } from "@/lib/hooks/use-lobby";
+import { useUser } from "@/lib/hooks/use-user";
+import { getUnreadCount } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
-export default async () => {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return null;
+export default () => {
+  const userId = useUser((s) => s?.id);
+  const lobbies = useLobby((s) => s.lobbies);
+  const [characters, setCharacters] = useState<Awaited<ReturnType<typeof getCharacters>>>([]);
 
-  const [characters, lobbies] = await Promise.all([
-    getCharacters(session.user.id),
-    getLobbies(session.user.id),
-  ]);
+  useEffect(() => {
+    if (!userId) return;
+    getCharacters(userId).then(setCharacters);
+  }, [userId]);
 
-  const myLobbies = lobbies.filter((l) => l.isMember);
-  const availableLobbies = lobbies.filter((l) => !l.isMember);
+  const myLobbies: LobbyInfo[] = lobbies.map((lobby) => ({
+    id: lobby.id,
+    name: lobby.name,
+    createdAt: lobby.createdAt,
+    memberCount: lobby.members.length,
+    characterCount: 0,
+    isMember: true,
+    unreadCount: userId ? getUnreadCount(lobby, userId) : 0,
+  }));
 
   return (
     <div className="space-y-8">
@@ -40,21 +53,12 @@ export default async () => {
         </section>
 
         <div className="bg-border relative left-1/2 h-1.5 w-screen -translate-x-1/2" />
-        <div className="grid flex-1 grid-cols-1 items-stretch gap-8 lg:grid-cols-[1fr_1.5px_1fr] lg:gap-0 lg:overflow-hidden">
-          <section className="overflow-y-auto px-4">
-            <h2 className="mb-4 text-center text-xl font-semibold">
-              My Lobbies ({myLobbies.length})
-            </h2>
-            <LobbyList lobbies={myLobbies} />
-          </section>
-          <div className="bg-border mx-4 hidden h-full w-1.5 lg:block" />
-          <section className="overflow-y-auto lg:pl-4">
-            <h2 className="mb-4 text-center text-xl font-semibold">
-              Available Lobbies ({availableLobbies.length})
-            </h2>
-            <LobbyList lobbies={availableLobbies} />
-          </section>
-        </div>
+        <section className="flex-1 overflow-y-auto px-4">
+          <h2 className="mb-4 text-center text-xl font-semibold">
+            My Lobbies ({myLobbies.length})
+          </h2>
+          <LobbyList lobbies={myLobbies} />
+        </section>
       </div>
     </div>
   );

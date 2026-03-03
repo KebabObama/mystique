@@ -3,7 +3,7 @@
 import { db, schema } from "@/lib/db";
 import { Game } from "@/lib/game";
 import type { Lobby } from "@/lib/types/lobby";
-import { and, eq } from "drizzle-orm";
+import { and, eq, gt } from "drizzle-orm";
 
 const normalizeData = (data: Partial<Game.Data> & Record<string, unknown>): Game.Data => ({
   turn: typeof data.turn === "number" ? data.turn : -1,
@@ -14,12 +14,12 @@ const normalizeData = (data: Partial<Game.Data> & Record<string, unknown>): Game
 export const getAll = async (userId: string): Promise<Array<Lobby>> => {
   const data = await db.query.lobbyMember.findMany({
     where: eq(schema.lobbyMember.userId, userId),
-    with: { lobby: { with: { members: { columns: {}, with: { user: true } }, messages: true } } },
+    with: { lobby: { with: { members: { with: { user: true } }, messages: true } } },
   });
 
   return data.map(({ lobby }) => ({
     ...lobby,
-    members: lobby.members.map((m) => m.user),
+    members: lobby.members.map((m) => ({ ...m.user, lastReadAt: m.lastReadAt })),
     messages: lobby.messages,
   }));
 };
@@ -132,11 +132,15 @@ export const create = async (userId: string, name: string): Promise<Lobby> => {
 
     const result = await tx.query.lobby.findFirst({
       where: eq(schema.lobby.id, newLobby.id),
-      with: { members: { columns: {}, with: { user: true } }, messages: true },
+      with: { members: { with: { user: true } }, messages: true },
     });
 
     if (!result) throw new Error("Failed to retrieve created lobby.");
-    return { ...result, members: result.members.map((m) => m.user), messages: [] };
+    return {
+      ...result,
+      members: result.members.map((m) => ({ ...m.user, lastReadAt: m.lastReadAt })),
+      messages: [],
+    };
   });
 };
 
@@ -168,11 +172,14 @@ export const join = async (userId: string, lobbyId: string): Promise<Lobby> => {
 
   const result = await db.query.lobby.findFirst({
     where: eq(schema.lobby.id, lobbyId),
-    with: { members: { columns: {}, with: { user: true } }, messages: true },
+    with: { members: { with: { user: true } }, messages: true },
   });
 
   if (!result) throw new Error("Lobby not found.");
-  return { ...result, members: result.members.map((m) => m.user) };
+  return {
+    ...result,
+    members: result.members.map((m) => ({ ...m.user, lastReadAt: m.lastReadAt })),
+  };
 };
 
 export const send = async (userId: string, lobbyId: string, content: string) => {
@@ -181,4 +188,36 @@ export const send = async (userId: string, lobbyId: string, content: string) => 
     .values({ senderId: userId, lobbyId, content })
     .returning();
   return newMessage;
+};
+
+export const markAsRead = async (userId: string, lobbyId: string): Promise<Date | null> => {
+  // Get the user's current lastReadAt timestamp
+  const member = await db.query.lobbyMember.findFirst({
+    where: and(eq(schema.lobbyMember.userId, userId), eq(schema.lobbyMember.lobbyId, lobbyId)),
+  });
+
+  if (!member) return null;
+
+  // Check if there are any unread messages (messages created after lastReadAt)
+  const hasUnreadMessages = member.lastReadAt
+    ? await db.query.message.findFirst({
+        where: and(
+          eq(schema.message.lobbyId, lobbyId),
+          gt(schema.message.createdAt, member.lastReadAt)
+        ),
+      })
+    : await db.query.message.findFirst({ where: eq(schema.message.lobbyId, lobbyId) });
+
+  // Only update if there are unread messages
+  if (hasUnreadMessages) {
+    const lastReadAt = new Date();
+    await db
+      .update(schema.lobbyMember)
+      .set({ lastReadAt })
+      .where(and(eq(schema.lobbyMember.userId, userId), eq(schema.lobbyMember.lobbyId, lobbyId)));
+
+    return lastReadAt;
+  }
+
+  return null;
 };

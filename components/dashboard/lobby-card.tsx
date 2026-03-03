@@ -1,10 +1,11 @@
 "use client";
 
+import { SidebarLobbyItem } from "@/components/layout/sidebar-lobby-item";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useLobby } from "@/lib/hooks/use-lobby";
 import { useUser } from "@/lib/hooks/use-user";
-import { LogIn, Users } from "lucide-react";
+import { LogIn, MessageSquare, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export type LobbyInfo = {
@@ -14,6 +15,7 @@ export type LobbyInfo = {
   memberCount: number;
   characterCount: number;
   isMember: boolean;
+  unreadCount?: number;
 };
 
 type LobbyCardProps = { lobby: LobbyInfo };
@@ -22,6 +24,7 @@ export const LobbyCard = ({ lobby }: LobbyCardProps) => {
   const router = useRouter();
   const userId = useUser((s) => s?.id);
   const joinLobby = useLobby((s) => s?.joinLobby);
+  const fullLobby = useLobby((s) => s.lobbies.find((entry) => entry.id === lobby.id));
 
   const handleAction = () => {
     if (lobby.isMember) {
@@ -59,18 +62,41 @@ export const LobbyCard = ({ lobby }: LobbyCardProps) => {
             {lobby.characterCount} {lobby.characterCount === 1 ? "character" : "characters"}
           </span>
         </div>
+        {lobby.isMember && lobby.unreadCount !== undefined && lobby.unreadCount > 0 && (
+          <div className="flex items-center gap-1.5">
+            <MessageSquare className="text-primary size-4" />
+            <span className="text-primary text-sm font-semibold">{lobby.unreadCount} unread</span>
+          </div>
+        )}
       </div>
 
       <div className="mt-4">
-        <Button
-          className="w-full"
-          size="sm"
-          variant={lobby.isMember ? "default" : "outline"}
-          onClick={handleAction}
-        >
-          <LogIn className="size-4" />
-          {lobby.isMember ? "Enter Lobby" : "Join & Enter"}
-        </Button>
+        {lobby.isMember ? (
+          <div className="flex gap-2">
+            <Button className="flex-1" size="sm" onClick={handleAction}>
+              <LogIn className="size-4" />
+              Enter Game
+            </Button>
+            {fullLobby ? (
+              <SidebarLobbyItem lobby={fullLobby}>
+                <Button className="flex-1" size="sm" variant="outline">
+                  <MessageSquare className="size-4" />
+                  Messages
+                </Button>
+              </SidebarLobbyItem>
+            ) : (
+              <Button className="flex-1" size="sm" variant="outline" disabled>
+                <MessageSquare className="size-4" />
+                Messages
+              </Button>
+            )}
+          </div>
+        ) : (
+          <Button className="w-full" size="sm" variant="outline" onClick={handleAction}>
+            <LogIn className="size-4" />
+            Join & Enter
+          </Button>
+        )}
       </div>
     </Card>
   );

@@ -133,6 +133,7 @@ export const lobbyMember = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date())
       .notNull(),
+    lastReadAt: timestamp("last_read_at"),
   },
   (table) => [
     primaryKey({ name: "lobby_member_pk", columns: [table.lobbyId, table.userId] }),

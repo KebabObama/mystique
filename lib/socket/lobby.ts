@@ -31,4 +31,11 @@ export const register = (ctx: SocketContext) => {
     const result = await Lobby.send(userId, lobbyId, content);
     io.to(`lobby:${result.lobbyId}`).emit("lobby:send", result);
   });
+
+  socket.on("lobby:markRead", async (userId, lobbyId) => {
+    const lastReadAt = await Lobby.markAsRead(userId, lobbyId);
+    if (lastReadAt) {
+      socket.emit("lobby:markRead", { lobbyId, userId, lastReadAt });
+    }
+  });
 };

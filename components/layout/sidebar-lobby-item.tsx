@@ -21,7 +21,9 @@ export const SidebarLobbyItem = ({ children, lobby }: SidebarLobbyItemProps) => 
   const user = useUser();
   const sendMessage = useLobby((s) => s.sendMessage);
   const leaveLobby = useLobby((s) => s.leaveLobby);
+  const markAsRead = useLobby((s) => s.markAsRead);
   const [isUserList, setIsUserList] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const send = () => {
     const input = inputRef.current;
@@ -37,8 +39,22 @@ export const SidebarLobbyItem = ({ children, lobby }: SidebarLobbyItemProps) => 
     return `${d.getMonth() + 1}.${d.getDate()}.${d.getFullYear()} - ${d.getHours()}:${d.getMinutes()}`;
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (open && user?.id) {
+      // Mark messages as read when dialog opens
+      markAsRead(lobby.id);
+    }
+  };
+
+  React.useEffect(() => {
+    if (isOpen && !isUserList && user?.id) {
+      markAsRead(lobby.id);
+    }
+  }, [isOpen, isUserList, user?.id, lobby.id, markAsRead]);
+
   return (
-    <Dialog fullscreen>
+    <Dialog fullscreen onOpenChange={handleOpenChange}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Content>
         <Dialog.Title>{lobby.name}</Dialog.Title>

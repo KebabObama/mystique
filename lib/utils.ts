@@ -43,3 +43,27 @@ export const getCroppedImg = async (
     );
   });
 };
+
+export const getUnreadCount = (
+  lobby: {
+    messages: Array<{ createdAt: Date }>;
+    members: Array<{ id: string; lastReadAt: Date | null }>;
+  },
+  userId: string
+): number => {
+  const member = lobby.members.find((m) => m.id === userId);
+  if (!member) return 0;
+
+  if (!member.lastReadAt) {
+    return lobby.messages.length;
+  }
+
+  const lastReadAt = new Date(member.lastReadAt);
+  if (Number.isNaN(lastReadAt.getTime())) return lobby.messages.length;
+
+  return lobby.messages.filter((msg) => {
+    const createdAt = new Date(msg.createdAt);
+    if (Number.isNaN(createdAt.getTime())) return false;
+    return createdAt > lastReadAt;
+  }).length;
+};

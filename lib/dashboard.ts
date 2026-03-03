@@ -34,36 +34,22 @@ export const getCharacters = async (userId: string) => {
 };
 
 /**
- * Get all lobbies with summary information
+ * Get lobbies the user is a member of
  */
-export const getLobbies = async (userId: string): Promise<LobbyInfo[]> => {
+export const getMyLobbies = async (userId: string): Promise<LobbyInfo[]> => {
   const lobbies = await db.query.lobby.findMany({
     with: { members: { columns: { userId: true } }, characters: { columns: { id: true } } },
     orderBy: (lobby, { desc }) => [desc(lobby.createdAt)],
   });
 
-  return lobbies.map((lobby) => ({
-    id: lobby.id,
-    name: lobby.name,
-    createdAt: lobby.createdAt,
-    memberCount: lobby.members.length,
-    characterCount: lobby.characters.length,
-    isMember: lobby.members.some((m) => m.userId === userId),
-  }));
-};
-
-/**
- * Get lobbies the user is a member of
- */
-export const getMyLobbies = async (userId: string): Promise<LobbyInfo[]> => {
-  const allLobbies = await getLobbies(userId);
-  return allLobbies.filter((lobby) => lobby.isMember);
-};
-
-/**
- * Get lobbies available to join (user is not a member)
- */
-export const getAvailableLobbies = async (userId: string): Promise<LobbyInfo[]> => {
-  const allLobbies = await getLobbies(userId);
-  return allLobbies.filter((lobby) => !lobby.isMember);
+  return lobbies
+    .filter((lobby) => lobby.members.some((m) => m.userId === userId))
+    .map((lobby) => ({
+      id: lobby.id,
+      name: lobby.name,
+      createdAt: lobby.createdAt,
+      memberCount: lobby.members.length,
+      characterCount: lobby.characters.length,
+      isMember: true,
+    }));
 };

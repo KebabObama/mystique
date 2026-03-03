@@ -10,6 +10,7 @@ export type Lobby = {
     image: string | null;
     createdAt: Date;
     updatedAt: Date | null;
+    lastReadAt: Date | null;
   }>;
   messages: Array<{
     id: string;
