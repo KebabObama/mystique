@@ -44,3 +44,11 @@ next-env.d.ts
 /.envrc
 
 **.md
+
+**/.idea
+**/_things
+**/desktop.ini
+**/.DS_Store
+**/*.aux
+**/*.bbl
+**/*.~lock*
