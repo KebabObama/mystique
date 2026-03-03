@@ -5,20 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Context } from "@/components/ui/context";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useGame } from "@/lib/hooks/use-game";
-import { useUser } from "@/lib/hooks/use-user";
+import { usePermissions } from "@/lib/hooks/use-permissions";
 import { Box } from "lucide-react";
 
 export const ChestControls = () => {
   const instance = useGame((state) => state.instance);
-  const isOnMasterTurn = useGame((state) => state.sequence.isOnMasterTurn);
+  const canManageChests = usePermissions((state) => state.isMasterOnTurn);
   const mode = useGame((state) => state.mode);
   const setMode = useGame((state) => state.setMode);
   const deleteById = useGame((state) => state.chest.deleteById);
   const openPanel = useGame((state) => state.inventory.openPanel);
 
-  const userId = useUser((state) => state?.id);
-
-  if (!instance || !userId || instance.masterId !== userId || !isOnMasterTurn) return null;
+  if (!instance || !canManageChests) return null;
 
   const chests = instance.chests;
   const placeMode = mode.type === "chest:place";

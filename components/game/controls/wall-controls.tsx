@@ -2,17 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { useGame } from "@/lib/hooks/use-game";
-import { useUser } from "@/lib/hooks/use-user";
+import { usePermissions } from "@/lib/hooks/use-permissions";
 import { BrickWall, Eraser, Grid2X2Plus, Grid2X2X } from "lucide-react";
 
 export const WallControls = () => {
-  const instance = useGame((state) => state.instance);
-  const isOnMasterTurn = useGame((state) => state.sequence.isOnMasterTurn);
+  const canManageWalls = usePermissions((state) => state.isMasterOnTurn);
   const mode = useGame((state) => state.mode);
   const setMode = useGame((state) => state.setMode);
-  const userId = useUser((state) => state?.id);
 
-  if (!instance || !userId || instance.masterId !== userId || !isOnMasterTurn) return null;
+  if (!canManageWalls) return null;
 
   const placing = mode.type === "wall:place";
   const deleting = mode.type === "wall:destroy";

@@ -1,15 +1,17 @@
 "use client";
 
+import { toast } from "@/components/layout/toast";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
 
 export const CampfireShopDialog = () => {
   const instance = useGame((s) => s.instance);
-  const open = useGame((s) => s.campfire.shopDialogOpen);
-  const closeShop = useGame((s) => s.campfire.closeShop);
-  const selectedCampfireId = useGame((s) => s.campfire.selectedCampfireId);
-  const selectedCharacterId = useGame((s) => s.campfire.selectedCharacterId);
+  const open = useDialog((s) => s.campfire.shopDialogOpen);
+  const closeShop = useDialog((s) => s.campfire.closeShop);
+  const selectedCampfireId = useDialog((s) => s.campfire.selectedCampfireId);
+  const selectedCharacterId = useDialog((s) => s.campfire.selectedCharacterId);
 
   if (!open || !selectedCampfireId || !selectedCharacterId || !instance) return null;
 
@@ -30,7 +32,7 @@ export const CampfireShopDialog = () => {
 
   const handleBuy = (itemId: string, cost: number) => {
     if (currencyAmount < cost) {
-      // Could show error toast here
+      toast.error("Not enough gold coins");
       return;
     }
     useGame.getState().send("campfire:shop:buy", selectedCharacterId, itemId, 1);
@@ -40,19 +42,19 @@ export const CampfireShopDialog = () => {
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && closeShop()}>
       <Dialog.Content className="max-w-xl">
         <Dialog.Title>Campfire Shop</Dialog.Title>
-        <p className="text-sm text-slate-600">Gold Coins: {currencyAmount}</p>
+        <p className="text-sm">Gold Coins: {currencyAmount}</p>
         <div className="max-h-96 space-y-3 overflow-y-auto">
           {campfireEntity.playable.shopItems.length === 0 ? (
-            <p className="py-8 text-center text-sm text-slate-500">No items available</p>
+            <p className="py-8 text-center text-sm">No items available</p>
           ) : (
             campfireEntity.playable.shopItems.map((shopItem) => (
               <div
                 key={shopItem.item.id}
-                className="flex items-center justify-between rounded-lg border border-slate-200 p-3"
+                className="flex items-center justify-between rounded-lg border p-3"
               >
                 <div>
                   <p className="font-medium">{shopItem.item.name}</p>
-                  <p className="text-sm text-slate-600">Cost: {shopItem.cost} coins</p>
+                  <p className="text-sm">Cost: {shopItem.cost} coins</p>
                 </div>
                 <Button
                   onClick={() => handleBuy(shopItem.item.id, shopItem.cost)}

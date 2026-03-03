@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Context } from "@/components/ui/context";
 import { Game } from "@/lib/game";
 import { useGame } from "@/lib/hooks/use-game";
+import { usePermissions } from "@/lib/hooks/use-permissions";
 import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp, ChevronDown } from "lucide-react";
 import * as React from "react";
@@ -17,7 +18,7 @@ export const Sequence = ({ children }: SequenceProps) => {
   const instance = useGame((s) => s.instance);
   const send = useGame((s) => s.send);
   const current = useGame((s) => s.sequence.current);
-  const isOnMasterTurn = useGame((s) => s.sequence.isOnMasterTurn);
+  const isOnMasterTurn = usePermissions((s) => s.isMasterOnTurn);
 
   if (!instance) return null;
 

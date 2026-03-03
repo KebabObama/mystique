@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Game } from "@/lib/game";
 import { useGame } from "@/lib/hooks/use-game";
+import { usePermissions } from "@/lib/hooks/use-permissions";
 import { cn } from "@/lib/utils";
 
 type AbilityCardProps = { ability: Game.Ability; selected: boolean; onSelect: () => void };
@@ -36,7 +37,7 @@ const AbilityCard = ({ ability, selected, onSelect }: AbilityCardProps) => {
 
 export const AbilitiesDrawer = () => {
   const current = useGame((s) => s.sequence.current);
-  const canControlCurrent = useGame((s) => s.sequence.canControl);
+  const canControlCurrent = usePermissions((s) => s.canControlCurrent);
   const mode = useGame((s) => s.mode);
   const setMode = useGame((s) => s.setMode);
   const castAbilityAt = useGame((s) => s.abilities.useAt);

@@ -3,14 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
+import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
 import React from "react";
 
 export const CampfireRestDialog = () => {
   const instance = useGame((s) => s.instance);
-  const open = useGame((s) => s.campfire.restDialogOpen);
-  const closeRest = useGame((s) => s.campfire.closeRest);
-  const selectedCharacterId = useGame((s) => s.campfire.selectedCharacterId);
+  const open = useDialog((s) => s.campfire.restDialogOpen);
+  const closeRest = useDialog((s) => s.campfire.closeRest);
+  const selectedCharacterId = useDialog((s) => s.campfire.selectedCharacterId);
   const [actionsToRest, setActionsToRest] = React.useState(1);
 
   if (!open || !selectedCharacterId || !instance) return null;

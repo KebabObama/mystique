@@ -2,17 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { useGame } from "@/lib/hooks/use-game";
-import { useUser } from "@/lib/hooks/use-user";
+import { usePermissions } from "@/lib/hooks/use-permissions";
 import { Backpack } from "lucide-react";
 
 export const InventoryButton = () => {
-  const instance = useGame((s) => s.instance);
   const openPanel = useGame((s) => s.inventory.openPanel);
   const current = useGame((s) => s.sequence.current);
-  const userId = useUser((s) => s?.id);
+  const canControlCurrent = usePermissions((s) => s.canControlCurrent);
 
-  if (!instance || !current || current.type !== "character" || current.playable.ownerId !== userId)
-    return null;
+  if (!current || current.type !== "character" || !canControlCurrent) return null;
 
   return (
     <Button size="sm" onClick={() => openPanel("view", current.id)}>

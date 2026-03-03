@@ -2,8 +2,9 @@
 
 import { Context } from "@/components/ui/context";
 import { Game } from "@/lib/game";
+import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
-import { useUser } from "@/lib/hooks/use-user";
+import { usePermissions } from "@/lib/hooks/use-permissions";
 import { Render } from "@/lib/render";
 import React from "react";
 
@@ -11,26 +12,27 @@ type MenuAction = { label: string; run: () => void };
 
 export const EntityContextMenu = () => {
   const instance = useGame((s) => s.instance);
-  const isOnMasterTurn = useGame((s) => s.sequence.isOnMasterTurn);
-  const isUsersEntity = useGame((s) => s.isUsersEntity);
   const openPanel = useGame((s) => s.inventory.openPanel);
 
-  const open = useGame((s) => s.entityContextMenu.open);
-  const entityId = useGame((s) => s.entityContextMenu.entityId);
-  const x = useGame((s) => s.entityContextMenu.x);
-  const y = useGame((s) => s.entityContextMenu.y);
-  const close = useGame((s) => s.entityContextMenu.close);
+  const isMasterOnTurn = usePermissions((s) => s.isMasterOnTurn);
+  const canControlEntity = usePermissions((s) => s.canControlEntity);
+  const isUsersEntity = usePermissions((s) => s.isUsersEntity);
 
-  const userId = useUser((s) => s?.id);
+  const open = useDialog((s) => s.entityContextMenu.open);
+  const entityId = useDialog((s) => s.entityContextMenu.entityId);
+  const x = useDialog((s) => s.entityContextMenu.x);
+  const y = useDialog((s) => s.entityContextMenu.y);
+  const close = useDialog((s) => s.entityContextMenu.close);
+
   const triggerRef = React.useRef<HTMLButtonElement | null>(null);
 
   const actions = React.useMemo<MenuAction[]>(() => {
-    if (!instance || !userId || !entityId) return [];
+    if (!instance || !entityId) return [];
 
     const targetEntity = Game.getEntityById(instance, entityId);
     if (!targetEntity) return [];
 
-    if (isOnMasterTurn) {
+    if (isMasterOnTurn) {
       return [{ label: "Open inventory", run: () => openPanel("master", targetEntity.id) }];
     }
 
@@ -41,9 +43,7 @@ export const EntityContextMenu = () => {
           instance.data.sequence[instance.data.turn]
         );
         const activeCharacter = activeEntity?.type === "character" ? activeEntity : null;
-        const controlsActiveCharacter =
-          !!activeCharacter &&
-          (activeCharacter.playable.ownerId === userId || instance.masterId === userId);
+        const controlsActiveCharacter = !!activeCharacter && canControlEntity(activeCharacter);
         const canTradeWithTarget =
           !!activeCharacter &&
           controlsActiveCharacter &&
@@ -61,7 +61,10 @@ export const EntityContextMenu = () => {
         if (canTradeWithTarget && activeCharacter) {
           actions.push({
             label: "Trade",
-            run: () => useGame.getState().trading.openDialog(activeCharacter.id, targetEntity.id),
+            run: () => {
+              useDialog.getState().trading.openDialog(activeCharacter.id);
+              useGame.getState().trading.startTrade(targetEntity.id, [], 0);
+            },
           });
         }
 
@@ -97,11 +100,13 @@ export const EntityContextMenu = () => {
         return [
           {
             label: "Rest & Heal",
-            run: () => useGame.getState().campfire.openRest(targetEntity.id, nearbyOwnCharacter.id),
+            run: () =>
+              useDialog.getState().campfire.openRest(targetEntity.id, nearbyOwnCharacter.id),
           },
           {
             label: "Shop",
-            run: () => useGame.getState().campfire.openShop(targetEntity.id, nearbyOwnCharacter.id),
+            run: () =>
+              useDialog.getState().campfire.openShop(targetEntity.id, nearbyOwnCharacter.id),
           },
         ];
       }
@@ -110,7 +115,7 @@ export const EntityContextMenu = () => {
       default:
         return [];
     }
-  }, [entityId, instance, isOnMasterTurn, isUsersEntity, openPanel, userId]);
+  }, [canControlEntity, entityId, instance, isMasterOnTurn, isUsersEntity, openPanel]);
 
   React.useEffect(() => {
     if (!open) return;

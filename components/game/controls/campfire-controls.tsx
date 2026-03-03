@@ -5,19 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Context } from "@/components/ui/context";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useGame } from "@/lib/hooks/use-game";
-import { useUser } from "@/lib/hooks/use-user";
+import { usePermissions } from "@/lib/hooks/use-permissions";
 import { Flame } from "lucide-react";
 
 export const CampfireControls = () => {
   const instance = useGame((state) => state.instance);
-  const isOnMasterTurn = useGame((state) => state.sequence.isOnMasterTurn);
+  const canManageCampfires = usePermissions((state) => state.isMasterOnTurn);
   const mode = useGame((state) => state.mode);
   const setMode = useGame((state) => state.setMode);
   const deleteById = useGame((state) => state.campfire.deleteById);
 
-  const userId = useUser((state) => state?.id);
-
-  if (!instance || !userId || instance.masterId !== userId || !isOnMasterTurn) return null;
+  if (!instance || !canManageCampfires) return null;
 
   const campfires = instance.campfires;
   const placeMode = mode.type === "campfire:place";

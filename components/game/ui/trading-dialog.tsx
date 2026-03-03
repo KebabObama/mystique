@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
 import { useUser } from "@/lib/hooks/use-user";
 import React from "react";
@@ -26,10 +27,10 @@ const fromDraft = (draft: DraftState) => ({
 export const TradingDialog = () => {
   const userId = useUser((s) => s?.id);
   const instance = useGame((s) => s.instance);
-  const open = useGame((s) => s.trading.dialogOpen);
-  const closeDialog = useGame((s) => s.trading.closeDialog);
-  const selectedCharacterId = useGame((s) => s.trading.selectedCharacterId);
-  const activeSession = useGame((s) => s.trading.activeSession);
+  const open = useDialog((s) => s.trading.dialogOpen);
+  const closeDialog = useDialog((s) => s.trading.closeDialog);
+  const selectedCharacterId = useDialog((s) => s.trading.selectedCharacterId);
+  const activeSession = useDialog((s) => s.trading.activeSession);
   const updateOffer = useGame((s) => s.trading.updateOffer);
   const setConfirmed = useGame((s) => s.trading.setConfirmed);
   const cancelTrade = useGame((s) => s.trading.cancelTrade);

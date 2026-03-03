@@ -2,6 +2,7 @@
 
 import { Game } from "@/lib/game";
 import { useCamera } from "@/lib/hooks/use-camera";
+import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
 import { useUser } from "@/lib/hooks/use-user";
 import { Mesh } from "@/lib/mesh";
@@ -111,17 +112,14 @@ const EntityMesh = ({
 
 export const Entities = () => {
   const instance = useGame((s) => s.instance);
-  const openAt = useGame((s) => s.entityContextMenu.openAt);
+  const openAt = useDialog((s) => s.entityContextMenu.openAt);
 
-  const sortedEntities = React.useMemo(
-    () =>
-      instance
-        ? Game.getEntities(instance)
-            .slice()
-            .sort((a, b) => a.id.localeCompare(b.id))
-        : undefined,
-    [instance]
-  );
+  const sortedEntities = React.useMemo(() => {
+    if (!instance) return undefined;
+    return Game.getEntities(instance)
+      .slice()
+      .sort((a, b) => a.id.localeCompare(b.id));
+  }, [instance]);
 
   return sortedEntities?.map((entity) => (
     <EntityMesh

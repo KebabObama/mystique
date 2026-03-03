@@ -3,15 +3,16 @@
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Game } from "@/lib/game";
+import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
 import React from "react";
 
 export const LevelUpDialog = () => {
   const instance = useGame((s) => s.instance);
-  const open = useGame((s) => s.leveling.dialogOpen);
-  const closeDialog = useGame((s) => s.leveling.closeDialog);
+  const open = useDialog((s) => s.leveling.dialogOpen);
+  const closeDialog = useDialog((s) => s.leveling.closeDialog);
   const levelUp = useGame((s) => s.leveling.levelUp);
-  const selectedCharacterId = useGame((s) => s.leveling.selectedCharacterId);
+  const selectedCharacterId = useDialog((s) => s.leveling.selectedCharacterId);
   const [attributePoints, setAttributePoints] = React.useState<Record<Game.Attribute, number>>({
     strength: 0,
     dexterity: 0,

@@ -2,10 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { useGame } from "@/lib/hooks/use-game";
+import { usePermissions } from "@/lib/hooks/use-permissions";
 import { SendHorizonal } from "lucide-react";
 
 export const EndTurn = () => {
-  const canEnd = useGame((s) => s.sequence.canEnd);
+  const canEnd = usePermissions((s) => s.canEndTurn);
   const next = useGame((s) => s.sequence.next);
 
   return (

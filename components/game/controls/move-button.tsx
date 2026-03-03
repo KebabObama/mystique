@@ -2,21 +2,22 @@
 
 import { Button } from "@/components/ui/button";
 import { useGame } from "@/lib/hooks/use-game";
-import { useUser } from "@/lib/hooks/use-user";
+import { usePermissions } from "@/lib/hooks/use-permissions";
 import { Move } from "lucide-react";
 
 export const MoveButton = () => {
-  const userId = useUser((s) => s?.id);
-  const instance = useGame((s) => s.instance);
   const current = useGame((s) => s.sequence.current);
   const setMode = useGame((s) => s.setMode);
+  const canControlCurrent = usePermissions((s) => s.canControlCurrent);
   const canHaveActions = current?.type === "character" || current?.type === "monster";
   const actions = current?.actions ?? (canHaveActions ? current.playable.maxActions : 0) ?? 0;
 
-  const isMyTurn = current?.type === "character" && current.playable.ownerId === userId;
-  const canMoveMonster = current?.type === "monster" && instance?.masterId === userId;
-
-  if (!isMyTurn && !canMoveMonster) return null;
+  if (
+    !canControlCurrent ||
+    !current ||
+    (current.type !== "character" && current.type !== "monster")
+  )
+    return null;
   return (
     <Button size="sm" disabled={actions <= 0} onClick={() => setMode({ type: "character:move" })}>
       <Move /> Move

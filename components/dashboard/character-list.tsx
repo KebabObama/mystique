@@ -83,7 +83,7 @@ export const CharacterList = ({ characters }: CharacterListProps) => {
           size={"icon"}
           variant={"outline"}
           onClick={() => scroll("left")}
-          className="absolute top-1/2 left-0 z-10 -translate-y-1/2"
+          className="bg-background absolute top-1/2 left-0 z-10 -translate-y-1/2"
           aria-label="Scroll left"
         >
           <ChevronLeft className="h-5 w-5" />
@@ -115,7 +115,7 @@ export const CharacterList = ({ characters }: CharacterListProps) => {
           size={"icon"}
           variant={"outline"}
           onClick={() => scroll("right")}
-          className="absolute top-1/2 right-0 z-10 -translate-y-1/2"
+          className="bg-background absolute top-1/2 right-0 z-10 -translate-y-1/2"
           aria-label="Scroll right"
         >
           <ChevronRight className="h-5 w-5" />

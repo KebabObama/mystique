@@ -6,7 +6,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Game } from "@/lib/game";
 import { useGame } from "@/lib/hooks/use-game";
-import { useUser } from "@/lib/hooks/use-user";
+import { usePermissions } from "@/lib/hooks/use-permissions";
 import { cn } from "@/lib/utils";
 import { Brain, Footprints, Heart, Search, Shield, Skull, Swords, Zap } from "lucide-react";
 import React from "react";
@@ -15,18 +15,17 @@ type MonsterDef = Game.Monster;
 
 export const MonsterControls = ({ monsters }: { monsters: MonsterDef[] }) => {
   const instance = useGame((state) => state.instance);
-  const isOnMasterTurn = useGame((state) => state.sequence.isOnMasterTurn);
+  const canManageMonsters = usePermissions((state) => state.isMasterOnTurn);
   const mode = useGame((state) => state.mode);
   const setMode = useGame((state) => state.setMode);
   const deleteById = useGame((state) => state.monster.deleteById);
   const openPanel = useGame((state) => state.inventory.openPanel);
-  const userId = useUser((state) => state?.id);
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const [selectedMonster, setSelectedMonster] = React.useState<MonsterDef | null>(null);
 
-  if (!instance || !userId || instance.masterId !== userId || !isOnMasterTurn) return null;
+  if (!instance || !canManageMonsters) return null;
 
   const placedMonsters = instance.monsters;
   const placingMode = mode.type === "monster:place";

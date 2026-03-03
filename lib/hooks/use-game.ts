@@ -2,6 +2,8 @@
 
 import { toast } from "@/components/layout/toast";
 import { Game } from "@/lib/game";
+import { useDialog } from "@/lib/hooks/use-dialog";
+import { usePermissions } from "@/lib/hooks/use-permissions";
 import { useSocket } from "@/lib/hooks/use-socket";
 import { useUser } from "@/lib/hooks/use-user";
 import { create } from "zustand";
@@ -45,8 +47,6 @@ export type GameStore = {
   send: (event: string, ...args: any[]) => void;
   mode: GameMode;
   setMode: (mode: GameMode) => void;
-  isEntityActive: (entity: Game.Entity) => boolean;
-  isUsersEntity: (entity: Game.Entity) => boolean;
   movement: {
     moveTo: (entityId: Game.Entity["id"], position: Game.Position) => void;
     getViable: (entityId: Game.Entity["id"]) => Game.Position[];
@@ -60,17 +60,6 @@ export type GameStore = {
     addAt: (position: Game.Position) => void;
     moveTo: (entityId: Game.Entity["id"], position: Game.Position) => void;
     deleteById: (entityId: Game.Entity["id"]) => void;
-    openRest: (campfireEntityId: Game.Entity["id"], characterEntityId: Game.Entity["id"]) => void;
-    closeRest: () => void;
-    openTrade: (campfireEntityId: Game.Entity["id"], characterEntityId: Game.Entity["id"]) => void;
-    closeTrade: () => void;
-    openShop: (campfireEntityId: Game.Entity["id"], characterEntityId: Game.Entity["id"]) => void;
-    closeShop: () => void;
-    restDialogOpen: boolean;
-    tradeDialogOpen: boolean;
-    shopDialogOpen: boolean;
-    selectedCampfireId?: Game.Entity["id"];
-    selectedCharacterId?: Game.Entity["id"];
   };
   monster: {
     addAt: (monsterId: string, position: Game.Position) => void;
@@ -102,20 +91,7 @@ export type GameStore = {
     dropItem: (entityId: Game.Entity["id"], itemId: string, quantity?: number) => void;
     toggleEquip: (entityId: Game.Entity["id"], itemId: string) => void;
   };
-  entityContextMenu: {
-    open: boolean;
-    entityId?: Game.Entity["id"];
-    x: number;
-    y: number;
-    openAt: (entityId: Game.Entity["id"], x: number, y: number) => void;
-    close: () => void;
-  };
   trading: {
-    dialogOpen: boolean;
-    selectedCharacterId?: Game.Entity["id"];
-    activeSession: TradeSession | null;
-    openDialog: (fromEntityId: Game.Entity["id"], toEntityId: Game.Entity["id"]) => void;
-    closeDialog: () => void;
     startTrade: (
       toEntityId: Game.Entity["id"],
       items: Array<{ itemId: string; quantity: number }>,
@@ -126,24 +102,13 @@ export type GameStore = {
     cancelTrade: (sessionId: string) => void;
   };
   leveling: {
-    dialogOpen: boolean;
-    selectedCharacterId?: string;
-    openDialog: (characterId: string) => void;
-    closeDialog: () => void;
     levelUp: (characterId: string, attributePoints: Record<Game.Attribute, number>) => void;
   };
   abilities: {
     useAt: (position: Game.Position) => void;
     getViable: (entityId: Game.Entity["id"], ability: Game.Ability) => Game.Position[];
   };
-  sequence: {
-    next: () => void;
-    readonly isMaster: boolean;
-    readonly canEnd: boolean;
-    readonly canControl: boolean;
-    readonly current: Game.Entity | undefined;
-    readonly isOnMasterTurn: boolean;
-  };
+  sequence: { next: () => void; readonly current: Game.Entity | undefined };
 };
 
 export const useGame = create<GameStore>((set, get) => ({
@@ -155,6 +120,7 @@ export const useGame = create<GameStore>((set, get) => ({
 
     socket.on("game:state", (instance: Game.Instance) => {
       set({ instance });
+      usePermissions.getState().update(instance);
     });
 
     socket.on("game:message", (data: MessageData) => {
@@ -176,11 +142,13 @@ export const useGame = create<GameStore>((set, get) => ({
     });
 
     socket.on("disconnect", () => {
-      set({ instance: null, trading: { ...get().trading, activeSession: null } });
+      set({ instance: null });
+      useDialog.getState().reset();
+      usePermissions.getState().update(null);
     });
 
     socket.on("game:trade:session", (session: TradeSession) => {
-      const selectedCharacterId = get().trading.selectedCharacterId;
+      const selectedCharacterId = useDialog.getState().trading.selectedCharacterId;
       if (
         selectedCharacterId &&
         session.entityAId !== selectedCharacterId &&
@@ -189,14 +157,14 @@ export const useGame = create<GameStore>((set, get) => ({
         return;
       }
 
-      set({ trading: { ...get().trading, activeSession: session, dialogOpen: true } });
+      useDialog.getState().trading.setActiveSession(session);
     });
 
     socket.on("game:trade:session:closed", ({ sessionId }: { sessionId: string }) => {
-      const current = get().trading.activeSession;
+      const current = useDialog.getState().trading.activeSession;
       if (!current || current.id !== sessionId) return;
 
-      set({ trading: { ...get().trading, activeSession: null } });
+      useDialog.getState().trading.clearActiveSession(sessionId);
     });
   },
 
@@ -205,6 +173,7 @@ export const useGame = create<GameStore>((set, get) => ({
     const socket = useSocket.getState().socket;
     if (!socket || !userId) return;
     set({ instance: null });
+    usePermissions.getState().update(null);
     socket.emit("game:join", userId, instanceId);
   },
 
@@ -215,6 +184,7 @@ export const useGame = create<GameStore>((set, get) => ({
     if (!userId || !socket || !instance) return;
     socket.emit("game:leave", userId, instance.id);
     set({ instance: null });
+    usePermissions.getState().update(null);
   },
 
   send: (event: string, ...payload: any[]) => {
@@ -228,22 +198,6 @@ export const useGame = create<GameStore>((set, get) => ({
 
   mode: { type: "normal" } as GameMode,
   setMode: (mode: GameMode) => set({ mode }),
-
-  isEntityActive: (entity: Game.Entity) => {
-    const instance = get().instance;
-    if (!instance) return false;
-    return instance.data.sequence[instance.data.turn] === entity.id;
-  },
-
-  isUsersEntity: (entity: Game.Entity) => {
-    const instance = get().instance;
-    const userId = useUser.getState()?.id;
-    if (!instance || !userId) return false;
-    const isActive = instance.data.sequence[instance.data.turn] === entity.id;
-    const isCharacterOwner = entity.type === "character" && entity.playable.ownerId === userId;
-    const isMasterMonster = entity.type === "monster" && instance.masterId === userId;
-    return isActive && (isCharacterOwner || isMasterMonster);
-  },
 
   movement: {
     moveTo: (entityId: Game.Entity["id"], position: Game.Position) => {
@@ -315,76 +269,10 @@ export const useGame = create<GameStore>((set, get) => ({
   },
 
   campfire: {
-    restDialogOpen: false,
-    tradeDialogOpen: false,
-    shopDialogOpen: false,
-    selectedCampfireId: undefined,
-    selectedCharacterId: undefined,
     addAt: (position: Game.Position) => get().send("campfire:add", position),
     moveTo: (entityId: Game.Entity["id"], position: Game.Position) =>
       get().send("campfire:move", entityId, position),
     deleteById: (entityId: Game.Entity["id"]) => get().send("campfire:delete", entityId),
-    openRest: (campfireEntityId, characterEntityId) =>
-      set({
-        campfire: {
-          ...get().campfire,
-          restDialogOpen: true,
-          selectedCampfireId: campfireEntityId,
-          selectedCharacterId: characterEntityId,
-        },
-      }),
-    closeRest: () =>
-      set({
-        campfire: {
-          ...get().campfire,
-          restDialogOpen: false,
-          selectedCampfireId: undefined,
-          selectedCharacterId: undefined,
-        },
-      }),
-    openTrade: (campfireEntityId, characterEntityId) =>
-      set({
-        campfire: {
-          ...get().campfire,
-          tradeDialogOpen: true,
-          selectedCampfireId: campfireEntityId,
-          selectedCharacterId: characterEntityId,
-        },
-        trading: { ...get().trading, dialogOpen: true, selectedCharacterId: characterEntityId },
-      }),
-    closeTrade: () =>
-      set({
-        campfire: {
-          ...get().campfire,
-          tradeDialogOpen: false,
-          selectedCampfireId: undefined,
-          selectedCharacterId: undefined,
-        },
-        trading: {
-          ...get().trading,
-          dialogOpen: false,
-          selectedCharacterId: undefined,
-          activeSession: null,
-        },
-      }),
-    openShop: (campfireEntityId, characterEntityId) =>
-      set({
-        campfire: {
-          ...get().campfire,
-          shopDialogOpen: true,
-          selectedCampfireId: campfireEntityId,
-          selectedCharacterId: characterEntityId,
-        },
-      }),
-    closeShop: () =>
-      set({
-        campfire: {
-          ...get().campfire,
-          shopDialogOpen: false,
-          selectedCampfireId: undefined,
-          selectedCharacterId: undefined,
-        },
-      }),
   },
 
   monster: {
@@ -425,43 +313,9 @@ export const useGame = create<GameStore>((set, get) => ({
     toggleEquip: (entityId, itemId) => get().send("inventory:equip", entityId, itemId),
   },
 
-  entityContextMenu: {
-    open: false,
-    entityId: undefined,
-    x: 0,
-    y: 0,
-    openAt: (entityId, x, y) =>
-      set({ entityContextMenu: { ...get().entityContextMenu, open: true, entityId, x, y } }),
-    close: () =>
-      set({ entityContextMenu: { ...get().entityContextMenu, open: false, entityId: undefined } }),
-  },
-
   trading: {
-    dialogOpen: false,
-    selectedCharacterId: undefined,
-    activeSession: null,
-    openDialog: (fromEntityId, toEntityId) => {
-      set({
-        trading: {
-          ...get().trading,
-          dialogOpen: true,
-          selectedCharacterId: fromEntityId,
-          activeSession: null,
-        },
-      });
-      get().send("trade:request", fromEntityId, toEntityId, { items: [], currency: 0 });
-    },
-    closeDialog: () =>
-      set({
-        trading: {
-          ...get().trading,
-          dialogOpen: false,
-          selectedCharacterId: undefined,
-          activeSession: null,
-        },
-      }),
     startTrade: (toEntityId, items, currency) => {
-      const fromEntityId = get().trading.selectedCharacterId;
+      const fromEntityId = useDialog.getState().trading.selectedCharacterId;
       if (!fromEntityId) return;
       get().send("trade:request", fromEntityId, toEntityId, { items, currency });
     },
@@ -473,12 +327,6 @@ export const useGame = create<GameStore>((set, get) => ({
   },
 
   leveling: {
-    dialogOpen: false,
-    selectedCharacterId: undefined,
-    openDialog: (characterId) =>
-      set({ leveling: { ...get().leveling, dialogOpen: true, selectedCharacterId: characterId } }),
-    closeDialog: () =>
-      set({ leveling: { ...get().leveling, dialogOpen: false, selectedCharacterId: undefined } }),
     levelUp: (characterId, attributePoints) =>
       get().send("character:levelup", characterId, attributePoints),
   },
@@ -522,49 +370,16 @@ export const useGame = create<GameStore>((set, get) => ({
   },
 
   sequence: {
-    get isMaster() {
-      const userId = useUser.getState()?.id;
-      const instance = get().instance;
-      if (!userId || !instance) return false;
-      return instance.masterId === userId;
-    },
-    get canEnd() {
-      const userId = useUser.getState()?.id;
-      const instance = get().instance;
-      if (!userId || !instance) return false;
-      if (instance.data.turn === -1) return userId === instance.masterId;
-      const current = get().sequence.current;
-      if (!current) return false;
-      if (current.type === "character") return current.playable.ownerId === userId;
-      if (current.type === "monster") return instance.masterId === userId;
-      return false;
-    },
     next: () => {
       const send = get().send;
-      const canEnd = get().sequence.canEnd;
+      const canEnd = usePermissions.getState().canEndTurn;
       if (canEnd) send("sequence:next");
       else toast.error("Cannot end turn.");
-    },
-    get canControl() {
-      const userId = useUser.getState()?.id;
-      const instance = get().instance;
-      const current = get().sequence.current;
-      if (!userId || !instance || !current) return false;
-      if (current.type === "chest") return false;
-      return (
-        (current.type === "character" && current.playable.ownerId === userId) ||
-        (current.type === "monster" && instance.masterId === userId)
-      );
     },
     get current() {
       const instance = get().instance;
       if (!instance) return undefined;
       return Game.getEntityById(instance, instance.data.sequence[instance.data.turn]);
-    },
-    get isOnMasterTurn() {
-      const instance = get().instance;
-      if (!instance) return false;
-      return get().sequence.isMaster && instance.data.turn === -1;
     },
   },
 }));
