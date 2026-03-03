@@ -289,3 +289,139 @@ V prostředí R3F se animované hodnoty přímo mapují na transformace a materi
 Při běhu aplikace probíhá zpracování ve více navazujících vrstvách. React vrstva vyhodnotí změnu stavu (například pohyb postavy, změnu iniciativy nebo aktivaci efektu). React Three Fiber tuto změnu promítne do odpovídajících uzlů scénového grafu Three.js. Three.js následně připraví renderovací data pro WebGL a předá je grafickému procesoru. Pokud je změna animovaná, `react-spring` generuje mezikroky, které jsou v každém snímku aplikovány přes R3F do scény.
 
 Tento model poskytuje jasné oddělení odpovědností: WebGL řeší nízkoúrovňové vykreslení, Three.js správu 3D domény, R3F integraci s React architekturou, `drei` produktivitu vývoje a `react-spring` fyzikálně konzistentní přechody stavů. Výsledkem je škálovatelné řešení, které je vhodné pro multiplayerovou RPG aplikaci s důrazem na plynulost, čitelnost kódu a dlouhodobou udržitelnost.
+
+= Praktická část
+
+Praktická část této práce popisuje skutečné fungování implementace v projektu Mystique, nikoliv pouze seznam technologií. Zaměřuje se na to, co se v systému děje při renderování 3D scény, interakci uživatele,  otevírání dialogů a komunikaci mezi clientem a serverem.
+
+== Kompozice scény a odpovědnosti jednotlivých vrstev
+
+Herní stránka je složena jako kompozice několika navzájem oddělených vrstev. Vrstva `GameProvider` zajišťuje napojení na multiplayer instanci a životní cyklus připojení. Vrstva `Main` vytváří `Canvas` pro podporu a vykreslení R3F komponentů. V tomto kontextu jsou umístěny:
+- entity čítající charaktery, monstra a specifické interaktivní objekty
+- podlaha a interaktivní vrstvy pro zvýraznění dosažitelných polí a detekci kliknutí
+- světla a kamera pro zajištění správného osvětlení a pohledu na scénu
+
+Z pohledu systémové správy je implementován hybridní provozní model, který odděluje vykreslovací odpovědnosti od řízení aplikačního stavu a současně zachovává jednotné doménové kontrakty.
+
+Technicky je tok operací realizován jako deterministický příkaz. Uživatelský vstup ve 3D scéně je serializován do doménové akce, akce je validována proti aktuálnímu snapshotu, následně je odeslána na backend přes socket kanál a po serverovém ověření a potvrzení je promítnuta do centrálního uložiště na klientské straně. Tím je zajištěno, že změna vzniklá interakcí  3D entitou se konzistentně projeví v obou prezentačních vrstvách i ve sdíleném synchronizovaném stavu celého lobby.
+
+== Co se renderuje čím a proč
+
+Renderovací subsystém je navržen modulárně: každý typ objektu má samostatnou komponentu, vlastní datový vstup a vlastní optimalizační strategii. Tím je dosaženo vysoké čitelnosti vykreslovacího řetězece i predikovatelného výkonového chování.
+
+=== Podlaha a interakční vrstvy
+
+Komponenta `Floor` představuje translační vrstvu mezi diskrétním herním modelem (dlaždicová mřížka) a spojitým 3D prostorem. Jejím úkolem není pouze vykreslení povrchu, ale zejména projekce herních pravidel do vizuálních interakčních markerů. Teoreticky jde o dvoufázové zpracování. Prvním je výpočet doménových kandidátů (viable tiles, impact tiles, area of effect) na základě aktuálního stavu hry a pravidel pro danou akci. Druhým je samotná vizualizace těchto kandidátů, která je podmíněna lokální viditelností a render distance. Tím se zajišťuje, že hráč vidí pouze relevantní informace, které odpovídají jeho aktuálnímu pohledu na herní svět. Tato separace výpočtu a vykreslení je zásadní pro determinismus: stejná pravidla mohou být použita jak pro UI feedback, tak pro serverovou validaci akce.
+
+=== Entity
+
+Vrstva `Entities` realizuje render herních aktérů (postavy, monstra) i statických interaktivních objektů (truhly, ohniště) pomocí jednotného kontraktu entity. Rendering je založen na principu „model-first. Avšak pro zkrácení načítací doby byl přidán fallback s parametrickou geometrii, která slouží jako záložní varianta, když se něco pokazí. Součástí je i časově spojitá interpolace pozice pomocí spring-based smoothing (dále již pouze jako SbM), která filtruje síťovou diskretizaci a redukuje vizuální sekání při příjmu a vykreslování nových dat. Dále je aplikována selektivní viditelnost odvozená od vzdálenosti vykreslování od pozice kamery, čímž se omezuje počet objektů zařazených do render pass v každém snímku.
+
+=== Stěny jako instancované objekty
+
+Stěny jsou implementovány jako instance jediné geometrie a společného materiálu s per-instancí transformační maticí. Z teoretického hlediska jde o klasickou GPU strategii, která minimalizuje vytížení na CPU straně a snižuje počet draw-call#footnote[Jednotlivé příkazy pro grafickou jednotku nutící vykreslení specifické instance] za obnovení. V praxi to znamená, že všechny stěny jsou reprezentovány jako jedna geometrie, která je duplikována a transformována pomocí shaderu. Tento přístup umožňuje efektivní vykreslení velkého množství stěn bez nutnosti vytvářet samostatné objekty pro každou z nich, což výrazně zlepšuje výkon a škálovatelnost scény. Problém tvoří maximální velikost bufferu pro instancované objekty, která je omezena na specifický počet sub-instancí. V daném případě je využit manager pro rozdělení stěn do skupin, které nepřekračují tento limit. Ačkoliv tento přístup přidává určitou komplexitu do správy stěn, výsledkem je výrazné zlepšení výkonu při zachování vizuální kvality.
+
+=== Postprocessing
+
+Postprocessing je realizován jako separátní kompoziční fáze nad již vykresleným framebufferem. Efekty nejsou aplikovány na jednotlivé entity, ale na finální obrazový výstup scény, což odpovídá standardnímu vykreslovacímu řetězeci. Zde zvolený přístup umožňuje aplikovat screen-space efekty bloom, pixelizace a částečné vykreslování hran při pohybu. V kontextu projektu je tímto způsobem aplikována stylizace obrazu, aniž by došlo ke změně pravidel nebo interakčního modelu hry.
+
+
+== Vzdálenosti v systému
+
+#block(breakable: false)[
+  Funkce `Render.distance()` je centrální utilitární funkce, která počítá vzdálenost třemi metrikami:
+
+  - Euclidean:
+  - metrika pro geometricky přímou vzdálenost dnou bodú ve vektoru
+  - hlavní využití pro render distance odpovídající reálné vzdálenosti.
+  - Manhattan:
+    - metrika po osách mřížky tvořící maximální vzdálenost v mřízcové formě
+    - vhodná pro deskový pohyb a interakční dosah.
+  - Chebyshev:
+    - metrika max(dx, dy, dz) pro největší rozdíl v kterékoli dimenzi
+    - vhodná pro čtvercové výřezové oblasti a render culling.
+
+  V implementaci je tento rozdíl prakticky využit pro optimalizaci vykreslování a interakční logiky. Například pro zobrazení zvýraznění dosažitelných polí se používá Manhattanova vzdálenost, která lépe odpovídá pravidlům pohybu po mřížce. Pro render distance se používá Eukleidovská vzdálenost, která poskytuje přirozenější vizuální efekt. Chebyshevova vzdálenost je využita pro optimalizaci cullingu, kdy se rozhoduje, zda je objekt dostatečně blízko kameře, aby měl být vykreslen.
+]
+
+
+
+
+== Kamera
+
+Kamera je implementována jako samostatný subsystém s vlastním zustand úložištěm (`useCamera`) a aktualizační smyčkou (`useFrame`). Uživatelský vstup realizovaný klávesami W/A/S/D, Q/E a +/- není mapován přímo na kartézskou pozici kamery, ale na parametry orbitálního modelu. Konkrétně se jedná o bod `target`, kolem něhož se kamera orientuje, dále o parametry `azimuth`#footnote[úhel reprezentující rotaci kolem vertikální osy], `elevation`#footnote[určující vertikální náklon pohledu] a  `distance`#footnote[jenž vyjadřuje vzdálenost kamery od cílového bodu], který fakticky odpovídá rotaci, náklonu a vzálenosi kamery v tomto pořadí.
+
+V každém vykresleném snímku jsou tyto parametry přepočítány ze sférických souřadnic na kartézskou polohu kamery. Výsledná pozice je následně použita na zajištění konzistentní orientace směrem k cíli. Tento model je stabilnější než přímé ad-hoc translace kamery v prostoru, protože jednoznačně odděluje informaci o tom, kam se kamera dívá, od informace o tom, odkud se dívá. Orientace je tedy vždy determinována vztahem k cílovému bodu, zatímco pozice je definována radiální vzdáleností a úhlovými parametry.
+
+Použití časování `delta` navíc zajišťuje nezávislost pohybu na snímkové frekvenci, což znamená, že rychlost změny parametrů zůstává konzistentní napříč zařízeními s odlišným snímky za vteřinu.
+
+
+== Jak funguje vyvolání kontextových menu a dialogů
+
+Dialogový systém je centralizován ve stavovém úložišti `useDialog`, které představuje aplikační vrstvu řízení modálních oken a kontextových panelů. Každý dialog má explicitně definovaný stav otevření či zavření a současně nese vlastní kontext. Otevření dialogu tedy není lokální UI stav konkrétní komponenty, ale doménová událost odvozená z herního modelu.
+
+Vyvolání kontextového menu nad entitou probíhá jako řízený proces. Po kliknutí pravým tlačítkem v rámci 3D scény komponenta reprezentující danou entitu předá identifikátor entity a souřadnice kurzoru do metody openAt v rámci větve useDialog.entityContextMenu. Samotná komponenta EntityContextMenu následně na základě aktuální instance hry a oprávnění hráče dynamicky odvodí množinu povolených akcí. Každá položka menu je podrobena doménové validaci zahrnující kontrolu vzdálenosti, vlastnictví, tahu nebo role typu Master. Teprve po úspěšném vyhodnocení těchto pravidel je možné vyvolat odpovídající aplikační reakci, například otevření inventáře nebo specializovaného dialogu typu odpočinek, obchod či interakce s objektem.
+
+Zásadní je, že vyvolání dialogu není přímým důsledkem samotné UI události, ale sekundárním efektem validovaného herního stavu. Uživatelské rozhraní tak funguje jako projekce oprávnění a pravidel definovaných v doménové vrstvě, čímž se eliminuje možnost otevření nepovolených akcí čistě na základě klientské manipulace.
+
+== Backend komunikace a synchronizace stavu
+
+Síťová komunikace je realizována prostřednictvím knihovny Socket.IO běžící na stejném Node.js serveru jako aplikace postavená na frameworku Next.js. Klient po inicializaci uživatelského kontextu nejprve zavolá endpoint `/api/socket`, čímž zajistí existenci socket serveru, a následně naváže perzistentní spojení.
+
+Po úspěšném připojení klient registruje listenery pro lobby i herní doménu. Vstup do konkrétní herní instance probíhá odesláním události `game:join`, na jejímž základě server přidá klienta do místnosti ve tvaru `game:{id}` a odešle kompletní `game:state`. Tento snapshot je uložen do centrálního úložiště `useGame.instance`, které představuje jediný zdroj pravdy na straně klienta. Z tohoto stavu je následně odvozena jak 3D reprezentace scény, tak veškeré uživatelské rozhraní.
+
+Komunikace je plně událostně orientovaná. Klient odesílá pouze záměry, například požadavek na pohyb postavy, použití schopnosti nebo zahájení obchodní interakce. Server každý záměr nejprve validuje z hlediska oprávnění, pravidel tahu, kolizí a dalších doménových omezení. Při úspěšné validaci je změna aplikována transakčně v databázi a následně je všem klientům v dané místnosti distribuován aktualizovaný `game:state`. Architektura je autoritativní: klient funguje výhradně jako producent vstupů a renderer, zatímco server je jediným kanonickým zdrojem pravdy.
+
+== Anonymizovaný popis komplexního validačního algoritmu
+
+Následující schéma popisuje zobecněný serverový mechanismus validace a aplikace herní akce v autoritativním modelu. Implementace tohoto algoritmu zajišťuje, že všechny akce jsou podrobeny důkladné kontrole před tím, než dojde k jakékoli změně stavu, čímž se minimalizuje riziko nekonzistence nebo zneužití ze strany klienta.
+
+#block(breakable: false)[ ```text
+ALGORITHM ValidateAndApplyIntent(principal, intent, snapshot)
+  // 1. Existenční a konzistenční kontrola snapshotu
+  REQUIRE snapshot exists
+  REQUIRE snapshot.version is current or mergeable
+  REQUIRE principal is registered member of session
+
+  // 2. Autentizace a autorizace
+  REQUIRE principal identity is verified
+  REQUIRE principal role permits intent.type
+  REQUIRE intent is allowed in current phase of turn-cycle
+
+  // 3. Strukturní validace vstupu a pravidel
+  REQUIRE intent payload matches schema(intent.type)
+  REQUIRE referenced entities exist in snapshot
+  REQUIRE no forbidden cross-session references
+  REQUIRE action_points(principal) >= cost(intent)
+  REQUIRE cooldowns and temporal constraints satisfied
+  REQUIRE spatial constraints satisfied
+  REQUIRE no rule-violating conflicts detected
+
+  // 4. Deterministický výpočet výsledků
+  candidates := derive_allowed_outcomes(
+    snapshot, principal, intent
+  )
+
+  // 5. Aplikace změn pomoci tranzakce
+  BEGIN TRANSACTION
+    lock affected aggregates
+    apply state mutation(intent)
+    decrement resource counters(principal)
+    resolve cascading effects()
+    update derived projections()
+    increment state version
+  COMMIT
+
+  // 6. Post-commit synchronisation
+  fresh_snapshot := reload_consistent_state()
+  publish_to_session(fresh_snapshot)
+END
+``` ]
+
+Tento princip je použit napříč všechny typy akcí prováděných v při komunikaci klienta se serverem. Klíčové je, že všechny vrstvy systému jsou navrženy tak, aby respektovaly tento autoritativní model, což zajišťuje konzistentní a bezpečný herní zážitek pro všechny hráče, ve kterém je server jediným zdrojem pravdy. Hráči tak nemají možnost obejít pravidla hry nebo manipulovat s herním stavem prostřednictvím manuálního volání serveru, protože všechny záměry jsou podrobeny validaci na serveru.
+
+== Zhodnocení implementace
+
+Implementace potvrzuje, že kombinace React Three Fiber, centralizovaných store, Socket.IO a serverově autoritativní validace je vhodná pro webovou multiplayer RPG aplikaci. Důležité je zejména to, že vizuální vrstva, interakční vrstva i síťová vrstva používají stejný doménový model a stejné metriky vzdáleností. Tím se minimalizuje riziko nekonzistence mezi tím, co hráč vidí, co může kliknout a co server skutečně povolí.
+
+Výsledný systém je dobře rozšiřitelný: nové entity lze přidat do renderovací vrstvy bez zásahu do transportní vrstvy, nové akce lze přidat do socket handlerů bez přepisování kamery či UI, a nové dialogy lze integrovat přes existující `useDialog` kontrakt.
