@@ -22,8 +22,20 @@ export const WallClickHandler = ({ visibleWalls }: Props) => {
     ) => {
       switch (mode.type) {
         case "wall:place":
-          // Use the calculated point directly - always accurate
-          addWallAt(point);
+          if (instanceId === undefined || !visibleWalls[instanceId]) {
+            emitFloorClick(e, point);
+            break;
+          }
+          const wall = visibleWalls[instanceId];
+          const normal = e.face?.normal;
+          if (normal) {
+            const absX = Math.abs(normal.x);
+            const absZ = Math.abs(normal.z);
+            let newPos = { x: wall.x, z: wall.z };
+            if (absX > absZ) newPos.x = wall.x + Math.sign(normal.x);
+            else newPos.z = wall.z + Math.sign(normal.z);
+            addWallAt(newPos);
+          }
           break;
         case "wall:destroy":
           if (instanceId !== undefined && visibleWalls[instanceId]) {
@@ -31,7 +43,6 @@ export const WallClickHandler = ({ visibleWalls }: Props) => {
           } else deleteWallAt(point);
           break;
         default:
-          // Forward to floor click callbacks
           emitFloorClick(e, point);
           break;
       }
