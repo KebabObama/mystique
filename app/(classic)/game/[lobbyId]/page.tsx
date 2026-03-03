@@ -90,8 +90,10 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
           <Entities />
           <Floor />
           <PostProcessing />
-          <directionalLight position={[0, 10, 0]} intensity={1} />
-          <ambientLight position={[0, 10, 0]} intensity={0.1} />
+          <directionalLight position={[0, 10, 0]} intensity={0.9} />
+          <directionalLight position={[12, 6, 0]} intensity={0.45} />
+          <directionalLight position={[-12, 6, 0]} intensity={0.45} />
+          <ambientLight position={[0, 10, 0]} intensity={0.25} />
           <CameraController />
         </Main>
       </GameProvider>
