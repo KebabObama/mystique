@@ -15,7 +15,7 @@ type CharacterCardProps = { character: CharacterWithLobby };
 
 export const CharacterCard = ({ character }: CharacterCardProps) => {
   return (
-    <Card>
+    <Card className="flex h-full flex-col">
       <h1 className="text-lg">{character.name}</h1>
       <div className="flex flex-row justify-between">
         <p className="text-muted">
@@ -46,7 +46,7 @@ export const CharacterCard = ({ character }: CharacterCardProps) => {
         </div>
       )}
 
-      <div className="mt-3 grid grid-cols-2 gap-6 p-1.5">
+      <div className="mt-auto grid grid-cols-2 gap-6 p-1.5 pt-4.5">
         <CharacterDelete character={character} asChild>
           <Button className="w-full" size={"sm"} variant={"destructive"}>
             <Trash />

@@ -38,7 +38,7 @@ export const CharacterList = ({ characters }: CharacterListProps) => {
         window.removeEventListener("resize", checkScroll);
       };
     }
-  }, []);
+  }, [characters]);
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -97,7 +97,7 @@ export const CharacterList = ({ characters }: CharacterListProps) => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        className="overflow-x-auto scroll-smooth"
+        className="overflow-x-auto scroll-smooth -full"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         <div className="flex w-max flex-nowrap gap-6 px-2 py-2 select-none">

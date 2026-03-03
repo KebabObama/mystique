@@ -122,7 +122,7 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
             </Card>
           </section>
           <section
-            className={`col-span-2 flex flex-col items-center gap-6 ${!character.inventory.length && "justify-center"}`}
+            className={`col-span-2 mt-12 mr-3 flex flex-col items-center p-3 gap-6 ${!character.inventory.length && "justify-center"}`}
           >
             {character.inventory.length > 0 ? (
               character.inventory.map((inv) => {
