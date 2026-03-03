@@ -262,13 +262,13 @@ Data jsou do GPU přenášena prostřednictvím bufferů a atributů, zatímco g
 
 Three.js představuje vysokou abstrakční vrstvu nad WebGL @threejs-docs. Místo manuální správy shader programů, bufferů a stavu renderovacího kontextu nabízí scénový graf s entitami jako `Scene`, `Camera`, `Mesh`, `Geometry`, `Material` a `Light`. Vývojář tak pracuje s doménově srozumitelnými objekty a transformačním stromem, zatímco knihovna interně řeší serializaci dat do GPU, optimalizaci renderovacího průchodu a správu WebGL stavu.
 
-Klíčovou součástí je renderovací smyčka, kde renderer v každém snímku vyhodnocuje scénu vzhledem ke kameře a generuje výsledný obraz. Three.js zároveň poskytuje nástroje pro raycasting, načítání externích assetů, práci s PBR materiály#footnote[Physically Based Rendering je model materiálů založený na fyzikálních vlastnostech povrchu, typicky parametrech jako roughness a metalness. Výsledkem je realističtější a konzistentnější osvětlení.] a správu stínování. V praxi to umožňuje vytvářet komplexní 3D rozhraní bez nutnosti psát nízkoúrovňový grafický kód od začátku.
+Klíčovou součástí je renderovací smyčka, kde renderer v každém snímku vyhodnocuje scénu vzhledem ke kameře a generuje výsledný obraz. Three.js zároveň poskytuje nástroje pro raycasting, načítání externích assetů, práci s PBR materiály#footnote[Physically Based Rendering je model materiálů založený na fyzikálních vlastnostech povrchu.] a správu stínování. V praxi to umožňuje vytvářet komplexní 3D rozhraní bez nutnosti psát nízkoúrovňový grafický kód od začátku.
 
 === React Three Fiber
 
 React Three Fiber (dále již pouze jako R3F) je vlastní renderer pro React, který mapuje JSX prvky na objekty Three.js @r3f-docs. Nejedná se o nadstavbu typu „wrapper komponent“, ale o plnohodnotný React reconciler#footnote[Reconciler je interní mechanismus Reactu, který porovnává předchozí a nový stav stromu komponent a provádí pouze minimální sadu změn potřebných pro aktualizaci výstupu.]. To znamená, že životní cyklus 3D objektů je řízen stejným principem diffingu a reconciliace jako běžné DOM komponenty: při změně stavu React vypočítá minimální nutné změny a aplikuje je do scénového grafu Three.js.
 
-Architektonicky je zásadní komponenta `Canvas`, která inicializuje renderer, scénu, kameru a interní loop. Hook `useFrame` umožňuje registrovat per-frame logiku#footnote[Per-frame logika je kód spouštěný při každém vykresleném snímku. V herních aplikacích se používá pro časově spojité výpočty, například interpolaci pohybu, kamerové přechody nebo simulace.] s přesným časovým krokem, například pro aktualizaci pozic, simulaci projektilů nebo interpolaci síťových snapshotů. R3F také podporuje řízení renderování v režimu `always` i `demand`, což umožňuje cíleně snižovat výpočetní zátěž v okamžicích, kdy se scéna nemění.
+Architektonicky je zásadní komponenta `Canvas`, která inicializuje renderer, scénu, kameru a interní loop. Hook `useFrame` umožňuje registrovat per-frame logiku#footnote[Per-frame logika je kód spouštěný při každém vykresleném snímku.] s přesným časovým krokem, například pro aktualizaci pozic, simulaci projektilů nebo interpolaci síťových snapshotů. R3F také podporuje řízení renderování v režimu `always` i `demand`, což umožňuje cíleně snižovat výpočetní zátěž v okamžicích, kdy se scéna nemění.
 
 Významnou výhodou je přímá integrace s React ekosystémem. Stav aplikace lze sdílet přes stejné mechanismy jako ve 2D UI (například Zustand), a 3D komponenty tak mohou reagovat na stejné doménové události jako zbytek aplikace. Tento jednotný datový model redukuje architektonickou složitost a usnadňuje údržbu rozsáhlého projektu.
 
@@ -340,16 +340,13 @@ Postprocessing je realizován jako separátní kompoziční fáze nad již vykre
   - Chebyshev:
     - metrika max(dx, dy, dz) pro největší rozdíl v kterékoli dimenzi
     - vhodná pro čtvercové výřezové oblasti a render culling.
-
-  V implementaci je tento rozdíl prakticky využit pro optimalizaci vykreslování a interakční logiky. Například pro zobrazení zvýraznění dosažitelných polí se používá Manhattanova vzdálenost, která lépe odpovídá pravidlům pohybu po mřížce. Pro render distance se používá Eukleidovská vzdálenost, která poskytuje přirozenější vizuální efekt. Chebyshevova vzdálenost je využita pro optimalizaci cullingu, kdy se rozhoduje, zda je objekt dostatečně blízko kameře, aby měl být vykreslen.
 ]
 
-
-
+V implementaci je tento rozdíl prakticky využit pro optimalizaci vykreslování a interakční logiky. Například pro zobrazení zvýraznění dosažitelných polí se používá Manhattanova vzdálenost, která lépe odpovídá pravidlům pohybu po mřížce. Pro render distance se používá Eukleidovská vzdálenost, která poskytuje přirozenější vizuální efekt. Chebyshevova vzdálenost je využita pro optimalizaci cullingu, kdy se rozhoduje, zda je objekt dostatečně blízko kameře, aby měl být vykreslen.
 
 == Kamera
 
-Kamera je implementována jako samostatný subsystém s vlastním zustand úložištěm (`useCamera`) a aktualizační smyčkou (`useFrame`). Uživatelský vstup realizovaný klávesami W/A/S/D, Q/E a +/- není mapován přímo na kartézskou pozici kamery, ale na parametry orbitálního modelu. Konkrétně se jedná o bod `target`, kolem něhož se kamera orientuje, dále o parametry `azimuth`#footnote[úhel reprezentující rotaci kolem vertikální osy], `elevation`#footnote[určující vertikální náklon pohledu] a  `distance`#footnote[jenž vyjadřuje vzdálenost kamery od cílového bodu], který fakticky odpovídá rotaci, náklonu a vzálenosi kamery v tomto pořadí.
+Kamera je implementována jako samostatný subsystém s vlastním zustand úložištěm (`useCamera`) a aktualizační smyčkou (`useFrame`). Uživatelský vstup realizovaný klávesami není mapován přímo na kartézskou pozici kamery, ale na parametry orbitálního modelu. Konkrétně se jedná o bod `target`, kolem něhož se kamera orientuje, dále o parametry `azimuth`#footnote[úhel reprezentující rotaci kolem vertikální osy], `elevation`#footnote[určující vertikální náklon pohledu] a  `distance`#footnote[jenž vyjadřuje vzdálenost kamery od cílového bodu], který fakticky odpovídá rotaci, náklonu a vzálenosi kamery v tomto pořadí.
 
 V každém vykresleném snímku jsou tyto parametry přepočítány ze sférických souřadnic na kartézskou polohu kamery. Výsledná pozice je následně použita na zajištění konzistentní orientace směrem k cíli. Tento model je stabilnější než přímé ad-hoc translace kamery v prostoru, protože jednoznačně odděluje informaci o tom, kam se kamera dívá, od informace o tom, odkud se dívá. Orientace je tedy vždy determinována vztahem k cílovému bodu, zatímco pozice je definována radiální vzdáleností a úhlovými parametry.
 
@@ -419,9 +416,3 @@ END
 ``` ]
 
 Tento princip je použit napříč všechny typy akcí prováděných v při komunikaci klienta se serverem. Klíčové je, že všechny vrstvy systému jsou navrženy tak, aby respektovaly tento autoritativní model, což zajišťuje konzistentní a bezpečný herní zážitek pro všechny hráče, ve kterém je server jediným zdrojem pravdy. Hráči tak nemají možnost obejít pravidla hry nebo manipulovat s herním stavem prostřednictvím manuálního volání serveru, protože všechny záměry jsou podrobeny validaci na serveru.
-
-== Zhodnocení implementace
-
-Implementace potvrzuje, že kombinace React Three Fiber, centralizovaných store, Socket.IO a serverově autoritativní validace je vhodná pro webovou multiplayer RPG aplikaci. Důležité je zejména to, že vizuální vrstva, interakční vrstva i síťová vrstva používají stejný doménový model a stejné metriky vzdáleností. Tím se minimalizuje riziko nekonzistence mezi tím, co hráč vidí, co může kliknout a co server skutečně povolí.
-
-Výsledný systém je dobře rozšiřitelný: nové entity lze přidat do renderovací vrstvy bez zásahu do transportní vrstvy, nové akce lze přidat do socket handlerů bez přepisování kamery či UI, a nové dialogy lze integrovat přes existující `useDialog` kontrakt.
