@@ -1,4 +1,4 @@
-import { db, schema } from "../../lib/db";
+import { db, schema } from "../seed";
 import {
   arrow,
   blessing,

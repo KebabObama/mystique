@@ -1,7 +1,9 @@
 import "dotenv/config";
 import { readdir } from "node:fs/promises";
 import { extname } from "node:path";
-import { db } from "../lib/db";
+import { db } from "../src/lib/db";
+export { db, schema } from "../src/lib/db";
+export { Game } from "../src/lib/game";
 
 type Seed = { seed?: () => Promise<void> };
 
@@ -34,7 +36,7 @@ const run = async () => {
     console.error("[seed] Failed:", error);
     process.exitCode = 1;
   } finally {
-    await db.$client.end();
+    db.$client.end();
   }
 };
 

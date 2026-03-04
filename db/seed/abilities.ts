@@ -1,4 +1,4 @@
-import { Game } from "../../lib/game";
+import { Game } from "../seed";
 
 // Physical Melee
 export const bite = (min: number, max: number): Game.Ability => ({

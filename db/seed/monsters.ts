@@ -1,4 +1,4 @@
-import { db, schema } from "../../lib/db";
+import { db, schema } from "../seed";
 import { bite, bolt, flame, frost, rot, slash, smite } from "./abilities";
 
 // prettier-ignore
