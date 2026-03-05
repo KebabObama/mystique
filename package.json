@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "drizzle-kit push && tsx ./db/seed.ts && next start",
+    "start": "next start",
     "lint": "prettier -w .",
     "db:push": "drizzle-kit push",
     "db:seed": "tsx ./db/seed.ts"

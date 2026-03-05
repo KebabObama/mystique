@@ -240,10 +240,9 @@ export const useGame = create<GameStore>((set, get) => ({
           .map((entry) => `${entry.position.x}:${entry.position.z}`)
       );
 
-      // For chests and campfires, allow movement to any empty tile on the board
       if (entity.type === "chest" || entity.type === "campfire") {
         const possible: Game.Position[] = [];
-        const bounds = { x: [0, 20], z: [0, 20] }; // Adjust based on your board size
+        const bounds = { x: [0, 20], z: [0, 20] };
         for (let x = bounds.x[0]; x < bounds.x[1]; x++) {
           for (let z = bounds.z[0]; z < bounds.z[1]; z++) {
             const key = `${x}:${z}`;
@@ -255,7 +254,6 @@ export const useGame = create<GameStore>((set, get) => ({
         return possible;
       }
 
-      // For characters and monsters, use stamina-based movement
       const { stamina } = entity.playable;
       if (stamina <= 0) return [];
 

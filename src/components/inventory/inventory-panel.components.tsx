@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Context } from "@/components/ui/context";
+import { Input } from "@/components/ui/input";
 import { ItemCard } from "@/components/ui/item-card";
 import {
   Select,
@@ -176,37 +177,58 @@ export const GrantControls = ({
   amount,
   onAmountChange,
   onAdd,
-}: GrantControlsProps) => (
-  <div className="flex flex-col gap-4.5 border-t pt-3">
-    <Select value={selectedItemId} onValueChange={onChange}>
-      <SelectTrigger>
-        <SelectValue placeholder="Item to add" />
-      </SelectTrigger>
-      <SelectContent>
-        {items.map((item) => (
-          <SelectItem key={item.id} value={item.id}>
-            {item.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+}: GrantControlsProps) => {
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-    <div className="space-y-1">
-      <div className="text-muted-foreground text-xs">Amount: {amount}</div>
-      <Slider
-        value={[amount]}
-        min={1}
-        max={50}
-        step={1}
-        onValueChange={(value) => onAmountChange(value[0] ?? 1)}
-      />
+  return (
+    <div className="flex flex-col gap-4.5 border-t pt-3">
+      <Select value={selectedItemId} onValueChange={onChange}>
+        <SelectTrigger>
+          <SelectValue placeholder="Item to add" />
+        </SelectTrigger>
+        <SelectContent side="bottom" align="start" sideOffset={4} collisionPadding={8}>
+          <div className="flex flex-col p-1.5">
+            <Input
+              type="text"
+              placeholder="Search items..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <div className="mt-1.5 flex max-h-40 flex-col overflow-y-auto">
+              {filteredItems.length === 0 ? (
+                <div className="text-muted-foreground py-2 text-center text-sm">No items found</div>
+              ) : (
+                filteredItems.map((item) => (
+                  <SelectItem key={item.id} value={item.id}>
+                    {item.name}
+                  </SelectItem>
+                ))
+              )}
+            </div>
+          </div>
+        </SelectContent>
+      </Select>
+
+      <div className="space-y-1">
+        <div className="text-muted-foreground text-xs">Amount: {amount}</div>
+        <Slider
+          value={[amount]}
+          min={1}
+          max={20}
+          step={1}
+          onValueChange={(value) => onAmountChange(value[0] ?? 1)}
+        />
+      </div>
+
+      <Button size="sm" onClick={onAdd}>
+        Add {amount}
+      </Button>
     </div>
-
-    <Button size="sm" onClick={onAdd}>
-      Add {amount}
-    </Button>
-  </div>
-);
+  );
+};
 
 /* ------------------------------------------------------------------ */
 /*  Entity info cards – character-dashboard-style stat displays        */
