@@ -1,7 +1,8 @@
 "use client";
 
-import { Game } from "@/lib/game";
 import { useUser } from "@/lib/hooks/use-user";
+import { InGameHelpers } from "@/lib/ingame-helpers";
+import { Game } from "@/types";
 import { create } from "zustand";
 
 type PermissionsStore = {
@@ -22,7 +23,7 @@ type PermissionsStore = {
 const getCurrentEntity = (instance: Game.Instance | null) => {
   if (!instance) return undefined;
   if (instance.data.turn < 0) return undefined;
-  return Game.getEntityById(instance, instance.data.sequence[instance.data.turn]);
+  return InGameHelpers.getEntityById(instance, instance.data.sequence[instance.data.turn]);
 };
 
 export const usePermissions = create<PermissionsStore>((set, get) => ({

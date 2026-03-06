@@ -1,7 +1,7 @@
 "use server";
 
 import { db, schema } from "@/lib/db";
-import { Game } from "@/lib/game";
+import { Game } from "@/types";
 import type { Lobby } from "@/types/lobby";
 import { and, eq, gt } from "drizzle-orm";
 

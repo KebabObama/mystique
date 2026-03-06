@@ -2,6 +2,8 @@
 
 // Game types
 export type {
+  Ability,
+  Attribute,
   Campfire,
   CampfireEntity,
   Character,
@@ -9,26 +11,21 @@ export type {
   Chest,
   ChestEntity,
   CombatEntity,
+  Data,
+  Effect,
   Entity,
-  GameAbility,
-  GameAttribute,
-  GameData,
-  GameEffect,
-  GameItemType,
-  GameRace,
   Instance,
+  ItemType,
   Monster,
   MonsterEntity,
   Position,
+  Race,
 } from "./game";
 
-export type * as Game from "./game";
+export * as Game from "./game";
 
 // Lobby types
 export type { Brand, Lobby, SocketAuth } from "./lobby";
-
-// Bucket types
-export type { BucketNames } from "./bucket";
 
 // Render types
 export type { RenderDistanceType, RenderPointerType } from "./render";

@@ -1,7 +1,7 @@
 import { Dialog } from "@/components/ui/dialog";
-import { Game } from "@/lib/game";
 import { useGame } from "@/lib/hooks/use-game";
 import { getEntityLabel } from "@/lib/inventory-panel";
+import { Game } from "@/types";
 import { InventoryList } from "./inventory-panel.components";
 
 type StoragePanelProps = {

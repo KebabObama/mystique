@@ -1,6 +1,6 @@
 import { db, schema } from "@/lib/db";
-import { Game } from "@/lib/game";
 import * as Lobby from "@/lib/lobby";
+import { Game } from "@/types";
 import { and, eq } from "drizzle-orm";
 import type { Server, Socket } from "socket.io";
 

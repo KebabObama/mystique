@@ -3,9 +3,9 @@
 import { toast } from "@/components/layout/toast";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { Game } from "@/lib/game";
 import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 
 export const CampfireShopDialog = () => {
   const instance = useGame((s) => s.instance);
@@ -16,8 +16,10 @@ export const CampfireShopDialog = () => {
 
   if (!open || !selectedCampfireId || !selectedCharacterId || !instance) return null;
 
-  const campfireEntity = Game.getEntities(instance).find((e) => e.id === selectedCampfireId);
-  const charEntity = Game.getEntities(instance).find((e) => e.id === selectedCharacterId);
+  const campfireEntity = InGameHelpers.getEntities(instance).find(
+    (e) => e.id === selectedCampfireId
+  );
+  const charEntity = InGameHelpers.getEntities(instance).find((e) => e.id === selectedCharacterId);
 
   if (
     !campfireEntity ||

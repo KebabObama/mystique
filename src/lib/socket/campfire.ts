@@ -1,5 +1,5 @@
 import { db, schema } from "@/lib/db";
-import { Game } from "@/lib/game";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import * as Lobby from "@/lib/lobby";
 import { and, eq } from "drizzle-orm";
 import {
@@ -79,7 +79,7 @@ export const register = (ctx: SocketContext) => {
     if (!inst) return;
     if (inst.masterId !== userId || inst.data.turn !== -1) return;
 
-    const campfireEntity = Game.getEntities(inst).find(
+    const campfireEntity = InGameHelpers.getEntities(inst).find(
       (entity) => entity.id === entityId && entity.type === "campfire"
     );
     if (!campfireEntity) return;
@@ -95,7 +95,7 @@ export const register = (ctx: SocketContext) => {
     if (inst.masterId !== userId || inst.data.turn !== -1) return;
     if (!isPosition(position)) return;
 
-    const campfireEntity = Game.getEntities(inst).find(
+    const campfireEntity = InGameHelpers.getEntities(inst).find(
       (entity) => entity.id === entityId && entity.type === "campfire"
     );
     if (!campfireEntity) return;
@@ -120,7 +120,7 @@ export const register = (ctx: SocketContext) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
-    const charEntity = Game.getEntities(inst).find((e) => e.id === characterEntityId);
+    const charEntity = InGameHelpers.getEntities(inst).find((e) => e.id === characterEntityId);
     if (!charEntity || charEntity.type !== "character") return;
 
     if (charEntity.ownerId !== userId && inst.masterId !== userId) return;
@@ -131,7 +131,7 @@ export const register = (ctx: SocketContext) => {
     if (actions > currentActions) return;
 
     // Calculate healing based on character level and attributes
-    const healing = Game.calculateRestHealing(charEntity, actions);
+    const healing = InGameHelpers.calculateRestHealing(charEntity, actions);
     const newHp = Math.min(charEntity.hp + healing, charEntity.maxHp);
 
     const newActions = currentActions - actions;
@@ -160,7 +160,7 @@ export const register = (ctx: SocketContext) => {
     if (!inst) return;
     if (inst.masterId !== userId) return;
 
-    const campfireEntity = Game.getEntities(inst).find(
+    const campfireEntity = InGameHelpers.getEntities(inst).find(
       (e) => e.id === campfireEntityId && e.type === "campfire"
     );
     if (!campfireEntity) return;
@@ -191,7 +191,7 @@ export const register = (ctx: SocketContext) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
-    const charEntity = Game.getEntities(inst).find((e) => e.id === characterEntityId);
+    const charEntity = InGameHelpers.getEntities(inst).find((e) => e.id === characterEntityId);
     if (!charEntity || charEntity.type !== "character") return;
 
     if (charEntity.ownerId !== userId && inst.masterId !== userId) return;
@@ -200,7 +200,7 @@ export const register = (ctx: SocketContext) => {
 
     // Find the shop item and its cost
     let shopItem = null;
-    for (const entity of Game.getEntities(inst)) {
+    for (const entity of InGameHelpers.getEntities(inst)) {
       if (entity.type === "campfire") {
         const found = (entity as any).shopItems.find((si: any) => si.id === itemId);
         if (found) {
@@ -264,7 +264,7 @@ export const register = (ctx: SocketContext) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
-    const campfireEntity = Game.getEntities(inst).find((e) => e.id === campfireEntityId);
+    const campfireEntity = InGameHelpers.getEntities(inst).find((e) => e.id === campfireEntityId);
     if (!campfireEntity || campfireEntity.type !== "campfire") return;
 
     socket.emit("game:campfire:info", {

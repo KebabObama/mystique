@@ -1,7 +1,8 @@
 "use server";
 
 import { db, schema } from "@/lib/db";
-import { Game } from "@/lib/game";
+import { InGameHelpers } from "@/lib/ingame-helpers";
+import { Game } from "@/types";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -20,7 +21,7 @@ export const createCharacter = async (
   options?: { path?: string }
 ) => {
   try {
-    const stats = Game.calculateCharacterStats(data, { weight: 0, armor: 0 });
+    const stats = InGameHelpers.calculateCharacterStats(data, { weight: 0, armor: 0 });
     const [newChar] = await db
       .insert(schema.character)
       .values({

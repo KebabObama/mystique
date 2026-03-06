@@ -1,12 +1,13 @@
 "use client";
 
-import { Game } from "@/lib/game";
 import { useCamera } from "@/lib/hooks/use-camera";
 import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
 import { useUser } from "@/lib/hooks/use-user";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Mesh } from "@/lib/mesh";
 import { Render } from "@/lib/render";
+import { Game } from "@/types";
 import { animated, useSpring } from "@react-spring/three";
 import { ThreeEvent } from "@react-three/fiber";
 import React, { useEffect, useState } from "react";
@@ -107,7 +108,7 @@ export const Entities = () => {
 
   const sortedEntities = React.useMemo(() => {
     if (!instance) return undefined;
-    return Game.getEntities(instance)
+    return InGameHelpers.getEntities(instance)
       .slice()
       .sort((a, b) => a.id.localeCompare(b.id));
   }, [instance]);

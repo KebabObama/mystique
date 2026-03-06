@@ -2,9 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { Game } from "@/lib/game";
 import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
+import { InGameHelpers } from "@/lib/ingame-helpers";
+import { Game } from "@/types";
 import React from "react";
 
 export const LevelUpDialog = () => {
@@ -22,7 +23,7 @@ export const LevelUpDialog = () => {
 
   if (!open || !selectedCharacterId || !instance) return null;
 
-  const character = Game.getEntities(instance).find(
+  const character = InGameHelpers.getEntities(instance).find(
     (e) => e.type === "character" && e.id === selectedCharacterId
   );
 

@@ -2,7 +2,7 @@
 
 import type { LobbyInfo } from "@/components/dashboard/lobby-card";
 import { db, schema } from "@/lib/db";
-import { Game } from "@/lib/game";
+import { Game } from "@/types";
 import { eq } from "drizzle-orm";
 
 /**

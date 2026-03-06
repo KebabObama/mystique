@@ -1,6 +1,7 @@
 import { db, schema } from "@/lib/db";
-import { Game } from "@/lib/game";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import * as Lobby from "@/lib/lobby";
+import { Game } from "@/types";
 import { eq } from "drizzle-orm";
 import { type SocketContext, exists, update } from "./helpers";
 
@@ -43,7 +44,7 @@ export const register = (ctx: SocketContext) => {
       armor: character.inventory.reduce((sum, inv) => sum + (inv.item.armor ?? 0), 0),
     };
 
-    const stats = Game.calculateCharacterStats(
+    const stats = InGameHelpers.calculateCharacterStats(
       { ...character, level: character.level, attributes: newAttributes },
       inventory
     );

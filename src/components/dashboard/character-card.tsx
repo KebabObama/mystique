@@ -4,7 +4,7 @@ import { CharacterDashboard } from "@/components/character/character-dashboard";
 import { CharacterDelete } from "@/components/character/character-delete";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Game } from "@/lib/game";
+import { Game } from "@/types";
 import { Info, Trash } from "lucide-react";
 
 type CharacterWithLobby = Game.Character & {

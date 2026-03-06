@@ -1,6 +1,7 @@
 import { db, schema } from "@/lib/db";
-import { Game } from "@/lib/game";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import * as Lobby from "@/lib/lobby";
+import { Game } from "@/types";
 import { and, eq } from "drizzle-orm";
 import {
   type SocketContext,
@@ -19,7 +20,7 @@ export const register = (ctx: SocketContext) => {
     if (!inst) return;
     if (inst.masterId !== userId) return;
 
-    const target = Game.getEntityById(inst, targetEntityId);
+    const target = InGameHelpers.getEntityById(inst, targetEntityId);
     if (!target || target.type === "monster") return;
 
     const item = await db.query.item.findFirst({ where: eq(schema.item.id, itemId) });
@@ -49,8 +50,8 @@ export const register = (ctx: SocketContext) => {
       if (fromEntityId === toEntityId) return;
 
       const quantity = normalizeQuantity(qty);
-      const fromEntity = Game.getEntityById(inst, fromEntityId);
-      const toEntity = Game.getEntityById(inst, toEntityId);
+      const fromEntity = InGameHelpers.getEntityById(inst, fromEntityId);
+      const toEntity = InGameHelpers.getEntityById(inst, toEntityId);
       if (!fromEntity || !toEntity) return;
       if (fromEntity.type === "monster" || toEntity.type === "monster") return;
 
@@ -147,7 +148,7 @@ export const register = (ctx: SocketContext) => {
     if (typeof itemId !== "string") return;
 
     const quantity = normalizeQuantity(qty);
-    const entity = Game.getEntityById(inst, entityId);
+    const entity = InGameHelpers.getEntityById(inst, entityId);
     if (!entity || entity.type === "monster") return;
 
     await db.transaction(async (tx) => {

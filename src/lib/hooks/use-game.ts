@@ -1,11 +1,12 @@
 "use client";
 
 import { toast } from "@/components/layout/toast";
-import { Game } from "@/lib/game";
 import { useDialog } from "@/lib/hooks/use-dialog";
 import { usePermissions } from "@/lib/hooks/use-permissions";
 import { useSocket } from "@/lib/hooks/use-socket";
 import { useUser } from "@/lib/hooks/use-user";
+import { InGameHelpers } from "@/lib/ingame-helpers";
+import { Game } from "@/types";
 import { create } from "zustand";
 
 export type GameMode =
@@ -204,7 +205,7 @@ export const useGame = create<GameStore>((set, get) => ({
       const send = get().send;
       if (!instance) return;
 
-      const entity = Game.getEntityById(instance, entityId);
+      const entity = InGameHelpers.getEntityById(instance, entityId);
       if (!entity) return;
 
       switch (entity.type) {
@@ -229,11 +230,11 @@ export const useGame = create<GameStore>((set, get) => ({
       const instance = get().instance;
       if (!instance) return [];
 
-      const entity = Game.getEntityById(instance, entityId);
+      const entity = InGameHelpers.getEntityById(instance, entityId);
       if (!entity || !entity.position) return [];
 
       const wallSet = new Set(instance.data.walls.map(({ x, z }) => `${x}:${z}`));
-      const allEntities = Game.getEntities(instance);
+      const allEntities = InGameHelpers.getEntities(instance);
       const occupiedSet = new Set(
         allEntities
           .filter((entry) => entry.id !== entityId)
@@ -389,10 +390,14 @@ export const useGame = create<GameStore>((set, get) => ({
       const instance = get().instance;
       if (!instance) return [];
 
-      const entity = Game.getEntityById(instance, entityId);
+      const entity = InGameHelpers.getEntityById(instance, entityId);
       if (!entity) return [];
 
-      return Game.getAbilityViableTargets(entity, ability, Game.getEntities(instance));
+      return InGameHelpers.getAbilityViableTargets(
+        entity,
+        ability,
+        InGameHelpers.getEntities(instance)
+      );
     },
   },
 
@@ -406,7 +411,7 @@ export const useGame = create<GameStore>((set, get) => ({
     get current() {
       const instance = get().instance;
       if (!instance) return undefined;
-      return Game.getEntityById(instance, instance.data.sequence[instance.data.turn]);
+      return InGameHelpers.getEntityById(instance, instance.data.sequence[instance.data.turn]);
     },
   },
 }));

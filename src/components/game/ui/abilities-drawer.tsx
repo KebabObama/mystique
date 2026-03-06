@@ -3,10 +3,11 @@
 import { Border } from "@/components/ui/border";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Game } from "@/lib/game";
 import { useGame } from "@/lib/hooks/use-game";
 import { usePermissions } from "@/lib/hooks/use-permissions";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import { cn } from "@/lib/utils";
+import { Game } from "@/types";
 
 type AbilityCardProps = { ability: Game.Ability; selected: boolean; onSelect: () => void };
 
@@ -46,7 +47,7 @@ export const AbilitiesDrawer = () => {
   if (!canControlCurrent || !current) return null;
   const canHaveActions = current.type === "character" || current.type === "monster";
   const actions = current.actions ?? (canHaveActions ? current.maxActions : 0) ?? 0;
-  const abilities = Game.getEntityAbilities(current);
+  const abilities = InGameHelpers.getEntityAbilities(current);
   const selectedAbility = mode.type === "ability" ? mode.ability : undefined;
   const selectedTarget = mode.type === "ability" ? mode.target : undefined;
   const hasActionsForSelected = selectedAbility ? actions >= selectedAbility.cost : false;

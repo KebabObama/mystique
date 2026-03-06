@@ -1,5 +1,5 @@
-import { Game } from "@/lib/game";
 import { Render } from "@/lib/render";
+import { Game } from "@/types";
 
 export type InventoryItem = { id: string; name: string };
 export type ListEntry = { item: InventoryItem; quantity: number };

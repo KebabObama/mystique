@@ -1,10 +1,10 @@
 "use client";
 
 import { Context } from "@/components/ui/context";
-import { Game } from "@/lib/game";
 import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
 import { usePermissions } from "@/lib/hooks/use-permissions";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Render } from "@/lib/render";
 import React from "react";
 
@@ -29,7 +29,7 @@ export const EntityContextMenu = () => {
   const actions = React.useMemo<MenuAction[]>(() => {
     if (!instance || !entityId) return [];
 
-    const targetEntity = Game.getEntityById(instance, entityId);
+    const targetEntity = InGameHelpers.getEntityById(instance, entityId);
     if (!targetEntity) return [];
 
     if (isMasterOnTurn) {
@@ -38,7 +38,7 @@ export const EntityContextMenu = () => {
 
     switch (targetEntity.type) {
       case "character": {
-        const activeEntity = Game.getEntityById(
+        const activeEntity = InGameHelpers.getEntityById(
           instance,
           instance.data.sequence[instance.data.turn]
         );

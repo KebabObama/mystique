@@ -3,9 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
-import { Game } from "@/lib/game";
 import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import React from "react";
 
 export const CampfireRestDialog = () => {
@@ -17,7 +17,7 @@ export const CampfireRestDialog = () => {
 
   if (!open || !selectedCharacterId || !instance) return null;
 
-  const charEntity = Game.getEntities(instance).find((e) => e.id === selectedCharacterId);
+  const charEntity = InGameHelpers.getEntities(instance).find((e) => e.id === selectedCharacterId);
   if (!charEntity || charEntity.type !== "character") return null;
 
   const maxActions = charEntity.actions ?? charEntity.maxActions ?? 0;

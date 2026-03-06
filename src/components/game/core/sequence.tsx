@@ -3,9 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Context } from "@/components/ui/context";
-import { Game } from "@/lib/game";
 import { useGame } from "@/lib/hooks/use-game";
 import { usePermissions } from "@/lib/hooks/use-permissions";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp, ChevronDown } from "lucide-react";
 import * as React from "react";
@@ -36,7 +36,7 @@ export const Sequence = ({ children }: SequenceProps) => {
       >
         <Card className="flex h-full flex-col p-2">
           {instance.data.sequence.map((entityId, index) => {
-            const wrapper = Game.getEntityById(instance, entityId);
+            const wrapper = InGameHelpers.getEntityById(instance, entityId);
             if (!wrapper) return null;
             const plays = current?.id === entityId;
 

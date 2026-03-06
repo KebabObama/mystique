@@ -7,10 +7,10 @@ import { Context } from "@/components/ui/context";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Game } from "@/lib/game";
 import { useGame } from "@/lib/hooks/use-game";
 import { usePermissions } from "@/lib/hooks/use-permissions";
 import { cn } from "@/lib/utils";
+import { Game } from "@/types";
 import { Brain, Footprints, Heart, Search, Shield, Skull, Swords, Zap } from "lucide-react";
 import React from "react";
 

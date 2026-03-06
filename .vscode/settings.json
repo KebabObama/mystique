@@ -24,5 +24,8 @@
     "*.ts":   "typescript",
   },
   "typescript.tsdk": "node_modules/typescript/lib",
-  "biome.enabled": false
+  "biome.enabled": false,
+  "chat.tools.terminal.autoApprove": {
+    "npx tsc": true
+  }
 }

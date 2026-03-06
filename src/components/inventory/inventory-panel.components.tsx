@@ -11,8 +11,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Game } from "@/lib/game";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import { InventoryItem } from "@/lib/inventory-panel";
+import { Game } from "@/types";
 import {
   ArrowRightLeft,
   BookA,
@@ -60,7 +61,8 @@ export const InventoryList = ({
           onEquip &&
           entity.type === "character" &&
           entry.type !== "misc" &&
-          (("equipped" in entry && entry.equipped) || Game.canEquipItem(entity, entry.type));
+          (("equipped" in entry && entry.equipped) ||
+            InGameHelpers.canEquipItem(entity, entry.type));
         if (!hasActions) return <ItemCard key={entry.id} item={entry} />;
         return (
           <InventoryItemWithActions

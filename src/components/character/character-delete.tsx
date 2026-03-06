@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { deleteCharacter } from "@/lib/character-actions";
-import type { Game } from "@/lib/game";
+import type { Game } from "@/types";
 import React from "react";
 
 type CharacaterDeleteProps = {

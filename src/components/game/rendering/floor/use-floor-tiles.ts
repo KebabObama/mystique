@@ -1,7 +1,8 @@
 "use client";
 
-import { Game } from "@/lib/game";
 import { useGame } from "@/lib/hooks/use-game";
+import { InGameHelpers } from "@/lib/ingame-helpers";
+import { Game } from "@/types";
 import React from "react";
 import { FloorPosition } from "./use-floor-position";
 
@@ -57,7 +58,7 @@ export const useFloorTiles = ({
 
   const abilityImpactTiles = React.useMemo(() => {
     if (!ability || !selectedAbilityTarget || ability.targeting <= 0) return [];
-    return Game.getAbilityImpactTiles(selectedAbilityTarget, ability.targeting);
+    return InGameHelpers.getAbilityImpactTiles(selectedAbilityTarget, ability.targeting);
   }, [ability, selectedAbilityTarget]);
 
   const visibleAbilityImpactTiles = React.useMemo(

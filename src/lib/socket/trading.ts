@@ -1,6 +1,7 @@
 import { db, schema } from "@/lib/db";
-import { Game } from "@/lib/game";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import * as Lobby from "@/lib/lobby";
+import { Game } from "@/types";
 import { and, eq } from "drizzle-orm";
 import { type SocketContext, exists, update, upsertCharacterInventory } from "./helpers";
 
@@ -33,7 +34,7 @@ const isParticipantController = (
   entityId: string
 ) => {
   if (!inst) return false;
-  const entity = Game.getEntities(inst).find((entry) => entry.id === entityId);
+  const entity = InGameHelpers.getEntities(inst).find((entry) => entry.id === entityId);
   if (!entity || entity.type !== "character") return false;
   return entity.ownerId === userId || inst.masterId === userId;
 };
@@ -132,11 +133,11 @@ const settleTrade = async (
   inst: NonNullable<Awaited<ReturnType<typeof exists>>>,
   session: TradeSession
 ) => {
-  const entityA = Game.getEntities(inst).find(
+  const entityA = InGameHelpers.getEntities(inst).find(
     (entry): entry is CharacterEntity =>
       entry.id === session.entityAId && entry.type === "character"
   );
-  const entityB = Game.getEntities(inst).find(
+  const entityB = InGameHelpers.getEntities(inst).find(
     (entry): entry is CharacterEntity =>
       entry.id === session.entityBId && entry.type === "character"
   );
@@ -188,8 +189,8 @@ export const register = (ctx: SocketContext) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
-    const fromEntity = Game.getEntities(inst).find((e) => e.id === fromEntityId);
-    const toEntity = Game.getEntities(inst).find((e) => e.id === toEntityId);
+    const fromEntity = InGameHelpers.getEntities(inst).find((e) => e.id === fromEntityId);
+    const toEntity = InGameHelpers.getEntities(inst).find((e) => e.id === toEntityId);
 
     if (!fromEntity || !toEntity) return;
     if (fromEntity.type !== "character" || toEntity.type !== "character") return;
@@ -229,7 +230,7 @@ export const register = (ctx: SocketContext) => {
     if (actorEntityId !== session.entityAId && actorEntityId !== session.entityBId) return;
     if (!isParticipantController(inst, userId, actorEntityId)) return;
 
-    const participantEntity = Game.getEntities(inst).find(
+    const participantEntity = InGameHelpers.getEntities(inst).find(
       (entry): entry is CharacterEntity => entry.id === actorEntityId && entry.type === "character"
     );
     if (!participantEntity) return;

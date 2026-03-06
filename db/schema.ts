@@ -1,4 +1,3 @@
-import { Game } from "@/lib/game";
 import type { Brand } from "@/types";
 import { relations } from "drizzle-orm";
 import {
@@ -13,6 +12,27 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
+
+// Type definitions to avoid circular dependency with @/types/game
+type Attribute = "strength" | "dexterity" | "constitution" | "intelligence";
+type Effect = "corroding" | "frostbite" | "burning" | "shocked";
+type Position = { x: number; z: number };
+type Ability = {
+  name: string;
+  cost: number;
+  range: number;
+  targeting: number;
+  amount: [number, number];
+  effects: Record<Effect, number>;
+};
+type Data = {
+  walls: Array<Position>;
+  sequence: Array<Brand<string, "lobbyEntityId">>;
+  turn: number;
+};
+
+const ITEM_TYPES = ["weapon", "helmet", "armor", "leggings", "ring", "misc"] as const;
+const RACES = ["dwarf", "elf", "human", "orc"] as const;
 
 const id = <T extends string>(name: string) => uuid(name).$type<Brand<string, T>>();
 
@@ -96,15 +116,15 @@ export const verification = pgTable(
 export const item = pgTable("item", {
   id: id<"itemId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull().unique(),
-  type: text("type", { enum: Game.ITEM_TYPES }).notNull().default("misc"),
+  type: text("type", { enum: ITEM_TYPES }).notNull().default("misc"),
   value: integer("value").notNull().default(0),
   weight: integer("weight").notNull().default(0),
   armor: integer("armor"),
   meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
-  abilities: json("abilities").notNull().$type<Game.Ability[]>(),
+  abilities: json("abilities").notNull().$type<Ability[]>(),
   requiremnts: json("regiments")
     .notNull()
-    .$type<Partial<Record<Game.Attribute, number | null>>>()
+    .$type<Partial<Record<Attribute, number | null>>>()
     .default({}),
 });
 
@@ -116,7 +136,7 @@ export const lobby = pgTable("lobby", {
   id: id<"lobbyId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  data: jsonb("data").notNull().$type<Game.Data>().default({ walls: [], sequence: [], turn: -1 }),
+  data: jsonb("data").notNull().$type<Data>().default({ walls: [], sequence: [], turn: -1 }),
   masterId: id<"userId">("master_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -136,7 +156,7 @@ export const lobbyMember = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date())
       .notNull(),
-    lastReadAt: timestamp("last_read_at"),
+    lastReadAt: timestamp("last_read_at").defaultNow(),
   },
   (table) => [
     primaryKey({ name: "lobby_member_pk", columns: [table.lobbyId, table.userId] }),
@@ -173,11 +193,11 @@ export const character = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     lobbyId: id<"lobbyId">("lobby_id").references(() => lobby.id, { onDelete: "set null" }),
     name: text("name").notNull(),
-    race: text("race", { enum: Game.RACES }).notNull(),
+    race: text("race", { enum: RACES }).notNull(),
     level: integer("level").notNull().default(1),
     xp: integer("xp").notNull().default(0),
     meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
-    attributes: jsonb("attributes").notNull().$type<Record<Game.Attribute, number>>(),
+    attributes: jsonb("attributes").notNull().$type<Record<Attribute, number>>(),
     memory: integer("memory").notNull().default(2),
     hp: integer("hp").notNull().default(10),
     coins: integer("coins").notNull().default(0),
@@ -228,7 +248,7 @@ export const monster = pgTable("monster", {
   stamina: integer("stamina").notNull().default(5),
   maxActions: integer("max_actions").notNull().default(1),
   memory: integer("memory").notNull().default(2),
-  abilities: jsonb("abilities").notNull().$type<Game.Ability[]>().default([]),
+  abilities: jsonb("abilities").notNull().$type<Ability[]>().default([]),
 });
 
 // ============================================================================
@@ -305,7 +325,7 @@ export const lobbyEntity = pgTable(
     campfireId: id<"campfireId">("campfire_id").references(() => campfire.id, {
       onDelete: "cascade",
     }),
-    position: jsonb("position").notNull().$type<Game.Position>().default({ x: 0, z: 0 }),
+    position: jsonb("position").notNull().$type<Position>().default({ x: 0, z: 0 }),
     actions: integer("actions").notNull().default(0),
   },
   (table) => [index("lobby_entity_lobby_idx").on(table.lobbyId)]

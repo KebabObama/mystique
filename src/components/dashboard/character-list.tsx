@@ -2,7 +2,7 @@
 
 import { CharacterCard } from "@/components/dashboard/character-card";
 import { Button } from "@/components/ui/button";
-import { Game } from "@/lib/game";
+import { Game } from "@/types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 

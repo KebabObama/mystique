@@ -13,8 +13,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createCharacter, getAllItems } from "@/lib/character-actions";
-import { Game } from "@/lib/game";
 import { useUser } from "@/lib/hooks/use-user";
+import { InGameHelpers } from "@/lib/ingame-helpers";
+import { Game } from "@/types";
 import { Dices, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import React from "react";
 
@@ -22,7 +23,7 @@ export const CharacterCreator = () => {
   const ownerId = useUser((s) => s?.id) as string;
   const createInitialChar = () => {
     const attributes = { ...Game.STARTING_RACES.human };
-    const stats = Game.calculateCharacterStats({ attributes, level: 1, memory: 0 });
+    const stats = InGameHelpers.calculateCharacterStats({ attributes, level: 1, memory: 0 });
     return {
       id: "",
       ownerId,
@@ -104,7 +105,7 @@ export const CharacterCreator = () => {
 
   const syncChar = (updatedFields: Partial<Game.Character>) => {
     const updated = { ...char, ...updatedFields } as Game.Character;
-    const stats = Game.calculateCharacterStats(updated, { weight: 0, armor: 0 });
+    const stats = InGameHelpers.calculateCharacterStats(updated, { weight: 0, armor: 0 });
     setChar({ ...updated, ...stats });
   };
 
@@ -164,7 +165,7 @@ export const CharacterCreator = () => {
                 type="button"
                 variant="outline"
                 size="icon"
-                onClick={() => setChar({ ...char, name: Game.generateRandomName(char) })}
+                onClick={() => setChar({ ...char, name: InGameHelpers.generateRandomName(char) })}
               >
                 <Dices className="h-4 w-4" />
               </Button>

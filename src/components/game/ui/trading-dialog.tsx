@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { Game } from "@/lib/game";
 import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
 import { useUser } from "@/lib/hooks/use-user";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import React from "react";
 
 type DraftState = { items: Record<string, number>; currency: number };
@@ -41,7 +41,7 @@ export const TradingDialog = () => {
 
   const selectedCharacter =
     instance && selectedCharacterId
-      ? Game.getEntities(instance).find(
+      ? InGameHelpers.getEntities(instance).find(
           (entity): entity is Extract<typeof entity, { type: "character" }> =>
             entity.id === selectedCharacterId && entity.type === "character"
         )
@@ -57,7 +57,7 @@ export const TradingDialog = () => {
 
   const firstCharacter =
     session && instance
-      ? Game.getEntities(instance).find(
+      ? InGameHelpers.getEntities(instance).find(
           (entity): entity is Extract<typeof entity, { type: "character" }> =>
             entity.id === session.entityAId && entity.type === "character"
         )
@@ -65,7 +65,7 @@ export const TradingDialog = () => {
 
   const secondCharacter =
     session && instance
-      ? Game.getEntities(instance).find(
+      ? InGameHelpers.getEntities(instance).find(
           (entity): entity is Extract<typeof entity, { type: "character" }> =>
             entity.id === session.entityBId && entity.type === "character"
         )

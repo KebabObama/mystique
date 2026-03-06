@@ -1,5 +1,5 @@
 import { db, schema } from "@/lib/db";
-import { Game } from "@/lib/game";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import * as Lobby from "@/lib/lobby";
 import { eq } from "drizzle-orm";
 import { type SocketContext, exists, isPosition, update } from "./helpers";
@@ -169,7 +169,7 @@ export const register = (ctx: SocketContext) => {
     if (inst.masterId !== userId || inst.data.turn !== -1) return;
     if (!isPosition(position)) return;
 
-    const blockedByEntity = Game.getEntities(inst).some(
+    const blockedByEntity = InGameHelpers.getEntities(inst).some(
       (entity) => entity.position.x === position.x && entity.position.z === position.z
     );
     if (blockedByEntity) return;
@@ -208,7 +208,7 @@ export const register = (ctx: SocketContext) => {
     const newWalls: { x: number; z: number }[] = [];
     for (let x = minX; x <= maxX; x++) {
       for (let z = minZ; z <= maxZ; z++) {
-        const blockedByEntity = Game.getEntities(inst).some(
+        const blockedByEntity = InGameHelpers.getEntities(inst).some(
           (entity) => entity.position.x === x && entity.position.z === z
         );
         const alreadyWall = inst.data.walls.some((wall) => wall.x === x && wall.z === z);
