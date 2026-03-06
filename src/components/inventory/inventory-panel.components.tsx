@@ -60,8 +60,7 @@ export const InventoryList = ({
           onEquip &&
           entity.type === "character" &&
           entry.type !== "misc" &&
-          (("equipped" in entry && entry.equipped) ||
-            Game.canEquipItem(entity, entry.type));
+          (("equipped" in entry && entry.equipped) || Game.canEquipItem(entity, entry.type));
         if (!hasActions) return <ItemCard key={entry.id} item={entry} />;
         return (
           <InventoryItemWithActions
