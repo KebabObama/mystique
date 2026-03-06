@@ -1,7 +1,7 @@
 "use client";
 
-import { useGame } from "@/lib/hooks/use-game";
-import { useSocket } from "@/lib/hooks/use-socket";
+import { useGame } from "@/hooks/use-game";
+import { useSocket } from "@/hooks/use-socket";
 import { usePathname } from "next/navigation";
 import React from "react";
 

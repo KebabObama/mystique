@@ -3,8 +3,8 @@
 import { Border } from "@/components/ui/border";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { useGame } from "@/lib/hooks/use-game";
-import { usePermissions } from "@/lib/hooks/use-permissions";
+import { useGame } from "@/hooks/use-game";
+import { usePermissions } from "@/hooks/use-permissions";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { cn } from "@/lib/utils";
 import { Game } from "@/types";

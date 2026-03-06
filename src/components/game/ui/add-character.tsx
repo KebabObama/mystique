@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { useGame } from "@/lib/hooks/use-game";
+import { useGame } from "@/hooks/use-game";
 
 type AddCharacterProps = {
   characters: { id: string; name: string; race: string; level: number; lobbyId: string | null }[];

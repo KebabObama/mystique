@@ -1,8 +1,8 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { useGame } from "@/lib/hooks/use-game";
-import { usePermissions } from "@/lib/hooks/use-permissions";
+import { useGame } from "@/hooks/use-game";
+import { usePermissions } from "@/hooks/use-permissions";
 
 export const ActionsDisplay = () => {
   const current = useGame((s) => s.sequence.current);

@@ -3,7 +3,7 @@
 import { SidebarLobbyItem } from "@/components/layout/sidebar-lobby-item";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useLobby } from "@/lib/hooks/use-lobby";
+import { useLobby } from "@/hooks/use-lobby";
 import { LogIn, MessageSquare, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCamera } from "@/lib/hooks/use-camera";
+import { useCamera } from "@/hooks/use-camera";
 import { useFrame, useThree } from "@react-three/fiber";
 import React from "react";
 import * as THREE from "three";

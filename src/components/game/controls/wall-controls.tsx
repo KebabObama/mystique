@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useGame } from "@/lib/hooks/use-game";
-import { usePermissions } from "@/lib/hooks/use-permissions";
+import { useGame } from "@/hooks/use-game";
+import { usePermissions } from "@/hooks/use-permissions";
 import { BrickWall, Eraser, Grid2X2Plus, Grid2X2X } from "lucide-react";
 
 export const WallControls = () => {

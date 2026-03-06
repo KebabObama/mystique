@@ -1,7 +1,7 @@
 "use client";
 
-import { useFloorClick } from "@/lib/hooks/use-floor-click";
-import { useGame } from "@/lib/hooks/use-game";
+import { useFloorClick } from "@/hooks/use-floor-click";
+import { useGame } from "@/hooks/use-game";
 import { Render } from "@/lib/render";
 import { ThreeEvent } from "@react-three/fiber";
 import React from "react";

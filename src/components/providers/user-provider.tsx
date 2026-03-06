@@ -1,8 +1,8 @@
 "use client";
 
-import { useGame } from "@/lib/hooks/use-game";
-import { usePermissions } from "@/lib/hooks/use-permissions";
-import { useUser } from "@/lib/hooks/use-user";
+import { useGame } from "@/hooks/use-game";
+import { usePermissions } from "@/hooks/use-permissions";
+import { useUser } from "@/hooks/use-user";
 import { User } from "better-auth";
 import React from "react";
 

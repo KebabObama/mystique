@@ -1,10 +1,10 @@
 "use client";
 
 import { toast } from "@/components/layout/toast";
-import { useDialog } from "@/lib/hooks/use-dialog";
-import { usePermissions } from "@/lib/hooks/use-permissions";
-import { useSocket } from "@/lib/hooks/use-socket";
-import { useUser } from "@/lib/hooks/use-user";
+import { useDialog } from "@/hooks/use-dialog";
+import { usePermissions } from "@/hooks/use-permissions";
+import { useSocket } from "@/hooks/use-socket";
+import { useUser } from "@/hooks/use-user";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Game } from "@/types";
 import { create } from "zustand";

@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { useDialog } from "@/lib/hooks/use-dialog";
-import { useGame } from "@/lib/hooks/use-game";
-import { useUser } from "@/lib/hooks/use-user";
+import { useDialog } from "@/hooks/use-dialog";
+import { useGame } from "@/hooks/use-game";
+import { useUser } from "@/hooks/use-user";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import React from "react";
 

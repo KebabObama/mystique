@@ -1,6 +1,6 @@
 "use client";
 
-import { useGame } from "@/lib/hooks/use-game";
+import { useGame } from "@/hooks/use-game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Game } from "@/types";
 import React from "react";

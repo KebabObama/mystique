@@ -1,5 +1,5 @@
 import { Dialog } from "@/components/ui/dialog";
-import { useGame } from "@/lib/hooks/use-game";
+import { useGame } from "@/hooks/use-game";
 import { Game } from "@/types";
 import { CharacterInfo, InventoryList } from "./inventory-panel.components";
 

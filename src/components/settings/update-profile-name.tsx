@@ -4,7 +4,7 @@ import { toast } from "@/components/layout/toast";
 import { Border } from "@/components/ui/border";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useUser } from "@/lib/hooks/use-user";
+import { useUser } from "@/hooks/use-user";
 import { authClient } from "@/lib/utils";
 import { User } from "better-auth";
 import { Loader2, Save } from "lucide-react";

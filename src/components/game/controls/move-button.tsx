@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useGame } from "@/lib/hooks/use-game";
-import { usePermissions } from "@/lib/hooks/use-permissions";
+import { useGame } from "@/hooks/use-game";
+import { usePermissions } from "@/hooks/use-permissions";
 import { Move } from "lucide-react";
 
 export const MoveButton = () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "@/lib/hooks/use-user";
+import { useUser } from "@/hooks/use-user";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Game } from "@/types";
 import { create } from "zustand";

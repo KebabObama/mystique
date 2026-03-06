@@ -12,8 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUser } from "@/hooks/use-user";
 import { createCharacter, getAllItems } from "@/lib/character-actions";
-import { useUser } from "@/lib/hooks/use-user";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Game } from "@/types";
 import { Dices, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";

@@ -3,8 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Context } from "@/components/ui/context";
-import { useGame } from "@/lib/hooks/use-game";
-import { usePermissions } from "@/lib/hooks/use-permissions";
+import { useGame } from "@/hooks/use-game";
+import { usePermissions } from "@/hooks/use-permissions";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp, ChevronDown } from "lucide-react";

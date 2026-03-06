@@ -5,9 +5,9 @@ import { CharacterList } from "@/components/dashboard/character-list";
 import type { LobbyInfo } from "@/components/dashboard/lobby-card";
 import { LobbyList } from "@/components/dashboard/lobby-list";
 import { LobbyCreate } from "@/components/layout/lobby-create";
+import { useLobby } from "@/hooks/use-lobby";
+import { useUser } from "@/hooks/use-user";
 import { getCharacters } from "@/lib/dashboard";
-import { useLobby } from "@/lib/hooks/use-lobby";
-import { useUser } from "@/lib/hooks/use-user";
 import { getUnreadCount } from "@/lib/utils";
 import { useEffect, useState } from "react";
 

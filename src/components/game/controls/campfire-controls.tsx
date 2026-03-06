@@ -4,8 +4,8 @@ import { Border } from "@/components/ui/border";
 import { Button } from "@/components/ui/button";
 import { Context } from "@/components/ui/context";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { useGame } from "@/lib/hooks/use-game";
-import { usePermissions } from "@/lib/hooks/use-permissions";
+import { useGame } from "@/hooks/use-game";
+import { usePermissions } from "@/hooks/use-permissions";
 import { Flame } from "lucide-react";
 
 export const CampfireControls = () => {

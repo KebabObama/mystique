@@ -1,6 +1,6 @@
 "use client";
 
-import { useCamera } from "@/lib/hooks/use-camera";
+import { useCamera } from "@/hooks/use-camera";
 import { Render } from "@/lib/render";
 import React from "react";
 

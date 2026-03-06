@@ -1,6 +1,6 @@
 "use client";
 
-import { useGame } from "@/lib/hooks/use-game";
+import { useGame } from "@/hooks/use-game";
 import { Game } from "@/types";
 import React from "react";
 import { FloorClickHandler } from "./floor/floor-click-handler";

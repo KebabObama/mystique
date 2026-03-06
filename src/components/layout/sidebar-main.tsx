@@ -8,8 +8,8 @@ import {
   SidebarMenuSub,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useLobby } from "@/lib/hooks/use-lobby";
-import { useUser } from "@/lib/hooks/use-user";
+import { useLobby } from "@/hooks/use-lobby";
+import { useUser } from "@/hooks/use-user";
 import { getUnreadCount } from "@/lib/utils";
 import { LayoutDashboard } from "lucide-react";
 import { redirect } from "next/navigation";

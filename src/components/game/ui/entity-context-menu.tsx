@@ -1,9 +1,9 @@
 "use client";
 
 import { Context } from "@/components/ui/context";
-import { useDialog } from "@/lib/hooks/use-dialog";
-import { useGame } from "@/lib/hooks/use-game";
-import { usePermissions } from "@/lib/hooks/use-permissions";
+import { useDialog } from "@/hooks/use-dialog";
+import { useGame } from "@/hooks/use-game";
+import { usePermissions } from "@/hooks/use-permissions";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Render } from "@/lib/render";
 import React from "react";

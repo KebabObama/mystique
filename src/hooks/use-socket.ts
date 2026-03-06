@@ -1,7 +1,7 @@
 "use client";
 
-import { useGame } from "@/lib/hooks/use-game";
-import { useLobby } from "@/lib/hooks/use-lobby";
+import { useGame } from "@/hooks/use-game";
+import { useLobby } from "@/hooks/use-lobby";
 import { io, type Socket } from "socket.io-client";
 import { create } from "zustand";
 import { useUser } from "./use-user";

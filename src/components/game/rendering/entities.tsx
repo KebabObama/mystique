@@ -1,9 +1,9 @@
 "use client";
 
-import { useCamera } from "@/lib/hooks/use-camera";
-import { useDialog } from "@/lib/hooks/use-dialog";
-import { useGame } from "@/lib/hooks/use-game";
-import { useUser } from "@/lib/hooks/use-user";
+import { useCamera } from "@/hooks/use-camera";
+import { useDialog } from "@/hooks/use-dialog";
+import { useGame } from "@/hooks/use-game";
+import { useUser } from "@/hooks/use-user";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Mesh } from "@/lib/mesh";
 import { Render } from "@/lib/render";

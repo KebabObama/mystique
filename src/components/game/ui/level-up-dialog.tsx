@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { useDialog } from "@/lib/hooks/use-dialog";
-import { useGame } from "@/lib/hooks/use-game";
+import { useDialog } from "@/hooks/use-dialog";
+import { useGame } from "@/hooks/use-game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Game } from "@/types";
 import React from "react";
