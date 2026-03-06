@@ -11,7 +11,7 @@ export const MoveButton = () => {
   const canControlCurrent = usePermissions((s) => s.canControlCurrent);
   const isMasterOnTurn = usePermissions((s) => s.isMasterOnTurn);
   const canHaveActions = current?.type === "character" || current?.type === "monster";
-  const actions = current?.actions ?? (canHaveActions ? current.playable.maxActions : 0) ?? 0;
+  const actions = current?.actions ?? (canHaveActions ? current.maxActions : 0) ?? 0;
 
   if (!current) return null;
 

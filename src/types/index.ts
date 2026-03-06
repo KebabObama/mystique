@@ -2,28 +2,30 @@
 
 // Game types
 export type {
+  Campfire,
+  CampfireEntity,
+  Character,
+  CharacterEntity,
+  Chest,
+  ChestEntity,
+  CombatEntity,
+  Entity,
   GameAbility,
   GameAttribute,
-  GameCampfire,
-  GameCampfireEntity,
-  GameCharacter,
-  GameCharacterEntity,
-  GameChest,
-  GameChestEntity,
-  GameCombatEntity,
   GameData,
   GameEffect,
-  GameEntity,
-  GameInstance,
   GameItemType,
-  GameMonster,
-  GameMonsterEntity,
-  GamePosition,
   GameRace,
+  Instance,
+  Monster,
+  MonsterEntity,
+  Position,
 } from "./game";
 
+export type * as Game from "./game";
+
 // Lobby types
-export type { Lobby } from "./lobby";
+export type { Brand, Lobby, SocketAuth } from "./lobby";
 
 // Bucket types
 export type { BucketNames } from "./bucket";

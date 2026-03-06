@@ -247,7 +247,7 @@ export const register = (ctx: SocketContext) => {
   socket.on("game:character:add", async (userId, lobbyId, characterId) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
-    if (inst.characters.some((entity) => entity.playable.id === characterId)) {
+    if (inst.characters.some((entity) => entity.id === characterId)) {
       socket.emit("error", "Character already exists within this instance.");
       return;
     }

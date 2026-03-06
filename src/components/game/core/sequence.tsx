@@ -40,7 +40,7 @@ export const Sequence = ({ children }: SequenceProps) => {
             if (!wrapper) return null;
             const plays = current?.id === entityId;
 
-            const displayName = wrapper.playable.name || "";
+            const displayName = (wrapper as any).name || "";
 
             const name = (
               <div className="flex flex-row items-center justify-between gap-2">

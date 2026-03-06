@@ -21,7 +21,7 @@ export const AddCharacter = ({ characters, children }: AddCharacterProps) => {
 
   // Filter out characters already in lobbies or already in this game
   const availableChars = characters.filter(
-    (c) => !c.lobbyId && !entities.some((entry) => entry.playable.id === c.id)
+    (c) => !c.lobbyId && !entities.some((entry) => entry.id === c.id)
   );
 
   return (

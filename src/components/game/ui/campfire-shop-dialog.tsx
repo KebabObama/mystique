@@ -3,6 +3,7 @@
 import { toast } from "@/components/layout/toast";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { Game } from "@/lib/game";
 import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
 
@@ -15,8 +16,8 @@ export const CampfireShopDialog = () => {
 
   if (!open || !selectedCampfireId || !selectedCharacterId || !instance) return null;
 
-  const campfireEntity = instance.entities.find((e) => e.id === selectedCampfireId);
-  const charEntity = instance.entities.find((e) => e.id === selectedCharacterId);
+  const campfireEntity = Game.getEntities(instance).find((e) => e.id === selectedCampfireId);
+  const charEntity = Game.getEntities(instance).find((e) => e.id === selectedCharacterId);
 
   if (
     !campfireEntity ||
@@ -26,8 +27,10 @@ export const CampfireShopDialog = () => {
   )
     return null;
 
+  const shopItems = ((campfireEntity as any).shopItems ?? []) as Array<any>;
+
   // Get currency from inventory
-  const currencyItem = charEntity.playable.inventory.find((inv) => inv.item.name === "Gold Coin");
+  const currencyItem = charEntity.inventory.find((inv) => inv.name === "Gold Coin");
   const currencyAmount = currencyItem?.quantity ?? 0;
 
   const handleBuy = (itemId: string, cost: number) => {
@@ -44,20 +47,20 @@ export const CampfireShopDialog = () => {
         <Dialog.Title>Campfire Shop</Dialog.Title>
         <p className="text-sm">Gold Coins: {currencyAmount}</p>
         <div className="max-h-96 space-y-3 overflow-y-auto">
-          {campfireEntity.playable.shopItems.length === 0 ? (
+          {shopItems.length === 0 ? (
             <p className="py-8 text-center text-sm">No items available</p>
           ) : (
-            campfireEntity.playable.shopItems.map((shopItem) => (
+            shopItems.map((shopItem) => (
               <div
-                key={shopItem.item.id}
+                key={shopItem.id}
                 className="flex items-center justify-between rounded-lg border p-3"
               >
                 <div>
-                  <p className="font-medium">{shopItem.item.name}</p>
+                  <p className="font-medium">{shopItem.name}</p>
                   <p className="text-sm">Cost: {shopItem.cost} coins</p>
                 </div>
                 <Button
-                  onClick={() => handleBuy(shopItem.item.id, shopItem.cost)}
+                  onClick={() => handleBuy(shopItem.id, shopItem.cost)}
                   disabled={currencyAmount < shopItem.cost}
                   size="sm"
                 >

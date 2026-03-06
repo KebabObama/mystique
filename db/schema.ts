@@ -1,4 +1,5 @@
 import { Game } from "@/lib/game";
+import type { Brand } from "@/types";
 import { relations } from "drizzle-orm";
 import {
   boolean,
@@ -13,12 +14,14 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+const id = <T extends string>(name: string) => uuid(name).$type<Brand<string, T>>();
+
 // ============================================================================
 // AUTH & USERS
 // ============================================================================
 
 export const user = pgTable("user", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: id<"userId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
@@ -32,14 +35,14 @@ export const user = pgTable("user", {
 export const session = pgTable(
   "session",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    id: id<"sessionId">("id").primaryKey().defaultRandom(),
     expiresAt: timestamp("expires_at").notNull(),
     token: text("token").notNull().unique(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
-    userId: uuid("user_id")
+    userId: id<"userId">("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
   },
@@ -49,10 +52,10 @@ export const session = pgTable(
 export const account = pgTable(
   "account",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    id: id<"accountId">("id").primaryKey().defaultRandom(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
-    userId: uuid("user_id")
+    userId: id<"userId">("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     accessToken: text("access_token"),
@@ -73,7 +76,7 @@ export const account = pgTable(
 export const verification = pgTable(
   "verification",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    id: id<"verificationId">("id").primaryKey().defaultRandom(),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
     expiresAt: timestamp("expires_at").notNull(),
@@ -91,7 +94,7 @@ export const verification = pgTable(
 // ============================================================================
 
 export const item = pgTable("item", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: id<"itemId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull().unique(),
   type: text("type", { enum: Game.ITEM_TYPES }).notNull().default("misc"),
   value: integer("value").notNull().default(0),
@@ -110,11 +113,11 @@ export const item = pgTable("item", {
 // ============================================================================
 
 export const lobby = pgTable("lobby", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: id<"lobbyId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   data: jsonb("data").notNull().$type<Game.Data>().default({ walls: [], sequence: [], turn: -1 }),
-  masterId: uuid("master_id")
+  masterId: id<"userId">("master_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
@@ -122,10 +125,10 @@ export const lobby = pgTable("lobby", {
 export const lobbyMember = pgTable(
   "lobby_member",
   {
-    lobbyId: uuid("lobby_id")
+    lobbyId: id<"lobbyId">("lobby_id")
       .notNull()
       .references(() => lobby.id, { onDelete: "cascade" }),
-    userId: uuid("user_id")
+    userId: id<"userId">("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     lastSeen: timestamp("last_seen")
@@ -144,11 +147,11 @@ export const lobbyMember = pgTable(
 export const message = pgTable(
   "message",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    lobbyId: uuid("lobby_id")
+    id: id<"messageId">("id").primaryKey().defaultRandom(),
+    lobbyId: id<"lobbyId">("lobby_id")
       .notNull()
       .references(() => lobby.id, { onDelete: "cascade" }),
-    senderId: uuid("sender_id")
+    senderId: id<"userId">("sender_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     content: text("content").notNull(),
@@ -164,11 +167,11 @@ export const message = pgTable(
 export const character = pgTable(
   "character",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    ownerId: uuid("owner_id")
+    id: id<"characterId">("id").primaryKey().defaultRandom(),
+    ownerId: id<"userId">("owner_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    lobbyId: uuid("lobby_id").references(() => lobby.id, { onDelete: "set null" }),
+    lobbyId: id<"lobbyId">("lobby_id").references(() => lobby.id, { onDelete: "set null" }),
     name: text("name").notNull(),
     race: text("race", { enum: Game.RACES }).notNull(),
     level: integer("level").notNull().default(1),
@@ -195,10 +198,10 @@ export const character = pgTable(
 export const inventory = pgTable(
   "inventory",
   {
-    characterId: uuid("character_id")
+    characterId: id<"characterId">("character_id")
       .notNull()
       .references(() => character.id, { onDelete: "cascade" }),
-    itemId: uuid("item_id")
+    itemId: id<"itemId">("item_id")
       .notNull()
       .references(() => item.id, { onDelete: "cascade" }),
     quantity: integer("quantity").notNull().default(1),
@@ -215,7 +218,7 @@ export const inventory = pgTable(
 // ============================================================================
 
 export const monster = pgTable("monster", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: id<"monsterId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   level: integer("level").notNull().default(1),
   hp: integer("hp").notNull().default(10),
@@ -235,7 +238,7 @@ export const monster = pgTable("monster", {
 export const chest = pgTable(
   "chest",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    id: id<"chestId">("id").primaryKey().defaultRandom(),
     name: text("name").notNull().default("Chest"),
     meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
   },
@@ -245,10 +248,10 @@ export const chest = pgTable(
 export const chestInventory = pgTable(
   "chest_inventory",
   {
-    chestId: uuid("chest_id")
+    chestId: id<"chestId">("chest_id")
       .notNull()
       .references(() => chest.id, { onDelete: "cascade" }),
-    itemId: uuid("item_id")
+    itemId: id<"itemId">("item_id")
       .notNull()
       .references(() => item.id, { onDelete: "cascade" }),
     quantity: integer("quantity").notNull().default(1),
@@ -264,7 +267,7 @@ export const chestInventory = pgTable(
 // ============================================================================
 
 export const campfire = pgTable("campfire", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: id<"campfireId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull().default("Campfire"),
   meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
 });
@@ -272,10 +275,10 @@ export const campfire = pgTable("campfire", {
 export const campfireShopItem = pgTable(
   "campfire_shop_item",
   {
-    campfireId: uuid("campfire_id")
+    campfireId: id<"campfireId">("campfire_id")
       .notNull()
       .references(() => campfire.id, { onDelete: "cascade" }),
-    itemId: uuid("item_id")
+    itemId: id<"itemId">("item_id")
       .notNull()
       .references(() => item.id, { onDelete: "cascade" }),
     cost: integer("cost").notNull(), // Cost in currency
@@ -289,15 +292,19 @@ export const campfireShopItem = pgTable(
 export const lobbyEntity = pgTable(
   "lobby_entity",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    lobbyId: uuid("lobby_id")
+    id: id<"lobbyEntityId">("id").primaryKey().defaultRandom(),
+    lobbyId: id<"lobbyId">("lobby_id")
       .notNull()
       .references(() => lobby.id, { onDelete: "cascade" }),
     type: text("type", { enum: ["character", "monster", "chest", "campfire"] }).notNull(),
-    characterId: uuid("character_id").references(() => character.id, { onDelete: "cascade" }),
-    monsterId: uuid("monster_id").references(() => monster.id, { onDelete: "cascade" }),
-    chestId: uuid("chest_id").references(() => chest.id, { onDelete: "cascade" }),
-    campfireId: uuid("campfire_id").references(() => campfire.id, { onDelete: "cascade" }),
+    characterId: id<"characterId">("character_id").references(() => character.id, {
+      onDelete: "cascade",
+    }),
+    monsterId: id<"monsterId">("monster_id").references(() => monster.id, { onDelete: "cascade" }),
+    chestId: id<"chestId">("chest_id").references(() => chest.id, { onDelete: "cascade" }),
+    campfireId: id<"campfireId">("campfire_id").references(() => campfire.id, {
+      onDelete: "cascade",
+    }),
     position: jsonb("position").notNull().$type<Game.Position>().default({ x: 0, z: 0 }),
     actions: integer("actions").notNull().default(0),
   },

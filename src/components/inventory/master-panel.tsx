@@ -48,9 +48,9 @@ export const MasterPanel = ({ entity, items, onClose }: MasterPanelProps) => {
             <Dialog.Title>{label}</Dialog.Title>
             <Dialog.Description className="-mt-6 mb-0">Manage inventory items</Dialog.Description>
 
-            {entity.type === "character" && <CharacterInfo character={entity.playable} />}
-            {entity.type === "chest" && <ChestInfo chest={entity.playable} />}
-            {entity.type === "monster" && <MonsterInfo monster={entity.playable} />}
+            {entity.type === "character" && <CharacterInfo character={entity} />}
+            {entity.type === "chest" && <ChestInfo chest={entity} />}
+            {entity.type === "monster" && <MonsterInfo monster={entity} />}
 
             {entity.type !== "monster" && (
               <GrantControls

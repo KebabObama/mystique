@@ -49,7 +49,7 @@ export const InventoryList = ({
   if (entity.type === "monster") return null;
 
   const entries =
-    entity.type === "character" || entity.type === "chest" ? (entity.playable.inventory ?? []) : [];
+    entity.type === "character" || entity.type === "chest" ? (entity.inventory ?? []) : [];
   const hasActions = Boolean(onTransfer || onDrop || onEquip);
 
   return (
@@ -59,13 +59,13 @@ export const InventoryList = ({
         const canEquip =
           onEquip &&
           entity.type === "character" &&
-          entry.item.type !== "misc" &&
+          entry.type !== "misc" &&
           (("equipped" in entry && entry.equipped) ||
-            Game.canEquipItem(entity.playable, entry.item.type));
-        if (!hasActions) return <ItemCard key={entry.item.id} item={entry} />;
+            Game.canEquipItem(entity, entry.type));
+        if (!hasActions) return <ItemCard key={entry.id} item={entry} />;
         return (
           <InventoryItemWithActions
-            key={entry.item.id}
+            key={entry.id}
             entry={entry}
             onTransfer={onTransfer}
             onDrop={onDrop}
@@ -124,7 +124,7 @@ const InventoryItemWithActions = ({
         )}
 
         {onEquip && (
-          <Context.Item onClick={() => onEquip(entry.item.id)}>
+          <Context.Item onClick={() => onEquip(entry.id)}>
             {isEquipped ? (
               <>
                 <ShieldOff className="mr-2 h-4 w-4" />
@@ -140,14 +140,14 @@ const InventoryItemWithActions = ({
         )}
 
         {onTransfer && (
-          <Context.Item onClick={() => onTransfer(entry.item.id, safeAmount)}>
+          <Context.Item onClick={() => onTransfer(entry.id, safeAmount)}>
             <ArrowRightLeft className="mr-2 h-4 w-4" />
             {transferLabel} {safeAmount > 1 ? safeAmount : ""}
           </Context.Item>
         )}
 
         {onDrop && maxAmount > 0 && (
-          <Context.Item onClick={() => onDrop(entry.item.id, safeAmount)}>
+          <Context.Item onClick={() => onDrop(entry.id, safeAmount)}>
             <PackageOpen className="mr-2 h-4 w-4" />
             Drop {safeAmount > 1 ? safeAmount : ""}
           </Context.Item>

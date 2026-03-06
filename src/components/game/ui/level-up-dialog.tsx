@@ -22,7 +22,7 @@ export const LevelUpDialog = () => {
 
   if (!open || !selectedCharacterId || !instance) return null;
 
-  const character = instance.entities.find(
+  const character = Game.getEntities(instance).find(
     (e) => e.type === "character" && e.id === selectedCharacterId
   );
 
@@ -47,7 +47,7 @@ export const LevelUpDialog = () => {
       <Dialog.Content>
         <Dialog.Title>Level Up!</Dialog.Title>
         <p className="text-sm text-slate-600">
-          {character.playable.name} has reached level {character.playable.level + 1}
+          {character.name} has reached level {character.level + 1}
         </p>
 
         <div className="space-y-4">
@@ -57,7 +57,7 @@ export const LevelUpDialog = () => {
 
           {Game.ATTRIBUTES.map((attr) => {
             const Icon = Game.ATTRIBUTE_ICON[attr];
-            const current = character.playable.attributes[attr];
+            const current = character.attributes[attr];
             const pointsAdded = attributePoints[attr] || 0;
 
             return (

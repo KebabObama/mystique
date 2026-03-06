@@ -79,7 +79,7 @@ export const register = (ctx: SocketContext) => {
     if (!inst) return;
     if (inst.masterId !== userId || inst.data.turn !== -1) return;
 
-    const campfireEntity = inst.entities.find(
+    const campfireEntity = Game.getEntities(inst).find(
       (entity) => entity.id === entityId && entity.type === "campfire"
     );
     if (!campfireEntity) return;
@@ -95,7 +95,7 @@ export const register = (ctx: SocketContext) => {
     if (inst.masterId !== userId || inst.data.turn !== -1) return;
     if (!isPosition(position)) return;
 
-    const campfireEntity = inst.entities.find(
+    const campfireEntity = Game.getEntities(inst).find(
       (entity) => entity.id === entityId && entity.type === "campfire"
     );
     if (!campfireEntity) return;
@@ -120,19 +120,19 @@ export const register = (ctx: SocketContext) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
-    const charEntity = inst.entities.find((e) => e.id === characterEntityId);
+    const charEntity = Game.getEntities(inst).find((e) => e.id === characterEntityId);
     if (!charEntity || charEntity.type !== "character") return;
 
-    if (charEntity.playable.ownerId !== userId && inst.masterId !== userId) return;
+    if (charEntity.ownerId !== userId && inst.masterId !== userId) return;
 
     const actions = normalizeQuantity(actionsToRest);
-    const currentActions = charEntity.actions ?? charEntity.playable.maxActions ?? 0;
+    const currentActions = charEntity.actions ?? charEntity.maxActions ?? 0;
 
     if (actions > currentActions) return;
 
     // Calculate healing based on character level and attributes
-    const healing = Game.calculateRestHealing(charEntity.playable, actions);
-    const newHp = Math.min(charEntity.playable.hp + healing, charEntity.playable.maxHp);
+    const healing = Game.calculateRestHealing(charEntity, actions);
+    const newHp = Math.min(charEntity.hp + healing, charEntity.maxHp);
 
     const newActions = currentActions - actions;
 
@@ -141,7 +141,7 @@ export const register = (ctx: SocketContext) => {
       await tx
         .update(schema.character)
         .set({ hp: newHp })
-        .where(eq(schema.character.id, charEntity.playable.id));
+        .where(eq(schema.character.id, charEntity.id));
 
       await tx
         .update(schema.lobbyEntity)
@@ -160,7 +160,7 @@ export const register = (ctx: SocketContext) => {
     if (!inst) return;
     if (inst.masterId !== userId) return;
 
-    const campfireEntity = inst.entities.find(
+    const campfireEntity = Game.getEntities(inst).find(
       (e) => e.id === campfireEntityId && e.type === "campfire"
     );
     if (!campfireEntity) return;
@@ -168,7 +168,7 @@ export const register = (ctx: SocketContext) => {
     // Clear existing shop items
     await db
       .delete(schema.campfireShopItem)
-      .where(eq(schema.campfireShopItem.campfireId, campfireEntity.playable.id));
+      .where(eq(schema.campfireShopItem.campfireId, (campfireEntity as any).campfireId));
 
     // Add new shop items
     if (itemsList && itemsList.length > 0) {
@@ -176,7 +176,7 @@ export const register = (ctx: SocketContext) => {
         .insert(schema.campfireShopItem)
         .values(
           itemsList.map((item: { itemId: string; cost: number }) => ({
-            campfireId: campfireEntity.playable.id,
+            campfireId: (campfireEntity as any).campfireId,
             itemId: item.itemId,
             cost: item.cost,
           }))
@@ -191,18 +191,18 @@ export const register = (ctx: SocketContext) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
-    const charEntity = inst.entities.find((e) => e.id === characterEntityId);
+    const charEntity = Game.getEntities(inst).find((e) => e.id === characterEntityId);
     if (!charEntity || charEntity.type !== "character") return;
 
-    if (charEntity.playable.ownerId !== userId && inst.masterId !== userId) return;
+    if (charEntity.ownerId !== userId && inst.masterId !== userId) return;
 
     const quantity = normalizeQuantity(qty);
 
     // Find the shop item and its cost
     let shopItem = null;
-    for (const entity of inst.entities) {
+    for (const entity of Game.getEntities(inst)) {
       if (entity.type === "campfire") {
-        const found = entity.playable.shopItems.find((si) => si.item.id === itemId);
+        const found = (entity as any).shopItems.find((si: any) => si.id === itemId);
         if (found) {
           shopItem = found;
           break;
@@ -221,9 +221,7 @@ export const register = (ctx: SocketContext) => {
     if (!currencyItem) return;
 
     // Check if character has enough currency
-    const currencyInv = charEntity.playable.inventory.find(
-      (inv) => inv.item.id === currencyItem.id
-    );
+    const currencyInv = charEntity.inventory.find((inv) => inv.id === currencyItem.id);
     if (!currencyInv || currencyInv.quantity < totalCost) {
       socket.emit("error", "Insufficient currency");
       return;
@@ -238,7 +236,7 @@ export const register = (ctx: SocketContext) => {
           .delete(schema.inventory)
           .where(
             and(
-              eq(schema.inventory.characterId, charEntity.playable.id),
+              eq(schema.inventory.characterId, charEntity.id),
               eq(schema.inventory.itemId, currencyItem.id)
             )
           );
@@ -248,14 +246,14 @@ export const register = (ctx: SocketContext) => {
           .set({ quantity: remaining })
           .where(
             and(
-              eq(schema.inventory.characterId, charEntity.playable.id),
+              eq(schema.inventory.characterId, charEntity.id),
               eq(schema.inventory.itemId, currencyItem.id)
             )
           );
       }
 
       // Add purchased item
-      await upsertCharacterInventory(tx, charEntity.playable.id, itemId, quantity);
+      await upsertCharacterInventory(tx, charEntity.id, itemId, quantity);
     });
 
     const fresh = await Lobby.getInstance(lobbyId);
@@ -266,12 +264,12 @@ export const register = (ctx: SocketContext) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
-    const campfireEntity = inst.entities.find((e) => e.id === campfireEntityId);
+    const campfireEntity = Game.getEntities(inst).find((e) => e.id === campfireEntityId);
     if (!campfireEntity || campfireEntity.type !== "campfire") return;
 
     socket.emit("game:campfire:info", {
       campfireId: campfireEntity.id,
-      shopItems: campfireEntity.playable.shopItems,
+      shopItems: (campfireEntity as any).shopItems,
     });
   });
 };

@@ -46,7 +46,7 @@ export const usePermissions = create<PermissionsStore>((set, get) => ({
       if (instance.data.turn === -1) {
         canEndTurn = isMaster;
       } else if (current?.type === "character") {
-        canEndTurn = current.playable.ownerId === userId;
+        canEndTurn = current.ownerId === userId;
       } else if (current?.type === "monster") {
         canEndTurn = isMaster;
       }
@@ -55,7 +55,7 @@ export const usePermissions = create<PermissionsStore>((set, get) => ({
     const canControlCurrent = Boolean(
       userId &&
       current &&
-      ((current.type === "character" && current.playable.ownerId === userId) ||
+      ((current.type === "character" && current.ownerId === userId) ||
         (current.type === "monster" && isMaster))
     );
 
@@ -75,14 +75,14 @@ export const usePermissions = create<PermissionsStore>((set, get) => ({
   isOwner: (entity) => {
     const userId = get().userId;
     if (!userId) return false;
-    return entity.type === "character" && entity.playable.ownerId === userId;
+    return entity.type === "character" && entity.ownerId === userId;
   },
 
   canControlEntity: (entity) => {
     const userId = get().userId;
     const isMaster = get().isMaster;
     if (!userId) return false;
-    if (entity.type === "character") return entity.playable.ownerId === userId;
+    if (entity.type === "character") return entity.ownerId === userId;
     if (entity.type === "monster") return isMaster;
     return false;
   },

@@ -60,7 +60,7 @@ export const CampfireControls = () => {
             <Context key={campfire.id}>
               <Context.Trigger>
                 <Button size="sm" variant={"outline"} className="w-full">
-                  <span>{campfire.playable.name}</span>
+                  <span>{(campfire as any).name ?? "Campfire"}</span>
                   <span className="text-muted-foreground text-xs">
                     ({campfire.position.x},{campfire.position.z})
                   </span>

@@ -2,7 +2,7 @@
 
 import { db, schema } from "@/lib/db";
 import { Game } from "@/lib/game";
-import type { Lobby } from "@/lib/types/lobby";
+import type { Lobby } from "@/types/lobby";
 import { and, eq, gt } from "drizzle-orm";
 
 const normalizeData = (data: Partial<Game.Data> & Record<string, unknown>): Game.Data => ({
@@ -46,34 +46,57 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
 
   const entities: Array<Game.Entity> = results.entities.map((e): Game.Entity => {
     if (e.type === "character") {
-      const playable = e.character!;
+      const character = e.character!;
       return {
+        ...character,
         id: e.id,
+        characterId: character.id,
         position: e.position,
-        actions: e.actions ?? playable.maxActions ?? 0,
+        actions: e.actions ?? character.maxActions ?? 0,
         type: "character",
-        playable,
-      };
+        inventory: character.inventory.map((inv) => ({
+          ...inv.item,
+          equipped: inv.equipped,
+          quantity: inv.quantity,
+        })),
+      } as any;
     }
 
     if (e.type === "chest") {
-      const playable = e.chest!;
-      return { id: e.id, position: e.position, actions: 0, type: "chest", playable };
+      const chest = e.chest!;
+      return {
+        ...chest,
+        id: e.id,
+        chestId: chest.id,
+        position: e.position,
+        actions: 0,
+        type: "chest",
+        inventory: chest.inventory.map((inv) => ({ ...inv.item, quantity: inv.quantity })),
+      } as any;
     }
 
     if (e.type === "campfire") {
-      const playable = e.campfire!;
-      return { id: e.id, position: e.position, actions: 0, type: "campfire", playable };
+      const campfire = e.campfire!;
+      return {
+        ...campfire,
+        id: e.id,
+        campfireId: campfire.id,
+        position: e.position,
+        actions: 0,
+        type: "campfire",
+        shopItems: campfire.shopItems.map((shop) => ({ ...shop.item, cost: shop.cost })),
+      } as any;
     }
 
-    const playable = e.monster!;
+    const monster = e.monster!;
     return {
+      ...monster,
       id: e.id,
+      monsterId: monster.id,
       position: e.position,
-      actions: e.actions ?? playable.maxActions ?? 0,
+      actions: e.actions ?? monster.maxActions ?? 0,
       type: "monster",
-      playable,
-    };
+    } as any;
   });
 
   const characters = entities.filter(
@@ -90,7 +113,6 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
   return {
     ...results,
     data,
-    entities,
     characters,
     monsters,
     chests,

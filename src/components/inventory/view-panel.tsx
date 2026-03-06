@@ -24,11 +24,11 @@ export const ViewPanel = ({ character, onClose, readonly }: ViewPanelProps) => {
       <Dialog.Content className="p-0 text-lg select-none">
         <div className="grid h-full grid-cols-3 gap-3">
           <section className="flex h-full flex-col gap-6 border-r-6 p-6">
-            <Dialog.Title>{character.playable.name}</Dialog.Title>
+            <Dialog.Title>{character.name}</Dialog.Title>
             <Dialog.Description className="-mt-6 mb-0">
               {readonly ? "Viewing character" : "Your character"}
             </Dialog.Description>
-            <CharacterInfo character={character.playable} />
+            <CharacterInfo character={character} />
           </section>
           <section className="col-span-2 flex flex-col gap-3 overflow-auto p-6">
             <InventoryList

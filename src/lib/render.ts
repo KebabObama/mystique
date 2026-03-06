@@ -1,4 +1,4 @@
-import type { RenderDistanceType, RenderPointerType } from "@/lib/types/render";
+import type { RenderDistanceType, RenderPointerType } from "@/types/render";
 
 export namespace Render {
   export type PointerType = RenderPointerType;

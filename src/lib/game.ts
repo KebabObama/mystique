@@ -1,23 +1,23 @@
 import type {
   GameAbility,
   GameAttribute,
-  GameCampfire,
-  GameCampfireEntity,
-  GameCharacter,
-  GameCharacterEntity,
-  GameChest,
-  GameChestEntity,
-  GameCombatEntity,
+  Campfire as GameCampfire,
+  CampfireEntity as GameCampfireEntity,
+  Character as GameCharacter,
+  CharacterEntity as GameCharacterEntity,
+  Chest as GameChest,
+  ChestEntity as GameChestEntity,
+  CombatEntity as GameCombatEntity,
   GameData,
   GameEffect,
-  GameEntity,
-  GameInstance,
+  Entity as GameEntity,
+  Instance as GameInstance,
   GameItemType,
-  GameMonster,
-  GameMonsterEntity,
-  GamePosition,
+  Monster as GameMonster,
+  MonsterEntity as GameMonsterEntity,
+  Position as GamePosition,
   GameRace,
-} from "@/lib/types/game";
+} from "@/types/game";
 import { BicepsFlexed, Bone, Brain, LucideIcon, Rabbit } from "lucide-react";
 
 export namespace Game {
@@ -91,12 +91,12 @@ export namespace Game {
   ): Game.Entity | undefined => getEntities(instance).find((entity) => entity.id === entityId);
 
   export const getEntityAbilities = (entity: Game.Entity): Array<Game.Ability> => {
-    if (entity.type === "monster") return entity.playable.abilities;
+    if (entity.type === "monster") return entity.abilities;
     if (entity.type === "chest" || entity.type === "campfire") return [];
 
-    return entity.playable.inventory
-      .filter((entry) => entry.equipped && entry.item.type === "weapon")
-      .flatMap((entry) => entry.item.abilities);
+    return entity.inventory
+      .filter((entry: any) => entry.equipped && entry.type === "weapon")
+      .flatMap((entry: any) => entry.abilities);
   };
 
   export const calculateCharacterStats = (
@@ -193,6 +193,7 @@ export namespace Game {
     ability: Game.Ability,
     entities: Array<Game.Entity>
   ): Array<Game.Position> => {
+    void entities;
     const maxRange = Math.max(0, ability.range);
     const possible: Array<Position> = [];
 
@@ -200,8 +201,7 @@ export namespace Game {
       for (let dz = -maxRange; dz <= maxRange; dz++) {
         if (Math.abs(dx) + Math.abs(dz) > maxRange) continue;
         const target = { x: caster.position.x + dx, z: caster.position.z + dz };
-        const victims = getAbilityVictims(entities, ability, target);
-        if (victims.length > 0) possible.push(target);
+        possible.push(target);
       }
     }
 
@@ -214,7 +214,7 @@ export namespace Game {
 
     // Count equipped items of this type
     const equippedOfType = character.inventory.filter(
-      (inv) => inv.equipped && inv.item.type === itemType
+      (inv: any) => inv.equipped && inv.type === itemType
     ).length;
 
     // Enforce slot limits: 2 for rings, 1 for everything else

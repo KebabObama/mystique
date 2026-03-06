@@ -9,14 +9,17 @@ export const NO_PERMISSIONS: Permissions = { canView: false, canEdit: false, can
 export const getEntries = (entity: Game.Entity): ListEntry[] => {
   if (entity.type === "monster" || entity.type === "campfire") return [];
 
-  return entity.playable.inventory
-    .map((entry): ListEntry => ({ item: entry.item, quantity: entry.quantity }))
+  return entity.inventory
+    .map(
+      (entry): ListEntry => ({ item: { id: entry.id, name: entry.name }, quantity: entry.quantity })
+    )
     .sort((a: ListEntry, b: ListEntry) => a.item.name.localeCompare(b.item.name));
 };
 
 export const getEntityLabel = (entity: Game.Entity) => {
-  if (entity.type === "chest") return entity.playable.name || "Chest";
-  return entity.playable.name;
+  if (entity.type === "chest") return entity.name || "Chest";
+  if (entity.type === "campfire") return "Campfire";
+  return entity.name;
 };
 
 export const getInventoryDescription = (permissions: Permissions) => {
@@ -30,7 +33,7 @@ export const getManhattanDistance = (a: Game.Position, b: Game.Position) =>
 
 export const getEntityInventory = (entity: Game.Entity) => {
   if (entity.type === "monster" || entity.type === "campfire") return [];
-  return entity.playable.inventory;
+  return entity.inventory;
 };
 
 export const getPermissions = (
@@ -51,7 +54,7 @@ export const getPermissions = (
     return { canView: true, canEdit: canUseMasterPermissions, canTransfer: true };
   }
 
-  const isOwner = entity.playable.ownerId === userId;
+  const isOwner = entity.ownerId === userId;
   return {
     canView: true,
     canEdit: canUseMasterPermissions && isOnTurn,

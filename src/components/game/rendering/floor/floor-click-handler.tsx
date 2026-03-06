@@ -22,7 +22,7 @@ export const FloorClickHandler = ({ viableAbility }: Props) => {
   const actions =
     current?.actions ??
     (current && (current.type === "character" || current?.type === "monster")
-      ? current.playable.maxActions
+      ? current.maxActions
       : 0) ??
     0;
 

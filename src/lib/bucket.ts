@@ -1,4 +1,4 @@
-import type { BucketNames } from "@/lib/types/bucket";
+import type { BucketNames } from "@/types/bucket";
 import { lookup } from "mime-types";
 import { Client } from "minio";
 

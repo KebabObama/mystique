@@ -198,7 +198,7 @@ export const MonsterControls = ({ monsters }: { monsters: MonsterDef[] }) => {
                     <Context.Trigger>
                       <Button size="sm" variant="outline" className="w-full text-xs">
                         <Skull className="size-3" />
-                        <span className="truncate">{monster.playable.name}</span>
+                        <span className="truncate">{monster.name}</span>
                         <span className="text-muted-foreground text-[10px]">
                           ({monster.position.x},{monster.position.z})
                         </span>

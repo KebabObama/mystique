@@ -125,8 +125,7 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
             className={`col-span-2 mt-12 mr-3 flex flex-col items-center gap-6 p-3 ${!character.inventory.length && "justify-center"}`}
           >
             {character.inventory.length > 0 ? (
-              character.inventory.map((inv) => {
-                const item = "item" in inv ? ({ ...inv, ...inv.item } as any) : inv;
+              character.inventory.map((item) => {
                 return <ItemCard item={item} key={item.id} />;
               })
             ) : (

@@ -32,7 +32,7 @@ export const register = (ctx: SocketContext) => {
         currentEntity &&
         (currentEntity.type === "character" || currentEntity.type === "monster")
       ) {
-        const maxActions = currentEntity.playable.maxActions ?? 0;
+        const maxActions = currentEntity.maxActions ?? 0;
         await db
           .update(schema.lobbyEntity)
           .set({ actions: maxActions })
@@ -67,13 +67,13 @@ export const register = (ctx: SocketContext) => {
     const entity = Game.getEntityById(inst, entityId);
     if (!entity) return;
     if (entity.type === "chest" || entity.type === "campfire") return;
-    if (entity.type === "character" && entity.playable.ownerId !== userId) return;
+    if (entity.type === "character" && entity.ownerId !== userId) return;
     if (entity.type === "monster" && userId !== inst.masterId) return;
-    const currentActions = entity.actions ?? entity.playable.maxActions ?? 0;
+    const currentActions = entity.actions ?? entity.maxActions ?? 0;
     if (currentActions <= 0) return;
 
     const positions = Game.getEntities(inst).map((e) => e.position);
-    const { stamina } = entity.playable;
+    const { stamina } = entity;
     const possible: Game.Position[] = [];
     for (let dx = -stamina; dx <= stamina; dx++) {
       for (let dz = -stamina; dz <= stamina; dz++) {
@@ -111,14 +111,14 @@ export const register = (ctx: SocketContext) => {
     if (!caster) return;
     if (caster.type === "chest" || caster.type === "campfire") return;
 
-    if (caster.type === "character" && caster.playable.ownerId !== userId) return;
+    if (caster.type === "character" && caster.ownerId !== userId) return;
     if (caster.type === "monster" && inst.masterId !== userId) return;
 
     const abilities = Game.getEntityAbilities(caster);
     const ability = abilities.find((entry) => entry.name === abilityName);
     if (!ability) return;
 
-    const currentActions = caster.actions ?? caster.playable.maxActions ?? 0;
+    const currentActions = caster.actions ?? caster.maxActions ?? 0;
     if (currentActions < ability.cost) return;
 
     const origin = caster.position;
@@ -138,28 +138,28 @@ export const register = (ctx: SocketContext) => {
       for (const victim of victims) {
         const rawAmount = Math.floor(Math.random() * (rollMax - rollMin + 1)) + rollMin;
         const adjustedAmount =
-          rawAmount > 0 ? Math.max(rawAmount - (victim.playable.armor ?? 0), 0) : rawAmount;
+          rawAmount > 0 ? Math.max(rawAmount - (victim.armor ?? 0), 0) : rawAmount;
 
-        const currentHp = victim.playable.hp ?? victim.playable.maxHp ?? 0;
-        const maxHp = victim.playable.maxHp ?? currentHp;
+        const currentHp = victim.hp ?? victim.maxHp ?? 0;
+        const maxHp = victim.maxHp ?? currentHp;
         const nextHp = Math.max(0, Math.min(maxHp, currentHp - adjustedAmount));
 
         if (victim.type === "character") {
           await tx
             .update(schema.character)
             .set({ hp: nextHp })
-            .where(eq(schema.character.id, victim.playable.id));
+            .where(eq(schema.character.id, victim.id));
         } else {
           await tx
             .update(schema.monster)
             .set({ hp: nextHp })
-            .where(eq(schema.monster.id, victim.playable.id));
+            .where(eq(schema.monster.id, victim.id));
 
           if (nextHp <= 0) {
             deadMonsterDrops.push({
               lobbyEntityId: victim.id,
               position: victim.position,
-              name: `${victim.playable.name} Loot`,
+              name: `${victim.name} Loot`,
             });
           }
         }
@@ -213,9 +213,9 @@ export const register = (ctx: SocketContext) => {
         .where(eq(schema.lobbyEntity.id, caster.id));
     });
 
-    const actorName = caster.playable.name;
+    const actorName = caster.name;
     const targetLabel = `(${target.x}, ${target.z})`;
-    const victimNames = victims.map((entry) => entry.playable.name).join(", ");
+    const victimNames = victims.map((entry) => entry.name).join(", ");
     io.to(`game:${inst.id}`).emit("game:message", {
       message: `${actorName} used ${ability.name} at ${targetLabel} and hit ${victimNames}.`,
       variant: "default",

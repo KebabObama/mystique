@@ -254,7 +254,7 @@ export const useGame = create<GameStore>((set, get) => ({
         return possible;
       }
 
-      const { stamina } = entity.playable;
+      const { stamina } = entity;
       if (stamina <= 0) return [];
 
       const start = entity.position;
@@ -369,7 +369,7 @@ export const useGame = create<GameStore>((set, get) => ({
       const ability = mode.ability;
 
       if (current.type === "chest" || current.type === "campfire") return;
-      const actions = current.actions ?? current.playable.maxActions ?? 0;
+      const actions = current.actions ?? current.maxActions ?? 0;
       if (actions < ability.cost) {
         toast.error("Not enough actions.");
         return;

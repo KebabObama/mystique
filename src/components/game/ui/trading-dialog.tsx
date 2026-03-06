@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { Game } from "@/lib/game";
 import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
 import { useUser } from "@/lib/hooks/use-user";
@@ -40,7 +41,7 @@ export const TradingDialog = () => {
 
   const selectedCharacter =
     instance && selectedCharacterId
-      ? instance.entities.find(
+      ? Game.getEntities(instance).find(
           (entity): entity is Extract<typeof entity, { type: "character" }> =>
             entity.id === selectedCharacterId && entity.type === "character"
         )
@@ -56,7 +57,7 @@ export const TradingDialog = () => {
 
   const firstCharacter =
     session && instance
-      ? instance.entities.find(
+      ? Game.getEntities(instance).find(
           (entity): entity is Extract<typeof entity, { type: "character" }> =>
             entity.id === session.entityAId && entity.type === "character"
         )
@@ -64,7 +65,7 @@ export const TradingDialog = () => {
 
   const secondCharacter =
     session && instance
-      ? instance.entities.find(
+      ? Game.getEntities(instance).find(
           (entity): entity is Extract<typeof entity, { type: "character" }> =>
             entity.id === session.entityBId && entity.type === "character"
         )
@@ -82,12 +83,12 @@ export const TradingDialog = () => {
     !!userId &&
     !!session &&
     !!firstCharacter &&
-    (firstCharacter.playable.ownerId === userId || instance.masterId === userId);
+    (firstCharacter.ownerId === userId || instance.masterId === userId);
   const controlsSecond =
     !!userId &&
     !!session &&
     !!secondCharacter &&
-    (secondCharacter.playable.ownerId === userId || instance.masterId === userId);
+    (secondCharacter.ownerId === userId || instance.masterId === userId);
 
   const applyOffer = (entityId: string, draft: DraftState) => {
     if (!session) return;
@@ -139,32 +140,31 @@ export const TradingDialog = () => {
     canEdit: boolean
   ) => {
     const draft = side === "a" ? draftA : draftB;
-    const coinMax =
-      character.playable.inventory.find((entry) => entry.item.name === "Gold Coin")?.quantity ?? 0;
+    const coinMax = character.inventory.find((entry) => entry.name === "Gold Coin")?.quantity ?? 0;
 
     return (
       <div className="space-y-2 rounded-lg border p-2">
-        <p className="text-sm font-semibold">{character.playable.name} inventory</p>
+        <p className="text-sm font-semibold">{character.name} inventory</p>
         <div className="max-h-72 space-y-2 overflow-y-auto">
-          {character.playable.inventory.length === 0 ? (
+          {character.inventory.length === 0 ? (
             <p className="text-muted-foreground text-sm">Empty</p>
           ) : (
-            character.playable.inventory.map((entry) => (
-              <div key={entry.item.id} className="flex items-center justify-between gap-2 text-sm">
+            character.inventory.map((entry) => (
+              <div key={entry.id} className="flex items-center justify-between gap-2 text-sm">
                 <span>
-                  {entry.item.name} (x{entry.quantity})
+                  {entry.name} (x{entry.quantity})
                 </span>
                 <input
                   type="number"
                   min={0}
                   max={entry.quantity}
                   disabled={!canEdit}
-                  value={draft.items[entry.item.id] ?? 0}
+                  value={draft.items[entry.id] ?? 0}
                   onChange={(e) =>
                     updateItemDraft(
                       side,
                       character.id,
-                      entry.item.id,
+                      entry.id,
                       entry.quantity,
                       Number(e.target.value)
                     )
@@ -201,15 +201,13 @@ export const TradingDialog = () => {
 
     return (
       <div className="space-y-2 rounded-lg border p-2">
-        <p className="text-sm font-semibold">{character.playable.name} barter</p>
+        <p className="text-sm font-semibold">{character.name} barter</p>
         <div className="max-h-72 space-y-1 overflow-y-auto text-sm">
           {offer.items.length === 0 ? (
             <p className="text-muted-foreground">No items offered</p>
           ) : (
             offer.items.map((item) => {
-              const itemName = character.playable.inventory.find(
-                (entry) => entry.item.id === item.itemId
-              )?.item.name;
+              const itemName = character.inventory.find((entry) => entry.id === item.itemId)?.name;
               return (
                 <p key={item.itemId}>
                   {itemName ?? item.itemId} × {item.quantity}
@@ -243,10 +241,10 @@ export const TradingDialog = () => {
 
               <div className="col-span-4 grid grid-cols-4 gap-3 pt-2">
                 <div className="text-muted-foreground col-span-4 text-sm">
-                  Status: {firstCharacter.playable.name}{" "}
+                  Status: {firstCharacter.name}{" "}
                   {session.confirmed[firstCharacter.id] ? "accepted" : "pending"}
                   {" · "}
-                  {secondCharacter.playable.name}{" "}
+                  {secondCharacter.name}{" "}
                   {session.confirmed[secondCharacter.id] ? "accepted" : "pending"}
                 </div>
 
@@ -263,8 +261,8 @@ export const TradingDialog = () => {
                     }
                   >
                     {session.confirmed[firstCharacter.id]
-                      ? `${firstCharacter.playable.name} accepted ✓`
-                      : `Accept as ${firstCharacter.playable.name}`}
+                      ? `${firstCharacter.name} accepted ✓`
+                      : `Accept as ${firstCharacter.name}`}
                   </Button>
                 )}
 
@@ -281,8 +279,8 @@ export const TradingDialog = () => {
                     }
                   >
                     {session.confirmed[secondCharacter.id]
-                      ? `${secondCharacter.playable.name} accepted ✓`
-                      : `Accept as ${secondCharacter.playable.name}`}
+                      ? `${secondCharacter.name} accepted ✓`
+                      : `Accept as ${secondCharacter.name}`}
                   </Button>
                 )}
               </div>

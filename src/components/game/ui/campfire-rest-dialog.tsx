@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
+import { Game } from "@/lib/game";
 import { useDialog } from "@/lib/hooks/use-dialog";
 import { useGame } from "@/lib/hooks/use-game";
 import React from "react";
@@ -16,15 +17,15 @@ export const CampfireRestDialog = () => {
 
   if (!open || !selectedCharacterId || !instance) return null;
 
-  const charEntity = instance.entities.find((e) => e.id === selectedCharacterId);
+  const charEntity = Game.getEntities(instance).find((e) => e.id === selectedCharacterId);
   if (!charEntity || charEntity.type !== "character") return null;
 
-  const maxActions = charEntity.actions ?? charEntity.playable.maxActions ?? 0;
+  const maxActions = charEntity.actions ?? charEntity.maxActions ?? 0;
   const healing = Math.min(
     actionsToRest * 20, // Max 20% of maxHp per action spent
-    charEntity.playable.maxHp
+    charEntity.maxHp
   );
-  const projectedHp = Math.min(charEntity.playable.hp + healing, charEntity.playable.maxHp);
+  const projectedHp = Math.min(charEntity.hp + healing, charEntity.maxHp);
 
   const handleRest = () => {
     useGame.getState().send("campfire:rest", selectedCharacterId, actionsToRest);
@@ -52,15 +53,13 @@ export const CampfireRestDialog = () => {
 
           <div className="space-y-2 rounded-lg bg-slate-100 p-3">
             <p className="text-sm">
-              <span className="font-medium">Current HP:</span> {charEntity.playable.hp} /
-              {charEntity.playable.maxHp}
+              <span className="font-medium">Current HP:</span> {charEntity.hp} /{charEntity.maxHp}
             </p>
             <p className="text-sm">
               <span className="font-medium">Healing:</span> +{healing}
             </p>
             <p className="text-sm">
-              <span className="font-medium">After rest:</span> {projectedHp} /
-              {charEntity.playable.maxHp}
+              <span className="font-medium">After rest:</span> {projectedHp} /{charEntity.maxHp}
             </p>
           </div>
 

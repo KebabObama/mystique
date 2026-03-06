@@ -33,9 +33,9 @@ const isParticipantController = (
   entityId: string
 ) => {
   if (!inst) return false;
-  const entity = inst.entities.find((entry) => entry.id === entityId);
+  const entity = Game.getEntities(inst).find((entry) => entry.id === entityId);
   if (!entity || entity.type !== "character") return false;
-  return entity.playable.ownerId === userId || inst.masterId === userId;
+  return entity.ownerId === userId || inst.masterId === userId;
 };
 
 const sanitizeOffer = (offer: unknown, entity: CharacterEntity): TradeOffer => {
@@ -45,7 +45,7 @@ const sanitizeOffer = (offer: unknown, entity: CharacterEntity): TradeOffer => {
   };
 
   const ownedByItemId = new Map<string, number>(
-    entity.playable.inventory.map((entry) => [entry.item.id, entry.quantity])
+    entity.inventory.map((entry) => [entry.id, entry.quantity])
   );
   const normalized = new Map<string, number>();
 
@@ -64,7 +64,7 @@ const sanitizeOffer = (offer: unknown, entity: CharacterEntity): TradeOffer => {
     normalized.set(itemId, Math.min(owned, current + requested));
   }
 
-  const coinEntry = entity.playable.inventory.find((entry) => entry.item.name === "Gold Coin");
+  const coinEntry = entity.inventory.find((entry) => entry.name === "Gold Coin");
   const maxCurrency = coinEntry?.quantity ?? 0;
   const requestedCurrency =
     typeof payload.currency === "number" && Number.isFinite(payload.currency)
@@ -132,11 +132,11 @@ const settleTrade = async (
   inst: NonNullable<Awaited<ReturnType<typeof exists>>>,
   session: TradeSession
 ) => {
-  const entityA = inst.entities.find(
+  const entityA = Game.getEntities(inst).find(
     (entry): entry is CharacterEntity =>
       entry.id === session.entityAId && entry.type === "character"
   );
-  const entityB = inst.entities.find(
+  const entityB = Game.getEntities(inst).find(
     (entry): entry is CharacterEntity =>
       entry.id === session.entityBId && entry.type === "character"
   );
@@ -150,13 +150,13 @@ const settleTrade = async (
     const offerB = session.offers[session.entityBId] ?? EMPTY_OFFER;
 
     for (const item of offerA.items) {
-      await debitCharacterInventory(tx, entityA.playable.id, item.itemId, item.quantity);
-      await upsertCharacterInventory(tx, entityB.playable.id, item.itemId, item.quantity);
+      await debitCharacterInventory(tx, entityA.id, item.itemId, item.quantity);
+      await upsertCharacterInventory(tx, entityB.id, item.itemId, item.quantity);
     }
 
     for (const item of offerB.items) {
-      await debitCharacterInventory(tx, entityB.playable.id, item.itemId, item.quantity);
-      await upsertCharacterInventory(tx, entityA.playable.id, item.itemId, item.quantity);
+      await debitCharacterInventory(tx, entityB.id, item.itemId, item.quantity);
+      await upsertCharacterInventory(tx, entityA.id, item.itemId, item.quantity);
     }
 
     const hasCurrency = offerA.currency > 0 || offerB.currency > 0;
@@ -167,13 +167,13 @@ const settleTrade = async (
       if (!currencyItem) throw new Error("Currency item does not exist");
 
       if (offerA.currency > 0) {
-        await debitCharacterInventory(tx, entityA.playable.id, currencyItem.id, offerA.currency);
-        await upsertCharacterInventory(tx, entityB.playable.id, currencyItem.id, offerA.currency);
+        await debitCharacterInventory(tx, entityA.id, currencyItem.id, offerA.currency);
+        await upsertCharacterInventory(tx, entityB.id, currencyItem.id, offerA.currency);
       }
 
       if (offerB.currency > 0) {
-        await debitCharacterInventory(tx, entityB.playable.id, currencyItem.id, offerB.currency);
-        await upsertCharacterInventory(tx, entityA.playable.id, currencyItem.id, offerB.currency);
+        await debitCharacterInventory(tx, entityB.id, currencyItem.id, offerB.currency);
+        await upsertCharacterInventory(tx, entityA.id, currencyItem.id, offerB.currency);
       }
     }
   });
@@ -188,8 +188,8 @@ export const register = (ctx: SocketContext) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
-    const fromEntity = inst.entities.find((e) => e.id === fromEntityId);
-    const toEntity = inst.entities.find((e) => e.id === toEntityId);
+    const fromEntity = Game.getEntities(inst).find((e) => e.id === fromEntityId);
+    const toEntity = Game.getEntities(inst).find((e) => e.id === toEntityId);
 
     if (!fromEntity || !toEntity) return;
     if (fromEntity.type !== "character" || toEntity.type !== "character") return;
@@ -229,7 +229,7 @@ export const register = (ctx: SocketContext) => {
     if (actorEntityId !== session.entityAId && actorEntityId !== session.entityBId) return;
     if (!isParticipantController(inst, userId, actorEntityId)) return;
 
-    const participantEntity = inst.entities.find(
+    const participantEntity = Game.getEntities(inst).find(
       (entry): entry is CharacterEntity => entry.id === actorEntityId && entry.type === "character"
     );
     if (!participantEntity) return;

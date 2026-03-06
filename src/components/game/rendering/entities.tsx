@@ -35,7 +35,7 @@ const EntityMesh = ({
 
   const visible = Render.distance(entity.position, target, "chebyshev") <= 25;
 
-  const meshPath = entity.playable?.meshPath;
+  const meshPath = (entity as any)?.meshPath;
 
   useEffect(() => {
     setLoadedModel(null);
@@ -55,7 +55,7 @@ const EntityMesh = ({
 
   const getColor = (): string => {
     if (entity.type === "character") {
-      return entity.id === currentId && entity.playable.ownerId === userId ? "green" : "blue";
+      return entity.id === currentId && entity.ownerId === userId ? "green" : "blue";
     }
     const colors: Record<string, string> = {
       monster: "red",
