@@ -85,4 +85,3 @@ export const applyStateSync = (
     campfires: applyEntityPatch(current.campfires, patch.campfires),
   };
 };
-

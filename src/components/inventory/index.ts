@@ -1,4 +1,5 @@
 export { InventoryButton } from "./inventory-button";
+export { InventoryPanel } from "./inventory-panel";
 export {
   CharacterInfo,
   ChestInfo,
@@ -6,7 +7,6 @@ export {
   InventoryList,
   MonsterInfo,
 } from "./inventory-panel.components";
-export { InventoryPanel } from "./inventory-panel";
 export { MasterPanel } from "./master-panel";
 export { StoragePanel } from "./storage-panel";
 export { ViewPanel } from "./view-panel";

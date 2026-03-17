@@ -130,4 +130,3 @@ export type StatePatch = {
 export type StateSync = { type: "full"; instance: Instance } | { type: "patch"; patch: StatePatch };
 
 export type CombatEntity = Extract<Entity, { type: "character" | "monster" }>;
-

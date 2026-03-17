@@ -1,11 +1,6 @@
 import type { Character } from "./game";
 
-export type CharacterLobby = {
-  id: string;
-  name: string;
-  memberCount: number;
-  members: string[];
-};
+export type CharacterLobby = { id: string; name: string; memberCount: number; members: string[] };
 
 export type CharacterWithLobby = Character & { lobby: CharacterLobby | null };
 
