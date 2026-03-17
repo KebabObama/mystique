@@ -20,7 +20,7 @@ export const register = (ctx: SocketContext) => {
     if (inst.masterId !== userId) return;
 
     const target = InGameHelpers.getEntityById(inst, targetEntityId);
-    if (!target || target.type === "monster") return;
+    if (!target || target.type === "monster" || target.type === "campfire") return;
 
     const item = await db.query.item.findFirst({ where: eq(schema.item.id, itemId) });
     if (!item) return;
@@ -29,11 +29,11 @@ export const register = (ctx: SocketContext) => {
 
     await db.transaction(async (tx) => {
       if (target.type === "character") {
-        await upsertCharacterInventory(tx, target.id, item.id, quantity);
+        await upsertCharacterInventory(tx, target.characterId, item.id, quantity);
         return;
       }
 
-      await upsertChestInventory(tx, target.id as any, item.id, quantity);
+      await upsertChestInventory(tx, target.chestId, item.id, quantity);
     });
 
     await refresh(ctx, lobbyId);
@@ -51,7 +51,13 @@ export const register = (ctx: SocketContext) => {
       const fromEntity = InGameHelpers.getEntityById(inst, fromEntityId);
       const toEntity = InGameHelpers.getEntityById(inst, toEntityId);
       if (!fromEntity || !toEntity) return;
-      if (fromEntity.type === "monster" || toEntity.type === "monster") return;
+      if (
+        fromEntity.type === "monster" ||
+        fromEntity.type === "campfire" ||
+        toEntity.type === "monster" ||
+        toEntity.type === "campfire"
+      )
+        return;
 
       const isMaster = inst.masterId === userId;
       if (!isMaster) {
@@ -69,7 +75,7 @@ export const register = (ctx: SocketContext) => {
         if (fromEntity.type === "character") {
           const source = await tx.query.inventory.findFirst({
             where: and(
-              eq(schema.inventory.characterId, fromEntity.id),
+              eq(schema.inventory.characterId, fromEntity.characterId),
               eq(schema.inventory.itemId, itemId)
             ),
           });
@@ -80,7 +86,7 @@ export const register = (ctx: SocketContext) => {
               .delete(schema.inventory)
               .where(
                 and(
-                  eq(schema.inventory.characterId, fromEntity.id),
+                  eq(schema.inventory.characterId, fromEntity.characterId),
                   eq(schema.inventory.itemId, itemId)
                 )
               );
@@ -90,7 +96,7 @@ export const register = (ctx: SocketContext) => {
               .set({ quantity: source.quantity - quantity })
               .where(
                 and(
-                  eq(schema.inventory.characterId, fromEntity.id),
+                  eq(schema.inventory.characterId, fromEntity.characterId),
                   eq(schema.inventory.itemId, itemId)
                 )
               );
@@ -98,7 +104,7 @@ export const register = (ctx: SocketContext) => {
         } else {
           const source = await tx.query.chestInventory.findFirst({
             where: and(
-              eq(schema.chestInventory.chestId, fromEntity.id as any),
+              eq(schema.chestInventory.chestId, fromEntity.chestId),
               eq(schema.chestInventory.itemId, itemId)
             ),
           });
@@ -109,7 +115,7 @@ export const register = (ctx: SocketContext) => {
               .delete(schema.chestInventory)
               .where(
                 and(
-                  eq(schema.chestInventory.chestId, fromEntity.id as any),
+                  eq(schema.chestInventory.chestId, fromEntity.chestId),
                   eq(schema.chestInventory.itemId, itemId)
                 )
               );
@@ -119,7 +125,7 @@ export const register = (ctx: SocketContext) => {
               .set({ quantity: source.quantity - quantity })
               .where(
                 and(
-                  eq(schema.chestInventory.chestId, fromEntity.id as any),
+                  eq(schema.chestInventory.chestId, fromEntity.chestId),
                   eq(schema.chestInventory.itemId, itemId)
                 )
               );
@@ -127,11 +133,11 @@ export const register = (ctx: SocketContext) => {
         }
 
         if (toEntity.type === "character") {
-          await upsertCharacterInventory(tx, toEntity.id, itemId, quantity);
+          await upsertCharacterInventory(tx, toEntity.characterId, itemId, quantity);
           return;
         }
 
-        await upsertChestInventory(tx, toEntity.id as any, itemId, quantity);
+        await upsertChestInventory(tx, toEntity.chestId, itemId, quantity);
       });
 
       await refresh(ctx, lobbyId);
@@ -146,13 +152,13 @@ export const register = (ctx: SocketContext) => {
 
     const quantity = normalizeQuantity(qty);
     const entity = InGameHelpers.getEntityById(inst, entityId);
-    if (!entity || entity.type === "monster") return;
+    if (!entity || entity.type === "monster" || entity.type === "campfire") return;
 
     await db.transaction(async (tx) => {
       if (entity.type === "character") {
         const source = await tx.query.inventory.findFirst({
           where: and(
-            eq(schema.inventory.characterId, entity.id),
+            eq(schema.inventory.characterId, entity.characterId),
             eq(schema.inventory.itemId, itemId)
           ),
         });
@@ -162,20 +168,26 @@ export const register = (ctx: SocketContext) => {
           await tx
             .delete(schema.inventory)
             .where(
-              and(eq(schema.inventory.characterId, entity.id), eq(schema.inventory.itemId, itemId))
+              and(
+                eq(schema.inventory.characterId, entity.characterId),
+                eq(schema.inventory.itemId, itemId)
+              )
             );
         } else {
           await tx
             .update(schema.inventory)
             .set({ quantity: source.quantity - quantity })
             .where(
-              and(eq(schema.inventory.characterId, entity.id), eq(schema.inventory.itemId, itemId))
+              and(
+                eq(schema.inventory.characterId, entity.characterId),
+                eq(schema.inventory.itemId, itemId)
+              )
             );
         }
       } else {
         const source = await tx.query.chestInventory.findFirst({
           where: and(
-            eq(schema.chestInventory.chestId, entity.id as any),
+            eq(schema.chestInventory.chestId, entity.chestId),
             eq(schema.chestInventory.itemId, itemId)
           ),
         });
@@ -186,7 +198,7 @@ export const register = (ctx: SocketContext) => {
             .delete(schema.chestInventory)
             .where(
               and(
-                eq(schema.chestInventory.chestId, entity.id as any),
+                eq(schema.chestInventory.chestId, entity.chestId),
                 eq(schema.chestInventory.itemId, itemId)
               )
             );
@@ -196,7 +208,7 @@ export const register = (ctx: SocketContext) => {
             .set({ quantity: source.quantity - quantity })
             .where(
               and(
-                eq(schema.chestInventory.chestId, entity.id as any),
+                eq(schema.chestInventory.chestId, entity.chestId),
                 eq(schema.chestInventory.itemId, itemId)
               )
             );
@@ -223,7 +235,7 @@ export const register = (ctx: SocketContext) => {
     await db.transaction(async (tx) => {
       const source = await tx.query.inventory.findFirst({
         where: and(
-          eq(schema.inventory.characterId, entity.id),
+          eq(schema.inventory.characterId, entity.characterId),
           eq(schema.inventory.itemId, itemId)
         ),
       });
@@ -236,14 +248,20 @@ export const register = (ctx: SocketContext) => {
         await tx
           .delete(schema.inventory)
           .where(
-            and(eq(schema.inventory.characterId, entity.id), eq(schema.inventory.itemId, itemId))
+            and(
+              eq(schema.inventory.characterId, entity.characterId),
+              eq(schema.inventory.itemId, itemId)
+            )
           );
       } else {
         await tx
           .update(schema.inventory)
           .set({ quantity: source.quantity - safeDrop })
           .where(
-            and(eq(schema.inventory.characterId, entity.id), eq(schema.inventory.itemId, itemId))
+            and(
+              eq(schema.inventory.characterId, entity.characterId),
+              eq(schema.inventory.itemId, itemId)
+            )
           );
       }
     });
@@ -264,7 +282,10 @@ export const register = (ctx: SocketContext) => {
     if (!isOwner && !isMaster) return;
 
     const entry = await db.query.inventory.findFirst({
-      where: and(eq(schema.inventory.characterId, entity.id), eq(schema.inventory.itemId, itemId)),
+      where: and(
+        eq(schema.inventory.characterId, entity.characterId),
+        eq(schema.inventory.itemId, itemId)
+      ),
       with: { item: true },
     });
     if (!entry) return;
@@ -274,7 +295,7 @@ export const register = (ctx: SocketContext) => {
     if (!entry.equipped) {
       const equippedCount = await db.query.inventory.findMany({
         where: and(
-          eq(schema.inventory.characterId, entity.id),
+          eq(schema.inventory.characterId, entity.characterId),
           eq(schema.inventory.equipped, true)
         ),
         with: { item: true },
@@ -291,7 +312,12 @@ export const register = (ctx: SocketContext) => {
     await db
       .update(schema.inventory)
       .set({ equipped: !entry.equipped })
-      .where(and(eq(schema.inventory.characterId, entity.id), eq(schema.inventory.itemId, itemId)));
+      .where(
+        and(
+          eq(schema.inventory.characterId, entity.characterId),
+          eq(schema.inventory.itemId, itemId)
+        )
+      );
 
     await refresh(ctx, lobbyId);
   });

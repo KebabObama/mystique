@@ -3,7 +3,83 @@ import { Game } from "@/lib/types";
 export namespace InGameHelpers {
   export const withEffects = (
     effects: Partial<Record<Game.Effect, number>> = {}
-  ): Record<Game.Effect, number> => ({ ...Game.EMPTY_EFFECTS, ...effects });
+  ): Record<Game.Effect, number> =>
+    Game.EFFECTS.reduce(
+      (all, effect) => ({ ...all, [effect]: Math.max(0, Math.floor(effects[effect] ?? 0)) }),
+      { ...Game.EMPTY_EFFECTS }
+    );
+
+  type EffectCarrier = Partial<{
+    effects: Partial<Record<Game.Effect, number>> | null;
+    activeEffects: Partial<Record<Game.Effect, number>> | null;
+  }>;
+
+  export const hasEffects = (effects: Partial<Record<Game.Effect, number>> | null | undefined) =>
+    Game.EFFECTS.some((effect) => (effects?.[effect] ?? 0) > 0);
+
+  export const getStoredEffects = (entity: EffectCarrier): Record<Game.Effect, number> =>
+    withEffects(entity.effects ?? {});
+
+  export const decayEffects = (
+    effects: Partial<Record<Game.Effect, number>> | null | undefined,
+    amount = 1
+  ): Record<Game.Effect, number> =>
+    Game.EFFECTS.reduce(
+      (next, effect) => ({ ...next, [effect]: Math.max(0, (effects?.[effect] ?? 0) - amount) }),
+      { ...Game.EMPTY_EFFECTS }
+    );
+
+  export const getTurnEffects = (entity: EffectCarrier): Record<Game.Effect, number> => {
+    const activeEffects = withEffects(entity.activeEffects ?? {});
+    if (!hasEffects(activeEffects)) return getStoredEffects(entity);
+
+    const storedEffects = getStoredEffects(entity);
+    const decayedActiveEffects = decayEffects(activeEffects);
+
+    return Game.EFFECTS.reduce(
+      (next, effect) => ({
+        ...next,
+        [effect]:
+          activeEffects[effect] + Math.max(0, storedEffects[effect] - decayedActiveEffects[effect]),
+      }),
+      { ...Game.EMPTY_EFFECTS }
+    );
+  };
+
+  export const addEffectStacks = (
+    current: Partial<Record<Game.Effect, number>> | null | undefined,
+    added: Partial<Record<Game.Effect, number>> | null | undefined
+  ): Record<Game.Effect, number> =>
+    Game.EFFECTS.reduce(
+      (next, effect) => ({
+        ...next,
+        [effect]: Math.max(0, (current?.[effect] ?? 0) + (added?.[effect] ?? 0)),
+      }),
+      { ...Game.EMPTY_EFFECTS }
+    );
+
+  export const getEffectiveArmor = (
+    entity: Pick<Game.CombatEntity, "armor"> & EffectCarrier
+  ): number => Math.max(0, entity.armor - getTurnEffects(entity).corroding);
+
+  export const getEffectiveStamina = (
+    entity: Pick<Game.CombatEntity, "stamina"> & EffectCarrier
+  ): number => Math.max(0, entity.stamina - getTurnEffects(entity).frostbite);
+
+  export const resolveTurnStart = (
+    entity: Pick<Game.CombatEntity, "hp" | "maxHp" | "maxActions"> & EffectCarrier
+  ) => {
+    const activeEffects = getStoredEffects(entity);
+    const currentHp = entity.hp ?? entity.maxHp ?? 0;
+    const maxHp = entity.maxHp ?? currentHp;
+
+    return {
+      activeEffects,
+      effects: decayEffects(activeEffects),
+      hp: Math.max(0, Math.min(maxHp, currentHp - activeEffects.burning)),
+      actions: Math.max(0, (entity.maxActions ?? 0) - activeEffects.shocked),
+    };
+  };
 
   export const getEntities = (instance: Game.Instance): Array<Game.Entity> => [
     ...instance.characters,
@@ -14,7 +90,7 @@ export namespace InGameHelpers {
 
   export const getEntityById = (
     instance: Game.Instance,
-    entityId: string
+    entityId: Game.Entity["id"]
   ): Game.Entity | undefined => getEntities(instance).find((entity) => entity.id === entityId);
 
   export const getEntityAbilities = (entity: Game.Entity): Array<Game.Ability> => {
@@ -135,7 +211,10 @@ export namespace InGameHelpers {
     return possible;
   };
 
-  export const canEquipItem = (character: Game.Character, itemType: Game.ItemType): boolean => {
+  export const canEquipItem = (
+    character: Pick<Game.CharacterEntity, "inventory">,
+    itemType: Game.ItemType
+  ): boolean => {
     if (itemType === "misc") return false;
     const equippedOfType = character.inventory.filter(
       (inv: any) => inv.equipped && inv.type === itemType
@@ -149,7 +228,7 @@ export namespace InGameHelpers {
   // ────────────────────────────────────────────────────────────────────────────
 
   export const calculateRestHealing = (
-    character: Game.Character,
+    character: Pick<Game.CharacterEntity, "attributes" | "level" | "maxHp">,
     actionsSpentResting: number
   ): number => {
     const baseHealing = actionsSpentResting;

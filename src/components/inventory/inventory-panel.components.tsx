@@ -84,7 +84,7 @@ export const InventoryList = ({
 /* ------------------------------------------------------------------ */
 
 type InventoryItemActionsProps = {
-  entry: Game.Character["inventory"][number] | Game.Chest["inventory"][number];
+  entry: Game.CharacterEntity["inventory"][number] | Game.ChestEntity["inventory"][number];
   onTransfer?: (itemId: string, quantity: number) => void;
   onDrop?: (itemId: string, quantity: number) => void;
   onEquip?: (itemId: string) => void;
@@ -252,7 +252,7 @@ const StatRow = ({
   </span>
 );
 
-export const CharacterInfo = ({ character }: { character: Game.Character }) => (
+export const CharacterInfo = ({ character }: { character: Game.CharacterEntity }) => (
   <Card className="bg-background text-muted mt-auto">
     <span className="text-foreground mb-1 flex w-full justify-between capitalize">
       <span>{character.race}</span>
@@ -287,14 +287,14 @@ export const CharacterInfo = ({ character }: { character: Game.Character }) => (
   </Card>
 );
 
-export const ChestInfo = ({ chest }: { chest: Game.Chest }) => (
+export const ChestInfo = ({ chest }: { chest: Game.ChestEntity }) => (
   <Card className="bg-background text-muted">
     <StatRow label="Name" value={chest.name} />
     <StatRow label="Items" value={chest.inventory?.length} />
   </Card>
 );
 
-export const MonsterInfo = ({ monster }: { monster: Game.Monster }) => (
+export const MonsterInfo = ({ monster }: { monster: Game.MonsterEntity }) => (
   <Card className="bg-background text-muted">
     <StatRow
       label="Health"

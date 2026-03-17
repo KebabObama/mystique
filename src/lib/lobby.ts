@@ -1,6 +1,7 @@
 "use server";
 
 import { db, schema } from "@/lib/db";
+import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Game, type Lobby } from "@/lib/types";
 import { and, eq, gt } from "drizzle-orm";
 
@@ -48,6 +49,8 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
       const character = e.character!;
       return {
         ...character,
+        activeEffects: InGameHelpers.withEffects(e.activeEffects),
+        effects: InGameHelpers.withEffects(e.effects),
         id: e.id,
         characterId: character.id,
         position: e.position,
@@ -64,7 +67,9 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
     if (e.type === "chest") {
       const chest = e.chest!;
       return {
+        activeEffects: InGameHelpers.withEffects(e.activeEffects),
         ...chest,
+        effects: InGameHelpers.withEffects(e.effects),
         id: e.id,
         chestId: chest.id,
         position: e.position,
@@ -77,7 +82,9 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
     if (e.type === "campfire") {
       const campfire = e.campfire!;
       return {
+        activeEffects: InGameHelpers.withEffects(e.activeEffects),
         ...campfire,
+        effects: InGameHelpers.withEffects(e.effects),
         id: e.id,
         campfireId: campfire.id,
         position: e.position,
@@ -89,7 +96,9 @@ export const getInstance = async (lobbyId: string, tx?: typeof db): Promise<Game
 
     const monster = e.monster!;
     return {
+      activeEffects: InGameHelpers.withEffects(e.activeEffects),
       ...monster,
+      effects: InGameHelpers.withEffects(e.effects),
       id: e.id,
       monsterId: monster.id,
       position: e.position,

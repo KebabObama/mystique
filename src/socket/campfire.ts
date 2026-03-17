@@ -11,15 +11,29 @@ import {
 } from "./helpers";
 
 export const register = (ctx: SocketContext) => {
-  const { socket } = ctx;
+  const { socket, io } = ctx;
 
   // ── Campfire Management ───────────────────────────────────────────────
 
   socket.on("game:campfire:add", async (userId, lobbyId, position) => {
     try {
       const inst = await exists(ctx, userId, lobbyId);
-      if (!inst || inst.masterId !== userId || inst.data.turn !== -1 || !isPosition(position))
+      if (!inst) {
+        console.log("[campfire:add] Instance not found");
         return;
+      }
+      if (inst.masterId !== userId) {
+        console.log("[campfire:add] User is not master");
+        return;
+      }
+      if (inst.data.turn !== -1) {
+        console.log("[campfire:add] Game is not in setup phase, turn:", inst.data.turn);
+        return;
+      }
+      if (!isPosition(position)) {
+        console.log("[campfire:add] Invalid position:", position);
+        return;
+      }
 
       await db.transaction(async (tx) => {
         const [newCampfire] = await tx
@@ -52,6 +66,7 @@ export const register = (ctx: SocketContext) => {
       });
 
       await refresh(ctx, lobbyId);
+      console.log("[campfire:add] Success - campfire placed at", position);
     } catch (error) {
       console.error("[campfire:add] Error:", error);
     }
@@ -122,7 +137,7 @@ export const register = (ctx: SocketContext) => {
       await tx
         .update(schema.character)
         .set({ hp: newHp })
-        .where(eq(schema.character.id, charEntity.id));
+        .where(eq(schema.character.id, charEntity.characterId));
 
       await tx
         .update(schema.lobbyEntity)
@@ -140,15 +155,13 @@ export const register = (ctx: SocketContext) => {
     if (!inst) return;
     if (inst.masterId !== userId) return;
 
-    const campfireEntity = InGameHelpers.getEntities(inst).find(
-      (e) => e.id === campfireEntityId && e.type === "campfire"
-    );
-    if (!campfireEntity) return;
+    const campfireEntity = InGameHelpers.getEntityById(inst, campfireEntityId);
+    if (!campfireEntity || campfireEntity.type !== "campfire") return;
 
     // Clear existing shop items
     await db
       .delete(schema.campfireShopItem)
-      .where(eq(schema.campfireShopItem.campfireId, (campfireEntity as any).campfireId));
+      .where(eq(schema.campfireShopItem.campfireId, campfireEntity.campfireId));
 
     // Add new shop items
     if (itemsList && itemsList.length > 0) {
@@ -156,7 +169,7 @@ export const register = (ctx: SocketContext) => {
         .insert(schema.campfireShopItem)
         .values(
           itemsList.map((item: { itemId: string; cost: number }) => ({
-            campfireId: (campfireEntity as any).campfireId,
+            campfireId: campfireEntity.campfireId,
             itemId: item.itemId,
             cost: item.cost,
           }))
@@ -181,7 +194,7 @@ export const register = (ctx: SocketContext) => {
     let shopItem = null;
     for (const entity of InGameHelpers.getEntities(inst)) {
       if (entity.type === "campfire") {
-        const found = (entity as any).shopItems.find((si: any) => si.id === itemId);
+        const found = entity.shopItems.find((si) => si.id === itemId);
         if (found) {
           shopItem = found;
           break;
@@ -215,7 +228,7 @@ export const register = (ctx: SocketContext) => {
           .delete(schema.inventory)
           .where(
             and(
-              eq(schema.inventory.characterId, charEntity.id),
+              eq(schema.inventory.characterId, charEntity.characterId),
               eq(schema.inventory.itemId, currencyItem.id)
             )
           );
@@ -225,14 +238,14 @@ export const register = (ctx: SocketContext) => {
           .set({ quantity: remaining })
           .where(
             and(
-              eq(schema.inventory.characterId, charEntity.id),
+              eq(schema.inventory.characterId, charEntity.characterId),
               eq(schema.inventory.itemId, currencyItem.id)
             )
           );
       }
 
       // Add purchased item
-      await upsertCharacterInventory(tx, charEntity.id, itemId, quantity);
+      await upsertCharacterInventory(tx, charEntity.characterId, itemId, quantity);
     });
 
     await refresh(ctx, lobbyId, "game:campfire:purchase");
@@ -242,7 +255,7 @@ export const register = (ctx: SocketContext) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
-    const campfireEntity = InGameHelpers.getEntities(inst).find((e) => e.id === campfireEntityId);
+    const campfireEntity = InGameHelpers.getEntityById(inst, campfireEntityId);
     if (!campfireEntity || campfireEntity.type !== "campfire") return;
 
     socket.emit("game:campfire:info", {

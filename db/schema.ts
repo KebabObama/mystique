@@ -31,6 +31,13 @@ type Data = {
   turn: number;
 };
 
+const EMPTY_EFFECTS: Record<Effect, number> = {
+  corroding: 0,
+  frostbite: 0,
+  burning: 0,
+  shocked: 0,
+};
+
 const ITEM_TYPES = ["weapon", "helmet", "armor", "leggings", "ring", "misc"] as const;
 const RACES = ["dwarf", "elf", "human", "orc"] as const;
 
@@ -327,6 +334,11 @@ export const lobbyEntity = pgTable(
     }),
     position: jsonb("position").notNull().$type<Position>().default({ x: 0, z: 0 }),
     actions: integer("actions").notNull().default(0),
+    effects: jsonb("effects").notNull().$type<Record<Effect, number>>().default(EMPTY_EFFECTS),
+    activeEffects: jsonb("active_effects")
+      .notNull()
+      .$type<Record<Effect, number>>()
+      .default(EMPTY_EFFECTS),
   },
   (table) => [index("lobby_entity_lobby_idx").on(table.lobbyId)]
 );

@@ -1,4 +1,4 @@
-import { Game } from "../seed";
+import { Game, InGameHelpers } from "../seed";
 
 // Physical Melee
 export const bite = (min: number, max: number): Game.Ability => ({
@@ -7,7 +7,7 @@ export const bite = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const slash = (min: number, max: number): Game.Ability => ({
@@ -16,7 +16,7 @@ export const slash = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const smite = (min: number, max: number): Game.Ability => ({
@@ -25,7 +25,7 @@ export const smite = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: 1,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const bolt = (min: number, max: number): Game.Ability => ({
@@ -34,7 +34,7 @@ export const bolt = (min: number, max: number): Game.Ability => ({
   range: 6,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects({ shocked: 1 }),
+  effects: InGameHelpers.withEffects({ shocked: 1 }),
 });
 
 export const frost = (min: number, max: number): Game.Ability => ({
@@ -43,7 +43,7 @@ export const frost = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: 1,
   amount: [min, max],
-  effects: Game.withEffects({ frostbite: 2 }),
+  effects: InGameHelpers.withEffects({ frostbite: 2 }),
 });
 
 export const flame = (min: number, max: number): Game.Ability => ({
@@ -52,7 +52,7 @@ export const flame = (min: number, max: number): Game.Ability => ({
   range: 4,
   targeting: 1,
   amount: [min, max],
-  effects: Game.withEffects({ burning: 2 }),
+  effects: InGameHelpers.withEffects({ burning: 2 }),
 });
 
 export const rot = (min: number, max: number): Game.Ability => ({
@@ -61,7 +61,7 @@ export const rot = (min: number, max: number): Game.Ability => ({
   range: 4,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects({ corroding: 2 }),
+  effects: InGameHelpers.withEffects({ corroding: 2 }),
 });
 
 export const strike = (min: number, max: number): Game.Ability => ({
@@ -70,7 +70,7 @@ export const strike = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const stab = (min: number, max: number): Game.Ability => ({
@@ -79,7 +79,7 @@ export const stab = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects({ corroding: 1 }),
+  effects: InGameHelpers.withEffects({ corroding: 1 }),
 });
 
 export const focusBolt = (min: number, max: number): Game.Ability => ({
@@ -88,7 +88,7 @@ export const focusBolt = (min: number, max: number): Game.Ability => ({
   range: 4,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects({ shocked: 1 }),
+  effects: InGameHelpers.withEffects({ shocked: 1 }),
 });
 
 // Additional Physical Melee
@@ -98,7 +98,7 @@ export const cleave = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: -2,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const whirlwind = (min: number, max: number): Game.Ability => ({
@@ -107,7 +107,7 @@ export const whirlwind = (min: number, max: number): Game.Ability => ({
   range: 2,
   targeting: -3,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const pierce = (min: number, max: number): Game.Ability => ({
@@ -116,7 +116,7 @@ export const pierce = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const crush = (min: number, max: number): Game.Ability => ({
@@ -125,7 +125,7 @@ export const crush = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const pummel = (min: number, max: number): Game.Ability => ({
@@ -134,7 +134,7 @@ export const pummel = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: -2,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const impale = (min: number, max: number): Game.Ability => ({
@@ -143,7 +143,7 @@ export const impale = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const swipe = (min: number, max: number): Game.Ability => ({
@@ -152,7 +152,7 @@ export const swipe = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const hack = (min: number, max: number): Game.Ability => ({
@@ -161,7 +161,7 @@ export const hack = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const rend = (min: number, max: number): Game.Ability => ({
@@ -170,7 +170,7 @@ export const rend = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects({ corroding: 1 }),
+  effects: InGameHelpers.withEffects({ corroding: 1 }),
 });
 
 // Ranged Physical
@@ -180,7 +180,7 @@ export const arrow = (min: number, max: number): Game.Ability => ({
   range: 6,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const volley = (min: number, max: number): Game.Ability => ({
@@ -189,7 +189,7 @@ export const volley = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: -3,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const pierceShot = (min: number, max: number): Game.Ability => ({
@@ -198,7 +198,7 @@ export const pierceShot = (min: number, max: number): Game.Ability => ({
   range: 7,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const multishot = (min: number, max: number): Game.Ability => ({
@@ -207,7 +207,7 @@ export const multishot = (min: number, max: number): Game.Ability => ({
   range: 6,
   targeting: -4,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const snipe = (min: number, max: number): Game.Ability => ({
@@ -216,7 +216,7 @@ export const snipe = (min: number, max: number): Game.Ability => ({
   range: 8,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 // Elemental - Fire
@@ -226,7 +226,7 @@ export const fireball = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: 2,
   amount: [min, max],
-  effects: Game.withEffects({ burning: 2 }),
+  effects: InGameHelpers.withEffects({ burning: 2 }),
 });
 
 export const inferno = (min: number, max: number): Game.Ability => ({
@@ -235,7 +235,7 @@ export const inferno = (min: number, max: number): Game.Ability => ({
   range: 4,
   targeting: 3,
   amount: [min, max],
-  effects: Game.withEffects({ burning: 3 }),
+  effects: InGameHelpers.withEffects({ burning: 3 }),
 });
 
 export const burn = (min: number, max: number): Game.Ability => ({
@@ -244,7 +244,7 @@ export const burn = (min: number, max: number): Game.Ability => ({
   range: 3,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects({ burning: 1 }),
+  effects: InGameHelpers.withEffects({ burning: 1 }),
 });
 
 export const scorch = (min: number, max: number): Game.Ability => ({
@@ -253,7 +253,7 @@ export const scorch = (min: number, max: number): Game.Ability => ({
   range: 4,
   targeting: 1,
   amount: [min, max],
-  effects: Game.withEffects({ burning: 2 }),
+  effects: InGameHelpers.withEffects({ burning: 2 }),
 });
 
 // Elemental - Ice
@@ -263,7 +263,7 @@ export const blizzard = (min: number, max: number): Game.Ability => ({
   range: 6,
   targeting: 2,
   amount: [min, max],
-  effects: Game.withEffects({ frostbite: 3 }),
+  effects: InGameHelpers.withEffects({ frostbite: 3 }),
 });
 
 export const icicle = (min: number, max: number): Game.Ability => ({
@@ -272,7 +272,7 @@ export const icicle = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects({ frostbite: 1 }),
+  effects: InGameHelpers.withEffects({ frostbite: 1 }),
 });
 
 export const freeze = (min: number, max: number): Game.Ability => ({
@@ -281,7 +281,7 @@ export const freeze = (min: number, max: number): Game.Ability => ({
   range: 4,
   targeting: 1,
   amount: [min, max],
-  effects: Game.withEffects({ frostbite: 2 }),
+  effects: InGameHelpers.withEffects({ frostbite: 2 }),
 });
 
 export const snowstorm = (min: number, max: number): Game.Ability => ({
@@ -290,7 +290,7 @@ export const snowstorm = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: -2,
   amount: [min, max],
-  effects: Game.withEffects({ frostbite: 2 }),
+  effects: InGameHelpers.withEffects({ frostbite: 2 }),
 });
 
 // Elemental - Lightning
@@ -300,7 +300,7 @@ export const lightning = (min: number, max: number): Game.Ability => ({
   range: 6,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects({ shocked: 2 }),
+  effects: InGameHelpers.withEffects({ shocked: 2 }),
 });
 
 export const chainLightning = (min: number, max: number): Game.Ability => ({
@@ -309,7 +309,7 @@ export const chainLightning = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: -2,
   amount: [min, max],
-  effects: Game.withEffects({ shocked: 1 }),
+  effects: InGameHelpers.withEffects({ shocked: 1 }),
 });
 
 export const shock = (min: number, max: number): Game.Ability => ({
@@ -318,7 +318,7 @@ export const shock = (min: number, max: number): Game.Ability => ({
   range: 4,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects({ shocked: 1 }),
+  effects: InGameHelpers.withEffects({ shocked: 1 }),
 });
 
 export const thunder = (min: number, max: number): Game.Ability => ({
@@ -327,7 +327,7 @@ export const thunder = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: 1,
   amount: [min, max],
-  effects: Game.withEffects({ shocked: 2 }),
+  effects: InGameHelpers.withEffects({ shocked: 2 }),
 });
 
 // Elemental - Toxic
@@ -337,7 +337,7 @@ export const poison = (min: number, max: number): Game.Ability => ({
   range: 4,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects({ corroding: 1 }),
+  effects: InGameHelpers.withEffects({ corroding: 1 }),
 });
 
 export const venom = (min: number, max: number): Game.Ability => ({
@@ -346,7 +346,7 @@ export const venom = (min: number, max: number): Game.Ability => ({
   range: 4,
   targeting: 1,
   amount: [min, max],
-  effects: Game.withEffects({ corroding: 2 }),
+  effects: InGameHelpers.withEffects({ corroding: 2 }),
 });
 
 export const toxicCloud = (min: number, max: number): Game.Ability => ({
@@ -355,7 +355,7 @@ export const toxicCloud = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: 2,
   amount: [min, max],
-  effects: Game.withEffects({ corroding: 2 }),
+  effects: InGameHelpers.withEffects({ corroding: 2 }),
 });
 
 export const acidBolt = (min: number, max: number): Game.Ability => ({
@@ -364,7 +364,7 @@ export const acidBolt = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects({ corroding: 1 }),
+  effects: InGameHelpers.withEffects({ corroding: 1 }),
 });
 
 // Support - Healing
@@ -374,7 +374,7 @@ export const heal = (min: number, max: number): Game.Ability => ({
   range: 4,
   targeting: 0,
   amount: [-min, -max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const greaterHeal = (min: number, max: number): Game.Ability => ({
@@ -383,7 +383,7 @@ export const greaterHeal = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: 0,
   amount: [-min, -max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const regenerate = (min: number, max: number): Game.Ability => ({
@@ -392,7 +392,7 @@ export const regenerate = (min: number, max: number): Game.Ability => ({
   range: 6,
   targeting: 0,
   amount: [-min, -max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const blessing = (min: number, max: number): Game.Ability => ({
@@ -401,7 +401,7 @@ export const blessing = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: -1,
   amount: [-min, -max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 // Support - Buffs & Utility
@@ -411,7 +411,7 @@ export const protect = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: 0,
   amount: [0, 0],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const haste = (min: number, max: number): Game.Ability => ({
@@ -420,7 +420,7 @@ export const haste = (min: number, max: number): Game.Ability => ({
   range: 4,
   targeting: 0,
   amount: [0, 0],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const fortify = (min: number, max: number): Game.Ability => ({
@@ -429,7 +429,7 @@ export const fortify = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: 0,
   amount: [0, 0],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const cloak = (min: number, max: number): Game.Ability => ({
@@ -438,7 +438,7 @@ export const cloak = (min: number, max: number): Game.Ability => ({
   range: 0,
   targeting: 0,
   amount: [0, 0],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 // Counter & Defensive
@@ -448,7 +448,7 @@ export const riposte = (min: number, max: number): Game.Ability => ({
   range: 1,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const parry = (min: number, max: number): Game.Ability => ({
@@ -457,7 +457,7 @@ export const parry = (min: number, max: number): Game.Ability => ({
   range: 0,
   targeting: 0,
   amount: [0, 0],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const reflect = (min: number, max: number): Game.Ability => ({
@@ -466,7 +466,7 @@ export const reflect = (min: number, max: number): Game.Ability => ({
   range: 0,
   targeting: 0,
   amount: [0, 0],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const dodge = (min: number, max: number): Game.Ability => ({
@@ -475,7 +475,7 @@ export const dodge = (min: number, max: number): Game.Ability => ({
   range: 0,
   targeting: 0,
   amount: [0, 0],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 // Crowd Control & Debuffs
@@ -485,7 +485,7 @@ export const stun = (min: number, max: number): Game.Ability => ({
   range: 3,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const knockback = (min: number, max: number): Game.Ability => ({
@@ -494,7 +494,7 @@ export const knockback = (min: number, max: number): Game.Ability => ({
   range: 2,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 export const silence = (min: number, max: number): Game.Ability => ({
@@ -503,7 +503,7 @@ export const silence = (min: number, max: number): Game.Ability => ({
   range: 4,
   targeting: 0,
   amount: [min, max],
-  effects: Game.withEffects(),
+  effects: InGameHelpers.withEffects(),
 });
 
 // Ultimate/High Cost
@@ -513,7 +513,7 @@ export const meteor = (min: number, max: number): Game.Ability => ({
   range: 6,
   targeting: 3,
   amount: [min, max],
-  effects: Game.withEffects({ burning: 3 }),
+  effects: InGameHelpers.withEffects({ burning: 3 }),
 });
 
 export const apocalypse = (min: number, max: number): Game.Ability => ({
@@ -522,7 +522,7 @@ export const apocalypse = (min: number, max: number): Game.Ability => ({
   range: 7,
   targeting: 4,
   amount: [min, max],
-  effects: Game.withEffects({ burning: 2, shocked: 2, frostbite: 2 }),
+  effects: InGameHelpers.withEffects({ burning: 2, shocked: 2, frostbite: 2 }),
 });
 
 export const tsunami = (min: number, max: number): Game.Ability => ({
@@ -531,5 +531,5 @@ export const tsunami = (min: number, max: number): Game.Ability => ({
   range: 5,
   targeting: 3,
   amount: [min, max],
-  effects: Game.withEffects({ frostbite: 3, corroding: 1 }),
+  effects: InGameHelpers.withEffects({ frostbite: 3, corroding: 1 }),
 });

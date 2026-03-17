@@ -3,6 +3,7 @@
 import { useCamera } from "@/hooks/use-camera";
 import { useDialog } from "@/hooks/use-dialog";
 import { useGame } from "@/hooks/use-game";
+import { useHoveredEntity } from "@/hooks/use-hovered-entity";
 import { useUser } from "@/hooks/use-user";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Mesh } from "@/lib/mesh";
@@ -23,6 +24,8 @@ const EntityMesh = ({
   const currentId = useGame((s) => s.sequence.current?.id);
   const mode = useGame((s) => s.mode);
   const target = useCamera((s) => s.camera.target);
+  const setHoveredEntity = useHoveredEntity((s) => s.setHoveredEntity);
+  const clearHoveredEntity = useHoveredEntity((s) => s.clearHoveredEntity);
   const tileCenter = Render.getTileCenter(entity.position);
   const userId = useUser((s) => s?.id);
   const [loadedModel, setLoadedModel] = useState<THREE.Group | null>(null);
@@ -73,11 +76,30 @@ const EntityMesh = ({
     onOpenMenu(entity.id, event);
   };
 
+  const handlePointerOver = (event: ThreeEvent<PointerEvent>) => {
+    event.stopPropagation();
+    setHoveredEntity(entity.id);
+  };
+
+  const handlePointerOut = (event: ThreeEvent<PointerEvent>) => {
+    event.stopPropagation();
+    clearHoveredEntity(entity.id);
+  };
+
+  useEffect(() => {
+    if (visible) return;
+    clearHoveredEntity(entity.id);
+  }, [clearHoveredEntity, entity.id, visible]);
+
+  useEffect(() => () => clearHoveredEntity(entity.id), [clearHoveredEntity, entity.id]);
+
   const animatedProps = {
     "position-x": x,
     "position-y": 0.5,
     "position-z": z,
     visible,
+    "onPointerOver": handlePointerOver,
+    "onPointerOut": handlePointerOut,
     "onContextMenu": handleContextMenu,
   };
 

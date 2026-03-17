@@ -17,6 +17,7 @@ import { AddCharacter } from "@/components/game/ui/add-character";
 import { CampfireRestDialog } from "@/components/game/ui/campfire-rest-dialog";
 import { CampfireShopDialog } from "@/components/game/ui/campfire-shop-dialog";
 import { EntityContextMenu } from "@/components/game/ui/entity-context-menu";
+import { EntityHoverCard } from "@/components/game/ui/entity-hover-card";
 import { LevelUpDialog } from "@/components/game/ui/level-up-dialog";
 import { LogEffect } from "@/components/game/ui/log-effect";
 import { TradingDialog } from "@/components/game/ui/trading-dialog";
@@ -59,6 +60,7 @@ export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
       <GameProvider lobbyId={lobbyId}>
         <LogEffect />
         <EntityContextMenu />
+        <EntityHoverCard />
         <CampfireRestDialog />
         <CampfireShopDialog />
         <TradingDialog />

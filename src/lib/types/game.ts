@@ -87,15 +87,36 @@ export type Campfire = typeof campfire.$inferSelect & {
   >;
 };
 
+type LobbyEntityRow = typeof lobbyEntity.$inferSelect;
+type CharacterRow = typeof character.$inferSelect;
+type MonsterRow = typeof monster.$inferSelect;
+type ChestRow = typeof chest.$inferSelect;
+type CampfireRow = typeof campfire.$inferSelect;
+
 type BaseEntity = Omit<
-  typeof lobbyEntity.$inferSelect,
+  LobbyEntityRow,
   "characterId" | "monsterId" | "chestId" | "campfireId" | "lobbyId"
 >;
 
-export type CharacterEntity = BaseEntity & Character & { type: "character" };
-export type MonsterEntity = BaseEntity & Monster & { type: "monster" };
-export type ChestEntity = BaseEntity & Chest & { type: "chest" };
-export type CampfireEntity = BaseEntity & Campfire & { type: "campfire" };
+export type CharacterEntity = BaseEntity &
+  Omit<Character, "id"> & {
+    id: LobbyEntityRow["id"];
+    characterId: CharacterRow["id"];
+    type: "character";
+  };
+
+export type MonsterEntity = BaseEntity &
+  Omit<Monster, "id"> & { id: LobbyEntityRow["id"]; monsterId: MonsterRow["id"]; type: "monster" };
+
+export type ChestEntity = BaseEntity &
+  Omit<Chest, "id"> & { id: LobbyEntityRow["id"]; chestId: ChestRow["id"]; type: "chest" };
+
+export type CampfireEntity = BaseEntity &
+  Omit<Campfire, "id"> & {
+    id: LobbyEntityRow["id"];
+    campfireId: CampfireRow["id"];
+    type: "campfire";
+  };
 
 export type Entity = CharacterEntity | MonsterEntity | ChestEntity | CampfireEntity;
 

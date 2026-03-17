@@ -12,6 +12,13 @@ export const register = (ctx: SocketContext) => {
   socket.on("game:sequence:next", async (userId, lobbyId) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
+
+    const previousTurn = inst.data.turn;
+    const previousEntity =
+      previousTurn >= 0
+        ? InGameHelpers.getEntityById(inst, inst.data.sequence[previousTurn])
+        : undefined;
+
     let turn = inst.data.turn;
     if (turn === -1) {
       if (userId !== inst.masterId) return;
@@ -21,24 +28,99 @@ export const register = (ctx: SocketContext) => {
       turn = next >= inst.data.sequence.length ? -1 : next;
     }
 
-    await db
-      .update(schema.lobby)
-      .set({ data: { ...inst.data, turn } })
-      .where(eq(schema.lobby.id, inst.id));
+    let sequence = [...inst.data.sequence];
 
-    if (turn >= 0) {
-      const currentEntity = InGameHelpers.getEntityById(inst, inst.data.sequence[turn]);
+    await db.transaction(async (tx) => {
       if (
-        currentEntity &&
-        (currentEntity.type === "character" || currentEntity.type === "monster")
+        previousEntity &&
+        (previousEntity.type === "character" || previousEntity.type === "monster")
       ) {
-        const maxActions = currentEntity.maxActions ?? 0;
-        await db
+        await tx
           .update(schema.lobbyEntity)
-          .set({ actions: maxActions })
-          .where(eq(schema.lobbyEntity.id, currentEntity.id));
+          .set({ activeEffects: Game.EMPTY_EFFECTS })
+          .where(eq(schema.lobbyEntity.id, previousEntity.id));
       }
-    }
+
+      while (turn >= 0) {
+        const currentId = sequence[turn];
+        const currentEntity = currentId ? InGameHelpers.getEntityById(inst, currentId) : undefined;
+
+        if (
+          !currentEntity ||
+          (currentEntity.type !== "character" && currentEntity.type !== "monster")
+        ) {
+          turn = -1;
+          break;
+        }
+
+        const resolved = InGameHelpers.resolveTurnStart(currentEntity);
+
+        if (currentEntity.type === "character") {
+          await tx
+            .update(schema.character)
+            .set({ hp: resolved.hp })
+            .where(eq(schema.character.id, currentEntity.characterId));
+
+          await tx
+            .update(schema.lobbyEntity)
+            .set({
+              actions: resolved.actions,
+              effects: resolved.effects,
+              activeEffects: resolved.activeEffects,
+            })
+            .where(eq(schema.lobbyEntity.id, currentEntity.id));
+
+          break;
+        }
+
+        await tx
+          .update(schema.monster)
+          .set({ hp: resolved.hp })
+          .where(eq(schema.monster.id, currentEntity.monsterId));
+
+        if (resolved.hp > 0) {
+          await tx
+            .update(schema.lobbyEntity)
+            .set({
+              actions: resolved.actions,
+              effects: resolved.effects,
+              activeEffects: resolved.activeEffects,
+            })
+            .where(eq(schema.lobbyEntity.id, currentEntity.id));
+
+          break;
+        }
+
+        const [newChest] = await tx
+          .insert(schema.chest)
+          .values({ name: `${currentEntity.name} Loot` })
+          .returning();
+
+        await tx
+          .insert(schema.lobbyEntity)
+          .values({
+            lobbyId: inst.id,
+            type: "chest",
+            chestId: newChest.id,
+            position: currentEntity.position,
+            actions: 0,
+          });
+
+        await tx.delete(schema.lobbyEntity).where(eq(schema.lobbyEntity.id, currentEntity.id));
+
+        sequence = sequence.filter((entityId) => entityId !== currentEntity.id);
+
+        if (sequence.length === 0 || turn >= sequence.length) {
+          turn = -1;
+          break;
+        }
+      }
+
+      await tx
+        .update(schema.lobby)
+        .set({ data: { ...inst.data, sequence, turn } })
+        .where(eq(schema.lobby.id, inst.id));
+    });
 
     await refresh(ctx, lobbyId);
   });
@@ -71,7 +153,7 @@ export const register = (ctx: SocketContext) => {
     if (currentActions <= 0) return;
 
     const positions = InGameHelpers.getEntities(inst).map((e) => e.position);
-    const { stamina } = entity;
+    const stamina = InGameHelpers.getEffectiveStamina(entity);
     const possible: Game.Position[] = [];
     for (let dx = -stamina; dx <= stamina; dx++) {
       for (let dz = -stamina; dz <= stamina; dz++) {
@@ -139,22 +221,30 @@ export const register = (ctx: SocketContext) => {
       for (const victim of victims) {
         const rawAmount = Math.floor(Math.random() * (rollMax - rollMin + 1)) + rollMin;
         const adjustedAmount =
-          rawAmount > 0 ? Math.max(rawAmount - (victim.armor ?? 0), 0) : rawAmount;
+          rawAmount > 0
+            ? Math.max(rawAmount - InGameHelpers.getEffectiveArmor(victim), 0)
+            : rawAmount;
 
         const currentHp = victim.hp ?? victim.maxHp ?? 0;
         const maxHp = victim.maxHp ?? currentHp;
         const nextHp = Math.max(0, Math.min(maxHp, currentHp - adjustedAmount));
+        const nextEffects = InGameHelpers.addEffectStacks(victim.effects, ability.effects);
 
         if (victim.type === "character") {
           await tx
             .update(schema.character)
             .set({ hp: nextHp })
-            .where(eq(schema.character.id, victim.id));
+            .where(eq(schema.character.id, victim.characterId));
+
+          await tx
+            .update(schema.lobbyEntity)
+            .set({ effects: nextEffects })
+            .where(eq(schema.lobbyEntity.id, victim.id));
         } else {
           await tx
             .update(schema.monster)
             .set({ hp: nextHp })
-            .where(eq(schema.monster.id, victim.id));
+            .where(eq(schema.monster.id, victim.monsterId));
 
           if (nextHp <= 0) {
             deadMonsterDrops.push({
@@ -162,6 +252,11 @@ export const register = (ctx: SocketContext) => {
               position: victim.position,
               name: `${victim.name} Loot`,
             });
+          } else {
+            await tx
+              .update(schema.lobbyEntity)
+              .set({ effects: nextEffects })
+              .where(eq(schema.lobbyEntity.id, victim.id));
           }
         }
       }

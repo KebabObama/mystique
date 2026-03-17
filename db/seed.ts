@@ -3,7 +3,8 @@ import { readdir } from "node:fs/promises";
 import { extname } from "node:path";
 import { db } from "../src/lib/db";
 export { db, schema } from "../src/lib/db";
-export { Game } from "../src/lib/game";
+export { InGameHelpers } from "../src/lib/ingame-helpers";
+export { Game } from "../src/lib/types";
 
 type Seed = { seed?: () => Promise<void> };
 
