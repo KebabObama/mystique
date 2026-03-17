@@ -2,8 +2,8 @@ import { Game } from "@/lib/game";
 
 /** Provides the InGameHelpers namespace. */
 export namespace InGameHelpers {
-    /** Defines the with effects constant. */
-export const withEffects = (
+  /** Defines the with effects constant. */
+  export const withEffects = (
     effects: Partial<Record<Game.Effect, number>> = {}
   ): Record<Game.Effect, number> =>
     Game.EFFECTS.reduce(
@@ -16,16 +16,16 @@ export const withEffects = (
     activeEffects: Partial<Record<Game.Effect, number>> | null;
   }>;
 
-    /** Provides the has effects function. */
-export const hasEffects = (effects: Partial<Record<Game.Effect, number>> | null | undefined) =>
+  /** Provides the has effects function. */
+  export const hasEffects = (effects: Partial<Record<Game.Effect, number>> | null | undefined) =>
     Game.EFFECTS.some((effect) => (effects?.[effect] ?? 0) > 0);
 
-    /** Defines the get stored effects constant. */
-export const getStoredEffects = (entity: EffectCarrier): Record<Game.Effect, number> =>
+  /** Defines the get stored effects constant. */
+  export const getStoredEffects = (entity: EffectCarrier): Record<Game.Effect, number> =>
     withEffects(entity.effects ?? {});
 
-    /** Defines the decay effects constant. */
-export const decayEffects = (
+  /** Defines the decay effects constant. */
+  export const decayEffects = (
     effects: Partial<Record<Game.Effect, number>> | null | undefined,
     amount = 1
   ): Record<Game.Effect, number> =>
@@ -34,8 +34,8 @@ export const decayEffects = (
       { ...Game.EMPTY_EFFECTS }
     );
 
-    /** Defines the get turn effects constant. */
-export const getTurnEffects = (entity: EffectCarrier): Record<Game.Effect, number> => {
+  /** Defines the get turn effects constant. */
+  export const getTurnEffects = (entity: EffectCarrier): Record<Game.Effect, number> => {
     const activeEffects = withEffects(entity.activeEffects ?? {});
     if (!hasEffects(activeEffects)) return getStoredEffects(entity);
 
@@ -52,8 +52,8 @@ export const getTurnEffects = (entity: EffectCarrier): Record<Game.Effect, numbe
     );
   };
 
-    /** Defines the add effect stacks constant. */
-export const addEffectStacks = (
+  /** Defines the add effect stacks constant. */
+  export const addEffectStacks = (
     current: Partial<Record<Game.Effect, number>> | null | undefined,
     added: Partial<Record<Game.Effect, number>> | null | undefined
   ): Record<Game.Effect, number> =>
@@ -65,18 +65,18 @@ export const addEffectStacks = (
       { ...Game.EMPTY_EFFECTS }
     );
 
-    /** Defines the get effective armor constant. */
-export const getEffectiveArmor = (
+  /** Defines the get effective armor constant. */
+  export const getEffectiveArmor = (
     entity: Pick<Game.CombatEntity, "armor"> & EffectCarrier
   ): number => Math.max(0, entity.armor - getTurnEffects(entity).corroding);
 
-    /** Defines the get effective stamina constant. */
-export const getEffectiveStamina = (
+  /** Defines the get effective stamina constant. */
+  export const getEffectiveStamina = (
     entity: Pick<Game.CombatEntity, "stamina"> & EffectCarrier
   ): number => Math.max(0, entity.stamina - getTurnEffects(entity).frostbite);
 
-    /** Provides the resolve turn start function. */
-export const resolveTurnStart = (
+  /** Provides the resolve turn start function. */
+  export const resolveTurnStart = (
     entity: Pick<Game.CombatEntity, "hp" | "maxHp" | "maxActions"> & EffectCarrier
   ) => {
     const activeEffects = getStoredEffects(entity);
@@ -91,22 +91,22 @@ export const resolveTurnStart = (
     };
   };
 
-    /** Defines the get entities constant. */
-export const getEntities = (instance: Game.Instance): Array<Game.Entity> => [
+  /** Defines the get entities constant. */
+  export const getEntities = (instance: Game.Instance): Array<Game.Entity> => [
     ...instance.characters,
     ...instance.monsters,
     ...instance.chests,
     ...instance.campfires,
   ];
 
-    /** Defines the get entity by id constant. */
-export const getEntityById = (
+  /** Defines the get entity by id constant. */
+  export const getEntityById = (
     instance: Game.Instance,
     entityId: Game.Entity["id"]
   ): Game.Entity | undefined => getEntities(instance).find((entity) => entity.id === entityId);
 
-    /** Defines the get entity abilities constant. */
-export const getEntityAbilities = (entity: Game.Entity): Array<Game.Ability> => {
+  /** Defines the get entity abilities constant. */
+  export const getEntityAbilities = (entity: Game.Entity): Array<Game.Ability> => {
     if (entity.type === "monster") return entity.abilities;
     if (entity.type === "chest" || entity.type === "campfire") return [];
 
@@ -115,8 +115,8 @@ export const getEntityAbilities = (entity: Game.Entity): Array<Game.Ability> => 
       .flatMap((entry: any) => entry.abilities);
   };
 
-    /** Provides the calculate character stats function. */
-export const calculateCharacterStats = (
+  /** Provides the calculate character stats function. */
+  export const calculateCharacterStats = (
     c: { attributes: Record<Game.Attribute, number>; level: number; memory: number },
     inventory: { weight: number; armor: number } = { weight: 0, armor: 0 }
   ) => {
@@ -140,8 +140,8 @@ export const calculateCharacterStats = (
     };
   };
 
-    /** Provides the generate random name function. */
-export const generateRandomName = (c: { race: Game.Race }) => {
+  /** Provides the generate random name function. */
+  export const generateRandomName = (c: { race: Game.Race }) => {
     const NAME_PREFIXES: Record<Game.Race, Array<string>> = {
       dwarf: ["Thor", "Brom", "Gim", "Dwa", "Bal", "Krag", "Dum", "Thrain"],
       elf: ["Gala", "Lego", "Ara", "Cele", "Thran", "Elro", "Fea", "Luth"],
@@ -162,8 +162,8 @@ export const generateRandomName = (c: { race: Game.Race }) => {
     return prefix + suffix;
   };
 
-    /** Defines the get ability impact tiles constant. */
-export const getAbilityImpactTiles = (
+  /** Defines the get ability impact tiles constant. */
+  export const getAbilityImpactTiles = (
     target: Game.Position,
     targeting: number
   ): Array<Game.Position> => {
@@ -179,8 +179,8 @@ export const getAbilityImpactTiles = (
     });
   };
 
-    /** Defines the get ability victims constant. */
-export const getAbilityVictims = (
+  /** Defines the get ability victims constant. */
+  export const getAbilityVictims = (
     entities: Array<Game.Entity>,
     ability: Game.Ability,
     target: Game.Position
@@ -208,8 +208,8 @@ export const getAbilityVictims = (
     );
   };
 
-    /** Defines the get ability viable targets constant. */
-export const getAbilityViableTargets = (
+  /** Defines the get ability viable targets constant. */
+  export const getAbilityViableTargets = (
     caster: Game.Entity,
     ability: Game.Ability,
     entities: Array<Game.Entity>
@@ -229,8 +229,8 @@ export const getAbilityViableTargets = (
     return possible;
   };
 
-    /** Defines the can equip item constant. */
-export const canEquipItem = (
+  /** Defines the can equip item constant. */
+  export const canEquipItem = (
     character: Pick<Game.CharacterEntity, "inventory">,
     itemType: Game.ItemType
   ): boolean => {
@@ -242,8 +242,8 @@ export const canEquipItem = (
     return equippedOfType < maxSlots;
   };
 
-/** Defines the calculate rest healing constant. */
-export const calculateRestHealing = (
+  /** Defines the calculate rest healing constant. */
+  export const calculateRestHealing = (
     character: Pick<Game.CharacterEntity, "attributes" | "level" | "maxHp">,
     actionsSpentResting: number
   ): number => {

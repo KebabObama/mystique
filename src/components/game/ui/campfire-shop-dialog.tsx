@@ -32,7 +32,7 @@ export const CampfireShopDialog = () => {
 
   const shopItems = ((campfireEntity as any).shopItems ?? []) as Array<any>;
 
-const currencyItem = charEntity.inventory.find((inv) => inv.name === "Gold Coin");
+  const currencyItem = charEntity.inventory.find((inv) => inv.name === "Gold Coin");
   const currencyAmount = currencyItem?.quantity ?? 0;
 
   const handleBuy = (itemId: string, cost: number) => {

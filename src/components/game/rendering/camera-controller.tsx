@@ -24,11 +24,20 @@ export const CameraController = () => {
   const tempVec3 = React.useRef(new THREE.Vector3());
   const tempSpherical = React.useRef(new THREE.Spherical());
 
-React.useEffect(() => {
+  React.useEffect(() => {
     const controller = new AbortController();
-    window.addEventListener("keydown", (e) => keys.current[e.key.toLowerCase()] = true , { signal: controller.signal, passive: true });
-    window.addEventListener("keyup",   (e) => keys.current[e.key.toLowerCase()] = false, { signal: controller.signal, passive: true });
-    window.addEventListener("blur",    ( ) => keys.current = {}                        , { signal: controller.signal, passive: true }); 
+    window.addEventListener("keydown", (e) => (keys.current[e.key.toLowerCase()] = true), {
+      signal: controller.signal,
+      passive: true,
+    });
+    window.addEventListener("keyup", (e) => (keys.current[e.key.toLowerCase()] = false), {
+      signal: controller.signal,
+      passive: true,
+    });
+    window.addEventListener("blur", () => (keys.current = {}), {
+      signal: controller.signal,
+      passive: true,
+    });
     return () => controller.abort();
   }, []);
 

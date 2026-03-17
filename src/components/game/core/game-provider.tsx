@@ -23,7 +23,7 @@ export const GameProvider = ({ children, lobbyId }: GameProviderProps) => {
     };
   }, [connected, lobbyId, joinInstance, leaveInstance]);
 
-React.useEffect(() => {
+  React.useEffect(() => {
     const isOnGamePage = pathname?.startsWith("/game/");
     if (!isOnGamePage && instance) {
       leaveInstance();

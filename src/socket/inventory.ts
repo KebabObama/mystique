@@ -292,7 +292,7 @@ export const register = (ctx: SocketContext) => {
     if (!entry) return;
     if (entry.item.type === "misc") return;
 
-if (!entry.equipped) {
+    if (!entry.equipped) {
       const equippedCount = await db.query.inventory.findMany({
         where: and(
           eq(schema.inventory.characterId, entity.characterId),
@@ -304,7 +304,7 @@ if (!entry.equipped) {
       const itemType = entry.item.type;
       const equippedOfType = equippedCount.filter((inv) => inv.item.type === itemType);
 
-const maxSlots = itemType === "ring" ? 2 : 1;
+      const maxSlots = itemType === "ring" ? 2 : 1;
       if (equippedOfType.length >= maxSlots) return;
     }
 

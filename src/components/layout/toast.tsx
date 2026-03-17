@@ -31,19 +31,25 @@ const toastVariants = cva(
 
 /** Provides the toast function. */
 export const toast = Object.assign(
-  (options: Omit<ToastOptions, "variant">) => sonnerToast.custom(() => <Toast {...options} />), 
+  (options: Omit<ToastOptions, "variant">) => sonnerToast.custom(() => <Toast {...options} />),
   {
     show: (message: string, action?: React.MouseEventHandler<HTMLButtonElement>) =>
       sonnerToast.custom(() => <Toast action={action} message={message} variant="default" />),
 
     warning: (message: string, action?: React.MouseEventHandler<HTMLButtonElement>) =>
-      sonnerToast.custom(() => <Toast action={action} message={message} variant="warning" title="Warning..." />),
+      sonnerToast.custom(() => (
+        <Toast action={action} message={message} variant="warning" title="Warning..." />
+      )),
 
     success: (message: string, action?: React.MouseEventHandler<HTMLButtonElement>) =>
-      sonnerToast.custom(() => <Toast action={action} message={message} variant="success" title="Success..." />),
+      sonnerToast.custom(() => (
+        <Toast action={action} message={message} variant="success" title="Success..." />
+      )),
 
     error: (message: string, action?: React.MouseEventHandler<HTMLButtonElement>) =>
-      sonnerToast.custom(() => <Toast action={action} message={message} variant="error"   title="Error...  " /> ),
+      sonnerToast.custom(() => (
+        <Toast action={action} message={message} variant="error" title="Error...  " />
+      )),
   }
 );
 

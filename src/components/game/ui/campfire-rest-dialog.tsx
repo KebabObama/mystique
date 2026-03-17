@@ -22,10 +22,7 @@ export const CampfireRestDialog = () => {
   if (!charEntity || charEntity.type !== "character") return null;
 
   const maxActions = charEntity.actions ?? charEntity.maxActions ?? 0;
-  const healing = Math.min(
-    actionsToRest * 20, 
-    charEntity.maxHp
-  );
+  const healing = Math.min(actionsToRest * 20, charEntity.maxHp);
   const projectedHp = Math.min(charEntity.hp + healing, charEntity.maxHp);
 
   const handleRest = () => {

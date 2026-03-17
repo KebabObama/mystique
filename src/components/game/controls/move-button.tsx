@@ -16,7 +16,7 @@ export const MoveButton = () => {
 
   if (!current) return null;
 
-if (current.type === "character" || current.type === "monster") {
+  if (current.type === "character" || current.type === "monster") {
     if (!canControlCurrent || actions <= 0) return null;
     return (
       <Button size="sm" onClick={() => setMode({ type: "character:move" })}>
@@ -25,7 +25,7 @@ if (current.type === "character" || current.type === "monster") {
     );
   }
 
-if (current.type === "chest") {
+  if (current.type === "chest") {
     if (!isMasterOnTurn) return null;
     return (
       <Button size="sm" onClick={() => setMode({ type: "chest:move", entityId: current.id })}>

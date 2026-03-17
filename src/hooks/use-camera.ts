@@ -23,14 +23,12 @@ const INITIAL_CAMERA_STATE: CameraState["camera"] = {
 };
 
 /** Provides the Zustand store for camera. */
-export const useCamera = create<CameraState>()(
-  (set) => ({
-    camera: INITIAL_CAMERA_STATE,
-    setCameraTarget:    (target   ) => set((state) => ({ camera: { ...state.camera, target     } })),
-    setCameraDistance:  (distance ) => set((state) => ({ camera: { ...state.camera, distance   } })),
-    setCameraAzimuth:   (azimuth  ) => set((state) => ({ camera: { ...state.camera, azimuth    } })),
-    setCameraElevation: (elevation) => set((state) => ({ camera: { ...state.camera, elevation  } })),
-    updateCamera:       (updates  ) => set((state) => ({ camera: { ...state.camera, ...updates } })),
-    resetCamera:        (         ) => set({ camera: INITIAL_CAMERA_STATE }),
-  }),
-);
+export const useCamera = create<CameraState>()((set) => ({
+  camera: INITIAL_CAMERA_STATE,
+  setCameraTarget: (target) => set((state) => ({ camera: { ...state.camera, target } })),
+  setCameraDistance: (distance) => set((state) => ({ camera: { ...state.camera, distance } })),
+  setCameraAzimuth: (azimuth) => set((state) => ({ camera: { ...state.camera, azimuth } })),
+  setCameraElevation: (elevation) => set((state) => ({ camera: { ...state.camera, elevation } })),
+  updateCamera: (updates) => set((state) => ({ camera: { ...state.camera, ...updates } })),
+  resetCamera: () => set({ camera: INITIAL_CAMERA_STATE }),
+}));

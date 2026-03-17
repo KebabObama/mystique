@@ -14,7 +14,6 @@ export namespace EntityMesh {
    * @param meshPath - Optional path to GLB/GLTF file in /public folder
    */
   export const createCharacter = async (data: any, meshPath?: string) => {
-    
     if (meshPath && !Mesh.isValidMeshPath(meshPath)) {
       meshPath = undefined;
     }
@@ -31,7 +30,6 @@ export namespace EntityMesh {
    * @param meshPath - Optional path to GLB/GLTF file in /public folder
    */
   export const createMonster = async (data: any, meshPath?: string) => {
-    
     if (meshPath && !Mesh.isValidMeshPath(meshPath)) {
       meshPath = undefined;
     }
@@ -48,7 +46,6 @@ export namespace EntityMesh {
    * @param meshPath - Optional path to GLB/GLTF file in /public folder
    */
   export const createChest = async (data: any, meshPath?: string) => {
-    
     if (meshPath && !Mesh.isValidMeshPath(meshPath)) {
       meshPath = undefined;
     }
@@ -65,7 +62,6 @@ export namespace EntityMesh {
    * @param meshPath - Optional path to GLB/GLTF file in /public folder
    */
   export const createCampfire = async (data: any, meshPath?: string) => {
-    
     if (meshPath && !Mesh.isValidMeshPath(meshPath)) {
       meshPath = undefined;
     }
@@ -82,7 +78,6 @@ export namespace EntityMesh {
    * @param meshPath - Optional path to GLB/GLTF file in /public folder
    */
   export const createItem = async (data: any, meshPath?: string) => {
-    
     if (meshPath && !Mesh.isValidMeshPath(meshPath)) {
       meshPath = undefined;
     }
@@ -99,7 +94,6 @@ export namespace EntityMesh {
    * @param meshPath - Path to GLB/GLTF file or null to use default shape
    */
   export const updateCharacterMesh = async (characterId: string, meshPath: string | null) => {
-    
     if (meshPath && !Mesh.isValidMeshPath(meshPath)) {
       return null;
     }
@@ -117,7 +111,6 @@ export namespace EntityMesh {
    * @param meshPath - Path to GLB/GLTF file or null to use default shape
    */
   export const updateMonsterMesh = async (monsterId: string, meshPath: string | null) => {
-    
     if (meshPath && !Mesh.isValidMeshPath(meshPath)) {
       return null;
     }
@@ -135,7 +128,6 @@ export namespace EntityMesh {
    * @param meshPath - Path to GLB/GLTF file or null to use default shape
    */
   export const updateChestMesh = async (chestId: string, meshPath: string | null) => {
-    
     if (meshPath && !Mesh.isValidMeshPath(meshPath)) {
       return null;
     }
@@ -153,7 +145,6 @@ export namespace EntityMesh {
    * @param meshPath - Path to GLB/GLTF file or null to use default shape
    */
   export const updateCampfireMesh = async (campfireId: string, meshPath: string | null) => {
-    
     if (meshPath && !Mesh.isValidMeshPath(meshPath)) {
       return null;
     }
@@ -171,7 +162,6 @@ export namespace EntityMesh {
    * @param meshPath - Path to GLB/GLTF file or null to use default shape
    */
   export const updateItemMesh = async (itemId: string, meshPath: string | null) => {
-    
     if (meshPath && !Mesh.isValidMeshPath(meshPath)) {
       return null;
     }

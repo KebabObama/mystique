@@ -14,7 +14,7 @@ import {
 export const register = (ctx: SocketContext) => {
   const { socket, io } = ctx;
 
-socket.on("game:campfire:add", async (userId, lobbyId, position) => {
+  socket.on("game:campfire:add", async (userId, lobbyId, position) => {
     try {
       const inst = await exists(ctx, userId, lobbyId);
       if (!inst) return;
@@ -96,7 +96,7 @@ socket.on("game:campfire:add", async (userId, lobbyId, position) => {
     await refresh(ctx, lobbyId);
   });
 
-socket.on("game:campfire:rest", async (userId, lobbyId, characterEntityId, actionsToRest) => {
+  socket.on("game:campfire:rest", async (userId, lobbyId, characterEntityId, actionsToRest) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
@@ -110,12 +110,12 @@ socket.on("game:campfire:rest", async (userId, lobbyId, characterEntityId, actio
 
     if (actions > currentActions) return;
 
-const healing = InGameHelpers.calculateRestHealing(charEntity, actions);
+    const healing = InGameHelpers.calculateRestHealing(charEntity, actions);
     const newHp = Math.min(charEntity.hp + healing, charEntity.maxHp);
 
     const newActions = currentActions - actions;
 
-await db.transaction(async (tx) => {
+    await db.transaction(async (tx) => {
       await tx
         .update(schema.character)
         .set({ hp: newHp })
@@ -130,7 +130,7 @@ await db.transaction(async (tx) => {
     await refresh(ctx, lobbyId, "game:campfire:rest:complete");
   });
 
-socket.on("game:campfire:shop:setup", async (userId, lobbyId, campfireEntityId, itemsList) => {
+  socket.on("game:campfire:shop:setup", async (userId, lobbyId, campfireEntityId, itemsList) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
     if (inst.masterId !== userId) return;
@@ -138,11 +138,11 @@ socket.on("game:campfire:shop:setup", async (userId, lobbyId, campfireEntityId, 
     const campfireEntity = InGameHelpers.getEntityById(inst, campfireEntityId);
     if (!campfireEntity || campfireEntity.type !== "campfire") return;
 
-await db
+    await db
       .delete(schema.campfireShopItem)
       .where(eq(schema.campfireShopItem.campfireId, campfireEntity.campfireId));
 
-if (itemsList && itemsList.length > 0) {
+    if (itemsList && itemsList.length > 0) {
       await db
         .insert(schema.campfireShopItem)
         .values(
@@ -168,7 +168,7 @@ if (itemsList && itemsList.length > 0) {
 
     const quantity = normalizeQuantity(qty);
 
-let shopItem = null;
+    let shopItem = null;
     for (const entity of InGameHelpers.getEntities(inst)) {
       if (entity.type === "campfire") {
         const found = entity.shopItems.find((si) => si.id === itemId);
@@ -183,19 +183,18 @@ let shopItem = null;
 
     const totalCost = shopItem.cost * quantity;
 
-const currencyItem = await db.query.item.findFirst({
+    const currencyItem = await db.query.item.findFirst({
       where: eq(schema.item.name, "Gold Coin"),
     });
     if (!currencyItem) return;
 
-const currencyInv = charEntity.inventory.find((inv) => inv.id === currencyItem.id);
+    const currencyInv = charEntity.inventory.find((inv) => inv.id === currencyItem.id);
     if (!currencyInv || currencyInv.quantity < totalCost) {
       socket.emit("error", "Insufficient currency");
       return;
     }
 
-await db.transaction(async (tx) => {
-      
+    await db.transaction(async (tx) => {
       const remaining = currencyInv.quantity - totalCost;
       if (remaining <= 0) {
         await tx
@@ -218,7 +217,7 @@ await db.transaction(async (tx) => {
           );
       }
 
-await upsertCharacterInventory(tx, charEntity.characterId, itemId, quantity);
+      await upsertCharacterInventory(tx, charEntity.characterId, itemId, quantity);
     });
 
     await refresh(ctx, lobbyId, "game:campfire:purchase");

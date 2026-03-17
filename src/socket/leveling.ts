@@ -8,7 +8,7 @@ import { type SocketContext, exists, refresh } from "./helpers";
 export const register = (ctx: SocketContext) => {
   const { socket } = ctx;
 
-socket.on("game:character:levelup", async (userId, lobbyId, characterId, attributePoints) => {
+  socket.on("game:character:levelup", async (userId, lobbyId, characterId, attributePoints) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
@@ -20,7 +20,7 @@ socket.on("game:character:levelup", async (userId, lobbyId, characterId, attribu
     if (!character) return;
     if (character.ownerId !== userId && inst.masterId !== userId) return;
 
-if (typeof attributePoints !== "object" || !attributePoints) return;
+    if (typeof attributePoints !== "object" || !attributePoints) return;
 
     let totalPointsSpent = 0;
     const newAttributes = { ...character.attributes };
@@ -32,9 +32,9 @@ if (typeof attributePoints !== "object" || !attributePoints) return;
       newAttributes[attr] = character.attributes[attr] + points;
     }
 
-if (totalPointsSpent !== 5) return;
+    if (totalPointsSpent !== 5) return;
 
-const inventory = {
+    const inventory = {
       weight: character.inventory.reduce((sum, inv) => sum + (inv.item.weight ?? 0), 0),
       armor: character.inventory.reduce((sum, inv) => sum + (inv.item.armor ?? 0), 0),
     };
@@ -44,7 +44,7 @@ const inventory = {
       inventory
     );
 
-await db
+    await db
       .update(schema.character)
       .set({
         level: character.level + 1,
@@ -54,14 +54,14 @@ await db
         stamina: stats.stamina,
         maxWeight: stats.maxWeight,
         maxMemory: stats.maxMemory,
-        hp: stats.maxHp, 
+        hp: stats.maxHp,
       })
       .where(eq(schema.character.id, characterId));
 
     await refresh(ctx, lobbyId, "game:character:levelup:complete");
   });
 
-socket.on("game:character:xp:info", async (userId, lobbyId, characterId) => {
+  socket.on("game:character:xp:info", async (userId, lobbyId, characterId) => {
     const character = await db.query.character.findFirst({
       where: eq(schema.character.id, characterId),
     });
@@ -80,7 +80,7 @@ socket.on("game:character:xp:info", async (userId, lobbyId, characterId) => {
     });
   });
 
-socket.on("game:character:xp:award", async (userId, lobbyId, characterId, amount) => {
+  socket.on("game:character:xp:award", async (userId, lobbyId, characterId, amount) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
     if (inst.masterId !== userId) return;

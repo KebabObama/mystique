@@ -17,11 +17,11 @@ type FloorClickStore = {
   floorClickCallbacks: FloorClickCallback[];
   wallClickCallbacks: WallClickCallback[];
 
-addFloorClickCallback: (callback: FloorClickCallback) => void;
+  addFloorClickCallback: (callback: FloorClickCallback) => void;
   removeFloorClickCallback: (callback: FloorClickCallback) => void;
   emitFloorClick: (e: ThreeEvent<MouseEvent>, point: { x: number; z: number }) => void;
 
-addWallClickCallback: (callback: WallClickCallback) => void;
+  addWallClickCallback: (callback: WallClickCallback) => void;
   removeWallClickCallback: (callback: WallClickCallback) => void;
   emitWallClick: (
     e: ThreeEvent<MouseEvent>,

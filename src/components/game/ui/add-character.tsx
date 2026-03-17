@@ -20,7 +20,7 @@ export const AddCharacter = ({ characters, children }: AddCharacterProps) => {
     send("character:add", characterId);
   };
 
-const availableChars = characters.filter(
+  const availableChars = characters.filter(
     (c) => !c.lobbyId && !entities.some((entry) => entry.id === c.id)
   );
 
