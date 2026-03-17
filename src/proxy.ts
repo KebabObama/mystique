@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
+/** Provides the proxy function. */
 export const proxy = async (request: NextRequest) => {
   const { pathname } = request.nextUrl;
   if (pathname.startsWith("/api/auth")) return NextResponse.next();
@@ -14,4 +15,5 @@ export const proxy = async (request: NextRequest) => {
   return NextResponse.next();
 };
 
+/** Defines the runtime configuration. */
 export const config = { matcher: ["/dashboard", "/auth", "/settings", "/friends", "/api"] };

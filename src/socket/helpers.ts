@@ -1,18 +1,21 @@
 import { db, schema } from "@/lib/db";
+import { Game } from "@/lib/game";
 import { diffStateSync } from "@/lib/game-state";
 import * as Lobby from "@/lib/lobby";
-import { Game } from "@/lib/types";
 import { and, eq } from "drizzle-orm";
 import type { Server, Socket } from "socket.io";
 
+/** Represents the socket context type. */
 export type SocketContext = { socket: Socket; io: Server; instances: Map<string, Game.Instance> };
 
+/** Defines the is position constant. */
 export const isPosition = (value: unknown): value is Game.Position => {
   if (!value || typeof value !== "object") return false;
   const point = value as Partial<Game.Position>;
   return typeof point.x === "number" && typeof point.z === "number";
 };
 
+/** Defines the exists constant. */
 export const exists = async (
   ctx: SocketContext,
   userId: string,
@@ -39,6 +42,7 @@ export const exists = async (
   return inst;
 };
 
+/** Provides the emit full state function. */
 export const emitFullState = (socket: Socket, instance: Game.Instance) => {
   socket.emit("game:state", { type: "full", instance } satisfies Game.StateSync);
 };
@@ -53,21 +57,25 @@ const syncInstance = (ctx: SocketContext, fresh: Game.Instance, event?: string) 
   return fresh;
 };
 
+/** Provides the refresh function. */
 export const refresh = async (ctx: SocketContext, lobbyId: string, event?: string) => {
   const fresh = await Lobby.getInstance(lobbyId);
   return syncInstance(ctx, fresh, event);
 };
 
+/** Provides the update function. */
 export const update = async (ctx: SocketContext, fresh: Game.Instance, event?: string) => {
   await db.update(schema.lobby).set({ data: fresh.data }).where(eq(schema.lobby.id, fresh.id));
   return syncInstance(ctx, fresh, event);
 };
 
+/** Provides the normalize quantity function. */
 export const normalizeQuantity = (value: unknown) => {
   if (typeof value !== "number" || !Number.isFinite(value)) return 1;
   return Math.max(1, Math.floor(value));
 };
 
+/** Provides the upsert character inventory function. */
 export const upsertCharacterInventory = async (
   tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
   characterId: string,
@@ -89,6 +97,7 @@ export const upsertCharacterInventory = async (
     .where(and(eq(schema.inventory.characterId, characterId), eq(schema.inventory.itemId, itemId)));
 };
 
+/** Provides the upsert chest inventory function. */
 export const upsertChestInventory = async (
   tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
   chestId: string,

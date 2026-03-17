@@ -2,9 +2,13 @@ import { createAuthClient } from "better-auth/react";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+/** Defines the auth client constant. */
 export const authClient = createAuthClient();
+/** Provides the cn function. */
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
+/** Provides the mod function. */
 export const mod = (i: number, j = 10, k = 2) => Math.floor((i - j) / k);
+/** Defines the get cropped img constant. */
 export const getCroppedImg = async (
   imageSrc: string,
   pixelCrop: { x: number; y: number; width: number; height: number },
@@ -44,6 +48,7 @@ export const getCroppedImg = async (
   });
 };
 
+/** Defines the get unread count constant. */
 export const getUnreadCount = (
   lobby: {
     messages: Array<{ createdAt: Date }>;

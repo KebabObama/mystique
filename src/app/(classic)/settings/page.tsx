@@ -4,6 +4,7 @@ import { UpdateProfileName } from "@/components/settings/update-profile-name";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+/** Renders the settings page. */
 export default async () => {
   const session = await auth.api.getSession({ headers: await headers() });
   return (

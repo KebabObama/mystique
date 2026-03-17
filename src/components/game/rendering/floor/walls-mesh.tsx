@@ -17,6 +17,7 @@ const getNextCapacity = (size: number) => {
   return Math.ceil(size / WALL_INSTANCE_CHUNK) * WALL_INSTANCE_CHUNK;
 };
 
+/** Renders the walls mesh component. */
 export const WallsMesh = ({ walls, onClickAction }: Props) => {
   const wallsRef = React.useRef<THREE.InstancedMesh>(null);
   const wallDummy = React.useMemo(() => new THREE.Object3D(), []);

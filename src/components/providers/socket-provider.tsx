@@ -4,6 +4,7 @@ import { useSocket } from "@/hooks/use-socket";
 import { useUser } from "@/hooks/use-user";
 import React from "react";
 
+/** Renders the socket provider component. */
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const connect = useSocket((s) => s.connect);
   const disconnect = useSocket((s) => s.disconnect);

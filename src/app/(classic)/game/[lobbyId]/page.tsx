@@ -32,6 +32,7 @@ import { Plus } from "lucide-react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+/** Renders the game lobbyId page. */
 export default async ({ params }: { params: Promise<{ lobbyId: string }> }) => {
   const { lobbyId } = await params;
   const session = await auth.api.getSession({ headers: await headers() });

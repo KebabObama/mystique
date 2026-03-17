@@ -1,11 +1,12 @@
 "use client";
 
 import { useGame } from "@/hooks/use-game";
+import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/lib/types";
 import React from "react";
 import { FloorPosition } from "./use-floor-position";
 
+/** Represents the floor tiles type. */
 export type FloorTiles = {
   viable: Array<{ x: number; z: number }>;
   visibleViable: Array<{ x: number; z: number }>;
@@ -26,6 +27,7 @@ type Props = {
   hoverPos: Game.Position | null;
 };
 
+/** Defines the use floor tiles constant. */
 export const useFloorTiles = ({
   floorPosition,
   current,

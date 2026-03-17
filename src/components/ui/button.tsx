@@ -25,9 +25,11 @@ const buttonVariants = cva(
   }
 );
 
+/** Represents the button props type. */
 type ButtonProps = React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & { asChild?: boolean };
 
+/** Renders the button component. */
 const Button = ({ className, variant, size, asChild = false, ...props }: ButtonProps) => {
   const Comp = asChild ? Slot : "button";
 

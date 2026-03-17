@@ -13,6 +13,7 @@ import { Camera, Loader2 } from "lucide-react";
 import React, { useRef, useState } from "react";
 import Cropper, { type Area } from "react-easy-crop";
 
+/** Renders the update user avatar component. */
 export const UpdateUserAvatar = () => {
   const user = useUser();
   const inputRef = useRef<HTMLInputElement>(null);

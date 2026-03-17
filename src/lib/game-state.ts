@@ -1,4 +1,4 @@
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
 
 const isEqual = (left: unknown, right: unknown) => JSON.stringify(left) === JSON.stringify(right);
 
@@ -43,6 +43,7 @@ const applyEntityPatch = <T extends { id: string }>(current: T[], patch?: Game.E
   return next;
 };
 
+/** Defines the diff state sync constant. */
 export const diffStateSync = (
   previous: Game.Instance | null | undefined,
   next: Game.Instance
@@ -66,6 +67,7 @@ export const diffStateSync = (
   return Object.keys(patch).length > 0 ? { type: "patch", patch } : null;
 };
 
+/** Defines the apply state sync constant. */
 export const applyStateSync = (
   current: Game.Instance | null,
   sync: Game.StateSync

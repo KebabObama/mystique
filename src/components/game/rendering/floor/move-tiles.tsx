@@ -1,6 +1,6 @@
 "use client";
 
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
 import { Plane } from "@react-three/drei";
 
 type Props = {
@@ -12,6 +12,7 @@ type Props = {
   onEndModeAction: () => void;
 };
 
+/** Renders the move tiles component. */
 export const MoveTiles = ({ tiles, current, actions, y, onMoveAction, onEndModeAction }: Props) => {
   const canMove =
     current && (current.type === "chest" || current.type === "campfire" || actions > 0);

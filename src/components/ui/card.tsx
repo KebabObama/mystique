@@ -4,6 +4,7 @@ import React from "react";
 
 type CardProps = React.ComponentPropsWithoutRef<"section">;
 
+/** Renders the card component. */
 export const Card = ({ children, className, ...props }: CardProps) => {
   return (
     <section className={cn("bg-card relative p-3", className)} {...props}>

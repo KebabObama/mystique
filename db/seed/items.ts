@@ -36,9 +36,8 @@ import {
   whirlwind,
 } from "./abilities";
 
-// prettier-ignore
 const ITEMS: (typeof schema.item.$inferInsert)[] = [
-	// Original items
+	
 	{
 		name: "Gold Coin",
 		type: "misc",
@@ -103,8 +102,7 @@ const ITEMS: (typeof schema.item.$inferInsert)[] = [
 		requiremnts: {},
 	},
 
-	// New weapons - Swords
-	{
+{
 		name: "Iron Longsword",
 		type: "weapon",
 		value: 15,
@@ -141,8 +139,7 @@ const ITEMS: (typeof schema.item.$inferInsert)[] = [
 		requiremnts: { strength: 8, dexterity: 2, constitution: null, intelligence: null },
 	},
 
-	// New weapons - Axes & Hammers
-	{
+{
 		name: "Battle Axe",
 		type: "weapon",
 		value: 22,
@@ -170,8 +167,7 @@ const ITEMS: (typeof schema.item.$inferInsert)[] = [
 		requiremnts: { strength: 5, dexterity: 5, constitution: null, intelligence: null },
 	},
 
-	// New weapons - Ranged
-	{
+{
 		name: "Longbow",
 		type: "weapon",
 		value: 20,
@@ -199,8 +195,7 @@ const ITEMS: (typeof schema.item.$inferInsert)[] = [
 		requiremnts: { strength: 3, dexterity: 6, constitution: null, intelligence: null },
 	},
 
-	// New weapons - Staves & Wands
-	{
+{
 		name: "Fire Staff",
 		type: "weapon",
 		value: 30,
@@ -246,8 +241,7 @@ const ITEMS: (typeof schema.item.$inferInsert)[] = [
 		requiremnts: { strength: null, dexterity: null, constitution: null, intelligence: 8 },
 	},
 
-	// Armor pieces - Helmets
-	{
+{
 		name: "Iron Helm",
 		type: "helmet",
 		value: 12,
@@ -275,8 +269,7 @@ const ITEMS: (typeof schema.item.$inferInsert)[] = [
 		requiremnts: { strength: null, dexterity: null, constitution: null, intelligence: 8 },
 	},
 
-	// Armor pieces - Chest
-	{
+{
 		name: "Steel Armor",
 		type: "armor",
 		value: 18,
@@ -304,8 +297,7 @@ const ITEMS: (typeof schema.item.$inferInsert)[] = [
 		requiremnts: { strength: 8, dexterity: null, constitution: 6, intelligence: null },
 	},
 
-	// Armor pieces - Leggings
-	{
+{
 		name: "Iron Greaves",
 		type: "leggings",
 		value: 14,
@@ -333,8 +325,7 @@ const ITEMS: (typeof schema.item.$inferInsert)[] = [
 		requiremnts: {},
 	},
 
-	// Accessories - Rings
-	{
+{
 		name: "Ring of Strength",
 		type: "ring",
 		value: 25,
@@ -371,8 +362,7 @@ const ITEMS: (typeof schema.item.$inferInsert)[] = [
 		requiremnts: {},
 	},
 
-	// Special weapons with multiple abilities
-	{
+{
 		name: "Duelist Rapier",
 		type: "weapon",
 		value: 26,
@@ -401,14 +391,11 @@ const ITEMS: (typeof schema.item.$inferInsert)[] = [
 	},
 ];
 
+/** Seeds items records into the database. */
 export const seed = async () => {
   const inserted = await db
     .insert(schema.item)
     .values(ITEMS)
     .onConflictDoNothing({ target: schema.item.name })
     .returning({ id: schema.item.id });
-
-  console.info(
-    `[seed] Added ${inserted.length} new item(s), skipped ${ITEMS.length - inserted.length} existing item(s).`
-  );
 };

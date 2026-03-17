@@ -4,6 +4,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { sendResetPassword, sendVerificationEmail } from "./email";
 
+/** Defines the auth constant. */
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", schema }),
   advanced: { database: { generateId: false, useNumberId: false } },

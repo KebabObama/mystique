@@ -1,7 +1,7 @@
 import { Dialog } from "@/components/ui/dialog";
 import { useGame } from "@/hooks/use-game";
+import { Game } from "@/lib/game";
 import { getEntityLabel, InventoryItem } from "@/lib/inventory-panel";
-import { Game } from "@/lib/types";
 import React from "react";
 import {
   CharacterInfo,
@@ -13,6 +13,7 @@ import {
 
 type MasterPanelProps = { entity: Game.Entity; items: InventoryItem[]; onClose: () => void };
 
+/** Renders the master panel component. */
 export const MasterPanel = ({ entity, items, onClose }: MasterPanelProps) => {
   const grant = useGame((state) => state.inventory.grant);
   const dropItem = useGame((state) => state.inventory.dropItem);

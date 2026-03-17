@@ -3,8 +3,8 @@
 import { Card } from "@/components/ui/card";
 import { useGame } from "@/hooks/use-game";
 import { useHoveredEntity } from "@/hooks/use-hovered-entity";
+import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/lib/types";
 import React from "react";
 
 type Detail = { label: string; value: string | number };
@@ -74,6 +74,7 @@ const getDetails = (entity: Game.Entity): Detail[] => {
   }
 };
 
+/** Renders the entity hover card component. */
 export const EntityHoverCard = () => {
   const instance = useGame((s) => s.instance);
   const hoveredEntityId = useHoveredEntity((s) => s.hoveredEntityId);

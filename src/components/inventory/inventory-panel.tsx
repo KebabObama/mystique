@@ -9,6 +9,7 @@ import { MasterPanel } from "./master-panel";
 
 type InventoryPanelProps = { items: InventoryItem[] };
 
+/** Renders the inventory panel component. */
 export const InventoryPanel = ({ items }: InventoryPanelProps) => {
   const instance = useGame((state) => state.instance);
   const panelMode = useGame((state) => state.inventory.panelMode);

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { deleteCharacter } from "@/lib/character-actions";
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
 import React from "react";
 
 type CharacaterDeleteProps = {
@@ -14,6 +14,7 @@ type CharacaterDeleteProps = {
   asChild?: boolean;
 };
 
+/** Renders the character delete component. */
 export const CharacterDelete = ({ character, children, asChild }: CharacaterDeleteProps) => {
   const [confirm, setConfirm] = React.useState("");
   const handle = async () => {

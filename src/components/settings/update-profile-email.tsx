@@ -10,6 +10,7 @@ import { User } from "better-auth";
 import { Loader2, Save } from "lucide-react";
 import React from "react";
 
+/** Renders the update profile email component. */
 export const UpdateProfileEmail = ({ user }: { user: User }) => {
   const [email, setEmail] = React.useState(user?.email || "");
   const [isLoading, setIsLoading] = React.useState(false);

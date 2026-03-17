@@ -10,6 +10,7 @@ import React from "react";
 
 type MenuAction = { label: string; run: () => void };
 
+/** Renders the entity context menu component. */
 export const EntityContextMenu = () => {
   const instance = useGame((s) => s.instance);
   const openPanel = useGame((s) => s.inventory.openPanel);

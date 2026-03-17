@@ -1,29 +1,13 @@
 import { db, schema } from "@/lib/db";
+import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/lib/types";
+import { Trading } from "@/lib/trading";
 import { and, eq } from "drizzle-orm";
 import { type SocketContext, exists, refresh, upsertCharacterInventory } from "./helpers";
 
-interface TradeOffer {
-  items: Array<{ itemId: string; quantity: number }>;
-  currency: number;
-}
-
-interface TradeSession {
-  id: string;
-  lobbyId: string;
-  entityAId: string;
-  entityBId: string;
-  offers: Record<string, TradeOffer>;
-  confirmed: Record<string, boolean>;
-  updatedAt: number;
-}
-
 type CharacterEntity = Extract<Game.Entity, { type: "character" }>;
 
-const activeTradeSessions = new Map<string, TradeSession>();
-
-const EMPTY_OFFER: TradeOffer = { items: [], currency: 0 };
+const activeTradeSessions = new Map<string, Trading.Session>();
 
 const createTradeId = () => `trade_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 
@@ -38,7 +22,7 @@ const isParticipantController = (
   return entity.ownerId === userId || inst.masterId === userId;
 };
 
-const sanitizeOffer = (offer: unknown, entity: CharacterEntity): TradeOffer => {
+const sanitizeOffer = (offer: unknown, entity: CharacterEntity): Trading.Offer => {
   const payload = (offer ?? {}) as {
     items?: Array<{ itemId?: unknown; quantity?: unknown }>;
     currency?: unknown;
@@ -86,7 +70,7 @@ const findPairSession = (lobbyId: string, aId: string, bId: string) => {
   );
 };
 
-const emitSession = (ctx: SocketContext, session: TradeSession) => {
+const emitSession = (ctx: SocketContext, session: Trading.Session) => {
   ctx.io.to(`game:${session.lobbyId}`).emit("game:trade:session", session);
 };
 
@@ -130,7 +114,7 @@ const debitCharacterInventory = async (
 
 const settleTrade = async (
   inst: NonNullable<Awaited<ReturnType<typeof exists>>>,
-  session: TradeSession
+  session: Trading.Session
 ) => {
   const entityA = InGameHelpers.getEntities(inst).find(
     (entry): entry is CharacterEntity =>
@@ -146,8 +130,8 @@ const settleTrade = async (
   }
 
   await db.transaction(async (tx) => {
-    const offerA = session.offers[session.entityAId] ?? EMPTY_OFFER;
-    const offerB = session.offers[session.entityBId] ?? EMPTY_OFFER;
+    const offerA = session.offers[session.entityAId] ?? Trading.EMPTY_OFFER;
+    const offerB = session.offers[session.entityBId] ?? Trading.EMPTY_OFFER;
 
     for (const item of offerA.items) {
       await debitCharacterInventory(tx, entityA.id, item.itemId, item.quantity);
@@ -179,10 +163,9 @@ const settleTrade = async (
   });
 };
 
+/** Registers the trading socket handlers. */
 export const register = (ctx: SocketContext) => {
   const { socket } = ctx;
-
-  // ── Trading ───────────────────────────────────────────────────────────
 
   socket.on("game:trade:request", async (userId, lobbyId, fromEntityId, toEntityId, payload) => {
     const inst = await exists(ctx, userId, lobbyId);
@@ -205,12 +188,12 @@ export const register = (ctx: SocketContext) => {
     const sessionId = createTradeId();
     const offerFrom = sanitizeOffer(payload, fromEntity);
 
-    const session: TradeSession = {
+    const session: Trading.Session = {
       id: sessionId,
       lobbyId,
       entityAId: fromEntityId,
       entityBId: toEntityId,
-      offers: { [fromEntityId]: offerFrom, [toEntityId]: { ...EMPTY_OFFER } },
+      offers: { [fromEntityId]: offerFrom, [toEntityId]: { ...Trading.EMPTY_OFFER } },
       confirmed: { [fromEntityId]: false, [toEntityId]: false },
       updatedAt: Date.now(),
     };

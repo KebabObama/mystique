@@ -5,6 +5,7 @@ import { EffectComposer, Pixelation } from "@react-three/postprocessing";
 
 type PostProcessingProps = {};
 
+/** Renders the post processing component. */
 export const PostProcessing = ({}: PostProcessingProps) => {
   return (
     <>

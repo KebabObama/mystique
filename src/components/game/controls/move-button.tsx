@@ -5,6 +5,7 @@ import { useGame } from "@/hooks/use-game";
 import { usePermissions } from "@/hooks/use-permissions";
 import { Move } from "lucide-react";
 
+/** Renders the move button component. */
 export const MoveButton = () => {
   const current = useGame((s) => s.sequence.current);
   const setMode = useGame((s) => s.setMode);
@@ -15,8 +16,7 @@ export const MoveButton = () => {
 
   if (!current) return null;
 
-  // Show for characters and monsters when you can control them
-  if (current.type === "character" || current.type === "monster") {
+if (current.type === "character" || current.type === "monster") {
     if (!canControlCurrent || actions <= 0) return null;
     return (
       <Button size="sm" onClick={() => setMode({ type: "character:move" })}>
@@ -25,8 +25,7 @@ export const MoveButton = () => {
     );
   }
 
-  // Show for chests and campfires when master is on turn
-  if (current.type === "chest") {
+if (current.type === "chest") {
     if (!isMasterOnTurn) return null;
     return (
       <Button size="sm" onClick={() => setMode({ type: "chest:move", entityId: current.id })}>

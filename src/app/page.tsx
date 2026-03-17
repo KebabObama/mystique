@@ -4,6 +4,7 @@ import PixelTrail from "@/components/ui/pixel-trail";
 import Link from "next/link";
 import React from "react";
 
+/** Renders the home page. */
 export default (): React.ReactNode => {
   return (
     <main className="pointer-events-none relative h-dvh w-dvw overflow-hidden">

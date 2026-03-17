@@ -13,6 +13,7 @@ type SocketStore = {
   disconnect: () => void;
 };
 
+/** Provides the Zustand store for socket. */
 export const useSocket = create<SocketStore>((set, get) => ({
   socket: null,
   connected: false,

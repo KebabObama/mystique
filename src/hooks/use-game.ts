@@ -5,11 +5,13 @@ import { useDialog } from "@/hooks/use-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useSocket } from "@/hooks/use-socket";
 import { useUser } from "@/hooks/use-user";
+import { Game } from "@/lib/game";
 import { applyStateSync } from "@/lib/game-state";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/lib/types";
+import { Trading } from "@/lib/trading";
 import { create } from "zustand";
 
+/** Represents the game mode type. */
 export type GameMode =
   | { type: "normal" }
   | { type: "character:move" }
@@ -24,23 +26,13 @@ export type GameMode =
   | { type: "campfire:move"; entityId: Game.Entity["id"] }
   | { type: "monster:place"; monsterId: string };
 
+/** Represents the message data type. */
 export type MessageData = {
   message: string;
   variant?: "default" | "success" | "error" | "warning";
 };
 
-export type TradeOffer = { items: Array<{ itemId: string; quantity: number }>; currency: number };
-
-export type TradeSession = {
-  id: string;
-  lobbyId: string;
-  entityAId: Game.Entity["id"];
-  entityBId: Game.Entity["id"];
-  offers: Record<string, TradeOffer>;
-  confirmed: Record<string, boolean>;
-  updatedAt: number;
-};
-
+/** Represents the game store type. */
 export type GameStore = {
   instance: Game.Instance | null;
   init: () => void;
@@ -98,7 +90,11 @@ export type GameStore = {
       items: Array<{ itemId: string; quantity: number }>,
       currency: number
     ) => void;
-    updateOffer: (sessionId: string, actorEntityId: Game.Entity["id"], offer: TradeOffer) => void;
+    updateOffer: (
+      sessionId: string,
+      actorEntityId: Game.Entity["id"],
+      offer: Trading.Offer
+    ) => void;
     setConfirmed: (sessionId: string, actorEntityId: Game.Entity["id"], ready: boolean) => void;
     cancelTrade: (sessionId: string) => void;
   };
@@ -112,6 +108,7 @@ export type GameStore = {
   sequence: { next: () => void; readonly current: Game.Entity | undefined };
 };
 
+/** Provides the Zustand store for game. */
 export const useGame = create<GameStore>((set, get) => ({
   instance: null,
 
@@ -151,7 +148,7 @@ export const useGame = create<GameStore>((set, get) => ({
       usePermissions.getState().update(null);
     });
 
-    socket.on("game:trade:session", (session: TradeSession) => {
+    socket.on("game:trade:session", (session: Trading.Session) => {
       const selectedCharacterId = useDialog.getState().trading.selectedCharacterId;
       if (
         selectedCharacterId &&
@@ -197,7 +194,6 @@ export const useGame = create<GameStore>((set, get) => ({
     const socket = useSocket.getState().socket;
     if (!socket || !userId || !inst) return;
     socket.emit(`game:${event}`, userId, inst.id, ...payload);
-    console.log(`game:${event}`, userId, inst.id, ...payload);
   },
 
   mode: { type: "normal" } as GameMode,

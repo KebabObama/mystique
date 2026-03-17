@@ -4,6 +4,7 @@ import { Border } from "@/components/ui/border";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 
+/** Renders the header component. */
 export const Header = () => {
   const text = (usePathname() ?? "").split("/")[1];
 

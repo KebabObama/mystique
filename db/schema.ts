@@ -1,4 +1,4 @@
-import { Brand } from "@/lib/types";
+import { Game } from "@/lib/game";
 import { relations } from "drizzle-orm";
 import {
   boolean,
@@ -13,40 +13,9 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-// Type definitions to avoid circular dependency with shared game types
-type Attribute = "strength" | "dexterity" | "constitution" | "intelligence";
-type Effect = "corroding" | "frostbite" | "burning" | "shocked";
-type Position = { x: number; z: number };
-type Ability = {
-  name: string;
-  cost: number;
-  range: number;
-  targeting: number;
-  amount: [number, number];
-  effects: Record<Effect, number>;
-};
-type Data = {
-  walls: Array<Position>;
-  sequence: Array<Brand<string, "lobbyEntityId">>;
-  turn: number;
-};
+const id = <T extends string>(name: string) => uuid(name).$type<Game.Brand<string, T>>();
 
-const EMPTY_EFFECTS: Record<Effect, number> = {
-  corroding: 0,
-  frostbite: 0,
-  burning: 0,
-  shocked: 0,
-};
-
-const ITEM_TYPES = ["weapon", "helmet", "armor", "leggings", "ring", "misc"] as const;
-const RACES = ["dwarf", "elf", "human", "orc"] as const;
-
-const id = <T extends string>(name: string) => uuid(name).$type<Brand<string, T>>();
-
-// ============================================================================
-// AUTH & USERS
-// ============================================================================
-
+/** Defines the user table schema. */
 export const user = pgTable("user", {
   id: id<"userId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -59,6 +28,7 @@ export const user = pgTable("user", {
     .$onUpdate(() => new Date()),
 });
 
+/** Defines the session table schema. */
 export const session = pgTable(
   "session",
   {
@@ -76,6 +46,7 @@ export const session = pgTable(
   (table) => [index("session_userId_idx").on(table.userId)]
 );
 
+/** Defines the account table schema. */
 export const account = pgTable(
   "account",
   {
@@ -100,6 +71,7 @@ export const account = pgTable(
   (table) => [index("account_userId_idx").on(table.userId)]
 );
 
+/** Defines the verification table schema. */
 export const verification = pgTable(
   "verification",
   {
@@ -116,39 +88,34 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)]
 );
 
-// ============================================================================
-// ITEMS
-// ============================================================================
-
+/** Defines the item table schema. */
 export const item = pgTable("item", {
   id: id<"itemId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull().unique(),
-  type: text("type", { enum: ITEM_TYPES }).notNull().default("misc"),
+  type: text("type", { enum: Game.ITEM_TYPES }).notNull().default("misc"),
   value: integer("value").notNull().default(0),
   weight: integer("weight").notNull().default(0),
   armor: integer("armor"),
-  meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
-  abilities: json("abilities").notNull().$type<Ability[]>(),
+  meshPath: text("mesh_path"), 
+  abilities: json("abilities").notNull().$type<Game.Ability[]>(),
   requiremnts: json("regiments")
     .notNull()
-    .$type<Partial<Record<Attribute, number | null>>>()
+    .$type<Partial<Record<Game.Attribute, number | null>>>()
     .default({}),
 });
 
-// ============================================================================
-// LOBBIES
-// ============================================================================
-
+/** Defines the lobby table schema. */
 export const lobby = pgTable("lobby", {
   id: id<"lobbyId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  data: jsonb("data").notNull().$type<Data>().default({ walls: [], sequence: [], turn: -1 }),
+  data: jsonb("data").notNull().$type<Game.Data>().default(Game.INITIAL_DATA),
   masterId: id<"userId">("master_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
+/** Defines the lobbyMember table schema. */
 export const lobbyMember = pgTable(
   "lobby_member",
   {
@@ -171,6 +138,7 @@ export const lobbyMember = pgTable(
   ]
 );
 
+/** Defines the message table schema. */
 export const message = pgTable(
   "message",
   {
@@ -187,10 +155,7 @@ export const message = pgTable(
   (table) => [index("message_lobby_idx").on(table.lobbyId)]
 );
 
-// ============================================================================
-// CHARACTERS
-// ============================================================================
-
+/** Defines the character table schema. */
 export const character = pgTable(
   "character",
   {
@@ -200,11 +165,11 @@ export const character = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     lobbyId: id<"lobbyId">("lobby_id").references(() => lobby.id, { onDelete: "set null" }),
     name: text("name").notNull(),
-    race: text("race", { enum: RACES }).notNull(),
+    race: text("race", { enum: Game.RACES }).notNull(),
     level: integer("level").notNull().default(1),
     xp: integer("xp").notNull().default(0),
-    meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
-    attributes: jsonb("attributes").notNull().$type<Record<Attribute, number>>(),
+    meshPath: text("mesh_path"), 
+    attributes: jsonb("attributes").notNull().$type<Record<Game.Attribute, number>>(),
     memory: integer("memory").notNull().default(2),
     hp: integer("hp").notNull().default(10),
     coins: integer("coins").notNull().default(0),
@@ -222,6 +187,7 @@ export const character = pgTable(
   ]
 );
 
+/** Defines the inventory table schema. */
 export const inventory = pgTable(
   "inventory",
   {
@@ -240,10 +206,7 @@ export const inventory = pgTable(
   ]
 );
 
-// ============================================================================
-// MONSTERS
-// ============================================================================
-
+/** Defines the monster table schema. */
 export const monster = pgTable("monster", {
   id: id<"monsterId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -251,27 +214,25 @@ export const monster = pgTable("monster", {
   hp: integer("hp").notNull().default(10),
   maxHp: integer("max_hp").notNull().default(10),
   armor: integer("armor").notNull().default(0),
-  meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
+  meshPath: text("mesh_path"), 
   stamina: integer("stamina").notNull().default(5),
   maxActions: integer("max_actions").notNull().default(1),
   memory: integer("memory").notNull().default(2),
-  abilities: jsonb("abilities").notNull().$type<Ability[]>().default([]),
+  abilities: jsonb("abilities").notNull().$type<Game.Ability[]>().default([]),
 });
 
-// ============================================================================
-// CHESTS
-// ============================================================================
-
+/** Defines the chest table schema. */
 export const chest = pgTable(
   "chest",
   {
     id: id<"chestId">("id").primaryKey().defaultRandom(),
     name: text("name").notNull().default("Chest"),
-    meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
+    meshPath: text("mesh_path"), 
   },
   (table) => [index("chest_name_idx").on(table.name)]
 );
 
+/** Defines the chestInventory table schema. */
 export const chestInventory = pgTable(
   "chest_inventory",
   {
@@ -289,16 +250,14 @@ export const chestInventory = pgTable(
   ]
 );
 
-// ============================================================================
-// LOBBY ENTITIES (for monsters & chests in lobbies)
-// ============================================================================
-
+/** Defines the campfire table schema. */
 export const campfire = pgTable("campfire", {
   id: id<"campfireId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull().default("Campfire"),
-  meshPath: text("mesh_path"), // Path to GLB/GLTF file in /public folder
+  meshPath: text("mesh_path"), 
 });
 
+/** Defines the campfireShopItem table schema. */
 export const campfireShopItem = pgTable(
   "campfire_shop_item",
   {
@@ -308,7 +267,7 @@ export const campfireShopItem = pgTable(
     itemId: id<"itemId">("item_id")
       .notNull()
       .references(() => item.id, { onDelete: "cascade" }),
-    cost: integer("cost").notNull(), // Cost in currency
+    cost: integer("cost").notNull(), 
   },
   (table) => [
     index("campfire_shop_item_campfire_idx").on(table.campfireId),
@@ -316,6 +275,7 @@ export const campfireShopItem = pgTable(
   ]
 );
 
+/** Defines the lobbyEntity table schema. */
 export const lobbyEntity = pgTable(
   "lobby_entity",
   {
@@ -323,7 +283,7 @@ export const lobbyEntity = pgTable(
     lobbyId: id<"lobbyId">("lobby_id")
       .notNull()
       .references(() => lobby.id, { onDelete: "cascade" }),
-    type: text("type", { enum: ["character", "monster", "chest", "campfire"] }).notNull(),
+    type: text("type", { enum: Game.ENTITY_TYPES }).notNull(),
     characterId: id<"characterId">("character_id").references(() => character.id, {
       onDelete: "cascade",
     }),
@@ -332,21 +292,21 @@ export const lobbyEntity = pgTable(
     campfireId: id<"campfireId">("campfire_id").references(() => campfire.id, {
       onDelete: "cascade",
     }),
-    position: jsonb("position").notNull().$type<Position>().default({ x: 0, z: 0 }),
+    position: jsonb("position").notNull().$type<Game.Position>().default({ x: 0, z: 0 }),
     actions: integer("actions").notNull().default(0),
-    effects: jsonb("effects").notNull().$type<Record<Effect, number>>().default(EMPTY_EFFECTS),
+    effects: jsonb("effects")
+      .notNull()
+      .$type<Record<Game.Effect, number>>()
+      .default(Game.EMPTY_EFFECTS),
     activeEffects: jsonb("active_effects")
       .notNull()
-      .$type<Record<Effect, number>>()
-      .default(EMPTY_EFFECTS),
+      .$type<Record<Game.Effect, number>>()
+      .default(Game.EMPTY_EFFECTS),
   },
   (table) => [index("lobby_entity_lobby_idx").on(table.lobbyId)]
 );
 
-// ============================================================================
-// RELATIONS
-// ============================================================================
-
+/** Defines the user relations relations. */
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
@@ -354,19 +314,23 @@ export const userRelations = relations(user, ({ many }) => ({
   lobbyMemberships: many(lobbyMember),
 }));
 
+/** Defines the session relations relations. */
 export const sessionRelations = relations(session, ({ one }) => ({
   user: one(user, { fields: [session.userId], references: [user.id] }),
 }));
 
+/** Defines the account relations relations. */
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, { fields: [account.userId], references: [user.id] }),
 }));
 
+/** Defines the item relations relations. */
 export const itemRelations = relations(item, ({ many }) => ({
   inventories: many(inventory),
   chestInventories: many(chestInventory),
 }));
 
+/** Defines the lobby relations relations. */
 export const lobbyRelations = relations(lobby, ({ one, many }) => ({
   master: one(user, { fields: [lobby.masterId], references: [user.id] }),
   members: many(lobbyMember),
@@ -375,16 +339,19 @@ export const lobbyRelations = relations(lobby, ({ one, many }) => ({
   characters: many(character),
 }));
 
+/** Defines the lobby member relations relations. */
 export const lobbyMemberRelations = relations(lobbyMember, ({ one }) => ({
   lobby: one(lobby, { fields: [lobbyMember.lobbyId], references: [lobby.id] }),
   user: one(user, { fields: [lobbyMember.userId], references: [user.id] }),
 }));
 
+/** Defines the message relations relations. */
 export const messageRelations = relations(message, ({ one }) => ({
   lobby: one(lobby, { fields: [message.lobbyId], references: [lobby.id] }),
   sender: one(user, { fields: [message.senderId], references: [user.id] }),
 }));
 
+/** Defines the character relations relations. */
 export const characterRelations = relations(character, ({ many, one }) => ({
   inventory: many(inventory),
   lobbyEntities: many(lobbyEntity),
@@ -392,35 +359,42 @@ export const characterRelations = relations(character, ({ many, one }) => ({
   lobby: one(lobby, { fields: [character.lobbyId], references: [lobby.id] }),
 }));
 
+/** Defines the inventory relations relations. */
 export const inventoryRelations = relations(inventory, ({ one }) => ({
   character: one(character, { fields: [inventory.characterId], references: [character.id] }),
   item: one(item, { fields: [inventory.itemId], references: [item.id] }),
 }));
 
+/** Defines the monster relations relations. */
 export const monsterRelations = relations(monster, ({ many }) => ({
   lobbyEntities: many(lobbyEntity),
 }));
 
+/** Defines the chest relations relations. */
 export const chestRelations = relations(chest, ({ many }) => ({
   inventory: many(chestInventory),
   lobbyEntities: many(lobbyEntity),
 }));
 
+/** Defines the campfire relations relations. */
 export const campfireRelations = relations(campfire, ({ many }) => ({
   shopItems: many(campfireShopItem),
   lobbyEntities: many(lobbyEntity),
 }));
 
+/** Defines the campfire shop item relations relations. */
 export const campfireShopItemRelations = relations(campfireShopItem, ({ one }) => ({
   campfire: one(campfire, { fields: [campfireShopItem.campfireId], references: [campfire.id] }),
   item: one(item, { fields: [campfireShopItem.itemId], references: [item.id] }),
 }));
 
+/** Defines the chest inventory relations relations. */
 export const chestInventoryRelations = relations(chestInventory, ({ one }) => ({
   chest: one(chest, { fields: [chestInventory.chestId], references: [chest.id] }),
   item: one(item, { fields: [chestInventory.itemId], references: [item.id] }),
 }));
 
+/** Defines the lobby entity relations relations. */
 export const lobbyEntityRelations = relations(lobbyEntity, ({ one }) => ({
   lobby: one(lobby, { fields: [lobbyEntity.lobbyId], references: [lobby.id] }),
   character: one(character, { fields: [lobbyEntity.characterId], references: [character.id] }),

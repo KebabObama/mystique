@@ -8,6 +8,7 @@ import { useGame } from "@/hooks/use-game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import React from "react";
 
+/** Renders the campfire rest dialog component. */
 export const CampfireRestDialog = () => {
   const instance = useGame((s) => s.instance);
   const open = useDialog((s) => s.campfire.restDialogOpen);
@@ -22,7 +23,7 @@ export const CampfireRestDialog = () => {
 
   const maxActions = charEntity.actions ?? charEntity.maxActions ?? 0;
   const healing = Math.min(
-    actionsToRest * 20, // Max 20% of maxHp per action spent
+    actionsToRest * 20, 
     charEntity.maxHp
   );
   const projectedHp = Math.min(charEntity.hp + healing, charEntity.maxHp);

@@ -8,6 +8,7 @@ import { useGame } from "@/hooks/use-game";
 import { usePermissions } from "@/hooks/use-permissions";
 import { Flame } from "lucide-react";
 
+/** Renders the campfire controls component. */
 export const CampfireControls = () => {
   const instance = useGame((state) => state.instance);
   const canManageCampfires = usePermissions((state) => state.isMasterOnTurn);

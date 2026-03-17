@@ -17,6 +17,7 @@ type LobbyActionDialogProps = {
   placeholder?: string;
 };
 
+/** Renders the lobby action dialog component. */
 export const LobbyActionDialog = ({
   title,
   description,

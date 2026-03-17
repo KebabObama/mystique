@@ -2,6 +2,7 @@ import * as React from "react";
 
 const MOBILE_BREAKPOINT = 768;
 
+/** Provides the is mobile hook. */
 export const useIsMobile = () => {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined);
   React.useEffect(() => {

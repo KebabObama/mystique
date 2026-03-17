@@ -1,25 +1,31 @@
-import type { RenderDistanceType, RenderPointerType } from "@/lib/types";
+import * as THREE from "three";
 
+/** Provides the Render namespace. */
 export namespace Render {
-  export type PointerType = RenderPointerType;
-  export type DistanceType = RenderDistanceType;
+    /** Represents the pointer type type. */
+export type PointerType = THREE.Vector3 | { x: number; y?: number | null; z: number } | number[];
+    /** Represents the distance type type. */
+export type DistanceType = "euclidean" | "manhattan" | "chebyshev";
 
   const parseCoords = (point: PointerType) => {
     if (Array.isArray(point)) return { x: point[0] ?? 0, y: point[1] ?? 0, z: point[2] ?? 0 };
     return { x: point.x ?? 0, y: point.y ?? 0, z: point.z ?? 0 };
   };
 
-  export const getTileCenter = (point: PointerType) => {
+    /** Provides the get tile center function. */
+export const getTileCenter = (point: PointerType) => {
     const { x, y, z } = parseCoords(point);
     return { x: Math.floor(x) + 0.5, y: Math.floor(y) + 0.5, z: Math.floor(z) + 0.5 };
   };
 
-  export const getTilePosition = (point: PointerType) => {
+    /** Provides the get tile position function. */
+export const getTilePosition = (point: PointerType) => {
     const { x, y, z } = parseCoords(point);
     return { x: Math.floor(x), y: Math.floor(y), z: Math.floor(z) };
   };
 
-  export const distance = (a: PointerType, b: PointerType, type: DistanceType = "euclidean") => {
+    /** Provides the distance function. */
+export const distance = (a: PointerType, b: PointerType, type: DistanceType = "euclidean") => {
     const p1 = parseCoords(a);
     const p2 = parseCoords(b);
 

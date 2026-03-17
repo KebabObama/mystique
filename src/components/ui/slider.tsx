@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import * as React from "react";
 
+/** Renders the slider component. */
 export const Slider = ({
   className,
   defaultValue,
@@ -44,9 +45,6 @@ export const Slider = ({
         />
       </SliderPrimitive.Track>
 
-      {/* We only map the thumbs if mounted, or we render a single thumb 
-          by default to match the most common server-side expectation.
-      */}
       {thumbValues.map((_, index) => (
         <SliderPrimitive.Thumb
           key={`thumb-${index}`}

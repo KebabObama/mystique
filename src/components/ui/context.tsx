@@ -40,6 +40,7 @@ const ContextItem = React.forwardRef<
   />
 ));
 
+/** Renders the menu component. */
 const Menu = Object.assign(Context, {
   Trigger: ContextTrigger,
   Content: ContextContent,

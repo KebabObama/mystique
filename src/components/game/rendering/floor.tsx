@@ -1,7 +1,7 @@
 "use client";
 
 import { useGame } from "@/hooks/use-game";
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
 import React from "react";
 import { FloorClickHandler } from "./floor/floor-click-handler";
 import { FloorGrid } from "./floor/floor-grid";
@@ -13,6 +13,7 @@ import { WallClickHandler } from "./floor/wall-click-handler";
 
 const EMPTY_WALLS: any[] = [];
 
+/** Renders the floor component. */
 export const Floor = React.memo(() => {
   const { position, isWithinRenderDistance } = useFloorPosition();
   const walls = useGame((s) => s.instance?.data.walls ?? EMPTY_WALLS);
@@ -24,7 +25,6 @@ export const Floor = React.memo(() => {
 
   const [hoverPos, setHoverPos] = React.useState<{ x: number; z: number } | null>(null);
 
-  // Determine ability mode and wall area start
   const abilityMode = mode.type === "ability" ? mode : undefined;
   const ability = abilityMode?.ability;
   const selectedAbilityTarget = abilityMode?.target;
@@ -38,7 +38,6 @@ export const Floor = React.memo(() => {
       : 0) ??
     0;
 
-  // Calculate all tiles
   const tiles = useFloorTiles({
     floorPosition: { position, isWithinRenderDistance },
     current,
@@ -48,7 +47,6 @@ export const Floor = React.memo(() => {
     hoverPos,
   });
 
-  // Filter visible walls
   const visibleWalls = React.useMemo(
     () => walls.filter((wall) => isWithinRenderDistance(wall)),
     [walls, isWithinRenderDistance]
@@ -56,14 +54,11 @@ export const Floor = React.memo(() => {
 
   return (
     <>
-      {/* Click handlers */}
       <FloorClickHandler viableAbility={tiles.viableAbility} />
       <WallClickHandler visibleWalls={visibleWalls} />
 
-      {/* Rendered surfaces */}
       <FloorSurface position={position} walls={visibleWalls} onHoverPosChange={setHoverPos} />
 
-      {/* Tile overlays */}
       <FloorTilesRenderer
         mode={mode}
         setModeAction={setMode}
@@ -75,7 +70,6 @@ export const Floor = React.memo(() => {
         floorCenter={position}
       />
 
-      {/* Grid */}
       <FloorGrid position={position} />
     </>
   );

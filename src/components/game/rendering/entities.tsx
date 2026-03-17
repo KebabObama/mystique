@@ -5,14 +5,16 @@ import { useDialog } from "@/hooks/use-dialog";
 import { useGame } from "@/hooks/use-game";
 import { useHoveredEntity } from "@/hooks/use-hovered-entity";
 import { useUser } from "@/hooks/use-user";
+import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Mesh } from "@/lib/mesh";
 import { Render } from "@/lib/render";
-import { Game } from "@/lib/types";
 import { animated, useSpring } from "@react-spring/three";
 import { ThreeEvent } from "@react-three/fiber";
 import React, { useEffect, useState } from "react";
 import * as THREE from "three";
+
+const AnimatedPrimitive = animated.primitive as unknown as React.ComponentType<any>;
 
 const EntityMesh = ({
   entity,
@@ -51,8 +53,7 @@ const EntityMesh = ({
         setLoadedModel(model);
         setIsLoading(false);
       })
-      .catch((error) => {
-        console.error("Failed to load mesh:", error);
+      .catch(() => {
         setIsLoading(false);
       });
   }, [meshPath]);
@@ -104,10 +105,7 @@ const EntityMesh = ({
   };
 
   if (loadedModel && !isLoading) {
-    return (
-      // @ts-expect-error - React Three Fiber doesn't have built-in types for animated.primitive
-      <animated.primitive object={loadedModel} {...animatedProps} />
-    );
+    return <AnimatedPrimitive object={loadedModel} {...animatedProps} />;
   }
 
   return (

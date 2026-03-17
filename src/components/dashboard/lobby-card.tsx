@@ -4,12 +4,13 @@ import { SidebarLobbyItem } from "@/components/layout/sidebar-lobby-item";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useLobby } from "@/hooks/use-lobby";
-import type { LobbyInfo } from "@/lib/types";
+import type { LobbyInfo } from "@/lib/dashboard";
 import { LogIn, MessageSquare, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type LobbyCardProps = { lobby: LobbyInfo };
 
+/** Renders the lobby card component. */
 export const LobbyCard = ({ lobby }: LobbyCardProps) => {
   const router = useRouter();
   const fullLobby = useLobby((s) => s.lobbies.find((entry) => entry.id === lobby.id));

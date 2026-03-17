@@ -14,11 +14,12 @@ import {
 } from "@/components/ui/select";
 import { useUser } from "@/hooks/use-user";
 import { createCharacter, getAllItems } from "@/lib/character-actions";
+import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/lib/types";
 import { Dices, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import React from "react";
 
+/** Renders the character creator component. */
 export const CharacterCreator = () => {
   const ownerId = useUser((s) => s?.id) as string;
   const createInitialChar = () => {
@@ -64,8 +65,8 @@ export const CharacterCreator = () => {
       if (result.success) {
         setAllItems(result.items);
       }
-    } catch (error) {
-      console.error("Failed to fetch items:", error);
+    } catch {
+      toast.error("Failed to load items");
     }
   };
 

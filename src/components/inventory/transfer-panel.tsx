@@ -1,7 +1,7 @@
 import { Dialog } from "@/components/ui/dialog";
 import { useGame } from "@/hooks/use-game";
+import { Game } from "@/lib/game";
 import { getEntityLabel } from "@/lib/inventory-panel";
-import { Game } from "@/lib/types";
 import { InventoryList } from "./inventory-panel.components";
 
 type StoragePanelProps = {
@@ -10,6 +10,7 @@ type StoragePanelProps = {
   onClose: () => void;
 };
 
+/** Renders the storage panel component. */
 export const StoragePanel = ({ sourceEntity, targetEntity, onClose }: StoragePanelProps) => {
   const transfer = useGame((state) => state.inventory.transfer);
   const dropItem = useGame((state) => state.inventory.dropItem);

@@ -8,7 +8,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useLobby } from "@/hooks/use-lobby";
 import { useUser } from "@/hooks/use-user";
-import type { Lobby } from "@/lib/types";
+import type { Lobby } from "@/lib/lobby";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Code, Delete, Play, Send, Text, Users } from "lucide-react";
 import { redirect } from "next/navigation";
@@ -16,6 +16,7 @@ import React from "react";
 
 type SidebarLobbyItemProps = { lobby: Lobby; readonly children: React.ReactNode };
 
+/** Renders the sidebar lobby item component. */
 export const SidebarLobbyItem = ({ children, lobby }: SidebarLobbyItemProps) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const user = useUser();
@@ -42,7 +43,6 @@ export const SidebarLobbyItem = ({ children, lobby }: SidebarLobbyItemProps) => 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (open && user?.id) {
-      // Mark messages as read when dialog opens
       markAsRead(lobby.id);
     }
   };

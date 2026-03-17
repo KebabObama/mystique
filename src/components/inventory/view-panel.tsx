@@ -1,6 +1,6 @@
 import { Dialog } from "@/components/ui/dialog";
 import { useGame } from "@/hooks/use-game";
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
 import { CharacterInfo, InventoryList } from "./inventory-panel.components";
 
 type ViewPanelProps = {
@@ -9,6 +9,7 @@ type ViewPanelProps = {
   readonly?: boolean;
 };
 
+/** Renders the view panel component. */
 export const ViewPanel = ({ character, onClose, readonly }: ViewPanelProps) => {
   const toggleEquip = useGame((state) => state.inventory.toggleEquip);
   const dropItem = useGame((state) => state.inventory.dropItem);

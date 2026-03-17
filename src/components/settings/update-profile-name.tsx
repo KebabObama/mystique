@@ -10,13 +10,13 @@ import { User } from "better-auth";
 import { Loader2, Save } from "lucide-react";
 import React from "react";
 
+/** Renders the update profile name component. */
 export const UpdateProfileName = ({ user }: { user?: User }) => {
   const [name, setName] = React.useState<string>(user?.name || "");
   const [isLoading, setIsLoading] = React.useState(false);
 
   const onSubmit = async () => {
     if (!name || name === user?.name) return;
-    console.log(name);
     setIsLoading(true);
     try {
       const { error } = await authClient.updateUser({ name });

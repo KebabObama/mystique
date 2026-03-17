@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import React from "react";
 import { LobbyActionDialog } from "./lobby-action-dialog";
 
+/** Renders the lobby create component. */
 export const LobbyCreate = ({ sidebar = true }: { sidebar?: boolean }) => {
   const createLobby = useLobby((s) => s.createLobby);
   const [name, setName] = React.useState("");

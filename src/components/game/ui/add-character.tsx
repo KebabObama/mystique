@@ -9,6 +9,7 @@ type AddCharacterProps = {
   children?: React.ReactNode;
 };
 
+/** Renders the add character component. */
 export const AddCharacter = ({ characters, children }: AddCharacterProps) => {
   const send = useGame((s) => s.send);
   const entities = useGame((s) => s.instance?.characters);
@@ -19,8 +20,7 @@ export const AddCharacter = ({ characters, children }: AddCharacterProps) => {
     send("character:add", characterId);
   };
 
-  // Filter out characters already in lobbies or already in this game
-  const availableChars = characters.filter(
+const availableChars = characters.filter(
     (c) => !c.lobbyId && !entities.some((entry) => entry.id === c.id)
   );
 

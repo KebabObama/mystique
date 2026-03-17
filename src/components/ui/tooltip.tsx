@@ -9,15 +9,12 @@ import * as React from "react";
  */
 const RetroFrame = ({ children, className }: { children: React.ReactNode; className?: string }) => (
   <div className={cn("bg-card relative px-3 py-1.5", className)}>
-    {/* Horizontal Bars */}
     <div className="bg-border absolute -top-1.5 right-1.5 left-1.5 h-1.5" />
     <div className="bg-border absolute right-1.5 -bottom-1.5 left-1.5 h-1.5" />
 
-    {/* Vertical Bars */}
     <div className="bg-border absolute top-1.5 bottom-1.5 -left-1.5 w-1.5" />
     <div className="bg-border absolute top-1.5 -right-1.5 bottom-1.5 w-1.5" />
 
-    {/* Corner Blocks */}
     <div className="bg-border absolute top-0 left-0 size-1.5" />
     <div className="bg-border absolute top-0 right-0 size-1.5" />
     <div className="bg-border absolute bottom-0 left-0 size-1.5" />
@@ -27,6 +24,7 @@ const RetroFrame = ({ children, className }: { children: React.ReactNode; classN
   </div>
 );
 
+/** Renders the tooltip provider component. */
 const TooltipProvider = ({
   delayDuration = 0,
   ...props
@@ -40,6 +38,7 @@ const TooltipProvider = ({
   );
 };
 
+/** Renders the tooltip component. */
 const Tooltip = ({ ...props }: React.ComponentProps<typeof TooltipPrimitive.Root>) => {
   return (
     <TooltipProvider>
@@ -48,13 +47,15 @@ const Tooltip = ({ ...props }: React.ComponentProps<typeof TooltipPrimitive.Root
   );
 };
 
+/** Renders the tooltip trigger component. */
 const TooltipTrigger = ({ ...props }: React.ComponentProps<typeof TooltipPrimitive.Trigger>) => {
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 };
 
+/** Renders the tooltip content component. */
 const TooltipContent = ({
   className,
-  sideOffset = 8, // Increased offset to accommodate the 1.5px external borders
+  sideOffset = 8,
   children,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Content>) => {

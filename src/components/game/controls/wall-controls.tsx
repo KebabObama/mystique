@@ -5,6 +5,7 @@ import { useGame } from "@/hooks/use-game";
 import { usePermissions } from "@/hooks/use-permissions";
 import { BrickWall, Eraser, Grid2X2Plus, Grid2X2X } from "lucide-react";
 
+/** Renders the wall controls component. */
 export const WallControls = () => {
   const canManageWalls = usePermissions((state) => state.isMasterOnTurn);
   const mode = useGame((state) => state.mode);

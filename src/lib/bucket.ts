@@ -3,8 +3,12 @@
 import { lookup } from "mime-types";
 import { Client } from "minio";
 
+/** Provides bucket storage helpers. */
 namespace Bucket {
+  /** Represents the bucket names type. */
   export type Names = keyof typeof names;
+
+  /** Defines the connection constant. */
   export const connection = {
     endPoint: process.env.S3_ENDPOINT || "localhost",
     port: Number(process.env.S3_PORT) || 9000,
@@ -13,13 +17,16 @@ namespace Bucket {
     useSSL: process.env.S3_USE_SSL === "true",
   };
 
+  /** Defines the client constant. */
   export const client = new Client(connection);
 
+  /** Defines the names constant. */
   export const names = {
     "avatars-bucket": true,
     "documents-private": false,
   } as const satisfies Record<string, boolean>;
 
+  /** Provides the bootstrap function. */
   export const bootstrap = async (bucket: Names) => {
     const exists = await client.bucketExists(bucket);
     if (!exists) {
@@ -41,6 +48,7 @@ namespace Bucket {
     }
   };
 
+  /** Provides the get function. */
   export const get = async (bucket: Names, objectName: string, expirySeconds = 86400) => {
     try {
       if (names[bucket]) {
@@ -48,12 +56,12 @@ namespace Bucket {
         return `${protocol}://${connection.endPoint}:${connection.port}/${bucket}/${objectName}`;
       }
       return await client.presignedGetObject(bucket, objectName, expirySeconds);
-    } catch (err) {
-      console.error("[BUCKET GET ERROR]:", err);
+    } catch {
       return undefined;
     }
   };
 
+  /** Provides the set function. */
   export const set = async (
     bucket: Names,
     file: Buffer | File | Blob,
@@ -79,6 +87,7 @@ namespace Bucket {
     }
   };
 
+  /** Provides the remove function. */
   export const remove = async (bucket: Names, filename: string) => {
     try {
       await client.removeObject(bucket, filename);
@@ -88,6 +97,7 @@ namespace Bucket {
     }
   };
 
+  /** Provides the list function. */
   export const list = async (bucket: Names, prefix: string = "") => {
     return new Promise((resolve, reject) => {
       const objectsList: any[] = [];
@@ -99,15 +109,10 @@ namespace Bucket {
   };
 }
 
+/** Provides the default Bucket export. */
 export default Bucket;
 
-/**
- * Universal upload action for MinIO
- *
- * @param bucketName - The key from your Bucket.names (e.g., 'avatars-bucket')
- * @param formData - The form data containing the 'file'
- * @param customPath - Optional subfolder path (e.g., 'users/logos/')
- */
+/** Provides the upload file function. */
 export const uploadFile = async (
   bucketName: Bucket.Names,
   formData: FormData,
@@ -121,9 +126,8 @@ export const uploadFile = async (
     const filename = customPath ?? `${uniqueId}-${originalName}`;
     const result = await Bucket.set(bucketName, file, filename, file.type);
     if (!result.success) throw new Error(result.error);
-    return { success: true, url: result.url, filename: filename, size: file.size };
+    return { success: true, url: result.url, filename, size: file.size };
   } catch (error) {
-    console.error("Global Upload Action Error:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Internal Server Error",

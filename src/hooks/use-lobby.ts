@@ -1,11 +1,12 @@
 "use client";
 
 import { toast } from "@/components/layout/toast";
-import type { Lobby } from "@/lib/types";
+import type { Lobby } from "@/lib/lobby";
 import { create } from "zustand";
 import { useSocket } from "./use-socket";
 import { useUser } from "./use-user";
 
+/** Represents the lobby store type. */
 export type LobbyStore = {
   lobbies: Lobby[];
   init: () => void;
@@ -16,6 +17,7 @@ export type LobbyStore = {
   markAsRead: (lobbyId: string) => void;
 };
 
+/** Provides the Zustand store for lobby. */
 export const useLobby = create<LobbyStore>((set) => ({
   lobbies: [],
 

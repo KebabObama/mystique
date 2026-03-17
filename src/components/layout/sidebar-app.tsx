@@ -12,6 +12,7 @@ import { redirect } from "next/navigation";
 import { useState } from "react";
 import { SidebarMain } from "./sidebar-main";
 
+/** Renders the sidebar app component. */
 export const SidebarApp = () => {
   const { toggleSidebar } = Sidebar.useSidebar();
   const [show, setShow] = useState(false);
@@ -33,6 +34,7 @@ export const SidebarApp = () => {
   );
 };
 
+/** Renders the user menu component. */
 export const UserMenu = () => {
   const { setTheme, resolvedTheme } = useTheme();
   const toggleTheme = () => setTheme((p) => (p === "dark" ? "light" : "dark"));
@@ -70,6 +72,7 @@ export const UserMenu = () => {
   );
 };
 
+/** Renders the user toggle component. */
 export const UserToggle = ({ show, onClick }: { show: boolean; onClick: () => void }) => {
   const user = useUser();
   return (
@@ -91,6 +94,7 @@ export const UserToggle = ({ show, onClick }: { show: boolean; onClick: () => vo
   );
 };
 
+/** Renders the sidebar header component. */
 export const SidebarHeader = ({ onToggle }: { onToggle: () => void }) => (
   <Sidebar.SidebarHeader className="-mx-0.5 hidden flex-col items-center justify-start gap-2 border-b-6 md:flex">
     <Sidebar.SidebarMenuButton onClick={onToggle} className="truncate text-lg">

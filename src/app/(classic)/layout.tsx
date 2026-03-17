@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { Toaster } from "sonner";
 
+/** Renders the home layout. */
 export default async ({ children }: { children: React.ReactNode }) => {
   const session = await auth.api.getSession({ headers: await headers() });
 

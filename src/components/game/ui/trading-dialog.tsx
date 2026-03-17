@@ -25,6 +25,7 @@ const fromDraft = (draft: DraftState) => ({
   currency: Math.max(0, Math.floor(draft.currency)),
 });
 
+/** Renders the trading dialog component. */
 export const TradingDialog = () => {
   const userId = useUser((s) => s?.id);
   const instance = useGame((s) => s.instance);

@@ -11,9 +11,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { InventoryItem } from "@/lib/inventory-panel";
-import { Game } from "@/lib/types";
 import {
   ArrowRightLeft,
   BookA,
@@ -28,10 +28,6 @@ import {
 } from "lucide-react";
 import React from "react";
 
-/* ------------------------------------------------------------------ */
-/*  InventoryList – ItemCards with all actions inside context menu     */
-/* ------------------------------------------------------------------ */
-
 type InventoryListProps = {
   entity: Game.Entity;
   onTransfer?: (itemId: string, quantity: number) => void;
@@ -40,6 +36,7 @@ type InventoryListProps = {
   transferLabel?: string;
 };
 
+/** Renders the inventory list component. */
 export const InventoryList = ({
   entity,
   onTransfer,
@@ -78,10 +75,6 @@ export const InventoryList = ({
     </div>
   );
 };
-
-/* ------------------------------------------------------------------ */
-/*  Single item – context menu with slider + labelled actions         */
-/* ------------------------------------------------------------------ */
 
 type InventoryItemActionsProps = {
   entry: Game.CharacterEntity["inventory"][number] | Game.ChestEntity["inventory"][number];
@@ -158,10 +151,6 @@ const InventoryItemWithActions = ({
   );
 };
 
-/* ------------------------------------------------------------------ */
-/*  GrantControls – master item-add bar                                */
-/* ------------------------------------------------------------------ */
-
 type GrantControlsProps = {
   items: InventoryItem[];
   selectedItemId?: string;
@@ -171,6 +160,7 @@ type GrantControlsProps = {
   onAdd: () => void;
 };
 
+/** Renders the grant controls component. */
 export const GrantControls = ({
   items,
   selectedItemId,
@@ -231,10 +221,6 @@ export const GrantControls = ({
   );
 };
 
-/* ------------------------------------------------------------------ */
-/*  Entity info cards – character-dashboard-style stat displays        */
-/* ------------------------------------------------------------------ */
-
 const StatRow = ({
   label,
   value,
@@ -252,6 +238,7 @@ const StatRow = ({
   </span>
 );
 
+/** Renders the character info component. */
 export const CharacterInfo = ({ character }: { character: Game.CharacterEntity }) => (
   <Card className="bg-background text-muted mt-auto">
     <span className="text-foreground mb-1 flex w-full justify-between capitalize">
@@ -287,6 +274,7 @@ export const CharacterInfo = ({ character }: { character: Game.CharacterEntity }
   </Card>
 );
 
+/** Renders the chest info component. */
 export const ChestInfo = ({ chest }: { chest: Game.ChestEntity }) => (
   <Card className="bg-background text-muted">
     <StatRow label="Name" value={chest.name} />
@@ -294,6 +282,7 @@ export const ChestInfo = ({ chest }: { chest: Game.ChestEntity }) => (
   </Card>
 );
 
+/** Renders the monster info component. */
 export const MonsterInfo = ({ monster }: { monster: Game.MonsterEntity }) => (
   <Card className="bg-background text-muted">
     <StatRow

@@ -60,4 +60,5 @@ const Content = ({ className, ...props }: React.ComponentProps<typeof TabsPrimit
   );
 };
 
+/** Provides the default export for tabs. */
 export default Object.assign(Body, { List, Content, Trigger });

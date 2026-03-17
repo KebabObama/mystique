@@ -2,6 +2,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+/** Provides the send verification email function. */
 export const sendVerificationEmail = async ({
   user,
   url,
@@ -17,6 +18,7 @@ export const sendVerificationEmail = async ({
   });
 };
 
+/** Provides the send reset password function. */
 export const sendResetPassword = async ({
   user,
   url,

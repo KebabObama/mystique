@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import type * as React from "react";
 
+/** Renders the avatar component. */
 const Avatar = ({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Root>) => {
   return (
     <AvatarPrimitive.Root
@@ -18,6 +19,7 @@ const Avatar = ({ className, ...props }: React.ComponentProps<typeof AvatarPrimi
   );
 };
 
+/** Renders the avatar image component. */
 const AvatarImage = ({
   className,
   ...props
@@ -33,6 +35,7 @@ const AvatarImage = ({
   );
 };
 
+/** Renders the avatar fallback component. */
 const AvatarFallback = ({
   className,
   ...props

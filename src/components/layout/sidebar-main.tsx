@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useLobby } from "@/hooks/use-lobby";
 import { useUser } from "@/hooks/use-user";
-import type { Lobby } from "@/lib/types";
+import type { Lobby } from "@/lib/lobby";
 import { getUnreadCount } from "@/lib/utils";
 import { LayoutDashboard } from "lucide-react";
 import { redirect } from "next/navigation";
@@ -42,6 +42,7 @@ const LobbyMenuEntry = ({ compact, lobby, userId }: LobbyMenuEntryProps) => {
   );
 };
 
+/** Renders the sidebar main component. */
 export const SidebarMain = () => {
   const { lobbies } = useLobby();
   const userId = useUser((s) => s?.id);

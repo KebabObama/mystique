@@ -1,7 +1,6 @@
 import { db, schema } from "../seed";
 import { bite, bolt, flame, frost, rot, slash, smite } from "./abilities";
 
-// prettier-ignore
 const MONSTERS: (typeof schema.monster.$inferInsert)[] = [
   { name: "Goblin", level: 1, hp: 8, maxHp: 8, armor: 0, stamina: 4, maxActions: 1, memory: 1, abilities: [slash(2, 4)] },
   { name: "Skeleton", level: 2, hp: 12, maxHp: 12, armor: 1, stamina: 5, maxActions: 1, memory: 2, abilities: [slash(3, 5)] },
@@ -28,12 +27,10 @@ const MONSTERS: (typeof schema.monster.$inferInsert)[] = [
   { name: "Clockwork Sentinel", level: 8, hp: 36, maxHp: 36, armor: 5, stamina: 6, maxActions: 1, memory: 2, abilities: [smite(8, 13), bolt(5, 8)] }, 
 ];
 
+/** Seeds monsters records into the database. */
 export const seed = async () => {
   const existing = await db.select({ name: schema.monster.name }).from(schema.monster);
   const existingNames = new Set(existing.map((monster) => monster.name));
   const missingMonsters = MONSTERS.filter((monster) => !existingNames.has(monster.name));
   if (missingMonsters.length > 0) await db.insert(schema.monster).values(missingMonsters);
-  console.info(
-    `[seed] Added ${missingMonsters.length} new monster(s), skipped ${MONSTERS.length - missingMonsters.length} existing monster(s).`
-  );
 };

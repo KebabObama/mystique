@@ -1,11 +1,12 @@
 "use server";
 
 import { db, schema } from "@/lib/db";
+import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/lib/types";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
+/** Provides the get all items function. */
 export const getAllItems = async () => {
   try {
     const items = await db.select().from(schema.item);
@@ -15,6 +16,7 @@ export const getAllItems = async () => {
   }
 };
 
+/** Provides the create character function. */
 export const createCharacter = async (
   userId: string,
   data: Game.Character,
@@ -41,7 +43,6 @@ export const createCharacter = async (
       })
       .returning();
 
-    // Add all items to the character's inventory
     const allItems = await db.select().from(schema.item);
     if (allItems.length > 0) {
       await db
@@ -64,6 +65,7 @@ export const createCharacter = async (
   }
 };
 
+/** Provides the delete character function. */
 export const deleteCharacter = async (characterId: string, options?: { path?: string }) => {
   try {
     await db.delete(schema.character).where(eq(schema.character.id, characterId));
@@ -74,19 +76,17 @@ export const deleteCharacter = async (characterId: string, options?: { path?: st
   }
 };
 
+/** Provides the unlink character from lobby function. */
 export const unlinkCharacterFromLobby = async (
   characterId: string,
   options?: { path?: string }
 ) => {
   try {
     await db.transaction(async (tx) => {
-      // Remove character from lobby
       await tx
         .update(schema.character)
         .set({ lobbyId: null })
         .where(eq(schema.character.id, characterId));
-
-      // Remove associated lobby entity
       await tx
         .delete(schema.lobbyEntity)
         .where(

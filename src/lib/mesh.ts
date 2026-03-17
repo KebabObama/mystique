@@ -1,10 +1,14 @@
-import type { MeshType } from "@/lib/types";
 import * as THREE from "three";
 
 /**
  * Mesh utility functions for handling 3D models from /public folder
  */
 export namespace Mesh {
+  /** Defines the types constant. */
+  export const TYPES = ["character", "monster", "chest", "campfire", "item"] as const;
+  /** Represents the type type. */
+  export type Type = (typeof TYPES)[number];
+
   let loader: THREE.Loader | null = null;
   const loadedModels = new Map<string, THREE.Group>();
 
@@ -13,7 +17,6 @@ export namespace Mesh {
    */
   const getLoader = () => {
     if (!loader) {
-      // Dynamic import to avoid issues in non-browser environments
       const { GLTFLoader } = require("three/examples/jsm/loaders/GLTFLoader");
       loader = new GLTFLoader();
     }
@@ -23,7 +26,7 @@ export namespace Mesh {
   /**
    * Default color for each entity type
    */
-  const DEFAULT_COLORS: Record<MeshType, string> = {
+  const DEFAULT_COLORS: Record<Type, string> = {
     character: "blue",
     monster: "red",
     chest: "#8b5a2b",
@@ -34,14 +37,14 @@ export namespace Mesh {
   /**
    * Get the default color for an entity type
    */
-  export const getDefaultColor = (type: MeshType): string => {
+  export const getDefaultColor = (type: Type): string => {
     return DEFAULT_COLORS[type];
   };
 
   /**
    * Get default geometry for an entity type (used when no mesh path is provided)
    */
-  export const getDefaultGeometry = (type: MeshType): THREE.BufferGeometry => {
+  export const getDefaultGeometry = (type: Type): THREE.BufferGeometry => {
     switch (type) {
       case "chest":
         return new THREE.BoxGeometry(0.8, 0.8, 0.8);
@@ -58,7 +61,7 @@ export namespace Mesh {
   /**
    * Create a default material for an entity type
    */
-  export const getDefaultMaterial = (type: MeshType): THREE.Material => {
+  export const getDefaultMaterial = (type: Type): THREE.Material => {
     return new THREE.MeshStandardMaterial({ color: getDefaultColor(type) });
   };
 
@@ -90,11 +93,9 @@ export namespace Mesh {
    */
   export const loadModel = async (meshPath: string): Promise<THREE.Group | null> => {
     if (!isValidMeshPath(meshPath)) {
-      console.warn(`Invalid mesh path: ${meshPath}. Must be a .glb or .gltf file.`);
       return null;
     }
 
-    // Check cache first
     if (loadedModels.has(meshPath)) {
       const cached = loadedModels.get(meshPath);
       if (cached instanceof THREE.Group) {
@@ -114,15 +115,13 @@ export namespace Mesh {
         );
       });
 
-      // Cache the loaded model
       if (gltf.scene) {
         loadedModels.set(meshPath, gltf.scene);
         return gltf.scene.clone();
       }
 
       return null;
-    } catch (error) {
-      console.error(`Failed to load mesh: ${meshPath}`, error);
+    } catch {
       return null;
     }
   };
@@ -132,7 +131,7 @@ export namespace Mesh {
    * If meshPath is provided and valid, load that; otherwise use default shape
    */
   export const getMeshConfig = (
-    type: MeshType,
+    type: Type,
     meshPath: string | null | undefined
   ): {
     type: "model" | "shape";

@@ -2,6 +2,7 @@ import { LobbyCard, type LobbyInfo } from "@/components/dashboard";
 
 type LobbyListProps = { lobbies: LobbyInfo[] };
 
+/** Renders the lobby list component. */
 export const LobbyList = ({ lobbies }: LobbyListProps) => {
   if (lobbies.length === 0) return null;
 

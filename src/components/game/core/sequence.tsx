@@ -12,6 +12,7 @@ import * as React from "react";
 
 type SequenceProps = { children?: React.ReactNode };
 
+/** Renders the sequence component. */
 export const Sequence = ({ children }: SequenceProps) => {
   const [open, setOpen] = React.useState(true);
 

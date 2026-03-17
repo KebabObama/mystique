@@ -1,8 +1,25 @@
 "use server";
 
 import { db, schema } from "@/lib/db";
-import type { CharacterWithLobby, LobbyInfo } from "@/lib/types";
+import { Game } from "@/lib/game";
 import { eq } from "drizzle-orm";
+
+/** Represents the character lobby type. */
+export type CharacterLobby = { id: string; name: string; memberCount: number; members: string[] };
+
+/** Represents the character with lobby type. */
+export type CharacterWithLobby = Game.Character & { lobby: CharacterLobby | null };
+
+/** Represents the lobby info type. */
+export type LobbyInfo = {
+  id: string;
+  name: string;
+  createdAt: Date;
+  memberCount: number;
+  characterCount: number;
+  isMember: boolean;
+  unreadCount?: number;
+};
 
 /**
  * Get all characters owned by a user with their lobby information

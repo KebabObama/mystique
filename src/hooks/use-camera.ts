@@ -22,7 +22,7 @@ const INITIAL_CAMERA_STATE: CameraState["camera"] = {
   elevation: Math.PI / 4,
 };
 
-// prettier-ignore
+/** Provides the Zustand store for camera. */
 export const useCamera = create<CameraState>()(
   (set) => ({
     camera: INITIAL_CAMERA_STATE,

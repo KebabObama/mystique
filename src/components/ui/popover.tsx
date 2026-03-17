@@ -92,4 +92,5 @@ const Anchor = ({ ...props }: React.ComponentProps<typeof PopoverPrimitive.Ancho
 
 const Popover = Object.assign(Body, { Content, Trigger, Context, Anchor });
 
+/** Provides the default export for popover. */
 export default Popover;

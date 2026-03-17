@@ -2,12 +2,13 @@
 
 import { CharacterCard } from "@/components/dashboard/character-card";
 import { Button } from "@/components/ui/button";
-import type { CharacterWithLobby } from "@/lib/types";
+import type { CharacterWithLobby } from "@/lib/dashboard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 type CharacterListProps = { characters: CharacterWithLobby[] };
 
+/** Renders the character list component. */
 export const CharacterList = ({ characters }: CharacterListProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showLeftChevron, setShowLeftChevron] = useState(false);
@@ -121,7 +122,6 @@ export const CharacterList = ({ characters }: CharacterListProps) => {
         </Button>
       )}
 
-      {/* Hide scrollbar CSS */}
       <style>{`
         div::-webkit-scrollbar {
           display: none;

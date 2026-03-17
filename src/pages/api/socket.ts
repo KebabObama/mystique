@@ -1,4 +1,4 @@
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
 import { register as registerCampfire } from "@/socket/campfire";
 import { register as registerGameActions } from "@/socket/game-actions";
 import { register as registerGameEntities } from "@/socket/game-entities";
@@ -12,31 +12,14 @@ import type { Server as HTTPServer } from "node:http";
 import type { Socket as NetSocket } from "node:net";
 import { Server } from "socket.io";
 
+/** Represents the next api response with socket type. */
 export type NextApiResponseWithSocket = NextApiResponse & {
   socket: NetSocket & { server: HTTPServer & { io?: Server } };
 };
 
 const instances = new Map<string, Game.Instance>();
-const SOCKET_DEBUG = process.env.SOCKET_DEBUG === "1";
 
-const formatArg = (value: unknown) => {
-  if (typeof value === "string") return value.length > 120 ? `${value.slice(0, 117)}...` : value;
-  if (typeof value === "number" || typeof value === "boolean" || value == null) return value;
-
-  try {
-    const text = JSON.stringify(value);
-    return text.length > 240 ? `${text.slice(0, 237)}...` : text;
-  } catch {
-    return "[unserializable]";
-  }
-};
-
-const debug = (...parts: unknown[]) => {
-  if (!SOCKET_DEBUG) return;
-  const time = new Date().toISOString();
-  console.log(`[socket][${time}]`, ...parts);
-};
-
+/** Handles Socket.IO API requests. */
 export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
   if (res.socket.server.io) {
     res.end();
@@ -48,25 +31,6 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
   io.on("connection", (socket) => {
     const ctx: SocketContext = { socket, io, instances };
 
-    debug("connected", { socketId: socket.id });
-
-    socket.onAny((event, ...args) => {
-      debug("in", event, args.map(formatArg));
-    });
-
-    const originalEmit = socket.emit.bind(socket);
-    socket.emit = ((event: string, ...args: unknown[]) => {
-      debug("out", event, args.map(formatArg));
-      return originalEmit(event, ...args);
-    }) as typeof socket.emit;
-
-    socket.on("error", (error) => {
-      debug("error", {
-        socketId: socket.id,
-        error: error instanceof Error ? error.message : error,
-      });
-    });
-
     registerLobby(ctx);
     registerGameEntities(ctx);
     registerInventory(ctx);
@@ -76,7 +40,6 @@ export default (_req: NextApiRequest, res: NextApiResponseWithSocket) => {
     registerLeveling(ctx);
 
     socket.on("disconnect", () => {
-      debug("disconnected", { socketId: socket.id, rooms: [...socket.rooms] });
       for (const room of socket.rooms) {
         if (!room.startsWith("game:")) continue;
         const lobbyId = room.replace("game:", "");

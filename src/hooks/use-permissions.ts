@@ -1,8 +1,8 @@
 "use client";
 
 import { useUser } from "@/hooks/use-user";
+import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/lib/types";
 import { create } from "zustand";
 
 type PermissionsStore = {
@@ -26,6 +26,7 @@ const getCurrentEntity = (instance: Game.Instance | null) => {
   return InGameHelpers.getEntityById(instance, instance.data.sequence[instance.data.turn]);
 };
 
+/** Provides the Zustand store for permissions. */
 export const usePermissions = create<PermissionsStore>((set, get) => ({
   instance: null,
   userId: undefined,

@@ -11,6 +11,7 @@ type Props = {
   onPointerMove(e: ThreeEvent<PointerEvent>): void;
 };
 
+/** Renders the floor plane component. */
 export const FloorPlane = ({ position, onClick, onPointerMove }: Props) => {
   const floorTexture = useTexture("/textures/floor.jpg");
 

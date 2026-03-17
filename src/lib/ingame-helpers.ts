@@ -1,7 +1,9 @@
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
 
+/** Provides the InGameHelpers namespace. */
 export namespace InGameHelpers {
-  export const withEffects = (
+    /** Defines the with effects constant. */
+export const withEffects = (
     effects: Partial<Record<Game.Effect, number>> = {}
   ): Record<Game.Effect, number> =>
     Game.EFFECTS.reduce(
@@ -14,13 +16,16 @@ export namespace InGameHelpers {
     activeEffects: Partial<Record<Game.Effect, number>> | null;
   }>;
 
-  export const hasEffects = (effects: Partial<Record<Game.Effect, number>> | null | undefined) =>
+    /** Provides the has effects function. */
+export const hasEffects = (effects: Partial<Record<Game.Effect, number>> | null | undefined) =>
     Game.EFFECTS.some((effect) => (effects?.[effect] ?? 0) > 0);
 
-  export const getStoredEffects = (entity: EffectCarrier): Record<Game.Effect, number> =>
+    /** Defines the get stored effects constant. */
+export const getStoredEffects = (entity: EffectCarrier): Record<Game.Effect, number> =>
     withEffects(entity.effects ?? {});
 
-  export const decayEffects = (
+    /** Defines the decay effects constant. */
+export const decayEffects = (
     effects: Partial<Record<Game.Effect, number>> | null | undefined,
     amount = 1
   ): Record<Game.Effect, number> =>
@@ -29,7 +34,8 @@ export namespace InGameHelpers {
       { ...Game.EMPTY_EFFECTS }
     );
 
-  export const getTurnEffects = (entity: EffectCarrier): Record<Game.Effect, number> => {
+    /** Defines the get turn effects constant. */
+export const getTurnEffects = (entity: EffectCarrier): Record<Game.Effect, number> => {
     const activeEffects = withEffects(entity.activeEffects ?? {});
     if (!hasEffects(activeEffects)) return getStoredEffects(entity);
 
@@ -46,7 +52,8 @@ export namespace InGameHelpers {
     );
   };
 
-  export const addEffectStacks = (
+    /** Defines the add effect stacks constant. */
+export const addEffectStacks = (
     current: Partial<Record<Game.Effect, number>> | null | undefined,
     added: Partial<Record<Game.Effect, number>> | null | undefined
   ): Record<Game.Effect, number> =>
@@ -58,15 +65,18 @@ export namespace InGameHelpers {
       { ...Game.EMPTY_EFFECTS }
     );
 
-  export const getEffectiveArmor = (
+    /** Defines the get effective armor constant. */
+export const getEffectiveArmor = (
     entity: Pick<Game.CombatEntity, "armor"> & EffectCarrier
   ): number => Math.max(0, entity.armor - getTurnEffects(entity).corroding);
 
-  export const getEffectiveStamina = (
+    /** Defines the get effective stamina constant. */
+export const getEffectiveStamina = (
     entity: Pick<Game.CombatEntity, "stamina"> & EffectCarrier
   ): number => Math.max(0, entity.stamina - getTurnEffects(entity).frostbite);
 
-  export const resolveTurnStart = (
+    /** Provides the resolve turn start function. */
+export const resolveTurnStart = (
     entity: Pick<Game.CombatEntity, "hp" | "maxHp" | "maxActions"> & EffectCarrier
   ) => {
     const activeEffects = getStoredEffects(entity);
@@ -81,19 +91,22 @@ export namespace InGameHelpers {
     };
   };
 
-  export const getEntities = (instance: Game.Instance): Array<Game.Entity> => [
+    /** Defines the get entities constant. */
+export const getEntities = (instance: Game.Instance): Array<Game.Entity> => [
     ...instance.characters,
     ...instance.monsters,
     ...instance.chests,
     ...instance.campfires,
   ];
 
-  export const getEntityById = (
+    /** Defines the get entity by id constant. */
+export const getEntityById = (
     instance: Game.Instance,
     entityId: Game.Entity["id"]
   ): Game.Entity | undefined => getEntities(instance).find((entity) => entity.id === entityId);
 
-  export const getEntityAbilities = (entity: Game.Entity): Array<Game.Ability> => {
+    /** Defines the get entity abilities constant. */
+export const getEntityAbilities = (entity: Game.Entity): Array<Game.Ability> => {
     if (entity.type === "monster") return entity.abilities;
     if (entity.type === "chest" || entity.type === "campfire") return [];
 
@@ -102,7 +115,8 @@ export namespace InGameHelpers {
       .flatMap((entry: any) => entry.abilities);
   };
 
-  export const calculateCharacterStats = (
+    /** Provides the calculate character stats function. */
+export const calculateCharacterStats = (
     c: { attributes: Record<Game.Attribute, number>; level: number; memory: number },
     inventory: { weight: number; armor: number } = { weight: 0, armor: 0 }
   ) => {
@@ -126,7 +140,8 @@ export namespace InGameHelpers {
     };
   };
 
-  export const generateRandomName = (c: { race: Game.Race }) => {
+    /** Provides the generate random name function. */
+export const generateRandomName = (c: { race: Game.Race }) => {
     const NAME_PREFIXES: Record<Game.Race, Array<string>> = {
       dwarf: ["Thor", "Brom", "Gim", "Dwa", "Bal", "Krag", "Dum", "Thrain"],
       elf: ["Gala", "Lego", "Ara", "Cele", "Thran", "Elro", "Fea", "Luth"],
@@ -147,7 +162,8 @@ export namespace InGameHelpers {
     return prefix + suffix;
   };
 
-  export const getAbilityImpactTiles = (
+    /** Defines the get ability impact tiles constant. */
+export const getAbilityImpactTiles = (
     target: Game.Position,
     targeting: number
   ): Array<Game.Position> => {
@@ -163,7 +179,8 @@ export namespace InGameHelpers {
     });
   };
 
-  export const getAbilityVictims = (
+    /** Defines the get ability victims constant. */
+export const getAbilityVictims = (
     entities: Array<Game.Entity>,
     ability: Game.Ability,
     target: Game.Position
@@ -191,7 +208,8 @@ export namespace InGameHelpers {
     );
   };
 
-  export const getAbilityViableTargets = (
+    /** Defines the get ability viable targets constant. */
+export const getAbilityViableTargets = (
     caster: Game.Entity,
     ability: Game.Ability,
     entities: Array<Game.Entity>
@@ -211,7 +229,8 @@ export namespace InGameHelpers {
     return possible;
   };
 
-  export const canEquipItem = (
+    /** Defines the can equip item constant. */
+export const canEquipItem = (
     character: Pick<Game.CharacterEntity, "inventory">,
     itemType: Game.ItemType
   ): boolean => {
@@ -223,11 +242,8 @@ export namespace InGameHelpers {
     return equippedOfType < maxSlots;
   };
 
-  // ────────────────────────────────────────────────────────────────────────────
-  // Rest & Leveling System
-  // ────────────────────────────────────────────────────────────────────────────
-
-  export const calculateRestHealing = (
+/** Defines the calculate rest healing constant. */
+export const calculateRestHealing = (
     character: Pick<Game.CharacterEntity, "attributes" | "level" | "maxHp">,
     actionsSpentResting: number
   ): number => {

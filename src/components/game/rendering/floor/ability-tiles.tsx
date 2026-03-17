@@ -1,6 +1,6 @@
 "use client";
 
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
 import { Plane } from "@react-three/drei";
 
 type Props = {
@@ -15,6 +15,7 @@ type Props = {
   center: { x: number; y: number; z: number };
 };
 
+/** Renders the ability tiles component. */
 export const AbilityTiles = ({
   active,
   tiles,

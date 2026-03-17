@@ -7,6 +7,7 @@ import React from "react";
 
 type Props = { visibleWalls: Array<{ x: number; z: number }> };
 
+/** Renders the wall click handler component. */
 export const WallClickHandler = ({ visibleWalls }: Props) => {
   const mode = useGame((s) => s.mode);
   const addWallAt = useGame((s) => s.wall.addAt);

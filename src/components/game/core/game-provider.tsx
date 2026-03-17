@@ -7,6 +7,7 @@ import React from "react";
 
 type GameProviderProps = { children?: React.ReactNode; lobbyId: string };
 
+/** Renders the game provider component. */
 export const GameProvider = ({ children, lobbyId }: GameProviderProps) => {
   const joinInstance = useGame((s) => s.joinInstance);
   const leaveInstance = useGame((s) => s.leaveInstance);
@@ -22,8 +23,7 @@ export const GameProvider = ({ children, lobbyId }: GameProviderProps) => {
     };
   }, [connected, lobbyId, joinInstance, leaveInstance]);
 
-  // Detect when user navigates away from the game page
-  React.useEffect(() => {
+React.useEffect(() => {
     const isOnGamePage = pathname?.startsWith("/game/");
     if (!isOnGamePage && instance) {
       leaveInstance();

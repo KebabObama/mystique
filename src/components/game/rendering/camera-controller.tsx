@@ -13,6 +13,7 @@ const CONSTANTS = {
   TARGET_Y_MIN: 0,
 } as const;
 
+/** Renders the camera controller component. */
 export const CameraController = () => {
   const { camera: threeCamera, gl } = useThree();
   const keys = React.useRef<Record<string, boolean>>({});
@@ -23,8 +24,7 @@ export const CameraController = () => {
   const tempVec3 = React.useRef(new THREE.Vector3());
   const tempSpherical = React.useRef(new THREE.Spherical());
 
-  // prettier-ignore
-  React.useEffect(() => {
+React.useEffect(() => {
     const controller = new AbortController();
     window.addEventListener("keydown", (e) => keys.current[e.key.toLowerCase()] = true , { signal: controller.signal, passive: true });
     window.addEventListener("keyup",   (e) => keys.current[e.key.toLowerCase()] = false, { signal: controller.signal, passive: true });

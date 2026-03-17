@@ -3,7 +3,8 @@
 import { Card } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
 import { ItemCard } from "@/components/ui/item-card";
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
+import { ATTRIBUTE_ICON } from "@/lib/game-ui";
 import { BookA, Coins, Heart, SearchCode, Section, Shield, Weight } from "lucide-react";
 import React from "react";
 
@@ -13,6 +14,7 @@ type CharacterInfoProps = {
   asChild?: boolean;
 };
 
+/** Renders the character dashboard component. */
 export const CharacterDashboard = ({ character, children, asChild }: CharacterInfoProps) => {
   const [hoveredAttr, setHoveredAttr] = React.useState<Game.Attribute>("strength");
 
@@ -105,9 +107,7 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
                   {e}:
                   <span className="text-foreground flex items-center gap-2">
                     {character.attributes[e]}
-                    {React.createElement(Game.ATTRIBUTE_ICON[e], {
-                      className: "size-4 text-muted",
-                    })}
+                    {React.createElement(ATTRIBUTE_ICON[e], { className: "size-4 text-muted" })}
                   </span>
                 </button>
               ))}

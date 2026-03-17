@@ -57,13 +57,13 @@ const DotMaterial = shaderMaterial(
     gridSize: 100,
     pixelColor: new THREE.Color("#ffffff"),
   },
-  /* glsl vertex shader */ `
+   `
     varying vec2 vUv;
     void main() {
       gl_Position = vec4(position.xy, 0.0, 1.0);
     }
   `,
-  /* glsl fragment shader */ `
+   `
     uniform vec2 resolution;
     uniform sampler2D mouseTrail;
     uniform float gridSize;
@@ -137,6 +137,7 @@ const Scene = ({
   );
 };
 
+/** Renders the pixel trail component. */
 export default function PixelTrail({
   gridSize = 40,
   trailSize = 0.1,

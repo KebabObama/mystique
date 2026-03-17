@@ -4,10 +4,9 @@ import * as Lobby from "@/lib/lobby";
 import { eq } from "drizzle-orm";
 import { emitFullState, exists, isPosition, refresh, update, type SocketContext } from "./helpers";
 
+/** Registers the game entities socket handlers. */
 export const register = (ctx: SocketContext) => {
   const { socket, io } = ctx;
-
-  // ── Join ──────────────────────────────────────────────────────────────
 
   socket.on("game:join", async (userId, lobbyId) => {
     const inst = await exists(ctx, userId, lobbyId, true);
@@ -21,14 +20,11 @@ export const register = (ctx: SocketContext) => {
     socket.leave(`game:${lobbyId}`);
     io.to(`game:${lobbyId}`).emit("game:leave", userId);
 
-    // Clean up instance if no one is in the room
     const roomSize = io.sockets.adapter.rooms.get(`game:${lobbyId}`)?.size ?? 0;
     if (roomSize === 0) {
       ctx.instances.delete(lobbyId);
     }
   });
-
-  // ── Chests ────────────────────────────────────────────────────────────
 
   socket.on("game:chest:add", async (userId, lobbyId, position) => {
     const inst = await exists(ctx, userId, lobbyId);
@@ -79,8 +75,6 @@ export const register = (ctx: SocketContext) => {
 
     await refresh(ctx, lobbyId);
   });
-
-  // ── Monsters ──────────────────────────────────────────────────────────
 
   socket.on("game:monster:add", async (userId, lobbyId, monsterId, position) => {
     const inst = await exists(ctx, userId, lobbyId);
@@ -155,8 +149,6 @@ export const register = (ctx: SocketContext) => {
     if (!fresh) return;
     await update(ctx, fresh);
   });
-
-  // ── Walls ─────────────────────────────────────────────────────────────
 
   socket.on("game:wall:add", async (userId, lobbyId, position) => {
     const inst = await exists(ctx, userId, lobbyId);
@@ -237,8 +229,6 @@ export const register = (ctx: SocketContext) => {
     await update(ctx, { ...inst, data: { ...inst.data, walls } });
   });
 
-  // ── Characters ────────────────────────────────────────────────────────
-
   socket.on("game:character:add", async (userId, lobbyId, characterId) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
@@ -259,7 +249,6 @@ export const register = (ctx: SocketContext) => {
         return;
       }
 
-      // Update character's lobby reference
       await tx
         .update(schema.character)
         .set({ lobbyId })

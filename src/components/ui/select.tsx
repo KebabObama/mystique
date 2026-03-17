@@ -19,9 +19,12 @@ const RetroFrame = ({ children, className }: { children: React.ReactNode; classN
   </div>
 );
 
+/** Renders the select component. */
 export const Select = SelectPrimitive.Root;
+/** Renders the select value component. */
 export const SelectValue = SelectPrimitive.Value;
 
+/** Renders the select trigger component. */
 export const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
@@ -38,6 +41,7 @@ export const SelectTrigger = React.forwardRef<
   </RetroFrame>
 ));
 
+/** Renders the select content component. */
 export const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
@@ -63,6 +67,7 @@ export const SelectContent = React.forwardRef<
   </SelectPrimitive.Portal>
 ));
 
+/** Renders the select item component. */
 export const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>

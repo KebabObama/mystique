@@ -1,15 +1,14 @@
 import { db, schema } from "@/lib/db";
+import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/lib/types";
 import { eq } from "drizzle-orm";
 import { type SocketContext, exists, refresh } from "./helpers";
 
+/** Registers the leveling socket handlers. */
 export const register = (ctx: SocketContext) => {
   const { socket } = ctx;
 
-  // ── Level Up ──────────────────────────────────────────────────────────
-
-  socket.on("game:character:levelup", async (userId, lobbyId, characterId, attributePoints) => {
+socket.on("game:character:levelup", async (userId, lobbyId, characterId, attributePoints) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
@@ -21,8 +20,7 @@ export const register = (ctx: SocketContext) => {
     if (!character) return;
     if (character.ownerId !== userId && inst.masterId !== userId) return;
 
-    // Validate attribute points (should be object with up to 5 total points distributed)
-    if (typeof attributePoints !== "object" || !attributePoints) return;
+if (typeof attributePoints !== "object" || !attributePoints) return;
 
     let totalPointsSpent = 0;
     const newAttributes = { ...character.attributes };
@@ -34,11 +32,9 @@ export const register = (ctx: SocketContext) => {
       newAttributes[attr] = character.attributes[attr] + points;
     }
 
-    // Enforce exactly 5 attribute points
-    if (totalPointsSpent !== 5) return;
+if (totalPointsSpent !== 5) return;
 
-    // Recalculate stats with new attributes
-    const inventory = {
+const inventory = {
       weight: character.inventory.reduce((sum, inv) => sum + (inv.item.weight ?? 0), 0),
       armor: character.inventory.reduce((sum, inv) => sum + (inv.item.armor ?? 0), 0),
     };
@@ -48,8 +44,7 @@ export const register = (ctx: SocketContext) => {
       inventory
     );
 
-    // Update character
-    await db
+await db
       .update(schema.character)
       .set({
         level: character.level + 1,
@@ -59,16 +54,14 @@ export const register = (ctx: SocketContext) => {
         stamina: stats.stamina,
         maxWeight: stats.maxWeight,
         maxMemory: stats.maxMemory,
-        hp: stats.maxHp, // Full heal on level up
+        hp: stats.maxHp, 
       })
       .where(eq(schema.character.id, characterId));
 
     await refresh(ctx, lobbyId, "game:character:levelup:complete");
   });
 
-  // ── Get XP Requirements ───────────────────────────────────────────────
-
-  socket.on("game:character:xp:info", async (userId, lobbyId, characterId) => {
+socket.on("game:character:xp:info", async (userId, lobbyId, characterId) => {
     const character = await db.query.character.findFirst({
       where: eq(schema.character.id, characterId),
     });
@@ -87,9 +80,7 @@ export const register = (ctx: SocketContext) => {
     });
   });
 
-  // ── Award XP ──────────────────────────────────────────────────────────
-
-  socket.on("game:character:xp:award", async (userId, lobbyId, characterId, amount) => {
+socket.on("game:character:xp:award", async (userId, lobbyId, characterId, amount) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
     if (inst.masterId !== userId) return;

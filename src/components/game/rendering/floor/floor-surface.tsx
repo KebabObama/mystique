@@ -14,6 +14,7 @@ type Props = {
   onHoverPosChange?: (pos: { x: number; z: number } | null) => void;
 };
 
+/** Renders the floor surface component. */
 export const FloorSurface = ({ position, walls, onHoverPosChange }: Props) => {
   const mode = useGame((s) => s.mode);
   const emitFloorClick = useFloorClick((s) => s.emitFloorClick);

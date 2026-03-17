@@ -9,6 +9,7 @@ import { authClient } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+/** Renders the auth page. */
 export default () => {
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -56,8 +57,7 @@ const Google = ({ loading, setLoading }: Props) => {
         try {
           await authClient.signIn.social({ provider: "google", callbackURL: "/dashboard" });
           toast.show("Redirecting to Google...");
-        } catch (error) {
-          console.error("Google auth error:", error);
+        } catch {
           toast.error("Authentication failed");
         } finally {
           setLoading(false);
@@ -80,8 +80,7 @@ const Github = ({ loading, setLoading }: Props) => {
         try {
           await authClient.signIn.social({ provider: "github", callbackURL: "/dashboard" });
           toast.show("Redirecting to Github...");
-        } catch (error) {
-          console.error("GitHub auth error:", error);
+        } catch {
           toast.error("Authentication failed");
         } finally {
           setLoading(false);
@@ -117,8 +116,7 @@ const Login = ({ loading, setLoading }: Props) => {
         toast.show("Success!");
         router.push("/dashboard");
       }
-    } catch (error) {
-      console.error("Login error:", error);
+    } catch {
       toast.error("Sign in failed");
     } finally {
       setLoading(false);
@@ -203,8 +201,7 @@ const Register = ({ loading, setLoading }: Props) => {
         toast.success("Account created!");
         router.push("/dashboard");
       }
-    } catch (error) {
-      console.error("Registration error:", error);
+    } catch {
       toast.error("Registration failed");
     } finally {
       setLoading(false);

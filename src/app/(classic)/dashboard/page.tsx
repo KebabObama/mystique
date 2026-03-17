@@ -6,11 +6,12 @@ import { LobbyList } from "@/components/dashboard/lobby-list";
 import { LobbyCreate } from "@/components/layout/lobby-create";
 import { useLobby } from "@/hooks/use-lobby";
 import { useUser } from "@/hooks/use-user";
+import type { LobbyInfo } from "@/lib/dashboard";
 import { getCharacters } from "@/lib/dashboard";
-import type { LobbyInfo } from "@/lib/types";
 import { getUnreadCount } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
+/** Renders the dashboard page. */
 export default () => {
   const userId = useUser((s) => s?.id);
   const lobbies = useLobby((s) => s.lobbies);

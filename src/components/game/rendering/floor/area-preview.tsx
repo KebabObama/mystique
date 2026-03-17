@@ -6,6 +6,7 @@ type Props = { tiles: { x: number; z: number }[]; y: number; isDestroy?: boolean
 
 type OptionalProps = { color?: string };
 
+/** Renders the area preview component. */
 export const AreaPreview = ({ tiles, y, isDestroy, color }: Props & OptionalProps) => {
   if (tiles.length === 0) return null;
 

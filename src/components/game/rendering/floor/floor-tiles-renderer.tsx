@@ -1,7 +1,7 @@
 "use client";
 
 import { GameMode, GameStore } from "@/hooks/use-game";
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
 import { AbilityTiles } from "./ability-tiles";
 import { AreaPreview } from "./area-preview";
 import { MoveTiles } from "./move-tiles";
@@ -18,6 +18,7 @@ type Props = {
   floorCenter: { x: number; y: number; z: number };
 };
 
+/** Renders the floor tiles renderer component. */
 export const FloorTilesRenderer = ({
   mode,
   setModeAction,

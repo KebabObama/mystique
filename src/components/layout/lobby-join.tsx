@@ -6,6 +6,7 @@ import { Ampersand } from "lucide-react";
 import React from "react";
 import { LobbyActionDialog } from "./lobby-action-dialog";
 
+/** Renders the lobby join component. */
 export const LobbyJoin = () => {
   const joinLobby = useLobby((s) => s.joinLobby);
   const [code, setCode] = React.useState("");

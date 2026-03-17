@@ -1,19 +1,8 @@
 "use client";
 
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
+import { Trading } from "@/lib/trading";
 import { create } from "zustand";
-
-export type TradeOffer = { items: Array<{ itemId: string; quantity: number }>; currency: number };
-
-export type TradeSession = {
-  id: string;
-  lobbyId: string;
-  entityAId: Game.Entity["id"];
-  entityBId: Game.Entity["id"];
-  offers: Record<string, TradeOffer>;
-  confirmed: Record<string, boolean>;
-  updatedAt: number;
-};
 
 type DialogStore = {
   campfire: {
@@ -40,10 +29,10 @@ type DialogStore = {
   trading: {
     dialogOpen: boolean;
     selectedCharacterId?: Game.Entity["id"];
-    activeSession: TradeSession | null;
+    activeSession: Trading.Session | null;
     openDialog: (fromEntityId: Game.Entity["id"]) => void;
     closeDialog: () => void;
-    setActiveSession: (session: TradeSession) => void;
+    setActiveSession: (session: Trading.Session) => void;
     clearActiveSession: (sessionId?: string) => void;
   };
   leveling: {
@@ -55,6 +44,7 @@ type DialogStore = {
   reset: () => void;
 };
 
+/** Provides the Zustand store for dialog. */
 export const useDialog = create<DialogStore>((set, get) => ({
   campfire: {
     restDialogOpen: false,

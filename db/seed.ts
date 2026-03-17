@@ -2,9 +2,12 @@ import "dotenv/config";
 import { readdir } from "node:fs/promises";
 import { extname } from "node:path";
 import { db } from "../src/lib/db";
+/** Re-exports public module members. */
 export { db, schema } from "../src/lib/db";
+/** Re-exports the game API. */
+export { Game } from "../src/lib/game";
+/** Re-exports the in game helpers API. */
 export { InGameHelpers } from "../src/lib/ingame-helpers";
-export { Game } from "../src/lib/types";
 
 type Seed = { seed?: () => Promise<void> };
 
@@ -25,17 +28,13 @@ const run = async () => {
       const moduleUrl = new URL(`./seed/${file}`, import.meta.url);
       const seedModule = (await import(moduleUrl.href)) as Seed;
       if (typeof seedModule.seed !== "function") {
-        console.warn(`[seed] Skipping ${file}: no exported seed() found.`);
         continue;
       }
-      console.info(`[seed] Running ${file}...`);
       await seedModule.seed();
     }
-
-    console.info("[seed] Completed.");
   } catch (error) {
-    console.error("[seed] Failed:", error);
     process.exitCode = 1;
+    throw error;
   } finally {
     db.$client.end();
   }

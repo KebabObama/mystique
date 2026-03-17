@@ -6,14 +6,17 @@ import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+/** Renders the sheet component. */
 const Sheet = ({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) => {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 };
 
+/** Renders the sheet trigger component. */
 const SheetTrigger = ({ ...props }: React.ComponentProps<typeof SheetPrimitive.Trigger>) => {
   return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
 };
 
+/** Renders the sheet close component. */
 const SheetClose = ({ ...props }: React.ComponentProps<typeof SheetPrimitive.Close>) => {
   return <SheetPrimitive.Close data-slot="sheet-close" {...props} />;
 };
@@ -38,6 +41,7 @@ const SheetOverlay = ({
   );
 };
 
+/** Renders the sheet content component. */
 const SheetContent = ({
   className,
   children,
@@ -75,6 +79,7 @@ const SheetContent = ({
   );
 };
 
+/** Renders the sheet header component. */
 const SheetHeader = ({ className, ...props }: React.ComponentProps<"div">) => {
   return (
     <div
@@ -85,6 +90,7 @@ const SheetHeader = ({ className, ...props }: React.ComponentProps<"div">) => {
   );
 };
 
+/** Renders the sheet footer component. */
 const SheetFooter = ({ className, ...props }: React.ComponentProps<"div">) => {
   return (
     <div
@@ -95,6 +101,7 @@ const SheetFooter = ({ className, ...props }: React.ComponentProps<"div">) => {
   );
 };
 
+/** Renders the sheet title component. */
 const SheetTitle = ({ className, ...props }: React.ComponentProps<typeof SheetPrimitive.Title>) => {
   return (
     <SheetPrimitive.Title
@@ -105,6 +112,7 @@ const SheetTitle = ({ className, ...props }: React.ComponentProps<typeof SheetPr
   );
 };
 
+/** Renders the sheet description component. */
 const SheetDescription = ({
   className,
   ...props

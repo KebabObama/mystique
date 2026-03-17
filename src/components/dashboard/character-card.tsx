@@ -4,11 +4,12 @@ import { CharacterDashboard } from "@/components/character/character-dashboard";
 import { CharacterDelete } from "@/components/character/character-delete";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import type { CharacterWithLobby } from "@/lib/types";
+import type { CharacterWithLobby } from "@/lib/dashboard";
 import { Info, Trash } from "lucide-react";
 
 type CharacterCardProps = { character: CharacterWithLobby };
 
+/** Renders the character card component. */
 export const CharacterCard = ({ character }: CharacterCardProps) => {
   return (
     <Card className="flex h-full flex-col">

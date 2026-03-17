@@ -1,6 +1,7 @@
 import * as Lobby from "@/lib/lobby";
 import type { SocketContext } from "./helpers";
 
+/** Registers the lobby socket handlers. */
 export const register = (ctx: SocketContext) => {
   const { socket, io } = ctx;
 

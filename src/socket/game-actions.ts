@@ -1,13 +1,12 @@
 import { db, schema } from "@/lib/db";
+import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/lib/types";
 import { eq } from "drizzle-orm";
 import { type SocketContext, exists, isPosition, refresh, update } from "./helpers";
 
+/** Registers the game actions socket handlers. */
 export const register = (ctx: SocketContext) => {
   const { socket, io } = ctx;
-
-  // ── Sequence ──────────────────────────────────────────────────────────
 
   socket.on("game:sequence:next", async (userId, lobbyId) => {
     const inst = await exists(ctx, userId, lobbyId);
@@ -139,8 +138,6 @@ export const register = (ctx: SocketContext) => {
     await update(ctx, fresh);
   });
 
-  // ── Movement ──────────────────────────────────────────────────────────
-
   socket.on("game:character:move", async (userId, lobbyId, entityId, position) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
@@ -174,8 +171,6 @@ export const register = (ctx: SocketContext) => {
       .where(eq(schema.lobbyEntity.id, entityId));
     await refresh(ctx, lobbyId);
   });
-
-  // ── Abilities ─────────────────────────────────────────────────────────
 
   socket.on("game:ability:use", async (userId, lobbyId, abilityName, target) => {
     const inst = await exists(ctx, userId, lobbyId);

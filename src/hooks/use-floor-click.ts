@@ -1,10 +1,12 @@
 import { ThreeEvent } from "@react-three/fiber";
 import { create } from "zustand";
 
+/** Represents the floor click callback type. */
 export type FloorClickCallback = (
   e: ThreeEvent<MouseEvent>,
   point: { x: number; z: number }
 ) => void;
+/** Represents the wall click callback type. */
 export type WallClickCallback = (
   e: ThreeEvent<MouseEvent>,
   point: { x: number; z: number },
@@ -15,13 +17,11 @@ type FloorClickStore = {
   floorClickCallbacks: FloorClickCallback[];
   wallClickCallbacks: WallClickCallback[];
 
-  // Floor click actions
-  addFloorClickCallback: (callback: FloorClickCallback) => void;
+addFloorClickCallback: (callback: FloorClickCallback) => void;
   removeFloorClickCallback: (callback: FloorClickCallback) => void;
   emitFloorClick: (e: ThreeEvent<MouseEvent>, point: { x: number; z: number }) => void;
 
-  // Wall click actions
-  addWallClickCallback: (callback: WallClickCallback) => void;
+addWallClickCallback: (callback: WallClickCallback) => void;
   removeWallClickCallback: (callback: WallClickCallback) => void;
   emitWallClick: (
     e: ThreeEvent<MouseEvent>,
@@ -30,6 +30,7 @@ type FloorClickStore = {
   ) => void;
 };
 
+/** Provides the Zustand store for floor click. */
 export const useFloorClick = create<FloorClickStore>((set, get) => ({
   floorClickCallbacks: [],
   wallClickCallbacks: [],

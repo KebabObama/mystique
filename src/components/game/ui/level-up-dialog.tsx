@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useDialog } from "@/hooks/use-dialog";
 import { useGame } from "@/hooks/use-game";
+import { Game } from "@/lib/game";
+import { ATTRIBUTE_ICON } from "@/lib/game-ui";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/lib/types";
 import React from "react";
 
+/** Renders the level up dialog component. */
 export const LevelUpDialog = () => {
   const instance = useGame((s) => s.instance);
   const open = useDialog((s) => s.leveling.dialogOpen);
@@ -57,7 +59,7 @@ export const LevelUpDialog = () => {
           </p>
 
           {Game.ATTRIBUTES.map((attr) => {
-            const Icon = Game.ATTRIBUTE_ICON[attr];
+            const Icon = ATTRIBUTE_ICON[attr];
             const current = character.attributes[attr];
             const pointsAdded = attributePoints[attr] || 0;
 

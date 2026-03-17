@@ -96,4 +96,5 @@ const Footer = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) =
   />
 );
 
+/** Renders the dialog component. */
 export const Dialog = Object.assign(Root, { Root, Trigger, Content, Title, Description, Footer });

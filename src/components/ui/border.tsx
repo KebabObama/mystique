@@ -1,3 +1,4 @@
+/** Renders the border component. */
 export const Border = () => {
   return (
     <>

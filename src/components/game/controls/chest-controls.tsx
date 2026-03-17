@@ -8,6 +8,7 @@ import { useGame } from "@/hooks/use-game";
 import { usePermissions } from "@/hooks/use-permissions";
 import { Box } from "lucide-react";
 
+/** Renders the chest controls component. */
 export const ChestControls = () => {
   const instance = useGame((state) => state.instance);
   const canManageChests = usePermissions((state) => state.isMasterOnTurn);

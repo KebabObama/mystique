@@ -29,7 +29,7 @@ const toastVariants = cva(
   }
 );
 
-// prettier-ignore
+/** Provides the toast function. */
 export const toast = Object.assign(
   (options: Omit<ToastOptions, "variant">) => sonnerToast.custom(() => <Toast {...options} />), 
   {

@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useGame } from "@/hooks/use-game";
 import { usePermissions } from "@/hooks/use-permissions";
+import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type AbilityCardProps = { ability: Game.Ability; selected: boolean; onSelect: () => void };
@@ -36,6 +36,7 @@ const AbilityCard = ({ ability, selected, onSelect }: AbilityCardProps) => {
   );
 };
 
+/** Renders the abilities drawer component. */
 export const AbilitiesDrawer = () => {
   const current = useGame((s) => s.sequence.current);
   const canControlCurrent = usePermissions((s) => s.canControlCurrent);

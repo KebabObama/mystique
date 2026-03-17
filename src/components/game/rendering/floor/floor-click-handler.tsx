@@ -8,6 +8,7 @@ import React from "react";
 
 type Props = { viableAbility: Array<{ x: number; z: number }> };
 
+/** Renders the floor click handler component. */
 export const FloorClickHandler = ({ viableAbility }: Props) => {
   const mode = useGame((s) => s.mode);
   const setMode = useGame((s) => s.setMode);

@@ -8,6 +8,7 @@ import React from "react";
 
 type GameProps = { children: React.ReactNode; lobbyId: string };
 
+/** Renders the main component. */
 export const Main = ({ children, lobbyId }: GameProps) => {
   const mobile = useIsMobile();
 

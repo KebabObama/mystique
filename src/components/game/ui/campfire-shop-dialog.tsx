@@ -7,6 +7,7 @@ import { useDialog } from "@/hooks/use-dialog";
 import { useGame } from "@/hooks/use-game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 
+/** Renders the campfire shop dialog component. */
 export const CampfireShopDialog = () => {
   const instance = useGame((s) => s.instance);
   const open = useDialog((s) => s.campfire.shopDialogOpen);
@@ -31,8 +32,7 @@ export const CampfireShopDialog = () => {
 
   const shopItems = ((campfireEntity as any).shopItems ?? []) as Array<any>;
 
-  // Get currency from inventory
-  const currencyItem = charEntity.inventory.find((inv) => inv.name === "Gold Coin");
+const currencyItem = charEntity.inventory.find((inv) => inv.name === "Gold Coin");
   const currencyAmount = currencyItem?.quantity ?? 0;
 
   const handleBuy = (itemId: string, cost: number) => {

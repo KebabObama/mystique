@@ -1,8 +1,9 @@
 import { Card } from "@/components/ui/card";
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
 
 type ItemEntry = Game.Character["inventory"][number] | Game.Chest["inventory"][number];
 
+/** Renders the item card component. */
 export const ItemCard = ({ item }: { item: ItemEntry }) => {
   return (
     <Card

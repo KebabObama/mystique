@@ -9,13 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useGame } from "@/hooks/use-game";
 import { usePermissions } from "@/hooks/use-permissions";
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
 import { cn } from "@/lib/utils";
 import { Brain, Footprints, Heart, Search, Shield, Skull, Swords, Zap } from "lucide-react";
 import React from "react";
 
 type MonsterDef = Game.Monster;
 
+/** Renders the monster controls component. */
 export const MonsterControls = ({ monsters }: { monsters: MonsterDef[] }) => {
   const instance = useGame((state) => state.instance);
   const canManageMonsters = usePermissions((state) => state.isMasterOnTurn);

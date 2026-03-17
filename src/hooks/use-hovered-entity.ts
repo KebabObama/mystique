@@ -1,6 +1,6 @@
 "use client";
 
-import { Game } from "@/lib/types";
+import { Game } from "@/lib/game";
 import { create } from "zustand";
 
 type HoveredEntityStore = {
@@ -9,6 +9,7 @@ type HoveredEntityStore = {
   clearHoveredEntity: (entityId?: Game.Entity["id"]) => void;
 };
 
+/** Provides the Zustand store for hovered entity. */
 export const useHoveredEntity = create<HoveredEntityStore>((set, get) => ({
   hoveredEntityId: undefined,
   setHoveredEntity: (hoveredEntityId) => set({ hoveredEntityId }),
