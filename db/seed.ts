@@ -2,11 +2,8 @@ import "dotenv/config";
 import { readdir } from "node:fs/promises";
 import { extname } from "node:path";
 import { db } from "../src/lib/db";
-/** Re-exports public module members. */
 export { db, schema } from "../src/lib/db";
-/** Re-exports the game API. */
 export { Game } from "../src/lib/game";
-/** Re-exports the in game helpers API. */
 export { InGameHelpers } from "../src/lib/ingame-helpers";
 
 type Seed = { seed?: () => Promise<void> };

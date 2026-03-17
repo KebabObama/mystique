@@ -15,7 +15,6 @@ import {
 
 const id = <T extends string>(name: string) => uuid(name).$type<Game.Brand<string, T>>();
 
-/** Defines the user table schema. */
 export const user = pgTable("user", {
   id: id<"userId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -28,7 +27,6 @@ export const user = pgTable("user", {
     .$onUpdate(() => new Date()),
 });
 
-/** Defines the session table schema. */
 export const session = pgTable(
   "session",
   {
@@ -46,7 +44,6 @@ export const session = pgTable(
   (table) => [index("session_userId_idx").on(table.userId)]
 );
 
-/** Defines the account table schema. */
 export const account = pgTable(
   "account",
   {
@@ -71,7 +68,6 @@ export const account = pgTable(
   (table) => [index("account_userId_idx").on(table.userId)]
 );
 
-/** Defines the verification table schema. */
 export const verification = pgTable(
   "verification",
   {
@@ -88,7 +84,6 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)]
 );
 
-/** Defines the item table schema. */
 export const item = pgTable("item", {
   id: id<"itemId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull().unique(),
@@ -104,7 +99,6 @@ export const item = pgTable("item", {
     .default({}),
 });
 
-/** Defines the lobby table schema. */
 export const lobby = pgTable("lobby", {
   id: id<"lobbyId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -115,7 +109,6 @@ export const lobby = pgTable("lobby", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
-/** Defines the lobbyMember table schema. */
 export const lobbyMember = pgTable(
   "lobby_member",
   {
@@ -138,7 +131,6 @@ export const lobbyMember = pgTable(
   ]
 );
 
-/** Defines the message table schema. */
 export const message = pgTable(
   "message",
   {
@@ -155,7 +147,6 @@ export const message = pgTable(
   (table) => [index("message_lobby_idx").on(table.lobbyId)]
 );
 
-/** Defines the character table schema. */
 export const character = pgTable(
   "character",
   {
@@ -187,7 +178,6 @@ export const character = pgTable(
   ]
 );
 
-/** Defines the inventory table schema. */
 export const inventory = pgTable(
   "inventory",
   {
@@ -206,7 +196,6 @@ export const inventory = pgTable(
   ]
 );
 
-/** Defines the monster table schema. */
 export const monster = pgTable("monster", {
   id: id<"monsterId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -221,7 +210,6 @@ export const monster = pgTable("monster", {
   abilities: jsonb("abilities").notNull().$type<Game.Ability[]>().default([]),
 });
 
-/** Defines the chest table schema. */
 export const chest = pgTable(
   "chest",
   {
@@ -232,7 +220,6 @@ export const chest = pgTable(
   (table) => [index("chest_name_idx").on(table.name)]
 );
 
-/** Defines the chestInventory table schema. */
 export const chestInventory = pgTable(
   "chest_inventory",
   {
@@ -250,14 +237,12 @@ export const chestInventory = pgTable(
   ]
 );
 
-/** Defines the campfire table schema. */
 export const campfire = pgTable("campfire", {
   id: id<"campfireId">("id").primaryKey().defaultRandom(),
   name: text("name").notNull().default("Campfire"),
   meshPath: text("mesh_path"),
 });
 
-/** Defines the campfireShopItem table schema. */
 export const campfireShopItem = pgTable(
   "campfire_shop_item",
   {
@@ -275,7 +260,6 @@ export const campfireShopItem = pgTable(
   ]
 );
 
-/** Defines the lobbyEntity table schema. */
 export const lobbyEntity = pgTable(
   "lobby_entity",
   {
@@ -306,7 +290,6 @@ export const lobbyEntity = pgTable(
   (table) => [index("lobby_entity_lobby_idx").on(table.lobbyId)]
 );
 
-/** Defines the user relations relations. */
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
@@ -314,23 +297,19 @@ export const userRelations = relations(user, ({ many }) => ({
   lobbyMemberships: many(lobbyMember),
 }));
 
-/** Defines the session relations relations. */
 export const sessionRelations = relations(session, ({ one }) => ({
   user: one(user, { fields: [session.userId], references: [user.id] }),
 }));
 
-/** Defines the account relations relations. */
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, { fields: [account.userId], references: [user.id] }),
 }));
 
-/** Defines the item relations relations. */
 export const itemRelations = relations(item, ({ many }) => ({
   inventories: many(inventory),
   chestInventories: many(chestInventory),
 }));
 
-/** Defines the lobby relations relations. */
 export const lobbyRelations = relations(lobby, ({ one, many }) => ({
   master: one(user, { fields: [lobby.masterId], references: [user.id] }),
   members: many(lobbyMember),
@@ -339,19 +318,16 @@ export const lobbyRelations = relations(lobby, ({ one, many }) => ({
   characters: many(character),
 }));
 
-/** Defines the lobby member relations relations. */
 export const lobbyMemberRelations = relations(lobbyMember, ({ one }) => ({
   lobby: one(lobby, { fields: [lobbyMember.lobbyId], references: [lobby.id] }),
   user: one(user, { fields: [lobbyMember.userId], references: [user.id] }),
 }));
 
-/** Defines the message relations relations. */
 export const messageRelations = relations(message, ({ one }) => ({
   lobby: one(lobby, { fields: [message.lobbyId], references: [lobby.id] }),
   sender: one(user, { fields: [message.senderId], references: [user.id] }),
 }));
 
-/** Defines the character relations relations. */
 export const characterRelations = relations(character, ({ many, one }) => ({
   inventory: many(inventory),
   lobbyEntities: many(lobbyEntity),
@@ -359,42 +335,35 @@ export const characterRelations = relations(character, ({ many, one }) => ({
   lobby: one(lobby, { fields: [character.lobbyId], references: [lobby.id] }),
 }));
 
-/** Defines the inventory relations relations. */
 export const inventoryRelations = relations(inventory, ({ one }) => ({
   character: one(character, { fields: [inventory.characterId], references: [character.id] }),
   item: one(item, { fields: [inventory.itemId], references: [item.id] }),
 }));
 
-/** Defines the monster relations relations. */
 export const monsterRelations = relations(monster, ({ many }) => ({
   lobbyEntities: many(lobbyEntity),
 }));
 
-/** Defines the chest relations relations. */
 export const chestRelations = relations(chest, ({ many }) => ({
   inventory: many(chestInventory),
   lobbyEntities: many(lobbyEntity),
 }));
 
-/** Defines the campfire relations relations. */
 export const campfireRelations = relations(campfire, ({ many }) => ({
   shopItems: many(campfireShopItem),
   lobbyEntities: many(lobbyEntity),
 }));
 
-/** Defines the campfire shop item relations relations. */
 export const campfireShopItemRelations = relations(campfireShopItem, ({ one }) => ({
   campfire: one(campfire, { fields: [campfireShopItem.campfireId], references: [campfire.id] }),
   item: one(item, { fields: [campfireShopItem.itemId], references: [item.id] }),
 }));
 
-/** Defines the chest inventory relations relations. */
 export const chestInventoryRelations = relations(chestInventory, ({ one }) => ({
   chest: one(chest, { fields: [chestInventory.chestId], references: [chest.id] }),
   item: one(item, { fields: [chestInventory.itemId], references: [item.id] }),
 }));
 
-/** Defines the lobby entity relations relations. */
 export const lobbyEntityRelations = relations(lobbyEntity, ({ one }) => ({
   lobby: one(lobby, { fields: [lobbyEntity.lobbyId], references: [lobby.id] }),
   character: one(character, { fields: [lobbyEntity.characterId], references: [character.id] }),
