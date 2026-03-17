@@ -1,6 +1,6 @@
 "use client";
 
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { create } from "zustand";
 
 export type TradeOffer = { items: Array<{ itemId: string; quantity: number }>; currency: number };

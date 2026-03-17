@@ -2,7 +2,7 @@
 
 import { useGame } from "@/hooks/use-game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import React from "react";
 import { FloorPosition } from "./use-floor-position";
 

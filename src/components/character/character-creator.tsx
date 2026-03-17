@@ -15,7 +15,7 @@ import {
 import { useUser } from "@/hooks/use-user";
 import { createCharacter, getAllItems } from "@/lib/character-actions";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { Dices, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import React from "react";
 

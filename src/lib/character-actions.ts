@@ -2,7 +2,7 @@
 
 import { db, schema } from "@/lib/db";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 

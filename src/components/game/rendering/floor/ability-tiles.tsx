@@ -1,6 +1,6 @@
 "use client";
 
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { Plane } from "@react-three/drei";
 
 type Props = {

@@ -1,4 +1,4 @@
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 
 export namespace InGameHelpers {
   export const withEffects = (
@@ -14,7 +14,7 @@ export namespace InGameHelpers {
 
   export const getEntityById = (
     instance: Game.Instance,
-    entityId: Game.Entity["id"]
+    entityId: string
   ): Game.Entity | undefined => getEntities(instance).find((entity) => entity.id === entityId);
 
   export const getEntityAbilities = (entity: Game.Entity): Array<Game.Ability> => {

@@ -1,13 +1,12 @@
 import { db, schema } from "@/lib/db";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import * as Lobby from "@/lib/lobby";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { and, eq } from "drizzle-orm";
 import {
   type SocketContext,
   exists,
   normalizeQuantity,
-  update,
+  refresh,
   upsertCharacterInventory,
   upsertChestInventory,
 } from "./helpers";
@@ -37,8 +36,7 @@ export const register = (ctx: SocketContext) => {
       await upsertChestInventory(tx, target.id as any, item.id, quantity);
     });
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh);
+    await refresh(ctx, lobbyId);
   });
 
   socket.on(
@@ -136,8 +134,7 @@ export const register = (ctx: SocketContext) => {
         await upsertChestInventory(tx, toEntity.id as any, itemId, quantity);
       });
 
-      const fresh = await Lobby.getInstance(lobbyId);
-      await update(ctx, fresh);
+      await refresh(ctx, lobbyId);
     }
   );
 
@@ -207,8 +204,7 @@ export const register = (ctx: SocketContext) => {
       }
     });
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh);
+    await refresh(ctx, lobbyId);
   });
 
   socket.on("game:inventory:drop", async (userId, lobbyId, entityId, itemId, qty) => {
@@ -252,8 +248,7 @@ export const register = (ctx: SocketContext) => {
       }
     });
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh);
+    await refresh(ctx, lobbyId);
   });
 
   socket.on("game:inventory:equip", async (userId, lobbyId, entityId, itemId) => {
@@ -298,7 +293,6 @@ export const register = (ctx: SocketContext) => {
       .set({ equipped: !entry.equipped })
       .where(and(eq(schema.inventory.characterId, entity.id), eq(schema.inventory.itemId, itemId)));
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh);
+    await refresh(ctx, lobbyId);
   });
 };

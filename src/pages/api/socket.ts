@@ -1,3 +1,4 @@
+import { Game } from "@/lib/types";
 import { register as registerCampfire } from "@/socket/campfire";
 import { register as registerGameActions } from "@/socket/game-actions";
 import { register as registerGameEntities } from "@/socket/game-entities";
@@ -6,7 +7,6 @@ import { register as registerInventory } from "@/socket/inventory";
 import { register as registerLeveling } from "@/socket/leveling";
 import { register as registerLobby } from "@/socket/lobby";
 import { register as registerTrading } from "@/socket/trading";
-import { Game } from "@/types";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Server as HTTPServer } from "node:http";
 import type { Socket as NetSocket } from "node:net";

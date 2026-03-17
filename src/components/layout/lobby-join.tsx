@@ -1,59 +1,32 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
 import { useLobby } from "@/hooks/use-lobby";
 import { Ampersand } from "lucide-react";
 import React from "react";
+import { LobbyActionDialog } from "./lobby-action-dialog";
 
 export const LobbyJoin = () => {
   const joinLobby = useLobby((s) => s.joinLobby);
   const [code, setCode] = React.useState("");
-  const [open, setOpen] = React.useState(false);
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(code);
+
   return (
-    <Dialog open={open} onOpenChange={(e) => setOpen(e)}>
-      <Dialog.Trigger asChild>
+    <LobbyActionDialog
+      description="Want to play or just want to text? Join lobby and see."
+      disabled={!isUuid}
+      onSubmit={joinLobby}
+      onValueChange={setCode}
+      placeholder="Lobby ID"
+      submitLabel="Join"
+      title="Join new lobby"
+      trigger={
         <SidebarMenuButton className="flex items-center truncate text-lg">
           <Ampersand />
           Join lobby
         </SidebarMenuButton>
-      </Dialog.Trigger>
-      <Dialog.Content>
-        <Dialog.Title>Join new lobby</Dialog.Title>
-        <Dialog.Description>
-          Want to play or just want to text? Join lobby and see.
-        </Dialog.Description>
-        <Input
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              joinLobby(code);
-              setOpen(!open);
-              setCode("");
-            }
-          }}
-        />
-        <Dialog.Footer>
-          <Button
-            type="submit"
-            disabled={!isUuid}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              joinLobby(code);
-              setOpen(!open);
-              setCode("");
-            }}
-          >
-            Create
-          </Button>
-        </Dialog.Footer>
-      </Dialog.Content>
-    </Dialog>
+      }
+      value={code}
+    />
   );
 };

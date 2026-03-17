@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 
 type ItemEntry = Game.Character["inventory"][number] | Game.Chest["inventory"][number];
 

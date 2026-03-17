@@ -9,8 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useGame } from "@/hooks/use-game";
 import { usePermissions } from "@/hooks/use-permissions";
+import { Game } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Game } from "@/types";
 import { Brain, Footprints, Heart, Search, Shield, Skull, Swords, Zap } from "lucide-react";
 import React from "react";
 

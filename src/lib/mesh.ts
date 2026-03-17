@@ -1,5 +1,5 @@
+import type { MeshType } from "@/lib/types";
 import * as THREE from "three";
-import type { MeshType } from "../types/render";
 
 /**
  * Mesh utility functions for handling 3D models from /public folder

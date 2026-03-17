@@ -3,7 +3,7 @@
 import { Card } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
 import { ItemCard } from "@/components/ui/item-card";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { BookA, Coins, Heart, SearchCode, Section, Shield, Weight } from "lucide-react";
 import React from "react";
 

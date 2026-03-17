@@ -1,6 +1,6 @@
 import { Dialog } from "@/components/ui/dialog";
 import { useGame } from "@/hooks/use-game";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { CharacterInfo, InventoryList } from "./inventory-panel.components";
 
 type ViewPanelProps = {

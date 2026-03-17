@@ -1,40 +1,25 @@
 import { db, schema } from "@/lib/db";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import * as Lobby from "@/lib/lobby";
 import { and, eq } from "drizzle-orm";
 import {
   type SocketContext,
   exists,
   isPosition,
   normalizeQuantity,
-  update,
+  refresh,
   upsertCharacterInventory,
 } from "./helpers";
 
 export const register = (ctx: SocketContext) => {
-  const { socket, io } = ctx;
+  const { socket } = ctx;
 
   // ── Campfire Management ───────────────────────────────────────────────
 
   socket.on("game:campfire:add", async (userId, lobbyId, position) => {
     try {
       const inst = await exists(ctx, userId, lobbyId);
-      if (!inst) {
-        console.log("[campfire:add] Instance not found");
+      if (!inst || inst.masterId !== userId || inst.data.turn !== -1 || !isPosition(position))
         return;
-      }
-      if (inst.masterId !== userId) {
-        console.log("[campfire:add] User is not master");
-        return;
-      }
-      if (inst.data.turn !== -1) {
-        console.log("[campfire:add] Game is not in setup phase, turn:", inst.data.turn);
-        return;
-      }
-      if (!isPosition(position)) {
-        console.log("[campfire:add] Invalid position:", position);
-        return;
-      }
 
       await db.transaction(async (tx) => {
         const [newCampfire] = await tx
@@ -66,9 +51,7 @@ export const register = (ctx: SocketContext) => {
           });
       });
 
-      const fresh = await Lobby.getInstance(lobbyId);
-      await update(ctx, fresh);
-      console.log("[campfire:add] Success - campfire placed at", position);
+      await refresh(ctx, lobbyId);
     } catch (error) {
       console.error("[campfire:add] Error:", error);
     }
@@ -85,8 +68,7 @@ export const register = (ctx: SocketContext) => {
     if (!campfireEntity) return;
 
     await db.delete(schema.lobbyEntity).where(eq(schema.lobbyEntity.id, campfireEntity.id));
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh);
+    await refresh(ctx, lobbyId);
   });
 
   socket.on("game:campfire:move", async (userId, lobbyId, entityId, position) => {
@@ -110,8 +92,7 @@ export const register = (ctx: SocketContext) => {
       .set({ position })
       .where(eq(schema.lobbyEntity.id, campfireEntity.id));
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh);
+    await refresh(ctx, lobbyId);
   });
 
   // ── Campfire Rest ─────────────────────────────────────────────────────
@@ -149,8 +130,7 @@ export const register = (ctx: SocketContext) => {
         .where(eq(schema.lobbyEntity.id, charEntity.id));
     });
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh, "game:campfire:rest:complete");
+    await refresh(ctx, lobbyId, "game:campfire:rest:complete");
   });
 
   // ── Campfire Shop ─────────────────────────────────────────────────────
@@ -183,8 +163,7 @@ export const register = (ctx: SocketContext) => {
         );
     }
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh);
+    await refresh(ctx, lobbyId);
   });
 
   socket.on("game:campfire:shop:buy", async (userId, lobbyId, characterEntityId, itemId, qty) => {
@@ -256,8 +235,7 @@ export const register = (ctx: SocketContext) => {
       await upsertCharacterInventory(tx, charEntity.id, itemId, quantity);
     });
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh, "game:campfire:purchase");
+    await refresh(ctx, lobbyId, "game:campfire:purchase");
   });
 
   socket.on("game:campfire:info", async (userId, lobbyId, campfireEntityId) => {

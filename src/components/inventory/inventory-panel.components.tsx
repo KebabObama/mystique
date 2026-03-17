@@ -13,7 +13,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { InventoryItem } from "@/lib/inventory-panel";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import {
   ArrowRightLeft,
   BookA,

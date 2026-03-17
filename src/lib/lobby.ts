@@ -1,8 +1,7 @@
 "use server";
 
 import { db, schema } from "@/lib/db";
-import { Game } from "@/types";
-import type { Lobby } from "@/types/lobby";
+import { Game, type Lobby } from "@/lib/types";
 import { and, eq, gt } from "drizzle-orm";
 
 const normalizeData = (data: Partial<Game.Data> & Record<string, unknown>): Game.Data => ({

@@ -1,4 +1,4 @@
-import type { Brand } from "@/types";
+import { Brand } from "@/lib/types";
 import { relations } from "drizzle-orm";
 import {
   boolean,
@@ -13,7 +13,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-// Type definitions to avoid circular dependency with @/types/game
+// Type definitions to avoid circular dependency with shared game types
 type Attribute = "strength" | "dexterity" | "constitution" | "intelligence";
 type Effect = "corroding" | "frostbite" | "burning" | "shocked";
 type Position = { x: number; z: number };

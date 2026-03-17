@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@/components/layout/toast";
-import { Lobby } from "@/types";
+import type { Lobby } from "@/lib/types";
 import { create } from "zustand";
 import { useSocket } from "./use-socket";
 import { useUser } from "./use-user";

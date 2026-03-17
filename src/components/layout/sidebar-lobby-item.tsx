@@ -8,7 +8,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useLobby } from "@/hooks/use-lobby";
 import { useUser } from "@/hooks/use-user";
-import { Lobby } from "@/types";
+import type { Lobby } from "@/lib/types";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Code, Delete, Play, Send, Text, Users } from "lucide-react";
 import { redirect } from "next/navigation";

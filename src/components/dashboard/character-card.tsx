@@ -4,12 +4,8 @@ import { CharacterDashboard } from "@/components/character/character-dashboard";
 import { CharacterDelete } from "@/components/character/character-delete";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Game } from "@/types";
+import type { CharacterWithLobby } from "@/lib/types";
 import { Info, Trash } from "lucide-react";
-
-type CharacterWithLobby = Game.Character & {
-  lobby: { id: string; name: string; memberCount: number; members: string[] } | null;
-};
 
 type CharacterCardProps = { character: CharacterWithLobby };
 

@@ -1,9 +1,8 @@
 import { db, schema } from "@/lib/db";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import * as Lobby from "@/lib/lobby";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { eq } from "drizzle-orm";
-import { type SocketContext, exists, isPosition, update } from "./helpers";
+import { type SocketContext, exists, isPosition, refresh, update } from "./helpers";
 
 export const register = (ctx: SocketContext) => {
   const { socket, io } = ctx;
@@ -41,9 +40,7 @@ export const register = (ctx: SocketContext) => {
       }
     }
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    ctx.instances.set(lobbyId, fresh);
-    io.to(`game:${fresh.id}`).emit("game:state", fresh);
+    await refresh(ctx, lobbyId);
   });
 
   socket.on("game:sequence:move", async (userId, lobbyId, entityId, delta) => {
@@ -93,8 +90,7 @@ export const register = (ctx: SocketContext) => {
       .update(schema.lobbyEntity)
       .set({ position, actions: newActions })
       .where(eq(schema.lobbyEntity.id, entityId));
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh);
+    await refresh(ctx, lobbyId);
   });
 
   // ── Abilities ─────────────────────────────────────────────────────────
@@ -225,7 +221,6 @@ export const register = (ctx: SocketContext) => {
       message: `${actorName} used ${ability.name} at ${targetLabel} and hit ${victimNames}.`,
       variant: "default",
     });
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh);
+    await refresh(ctx, lobbyId);
   });
 };

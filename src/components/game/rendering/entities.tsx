@@ -7,7 +7,7 @@ import { useUser } from "@/hooks/use-user";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { Mesh } from "@/lib/mesh";
 import { Render } from "@/lib/render";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { animated, useSpring } from "@react-spring/three";
 import { ThreeEvent } from "@react-three/fiber";
 import React, { useEffect, useState } from "react";

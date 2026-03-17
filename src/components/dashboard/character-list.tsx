@@ -2,13 +2,9 @@
 
 import { CharacterCard } from "@/components/dashboard/character-card";
 import { Button } from "@/components/ui/button";
-import { Game } from "@/types";
+import type { CharacterWithLobby } from "@/lib/types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-
-type CharacterWithLobby = Game.Character & {
-  lobby: { id: string; name: string; memberCount: number; members: string[] } | null;
-};
 
 type CharacterListProps = { characters: CharacterWithLobby[] };
 

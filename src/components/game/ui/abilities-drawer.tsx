@@ -6,8 +6,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { useGame } from "@/hooks/use-game";
 import { usePermissions } from "@/hooks/use-permissions";
 import { InGameHelpers } from "@/lib/ingame-helpers";
+import { Game } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Game } from "@/types";
 
 type AbilityCardProps = { ability: Game.Ability; selected: boolean; onSelect: () => void };
 

@@ -1,9 +1,8 @@
 import { db, schema } from "@/lib/db";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import * as Lobby from "@/lib/lobby";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { eq } from "drizzle-orm";
-import { type SocketContext, exists, update } from "./helpers";
+import { type SocketContext, exists, refresh } from "./helpers";
 
 export const register = (ctx: SocketContext) => {
   const { socket } = ctx;
@@ -64,8 +63,7 @@ export const register = (ctx: SocketContext) => {
       })
       .where(eq(schema.character.id, characterId));
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh, "game:character:levelup:complete");
+    await refresh(ctx, lobbyId, "game:character:levelup:complete");
   });
 
   // ── Get XP Requirements ───────────────────────────────────────────────
@@ -110,7 +108,6 @@ export const register = (ctx: SocketContext) => {
       .set({ xp: newXp })
       .where(eq(schema.character.id, characterId));
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh, "game:character:xp:awarded");
+    await refresh(ctx, lobbyId, "game:character:xp:awarded");
   });
 };

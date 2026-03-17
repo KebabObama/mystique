@@ -5,8 +5,9 @@ import { useDialog } from "@/hooks/use-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useSocket } from "@/hooks/use-socket";
 import { useUser } from "@/hooks/use-user";
+import { applyStateSync } from "@/lib/game-state";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { create } from "zustand";
 
 export type GameMode =
@@ -118,7 +119,10 @@ export const useGame = create<GameStore>((set, get) => ({
     const socket = useSocket.getState().socket;
     if (!socket) return;
 
-    socket.on("game:state", (instance: Game.Instance) => {
+    socket.on("game:state", (sync: Game.StateSync) => {
+      const instance = applyStateSync(get().instance, sync);
+      if (sync.type === "patch" && !instance) return;
+
       set({ instance });
       usePermissions.getState().update(instance);
     });

@@ -1,9 +1,8 @@
 import { db, schema } from "@/lib/db";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import * as Lobby from "@/lib/lobby";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { and, eq } from "drizzle-orm";
-import { type SocketContext, exists, update, upsertCharacterInventory } from "./helpers";
+import { type SocketContext, exists, refresh, upsertCharacterInventory } from "./helpers";
 
 interface TradeOffer {
   items: Array<{ itemId: string; quantity: number }>;
@@ -274,8 +273,7 @@ export const register = (ctx: SocketContext) => {
           .emit("game:message", { message: "Trade completed successfully.", variant: "success" });
 
         emitClosed(ctx, lobbyId, session.id, "completed");
-        const fresh = await Lobby.getInstance(lobbyId);
-        await update(ctx, fresh);
+        await refresh(ctx, lobbyId);
       } catch (error) {
         session.confirmed[session.entityAId] = false;
         session.confirmed[session.entityBId] = false;

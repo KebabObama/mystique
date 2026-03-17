@@ -1,7 +1,7 @@
 "use client";
 
 import { GameMode, GameStore } from "@/hooks/use-game";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { AbilityTiles } from "./ability-tiles";
 import { AreaPreview } from "./area-preview";
 import { MoveTiles } from "./move-tiles";

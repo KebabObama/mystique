@@ -2,12 +2,12 @@
 
 import { CharacterCreator } from "@/components/character/character-creator";
 import { CharacterList } from "@/components/dashboard/character-list";
-import type { LobbyInfo } from "@/components/dashboard/lobby-card";
 import { LobbyList } from "@/components/dashboard/lobby-list";
 import { LobbyCreate } from "@/components/layout/lobby-create";
 import { useLobby } from "@/hooks/use-lobby";
 import { useUser } from "@/hooks/use-user";
 import { getCharacters } from "@/lib/dashboard";
+import type { LobbyInfo } from "@/lib/types";
 import { getUnreadCount } from "@/lib/utils";
 import { useEffect, useState } from "react";
 

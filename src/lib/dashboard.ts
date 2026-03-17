@@ -1,8 +1,7 @@
 "use server";
 
-import type { LobbyInfo } from "@/components/dashboard/lobby-card";
 import { db, schema } from "@/lib/db";
-import { Game } from "@/types";
+import type { CharacterWithLobby, LobbyInfo } from "@/lib/types";
 import { eq } from "drizzle-orm";
 
 /**
@@ -28,9 +27,7 @@ export const getCharacters = async (userId: string) => {
           members: char.lobby.members.map((m) => m.user.name),
         }
       : null,
-  })) as (Game.Character & {
-    lobby: { id: string; name: string; memberCount: number; members: string[] } | null;
-  })[];
+  })) as CharacterWithLobby[];
 };
 
 /**

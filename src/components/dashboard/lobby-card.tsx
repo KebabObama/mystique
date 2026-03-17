@@ -4,18 +4,9 @@ import { SidebarLobbyItem } from "@/components/layout/sidebar-lobby-item";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useLobby } from "@/hooks/use-lobby";
+import type { LobbyInfo } from "@/lib/types";
 import { LogIn, MessageSquare, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-export type LobbyInfo = {
-  id: string;
-  name: string;
-  createdAt: Date;
-  memberCount: number;
-  characterCount: number;
-  isMember: boolean;
-  unreadCount?: number;
-};
 
 type LobbyCardProps = { lobby: LobbyInfo };
 

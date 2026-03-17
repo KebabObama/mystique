@@ -2,7 +2,7 @@ import { db, schema } from "@/lib/db";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import * as Lobby from "@/lib/lobby";
 import { eq } from "drizzle-orm";
-import { type SocketContext, exists, isPosition, update } from "./helpers";
+import { emitFullState, exists, isPosition, refresh, update, type SocketContext } from "./helpers";
 
 export const register = (ctx: SocketContext) => {
   const { socket, io } = ctx;
@@ -14,7 +14,7 @@ export const register = (ctx: SocketContext) => {
     if (!inst) return;
     socket.join(`game:${inst.id}`);
     io.to(`game:${inst.id}`).emit("game:join", userId);
-    socket.emit("game:state", inst);
+    emitFullState(socket, inst);
   });
 
   socket.on("game:leave", async (userId, lobbyId) => {
@@ -43,8 +43,7 @@ export const register = (ctx: SocketContext) => {
         .values({ lobbyId: inst.id, type: "chest", chestId: newChest.id, position, actions: 0 });
     });
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh);
+    await refresh(ctx, lobbyId);
   });
 
   socket.on("game:chest:delete", async (userId, lobbyId, entityId) => {
@@ -56,8 +55,7 @@ export const register = (ctx: SocketContext) => {
     if (!chestEntity) return;
 
     await db.delete(schema.lobbyEntity).where(eq(schema.lobbyEntity.id, chestEntity.id));
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh);
+    await refresh(ctx, lobbyId);
   });
 
   socket.on("game:chest:move", async (userId, lobbyId, entityId, position) => {
@@ -79,8 +77,7 @@ export const register = (ctx: SocketContext) => {
       .set({ position })
       .where(eq(schema.lobbyEntity.id, chestEntity.id));
 
-    const fresh = await Lobby.getInstance(lobbyId);
-    await update(ctx, fresh);
+    await refresh(ctx, lobbyId);
   });
 
   // ── Monsters ──────────────────────────────────────────────────────────
@@ -131,8 +128,7 @@ export const register = (ctx: SocketContext) => {
     });
 
     if (!fresh) return;
-    ctx.instances.set(lobbyId, fresh);
-    io.to(`game:${inst.id}`).emit("game:state", fresh);
+    await update(ctx, fresh);
   });
 
   socket.on("game:monster:delete", async (userId, lobbyId, entityId) => {
@@ -157,8 +153,7 @@ export const register = (ctx: SocketContext) => {
     });
 
     if (!fresh) return;
-    ctx.instances.set(lobbyId, fresh);
-    io.to(`game:${inst.id}`).emit("game:state", fresh);
+    await update(ctx, fresh);
   });
 
   // ── Walls ─────────────────────────────────────────────────────────────
@@ -281,7 +276,6 @@ export const register = (ctx: SocketContext) => {
       return await Lobby.getInstance(lobbyId, tx as any);
     });
     if (!fresh) return;
-    ctx.instances.set(lobbyId, fresh);
-    io.to(`game:${inst.id}`).emit("game:state", fresh);
+    await update(ctx, fresh);
   });
 };

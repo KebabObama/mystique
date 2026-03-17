@@ -2,7 +2,7 @@
 
 import { useUser } from "@/hooks/use-user";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import { create } from "zustand";
 
 type PermissionsStore = {

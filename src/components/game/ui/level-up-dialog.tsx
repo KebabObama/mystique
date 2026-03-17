@@ -5,7 +5,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { useDialog } from "@/hooks/use-dialog";
 import { useGame } from "@/hooks/use-game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Game } from "@/types";
+import { Game } from "@/lib/types";
 import React from "react";
 
 export const LevelUpDialog = () => {
