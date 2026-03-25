@@ -7,7 +7,7 @@ export const LobbyList = ({ lobbies }: LobbyListProps) => {
   if (lobbies.length === 0) return null;
 
   return (
-    <section className="flex-cols flex w-full gap-6">
+    <section className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2">
       {lobbies.map((lobby) => (
         <LobbyCard key={lobby.id} lobby={lobby} />
       ))}
