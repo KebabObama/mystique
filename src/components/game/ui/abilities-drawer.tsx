@@ -42,24 +42,13 @@ export const AbilitiesDrawer = () => {
   const canControlCurrent = usePermissions((s) => s.canControlCurrent);
   const mode = useGame((s) => s.mode);
   const setMode = useGame((s) => s.setMode);
-  const castAbilityAt = useGame((s) => s.abilities.useAt);
-  const getViableTargets = useGame((s) => s.abilities.getViable);
+  const { useAt, getViable } = useGame((s) => s.abilities);
 
   if (!canControlCurrent || !current) return null;
-  const canHaveActions = current.type === "character" || current.type === "monster";
-  const actions = current.actions ?? (canHaveActions ? current.maxActions : 0) ?? 0;
   const abilities = InGameHelpers.getEntityAbilities(current);
   const selectedAbility = mode.type === "ability" ? mode.ability : undefined;
   const selectedTarget = mode.type === "ability" ? mode.target : undefined;
-  const hasActionsForSelected = selectedAbility ? actions >= selectedAbility.cost : false;
-  const viableSelectedTargets = selectedAbility
-    ? getViableTargets(current.id, selectedAbility)
-    : [];
-  const canCastSelected =
-    Boolean(selectedAbility && selectedTarget && hasActionsForSelected) &&
-    viableSelectedTargets.some(
-      (tile) => tile.x === selectedTarget?.x && tile.z === selectedTarget?.z
-    );
+  const hasActionsForSelected = selectedAbility ? current.actions >= selectedAbility.cost : false;
 
   return (
     <div className="flex flex-col gap-2">
@@ -103,10 +92,10 @@ export const AbilitiesDrawer = () => {
         <Button
           size="sm"
           variant="outline"
-          disabled={!canCastSelected}
+          disabled={!selectedAbility || !selectedTarget || !hasActionsForSelected}
           onClick={() => {
             if (!selectedTarget) return;
-            castAbilityAt(selectedTarget);
+            useAt(selectedTarget);
           }}
         >
           {selectedTarget

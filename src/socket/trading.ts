@@ -48,8 +48,7 @@ const sanitizeOffer = (offer: unknown, entity: CharacterEntity): Trading.Offer =
     normalized.set(itemId, Math.min(owned, current + requested));
   }
 
-  const coinEntry = entity.inventory.find((entry) => entry.name === "Gold Coin");
-  const maxCurrency = coinEntry?.quantity ?? 0;
+  const maxCurrency = entity.coins;
   const requestedCurrency =
     typeof payload.currency === "number" && Number.isFinite(payload.currency)
       ? Math.max(0, Math.floor(payload.currency))
@@ -112,6 +111,48 @@ const debitCharacterInventory = async (
     .where(and(eq(schema.inventory.characterId, characterId), eq(schema.inventory.itemId, itemId)));
 };
 
+const debitCharacterCoins = async (
+  tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
+  characterId: string,
+  amount: number
+) => {
+  if (amount <= 0) return;
+
+  const character = await tx.query.character.findFirst({
+    where: eq(schema.character.id, characterId),
+  });
+
+  if (!character || character.coins < amount) {
+    throw new Error("Insufficient trade currency");
+  }
+
+  await tx
+    .update(schema.character)
+    .set({ coins: character.coins - amount })
+    .where(eq(schema.character.id, characterId));
+};
+
+const creditCharacterCoins = async (
+  tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
+  characterId: string,
+  amount: number
+) => {
+  if (amount <= 0) return;
+
+  const character = await tx.query.character.findFirst({
+    where: eq(schema.character.id, characterId),
+  });
+
+  if (!character) {
+    throw new Error("Trade participant is no longer valid");
+  }
+
+  await tx
+    .update(schema.character)
+    .set({ coins: character.coins + amount })
+    .where(eq(schema.character.id, characterId));
+};
+
 const settleTrade = async (
   inst: NonNullable<Awaited<ReturnType<typeof exists>>>,
   session: Trading.Session
@@ -134,31 +175,23 @@ const settleTrade = async (
     const offerB = session.offers[session.entityBId] ?? Trading.EMPTY_OFFER;
 
     for (const item of offerA.items) {
-      await debitCharacterInventory(tx, entityA.id, item.itemId, item.quantity);
-      await upsertCharacterInventory(tx, entityB.id, item.itemId, item.quantity);
+      await debitCharacterInventory(tx, entityA.characterId, item.itemId, item.quantity);
+      await upsertCharacterInventory(tx, entityB.characterId, item.itemId, item.quantity);
     }
 
     for (const item of offerB.items) {
-      await debitCharacterInventory(tx, entityB.id, item.itemId, item.quantity);
-      await upsertCharacterInventory(tx, entityA.id, item.itemId, item.quantity);
+      await debitCharacterInventory(tx, entityB.characterId, item.itemId, item.quantity);
+      await upsertCharacterInventory(tx, entityA.characterId, item.itemId, item.quantity);
     }
 
-    const hasCurrency = offerA.currency > 0 || offerB.currency > 0;
-    if (hasCurrency) {
-      const currencyItem = await tx.query.item.findFirst({
-        where: eq(schema.item.name, "Gold Coin"),
-      });
-      if (!currencyItem) throw new Error("Currency item does not exist");
+    if (offerA.currency > 0) {
+      await debitCharacterCoins(tx, entityA.characterId, offerA.currency);
+      await creditCharacterCoins(tx, entityB.characterId, offerA.currency);
+    }
 
-      if (offerA.currency > 0) {
-        await debitCharacterInventory(tx, entityA.id, currencyItem.id, offerA.currency);
-        await upsertCharacterInventory(tx, entityB.id, currencyItem.id, offerA.currency);
-      }
-
-      if (offerB.currency > 0) {
-        await debitCharacterInventory(tx, entityB.id, currencyItem.id, offerB.currency);
-        await upsertCharacterInventory(tx, entityA.id, currencyItem.id, offerB.currency);
-      }
+    if (offerB.currency > 0) {
+      await debitCharacterCoins(tx, entityB.characterId, offerB.currency);
+      await creditCharacterCoins(tx, entityA.characterId, offerB.currency);
     }
   });
 };

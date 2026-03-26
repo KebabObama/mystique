@@ -16,7 +16,6 @@ export default () => {
   return (
     <Card className="absolute top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 gap-6">
       <div className="grid grid-cols-2 gap-6">
-        <Github loading={loading} setLoading={setLoading} />
         <Google loading={loading} setLoading={setLoading} />
       </div>
 
@@ -66,29 +65,6 @@ const Google = ({ loading, setLoading }: Props) => {
       variant="outline"
     >
       Google
-    </Button>
-  );
-};
-
-const Github = ({ loading, setLoading }: Props) => {
-  return (
-    <Button
-      className="w-full"
-      disabled={loading}
-      onClick={async () => {
-        setLoading(true);
-        try {
-          await authClient.signIn.social({ provider: "github", callbackURL: "/dashboard" });
-          toast.show("Redirecting to Github...");
-        } catch {
-          toast.error("Authentication failed");
-        } finally {
-          setLoading(false);
-        }
-      }}
-      variant="outline"
-    >
-      GitHub
     </Button>
   );
 };

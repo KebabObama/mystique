@@ -23,26 +23,6 @@ export const CharacterCard = ({ character }: CharacterCardProps) => {
         </p>
       </div>
 
-      {character.lobby && (
-        <div className="mt-2 border-t-2 pt-2">
-          <p className="text-muted text-sm">
-            Active Lobby: <span className="text-foreground">{character.lobby.name}</span>
-          </p>
-          <p className="text-muted text-sm">
-            Members: <span className="text-foreground">{character.lobby.memberCount}</span>
-          </p>
-          <p className="text-muted truncate text-xs" title={character.lobby.members.join(", ")}>
-            {character.lobby.members.join(", ")}
-          </p>
-        </div>
-      )}
-
-      {!character.lobby && (
-        <div className="mt-2 border-t-2 pt-2">
-          <p className="text-muted/50 text-sm italic">Not in any lobby</p>
-        </div>
-      )}
-
       <div className="mt-auto grid grid-cols-2 gap-6 p-1.5 pt-4.5">
         <CharacterDelete character={character} asChild>
           <Button className="w-full" size={"sm"} variant={"destructive"}>

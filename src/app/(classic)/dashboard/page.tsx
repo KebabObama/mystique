@@ -9,7 +9,7 @@ import { useUser } from "@/hooks/use-user";
 import type { LobbyInfo } from "@/lib/dashboard";
 import { getCharacters } from "@/lib/dashboard";
 import { getUnreadCount } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 /** Renders the dashboard page. */
 export default () => {
@@ -17,10 +17,17 @@ export default () => {
   const lobbies = useLobby((s) => s.lobbies);
   const [characters, setCharacters] = useState<Awaited<ReturnType<typeof getCharacters>>>([]);
 
-  useEffect(() => {
-    if (!userId) return;
-    getCharacters(userId).then(setCharacters);
+  const loadCharacters = useCallback(async () => {
+    if (!userId) {
+      setCharacters([]);
+      return;
+    }
+    setCharacters(await getCharacters(userId));
   }, [userId]);
+
+  useEffect(() => {
+    loadCharacters();
+  }, [loadCharacters]);
 
   const myLobbies: LobbyInfo[] = lobbies.map((lobby) => ({
     id: lobby.id,

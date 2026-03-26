@@ -7,7 +7,6 @@ import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import React from "react";
 
-type Detail = { label: string; value: string | number };
 type VisibleEffect = { effect: Game.Effect; stacks: number };
 
 const EFFECT_LABELS: Record<Game.Effect, string> = {
@@ -17,13 +16,12 @@ const EFFECT_LABELS: Record<Game.Effect, string> = {
   shocked: "Shocked",
 };
 
-const hasHealth = (entity: Game.Entity): entity is Game.CharacterEntity | Game.MonsterEntity =>
-  entity.type === "character" || entity.type === "monster";
+const hasHealth = (entity: Game.Entity) => entity.type === "character" || entity.type === "monster";
 
 const getTurnEffectStacks = (
   entity: Game.CharacterEntity | Game.MonsterEntity,
   effect: Game.Effect
-): number => {
+) => {
   const activeStacks = Math.max(0, entity.activeEffects?.[effect] ?? 0);
   const storedStacks = Math.max(0, entity.effects?.[effect] ?? 0);
   const decayedActiveStacks = Math.max(activeStacks - 1, 0);
@@ -35,10 +33,8 @@ const getVisibleEffects = (entity: Game.CharacterEntity | Game.MonsterEntity): V
     ({ stacks }) => stacks > 0
   );
 
-const getDetails = (entity: Game.Entity): Detail[] => {
-  const details: Detail[] = [
-    { label: "Position", value: `${entity.position.x}, ${entity.position.z}` },
-  ];
+const getDetails = (entity: Game.Entity) => {
+  const details = [{ label: "Position", value: `${entity.position.x}, ${entity.position.z}` }];
 
   switch (entity.type) {
     case "character":

@@ -5,7 +5,7 @@
   major: "Informační technologie",
   class: "ITB4",
   year: 2025,
-  author: "Jméno Příjmení",
+  author: "Lukáš Pražák",
   abstract-cs: [
     Práce se zaměřuje na návrh a implementaci webové aplikace pro hraní multiplayerové hry na hrdiny inspirované systémem Dračí doupě. Řešení kombinuje moderní webové technologie na straně klienta i serveru, podporuje správu herních entit, tvorbu postav a synchronizaci herního stavu v reálném čase.
   ],
@@ -20,5 +20,12 @@
   ],
   body: [
     #include "thesis.typ";
+  ],
+  assignment: [
+    Cílem práce je návrh a implementace webové aplikace umožňující hraní multiplayerové hry na hrdiny inspirované systémem Dračím doupětem. Hlavní součástí aplikace bude správa herních entit (např. tříd, kouzel a předmětů) a podpora herního režimu, v němž jeden hráč zastává roli tzv. Dungeon Mastera, zatímco ostatní hráči představují jeho družinu.
+
+    Frontend aplikace bude realizován v prostředí React s využitím knihovny Tailwind CSS, pro vizualizaci trojrozměrných prvků bude nasazen framework React Three Fiber. Serverová část bude vybudována na platformě Next.js a Node.js. Komunikace mezi klientem a serverem v reálném čase bude zajištěna pomocí knihovny Socket.IO. Data budou ukládána do databázového systému PostgreSQL a statické soubory (3D modely, obrázky) budou spravovány prostřednictvím objektového úložiště MinIO S3.
+
+    Součástí aplikace bude modul pro tvorbu a správu postav, které si hráči mohou definovat na základě dostupných tříd, kouzel a předmětů. Dále bude implementována funkce tvorby multiplayerových lobby, kde se hráči sdružují do skupin a jeden z nich přebírá roli Dungeon Mastera. Aplikace bude podporovat tahový boj i interakce v reálném čase a zajistí plynulý průběh herních sezení.
   ],
 )

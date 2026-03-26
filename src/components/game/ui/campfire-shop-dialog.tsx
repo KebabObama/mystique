@@ -1,11 +1,10 @@
 "use client";
 
-import { toast } from "@/components/layout/toast";
+import { Card } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useDialog } from "@/hooks/use-dialog";
 import { useGame } from "@/hooks/use-game";
-import { InGameHelpers } from "@/lib/ingame-helpers";
 
 /** Renders the campfire shop dialog component. */
 export const CampfireShopDialog = () => {
@@ -17,29 +16,13 @@ export const CampfireShopDialog = () => {
 
   if (!open || !selectedCampfireId || !selectedCharacterId || !instance) return null;
 
-  const campfireEntity = InGameHelpers.getEntities(instance).find(
-    (e) => e.id === selectedCampfireId
-  );
-  const charEntity = InGameHelpers.getEntities(instance).find((e) => e.id === selectedCharacterId);
+  const camp = instance.campfires.find((e) => e.id === selectedCampfireId);
+  const char = instance.characters.find((e) => e.id === selectedCharacterId);
 
-  if (
-    !campfireEntity ||
-    campfireEntity.type !== "campfire" ||
-    !charEntity ||
-    charEntity.type !== "character"
-  )
-    return null;
-
-  const shopItems = ((campfireEntity as any).shopItems ?? []) as Array<any>;
-
-  const currencyItem = charEntity.inventory.find((inv) => inv.name === "Gold Coin");
-  const currencyAmount = currencyItem?.quantity ?? 0;
+  if (!camp || !char) return null;
 
   const handleBuy = (itemId: string, cost: number) => {
-    if (currencyAmount < cost) {
-      toast.error("Not enough gold coins");
-      return;
-    }
+    if (char.coins < cost) return;
     useGame.getState().send("campfire:shop:buy", selectedCharacterId, itemId, 1);
   };
 
@@ -47,34 +30,29 @@ export const CampfireShopDialog = () => {
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && closeShop()}>
       <Dialog.Content className="max-w-xl">
         <Dialog.Title>Campfire Shop</Dialog.Title>
-        <p className="text-sm">Gold Coins: {currencyAmount}</p>
-        <div className="max-h-96 space-y-3 overflow-y-auto">
-          {shopItems.length === 0 ? (
+        <p className="text-sm">Coins: {char.coins}</p>
+        <div className="flex max-h-96 flex-col gap-6 overflow-y-auto px-1.5 py-3">
+          {camp.shopItems.length === 0 ? (
             <p className="py-8 text-center text-sm">No items available</p>
           ) : (
-            shopItems.map((shopItem) => (
-              <div
-                key={shopItem.id}
-                className="flex items-center justify-between rounded-lg border p-3"
-              >
+            camp.shopItems.map((shopItem) => (
+              <Card key={shopItem.id} className="flex justify-between">
                 <div>
                   <p className="font-medium">{shopItem.name}</p>
                   <p className="text-sm">Cost: {shopItem.cost} coins</p>
                 </div>
                 <Button
                   onClick={() => handleBuy(shopItem.id, shopItem.cost)}
-                  disabled={currencyAmount < shopItem.cost}
+                  disabled={char.coins < shopItem.cost}
                   size="sm"
+                  className="my-auto"
                 >
                   Buy
                 </Button>
-              </div>
+              </Card>
             ))
           )}
         </div>
-        <Button onClick={closeShop} variant="outline" className="w-full">
-          Close
-        </Button>
       </Dialog.Content>
     </Dialog>
   );

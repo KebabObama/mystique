@@ -29,11 +29,9 @@ export const MasterPanel = ({ entity, items, onClose }: MasterPanelProps) => {
     grant(entity.id, selectedGrantItemId, grantAmount);
   };
 
-  const handleDelete = (itemId: string, quantity: number) => {
+  const handleDrop = (itemId: string, quantity: number) => {
     dropItem(entity.id, itemId, quantity);
   };
-
-  const label = getEntityLabel(entity);
 
   return (
     <Dialog
@@ -46,7 +44,7 @@ export const MasterPanel = ({ entity, items, onClose }: MasterPanelProps) => {
       <Dialog.Content className="p-0 text-lg select-none">
         <div className="grid h-full grid-cols-3 gap-3">
           <section className="flex h-full flex-col gap-6 border-r-6 p-6">
-            <Dialog.Title>{label}</Dialog.Title>
+            <Dialog.Title>{getEntityLabel(entity)}</Dialog.Title>
             <Dialog.Description className="-mt-6 mb-0">Manage inventory items</Dialog.Description>
 
             {entity.type === "character" && <CharacterInfo character={entity} />}
@@ -68,7 +66,7 @@ export const MasterPanel = ({ entity, items, onClose }: MasterPanelProps) => {
           <section className="col-span-2 flex flex-col gap-3 overflow-auto p-6">
             <InventoryList
               entity={entity}
-              onDrop={handleDelete}
+              onDrop={handleDrop}
               onEquip={(itemId) => toggleEquip(entity.id, itemId)}
             />
           </section>

@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm";
 export type CharacterLobby = { id: string; name: string; memberCount: number; members: string[] };
 
 /** Represents the character with lobby type. */
-export type CharacterWithLobby = Game.Character & { lobby: CharacterLobby | null };
+export type CharacterWithLobby = Game.Character & { lobbies: CharacterLobby[] };
 
 /** Represents the lobby info type. */
 export type LobbyInfo = {
@@ -29,22 +29,33 @@ export const getCharacters = async (userId: string) => {
     where: eq(schema.character.ownerId, userId),
     with: {
       inventory: { with: { item: true } },
-      lobby: { with: { members: { columns: {}, with: { user: true } } } },
+      lobbyEntities: {
+        columns: { lobbyId: true },
+        with: { lobby: { with: { members: { columns: {}, with: { user: true } } } } },
+      },
     },
   });
 
-  return results.map((char) => ({
-    ...char,
-    inventory: char.inventory.map((i) => ({ ...i, ...i.item })),
-    lobby: char.lobby
-      ? {
-          id: char.lobby.id,
-          name: char.lobby.name,
-          memberCount: char.lobby.members.length,
-          members: char.lobby.members.map((m) => m.user.name),
-        }
-      : null,
-  })) as CharacterWithLobby[];
+  return results.map(({ inventory, lobbyEntities, ...character }) => {
+    const lobbies = new Map<string, CharacterLobby>();
+
+    for (const entry of lobbyEntities) {
+      if (!entry.lobby || lobbies.has(entry.lobby.id)) continue;
+
+      lobbies.set(entry.lobby.id, {
+        id: entry.lobby.id,
+        name: entry.lobby.name,
+        memberCount: entry.lobby.members.length,
+        members: entry.lobby.members.map((member) => member.user.name),
+      });
+    }
+
+    return {
+      ...character,
+      inventory: inventory.map((i) => ({ ...i, ...i.item })),
+      lobbies: [...lobbies.values()],
+    };
+  }) as CharacterWithLobby[];
 };
 
 /**
@@ -52,7 +63,10 @@ export const getCharacters = async (userId: string) => {
  */
 export const getMyLobbies = async (userId: string): Promise<LobbyInfo[]> => {
   const lobbies = await db.query.lobby.findMany({
-    with: { members: { columns: { userId: true } }, characters: { columns: { id: true } } },
+    with: {
+      members: { columns: { userId: true } },
+      entities: { columns: { type: true, characterId: true } },
+    },
     orderBy: (lobby, { desc }) => [desc(lobby.createdAt)],
   });
 
@@ -63,7 +77,9 @@ export const getMyLobbies = async (userId: string): Promise<LobbyInfo[]> => {
       name: lobby.name,
       createdAt: lobby.createdAt,
       memberCount: lobby.members.length,
-      characterCount: lobby.characters.length,
+      characterCount: lobby.entities.filter(
+        (entity) => entity.type === "character" && entity.characterId
+      ).length,
       isMember: true,
     }));
 };

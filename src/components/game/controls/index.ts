@@ -1,6 +1,6 @@
-export { CampfireControls } from "./campfire-controls";
-export { ChestControls } from "./chest-controls";
-export { EndTurn } from "./end-turm";
-export { MonsterControls } from "./monster-controls";
-export { MoveButton } from "./move-button";
-export { WallControls } from "./wall-controls";
+export * from "./campfire-controls";
+export * from "./chest-controls";
+export * from "./end-turm";
+export * from "./monster-controls";
+export * from "./move-button";
+export * from "./wall-controls";

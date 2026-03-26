@@ -38,15 +38,6 @@ import {
 
 const ITEMS: (typeof schema.item.$inferInsert)[] = [
   {
-    name: "Gold Coin",
-    type: "misc",
-    value: 1,
-    weight: 0,
-    armor: null,
-    abilities: [],
-    requiremnts: {},
-  },
-  {
     name: "Training Sword",
     type: "weapon",
     value: 8,

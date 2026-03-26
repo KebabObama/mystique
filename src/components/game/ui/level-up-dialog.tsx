@@ -6,16 +6,13 @@ import { useDialog } from "@/hooks/use-dialog";
 import { useGame } from "@/hooks/use-game";
 import { Game } from "@/lib/game";
 import { ATTRIBUTE_ICON } from "@/lib/game-ui";
-import { InGameHelpers } from "@/lib/ingame-helpers";
 import React from "react";
 
 /** Renders the level up dialog component. */
 export const LevelUpDialog = () => {
   const instance = useGame((s) => s.instance);
-  const open = useDialog((s) => s.leveling.dialogOpen);
-  const closeDialog = useDialog((s) => s.leveling.closeDialog);
+  const { dialogOpen, closeDialog, selectedCharacterId } = useDialog((s) => s.leveling);
   const levelUp = useGame((s) => s.leveling.levelUp);
-  const selectedCharacterId = useDialog((s) => s.leveling.selectedCharacterId);
   const [attributePoints, setAttributePoints] = React.useState<Record<Game.Attribute, number>>({
     strength: 0,
     dexterity: 0,
@@ -23,30 +20,24 @@ export const LevelUpDialog = () => {
     intelligence: 0,
   });
 
-  if (!open || !selectedCharacterId || !instance) return null;
-
-  const character = InGameHelpers.getEntities(instance).find(
-    (e) => e.type === "character" && e.id === selectedCharacterId
-  );
+  if (!dialogOpen || !selectedCharacterId || !instance) return null;
+  const character = instance.characters.find((e) => e.id === selectedCharacterId);
+  const totalPointsSpent = Object.values(attributePoints).reduce((a, b) => a + b, 0);
 
   if (!character || character.type !== "character") return null;
-
-  const totalPointsSpent = Object.values(attributePoints).reduce((a, b) => a + b, 0);
-  const canLevelUp = totalPointsSpent === 5;
 
   const handleAttributeChange = (attr: Game.Attribute, value: number) => {
     setAttributePoints({ ...attributePoints, [attr]: Math.max(0, value) });
   };
 
   const handleLevelUp = () => {
-    if (canLevelUp) {
-      levelUp(selectedCharacterId, attributePoints);
-      closeDialog();
-    }
+    if (totalPointsSpent !== 5) return;
+    levelUp(selectedCharacterId, attributePoints);
+    closeDialog();
   };
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && closeDialog()}>
+    <Dialog open={dialogOpen} onOpenChange={(isOpen) => !isOpen && closeDialog()}>
       <Dialog.Content>
         <Dialog.Title>Level Up!</Dialog.Title>
         <p className="text-sm text-slate-600">
@@ -113,7 +104,7 @@ export const LevelUpDialog = () => {
           </div>
 
           <div className="flex gap-2">
-            <Button onClick={handleLevelUp} disabled={!canLevelUp} className="flex-1">
+            <Button onClick={handleLevelUp} disabled={totalPointsSpent !== 5} className="flex-1">
               Confirm Level Up ({totalPointsSpent}/5)
             </Button>
             <Button onClick={closeDialog} variant="outline" className="flex-1">

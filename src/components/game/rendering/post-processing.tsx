@@ -9,6 +9,10 @@ type PostProcessingProps = {};
 export const PostProcessing = ({}: PostProcessingProps) => {
   return (
     <>
+      <directionalLight position={[0, 10, 0]} intensity={0.9} />
+      <directionalLight position={[12, 6, 0]} intensity={0.45} />
+      <directionalLight position={[-12, 6, 0]} intensity={0.45} />
+      <ambientLight position={[0, 10, 0]} intensity={0.25} />
       <AdaptiveEvents />
       <EffectComposer autoClear={false}>
         <Pixelation granularity={3} />

@@ -3,7 +3,7 @@
 import { db, schema } from "@/lib/db";
 import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { and, eq, gt } from "drizzle-orm";
+import { and, eq, gt, inArray } from "drizzle-orm";
 
 /** Represents the lobby type. */
 export type Lobby = typeof schema.lobby.$inferSelect & {
@@ -144,20 +144,22 @@ export const link = async (lobbyId: string, characterId: string) => {
       where: eq(schema.character.id, characterId),
     });
     if (!character) throw new Error("Character not found");
-    if (character.lobbyId) throw new Error("Character already in a lobby");
 
-    const [updated] = await tx
-      .update(schema.character)
-      .set({ lobbyId })
-      .where(eq(schema.character.id, characterId))
-      .returning();
+    const existing = await tx.query.lobbyEntity.findFirst({
+      where: and(
+        eq(schema.lobbyEntity.lobbyId, lobbyId),
+        eq(schema.lobbyEntity.characterId, characterId),
+        eq(schema.lobbyEntity.type, "character")
+      ),
+    });
+    if (existing) throw new Error("Character already in this lobby");
 
     await tx
       .insert(schema.lobbyEntity)
-      .values({ lobbyId, characterId, type: "character" })
+      .values({ lobbyId, characterId, type: "character", actions: character.maxActions })
       .returning();
 
-    return updated;
+    return character;
   });
 };
 
@@ -184,10 +186,38 @@ export const create = async (userId: string, name: string): Promise<Lobby> => {
 /** Provides the leave function. */
 export const leave = async (userId: string, lobbyId: string) => {
   return await db.transaction(async (tx) => {
-    await tx
-      .update(schema.character)
-      .set({ lobbyId: null })
-      .where(and(eq(schema.character.ownerId, userId), eq(schema.character.lobbyId, lobbyId)));
+    const characterEntities = await tx.query.lobbyEntity.findMany({
+      where: and(eq(schema.lobbyEntity.lobbyId, lobbyId), eq(schema.lobbyEntity.type, "character")),
+      columns: { id: true },
+      with: { character: { columns: { ownerId: true } } },
+    });
+
+    const entityIdsToRemove = characterEntities
+      .filter((entity) => entity.character?.ownerId === userId)
+      .map((entity) => entity.id);
+
+    if (entityIdsToRemove.length > 0) {
+      await tx.delete(schema.lobbyEntity).where(inArray(schema.lobbyEntity.id, entityIdsToRemove));
+
+      const lobbyData = await tx.query.lobby.findFirst({
+        where: eq(schema.lobby.id, lobbyId),
+        columns: { data: true },
+      });
+
+      if (lobbyData) {
+        const data = normalizeData((lobbyData.data as any) ?? {});
+
+        await tx
+          .update(schema.lobby)
+          .set({
+            data: {
+              ...data,
+              sequence: data.sequence.filter((id) => !entityIdsToRemove.includes(id)),
+            },
+          })
+          .where(eq(schema.lobby.id, lobbyId));
+      }
+    }
 
     await tx
       .delete(schema.lobbyMember)

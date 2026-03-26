@@ -1,19 +1,21 @@
 "use client";
 
+import { AddCharacter } from "@/components/game";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Context } from "@/components/ui/context";
 import { useGame } from "@/hooks/use-game";
 import { usePermissions } from "@/hooks/use-permissions";
+import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp, ChevronDown } from "lucide-react";
 import * as React from "react";
 
-type SequenceProps = { children?: React.ReactNode };
+type SequenceProps = { characters: Omit<Game.Character, "inventory">[] };
 
 /** Renders the sequence component. */
-export const Sequence = ({ children }: SequenceProps) => {
+export const Sequence = ({ characters }: SequenceProps) => {
   const [open, setOpen] = React.useState(true);
 
   const instance = useGame((s) => s.instance);
@@ -86,7 +88,7 @@ export const Sequence = ({ children }: SequenceProps) => {
           />
         </Card>
 
-        {children}
+        <AddCharacter characters={characters} />
       </div>
 
       <Button size="sm" className={`mr-1.5 text-sm`} onClick={() => setOpen((v) => !v)}>

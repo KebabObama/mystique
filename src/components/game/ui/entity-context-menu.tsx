@@ -13,18 +13,10 @@ type MenuAction = { label: string; run: () => void };
 /** Renders the entity context menu component. */
 export const EntityContextMenu = () => {
   const instance = useGame((s) => s.instance);
+  const activeEntity = useGame((s) => s.sequence.current);
   const openPanel = useGame((s) => s.inventory.openPanel);
-
-  const isMasterOnTurn = usePermissions((s) => s.isMasterOnTurn);
-  const canControlEntity = usePermissions((s) => s.canControlEntity);
-  const isUsersEntity = usePermissions((s) => s.isUsersEntity);
-
-  const open = useDialog((s) => s.entityContextMenu.open);
-  const entityId = useDialog((s) => s.entityContextMenu.entityId);
-  const x = useDialog((s) => s.entityContextMenu.x);
-  const y = useDialog((s) => s.entityContextMenu.y);
-  const close = useDialog((s) => s.entityContextMenu.close);
-
+  const { isUsersEntity, isMasterOnTurn, canControlEntity } = usePermissions();
+  const { x, y, close, entityId, open } = useDialog((s) => s.entityContextMenu);
   const triggerRef = React.useRef<HTMLButtonElement | null>(null);
 
   const actions = React.useMemo<MenuAction[]>(() => {
@@ -33,29 +25,24 @@ export const EntityContextMenu = () => {
     const targetEntity = InGameHelpers.getEntityById(instance, entityId);
     if (!targetEntity) return [];
 
-    if (isMasterOnTurn) {
+    if (isMasterOnTurn)
       return [{ label: "Open inventory", run: () => openPanel("master", targetEntity.id) }];
-    }
 
     switch (targetEntity.type) {
       case "character": {
-        const activeEntity = InGameHelpers.getEntityById(
-          instance,
-          instance.data.sequence[instance.data.turn]
-        );
         const activeCharacter = activeEntity?.type === "character" ? activeEntity : null;
         const controlsActiveCharacter = !!activeCharacter && canControlEntity(activeCharacter);
+        const canOpenInventory = canControlEntity(targetEntity);
         const canTradeWithTarget =
           !!activeCharacter &&
           controlsActiveCharacter &&
           activeCharacter.id !== targetEntity.id &&
           Render.distance(activeCharacter.position, targetEntity.position, "manhattan") <= 1;
 
-        const isOwnAndActive = isUsersEntity(targetEntity);
         const actions: MenuAction[] = [
           {
-            label: isOwnAndActive ? "Open inventory" : "Inspect",
-            run: () => openPanel(isOwnAndActive ? "view" : "inspect", targetEntity.id),
+            label: canOpenInventory ? "Open inventory" : "View",
+            run: () => openPanel(canOpenInventory ? "view" : "inspect", targetEntity.id),
           },
         ];
 
@@ -78,9 +65,7 @@ export const EntityContextMenu = () => {
             isUsersEntity(entry) &&
             Render.distance(entry.position, targetEntity.position, "manhattan") <= 1
         );
-
         if (!nearbyOwnCharacter) return [];
-
         return [
           {
             label: "Open chest",
@@ -116,7 +101,15 @@ export const EntityContextMenu = () => {
       default:
         return [];
     }
-  }, [canControlEntity, entityId, instance, isMasterOnTurn, isUsersEntity, openPanel]);
+  }, [
+    activeEntity,
+    canControlEntity,
+    entityId,
+    instance,
+    isMasterOnTurn,
+    isUsersEntity,
+    openPanel,
+  ]);
 
   React.useEffect(() => {
     if (!open) return;

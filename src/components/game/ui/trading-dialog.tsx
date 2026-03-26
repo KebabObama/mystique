@@ -141,7 +141,7 @@ export const TradingDialog = () => {
     canEdit: boolean
   ) => {
     const draft = side === "a" ? draftA : draftB;
-    const coinMax = character.inventory.find((entry) => entry.name === "Gold Coin")?.quantity ?? 0;
+    const coinMax = character.coins;
 
     return (
       <div className="space-y-2 rounded-lg border p-2">

@@ -16,7 +16,7 @@ import { useUser } from "@/hooks/use-user";
 import { createCharacter, getAllItems } from "@/lib/character-actions";
 import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { Dices, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
+import { Coins, Dices, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import React from "react";
 
 /** Renders the character creator component. */
@@ -279,11 +279,11 @@ export const CharacterCreator = () => {
                       <div className="flex-1">
                         <h4 className="font-bold">{item.name}</h4>
                         <p className="text-muted-foreground text-sm">{item.type}</p>
-                        <p className="mt-1 text-lg font-black text-yellow-500">
-                          {item.value} coins
+                        <p className="mt-1 flex gap-1.5 text-lg font-black text-yellow-500">
+                          {item.value} <Coins />
                         </p>
                       </div>
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-3">
                         <Button
                           size="sm"
                           variant="default"
@@ -294,56 +294,20 @@ export const CharacterCreator = () => {
                           <ShoppingCart className="mr-1 h-3 w-3" />
                           Buy
                         </Button>
-                        {boughtQty > 0 && (
-                          <div className="flex items-center justify-center gap-2 text-xs">
-                            <span className="font-bold">{boughtQty}x</span>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => removeBoughtItem(item.id, item.value)}
-                              className="h-6 w-6 p-0"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        )}
+                        <Button
+                          size="sm"
+                          onClick={() => removeBoughtItem(item.id, item.value)}
+                          hidden={boughtQty === 0}
+                        >
+                          <Trash2 />
+                          <span className="font-bold">{boughtQty}x</span>
+                        </Button>
                       </div>
                     </div>
                   </Card>
                 );
               })}
             </div>
-
-            {selectedItems.size > 0 && (
-              <div className="bg-background sticky bottom-0 border-t pt-4">
-                <Card className="bg-muted p-3">
-                  <h3 className="mb-2 text-sm font-black">Purchased Items</h3>
-                  <div className="space-y-1">
-                    {Array.from(selectedItems.entries()).map(([itemId, qty]) => {
-                      const item = allItems.find((i: any) => i.id === itemId);
-                      return (
-                        <div key={itemId} className="flex justify-between text-xs">
-                          <span>
-                            {item?.name} x{qty}
-                          </span>
-                          <span>{item?.value! * qty} coins</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="mt-2 flex justify-between border-t pt-2 text-sm font-bold">
-                    <span>Total Cost:</span>
-                    <span>
-                      {Array.from(selectedItems.entries()).reduce((sum, [itemId, qty]) => {
-                        const item = allItems.find((i: any) => i.id === itemId);
-                        return sum + (item?.value || 0) * qty;
-                      }, 0)}{" "}
-                      coins
-                    </span>
-                  </div>
-                </Card>
-              </div>
-            )}
           </div>
         </div>
       </Dialog.Content>

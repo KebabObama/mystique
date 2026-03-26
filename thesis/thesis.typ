@@ -1,26 +1,24 @@
-= úvod
+= Úvod
 
-Žánr deskových her na hrdiny se stal jedinečným typem herních systémů, které spojují prvky vyprávění příběhu, strategického rozhodování a pravidelně řízených interakcí mezi hráči. Patří sem nejznámější deskové hry na hrdiny systému Dungeons & Dragons a jeho český analog Dračí doupě, které se staví na spolupráci skupinového hráče se skupinou hráčů řízených jedním hráčem jako Dungeon Masterem. Dungeon Master je odpovědný za řízení herového světa a interpretaci pravidel, zatímco hráči ovládají jednotlivé herové postavy.
+Hráči stolních her na hrdiny pro více hráčů tvoří zvláštní větev herních systémů, kde se kombinuje společné vyprávění, rozhodování na základě předem definovaných pravidel a spolupráce hráčů v jednom sdíleným světě. Nejznámější zástupci tohoto žánru jsou hry jako Dungeons & Dragons, a v českém prostředí pak specificky i Dračí doupě. Nejvýraznější znak je bezesporu jasná separace rolí. Většina hráčů kontroluje svého hrdinu, zatímco vypravěč, též nazývaný _dungeon master_, či v českém překladu _pán jeskyně_, řídí svět, pravidla vykládá a reaguje na to, co ostatní hráči činí.
 
-S rozvojem aplikací a online prostředí se tyto hry začínají objevovat i v online prostředí. To s sebou přináší řadu výhod, jako je možnost jednodušeji dostupné hry, možnosti hraní na dálku, automatizace provádění pravidel nebo obohacení hry o multimediální prvky. Hraní her tohoto typu ale klade vysoké nároky na konstrukci aplikace, synchronizaci dat mezi hráči a udržení plynulosti hry.
-
-Cílem této práce je návrh a implementace webové aplikace umožňující hraní multiplayerové hry na hrdiny inspirované Dračí doupětem. Aplikace je navržena tak, aby sloužila jako plnohodnotná herní platforma zahrnující správu herních jednotek, tvorbu a úpravu postav, správu multiplayerových utkání a vedení samotné hry. Důraz je kladen na využití moderních technologií pro web a na maximální možnosti dalšího rozšiřování aplikace.
+S vývojem webových technologií a online komunikace se začíná čím dál pravděpodobněji mluvit i o transformaci těchto her do virtuální reality. Do online zpracování hry lze přidat celou řadu výhod, ať již jde o usnadnění organizace hry, nebo možnost hrát i v přímé nepřítemnosti jednoho nebo více hráčů.
 
 = Architektura
 
-Pro aplikaci bylo zvoleno schéma klient-server, které je běžným standardem pro vývoj webových aplikací. Architektura klient-server umožňuje čisté oddělení klientského kódu od serverového, což umožní bezpečnost serveru a jeden zdroj pravdy.
+Pro aplikaci bylo zvoleno schéma klient-server, které je standardem pro vývoj webových aplikací. Daná architektura umožňuje čisté oddělení klientského kódu od serverového, což umožní bezpečnost serveru a jeden zdroj pravdy.
 
-Klientská část aplikace běží přímo v webovém prohlížeči a představuje rozhraní mezi uživatelem a aplikací. Její hlavní úlohou je zobrazování uživatelského rozhraní, zpracovávání uživatelských vstupů a zobrazování aktuálního herního stavu. Klientská část aplikace s serverem komunikuje pomocí síťových požadavků a reaguje v reálném čase na změny.
+Klientská část aplikace běží přímo v webovém prohlížeči a představuje rozhraní mezi uživatelem a aplikací. Hlavní úlohou je zobrazování uživatelského rozhraní, zpracovávání uživatelských vstupů a zobrazování aktuálního herního stavu. Klientská část aplikace s serverem komunikuje pomocí síťových požadavků a volání událostí při využívání socketů a reaguje v reálném čase na změny.
 
-Části aplikace, které se zabývají jsou prováděny na serveru a jsou zde umístěny rozhodící autoritativní a autentizační část celého systému. Zajišťuje také správu herních stavů, ověřování tahů hráčů, přihlášení a legitimaci uživatele a komunikační funkce s databází. Server také zajišťuje komunikační funkce s jednotlivými klienty a provádí synchronizaci dat v reálném čase s cílem zajištění konzistence.
+Části aplikace, které se zabývají logikou hry jsou prováděny na serveru a jsou zde umístěny i rozhodící autoritativní a autentizační části celého systému. Zajišťuje také správu herních stavů, ověřování tahů hráčů, přihlášení a legitimaci uživatele a komunikační funkce s databází. Server navíc zajišťuje komunikační funkce s jednotlivými klienty a provádí synchronizaci dat v reálném čase s cílem zajištění konzistence.
 
 = Programovací jazyky
 
-Výběr programovacího jazyka pro fullstack aplikace je extrémně důležité pro rychlost vývoje i stabilnost takového systému. V tomto projektu bude kombinován moderní standard jazyka JavaScriptu se jeho typovou nadstavbou TypeScriptem.
+Výběr programovacího jazyka pro fullstack aplikace je extrémně důležité pro rychlost vývoje i stabilnost takového systému. V tomto projektu bude kombinován moderní standard jazyka JavaScriptu se jeho typovou nadstavbou TypeScriptem za využití knihovny Tailwind CSS pro stylování uživatelského rozhraní.
 
 == JavaScript
 
-JavaScript je hlavním programovací jazykem pro web a jediným nativním webovým jazykem pro logiku na straně klienta, který je podporován všemi moderními prohlížeči. Pro účely této publikace je jazyk JavaScript velice důležitý, protože se jedná o dynamicky interpretovaný jazyk s asynchronV kontextu této aplikace je jazyk JavaScript využíván hlavně prostřednictvím jeho současného standardu ECMAScript. Ten poskytuje účelnou manipulaci asynchronními proudy dat prostřednictvím konstrukcí async a await, což je nesmírné požadavku pro interakce s serverem i databází. Také kvůli neblokujícím vstupu a výstupu je jazyk JavaScript nejvhodnějším pro aplikace vyžadující vysoké interaktivní hodnoty, jako jsou systémy reálného času, kde je zapotřebí zpracování velké množství vstupů od různých uživatelů současně bez prodlení.
+JavaScript je hlavním programovací jazykem pro webové prohlížeče a jediným nativním webovým jazykem pro logiku na straně klienta, který je podporován všemi moderními prohlížeči. Pro účely této publikace je jazyk JavaScript velice důležitý, protože se jedná o dynamicky interpretovaný jazyk s asynchronV kontextu této aplikace je jazyk JavaScript využíván hlavně prostřednictvím jeho současného standardu ECMAScript. Ten poskytuje účelnou manipulaci asynchronními proudy dat prostřednictvím konstrukcí async a await, což je nesmírné požadavku pro interakce s serverem i databází. Také kvůli neblokujícím vstupu a výstupu je jazyk JavaScript nejvhodnějším pro aplikace vyžadující vysoké interaktivní hodnoty, jako jsou systémy reálného času, kde je zapotřebí zpracování velké množství vstupů od různých uživatelů současně bez prodlení.
 
 == TypeScript
 
@@ -116,7 +114,7 @@ Pokud se reference na objekt nezměnila, React uměl progressDialoguecalled zapo
 
 === React Compiler
 
-Významnou inovací použitou v projektu je nasazení React Compileru. V předchozích verzích Reactu, do verze 19, byla optimalizace renderování z velké části manuální odpovědností vývojáře. Aby se předešlo zbytečnému vytváření nových instancí funkcí a objektů při každém vykreslení, museli vývojáři obalovat kód do hooků useMemo, který slouží pro hodnoty, a useCallback, jenž složí pro funkce.
+Inovací použitou v projektu je nasazení React Compileru. V předchozích verzích Reactu, do verze 19, byla optimalizace renderování z velké části manuální odpovědností vývojáře. Aby se předešlo zbytečnému vytváření nových instancí funkcí a objektů při každém vykreslení, museli vývojáři obalovat kód do hooků useMemo, který slouží pro hodnoty, a useCallback, jenž složí pro funkce.
 
 React Compiler tento proces automatizuje na úrovni sestavování. Analyzuje sémantiku kódu a datové toky uvnitř komponent a automaticky _"memorizuje"_ hodnoty, které nezávisí na změněných vstupech. V praxi to znamená, že pokud se změní data ve vyším komponentu, tak ne všechny _pod-komponenty_ budou muset být znovu sestaveny.
 
@@ -232,20 +230,54 @@ Při běhu aplikace probíhá zpracování ve více navazujících vrstvách. Re
 
 Tento model poskytuje jasné oddělení odpovědností: WebGL řeší nízkoúrovňové vykreslení, Three.js správu 3D domény, R3F integraci s React architekturou, `drei` produktivitu vývoje a `react-spring` fyzikálně konzistentní přechody stavů. Výsledkem je škálovatelné řešení, které je vhodné pro multiplayerovou RPG aplikaci s důrazem na plynulost, čitelnost kódu a dlouhodobou udržitelnost.
 
-= Praktická část
+= Vývoj aplikace
 
-Praktická část této práce popisuje skutečné fungování implementace v projektu Mystique, nikoliv pouze seznam technologií. Zaměřuje se na to, co se v systému děje při renderování 3D scény, interakci uživatele,  otevírání dialogů a komunikaci mezi clientem a serverem.
+Následující část práce se zaměřuje na reálné fungování implementace v rámci projektu, nikoli pouze na výčet použitých technologií. Analyzuje procesy probíhající při vykreslování 3D scény, interakci uživatele se systémem, otevírání dialogových oken a komunikaci mezi klientskou a serverovou částí aplikace.
+
+== Postup vývoje aplikace
+
+Vývoj aplikace probíhal iterativním způsobem. První etapou bylo vytvoření stabilního datového a aplikačního základu, tedy návrh databázového schématu, autentizační vrstvy a základních serverových operací pro práci s uživateli, lobby a ostatními herními prvky. Teprve po ověření těchto částí následovala implementace komunikace v reálném čase a 3D zobrazování na straně klienta. Tento postup se v praxi ukázal jako vhodný, protože umožnil oddělit základní strukturu od prezentační vrstvy a minimalizoval riziko, že by se grafické rozhraní vyvíjelo nad neustále se měnícím modelem dat.
+
+=== Využití Socket.IO při vývoji multiplayeru
+
+Knihovna Socket.IO byla do projektu zařazena, jelikož bylo potřeba zajistit obousměrnou komunikaci mezi klientem a serverem bez neustálého opakování klasických dotazů. Praktická implementace je založena na tom, že klient po přihlášení nejprve aktivuje endpoint `/api/socket`, čímž je zajištěna inicializace socket serveru v rámci stejného Node.js procesu jako samotná aplikace. Následně dojde k navázání perzistentního spojení a registraci posluchačů pro lobby i herní vrstvu. Tento přístup umožnil zachovat jednotné nasazení aplikace bez nutnosti provozovat samostatný realtime server @socketio-docs @nextjs-docs.
+
+Při návrhu komunikační vrstvy bylo důležité nerozlišovat klienta jako zdroj pravdy, ale pouze jako zdroj vstupů. Klient proto neodesílá hotový nový stav hry, nýbrž pouze záměr provést konkrétní akci, například vstoupit do hry, přesunout entitu nebo otevřít obchodní interakci. Server tento záměr ověří, aplikuje změnu do autoritativního stavu a teprve poté rozešle aktualizovaný snapshot nebo patch ostatním klientům v příslušné místnosti. Takový model odpovídá doporučením pro síťové hry, kde je potřeba předcházet nekonzistenci a současně omezit možnost klientské manipulace s pravidly @multiplayer-game-programming @socketio-docs.
+
+Praktickým přínosem Socket.IO v této aplikaci nebyla pouze rychlost přenosu, ale i jasná organizace komunikace. Události byly rozděleny do doménových skupin `lobby:*` a `game:*`, díky čemuž bylo možné jednoduše oddělit sociální část systému od samotné herní logiky. Současně se v implementaci osvědčilo využití místností (rooms), protože server mohl rozesílat změny pouze těm klientům, kterých se konkrétní herní instance skutečně týká. Tím se snižuje objem přenášených dat a celý systém je lépe škálovatelný i při souběhu více aktivních herních relací @socketio-docs.
+
+=== Využití React Three Fiber při návrhu 3D bojiště
+
+Po stabilizaci síťové a datové vrstvy následoval vývoj samotného herního rozhraní. Pro zobrazení herního plánu bylo zvoleno řešení založené na knihovně React Three Fiber, která umožňuje vytvářet 3D scénu deklarativním způsobem přímo v ekosystému Reactu. V praxi to znamená, že komponenty jako podlaha, entity, světla nebo kamera mohou být navrženy stejně jako běžné React komponenty, přestože se jejich výsledkem nestává HTML strom, ale scénový graf knihovny Three.js @r3f-docs @threejs-docs.
+
+Tento přístup se během vývoje ukázal jako velmi přínosný zejména proto, že 3D zobrazovací vrstva nemusela být oddělena od zbytku aplikace. Stav herní instance je uložen v centrálním úložišti Zustand a stejná data jsou současně využívána jak pro klasické uživatelské rozhraní, tak pro vykreslení 3D objektů. Pokud například server odešle aktualizaci pozice entity, projeví se tatáž změna ve stavovém úložišti a následně se bez duplicitní logiky promítne do seznamu akcí, dialogových oken i do pozice objektu ve scéně. Tím bylo dosaženo jednotného datového modelu a výrazně jednodušší údržby klientské části @zustand-docs @r3f-docs.
+
+Při vývoji 3D části bylo zároveň nutné počítat s tím, že ne všechny entity budou mít vždy připravený finální model. Z tohoto důvodu byla implementována záložní geometrie, která je vykreslena v případě, že model ve formátu glTF nebo GLB není dostupný nebo se nepodaří načíst. Tento mechanismus se ukázal jako důležitý nejen pro odolnost aplikace za běhu, ale i pro samotný vývoj, protože umožnil testovat herní logiku a interakce ještě před dokončením všech grafických assetů @gltf-spec @threejs-docs.
+
+=== Praktické využití hlavních technologií
+
+Z praktického hlediska se v projektu nejedná o soubor izolovaných knihoven, ale o navazující vrstvy, z nichž každá řeší jiný typ problému. Framework Next.js tvoří aplikační kostru celého systému: pomocí App Routeru jsou realizovány běžné stránky aplikace, dashboard a herní rozhraní, zatímco Pages Router je využit pro endpoint `/api/socket`, jehož prostřednictvím se inicializuje realtime komunikační vrstva. Toto rozdělení se v praxi ukázalo jako účelné, protože umožnilo zachovat komfort moderního React frameworku a současně obejít omezení, která jsou spojena s nasazením WebSocket serveru přímo v čistě server-component architektuře @nextjs-docs @socketio-docs.
+
+Na klientské straně plní React Three Fiber roli integrační vrstvy mezi Reactem a 3D scénou. Knihovna Three.js zde zůstává nízkoúrovňovým základem, který poskytuje scénový graf, kameru, světla, materiály a načítání modelů pomocí `GLTFLoader`, zatímco React Three Fiber převádí tyto koncepty do deklarativních komponent. Knihovna `@react-three/drei` doplňuje pomocné mechanismy, v této implementaci zejména adaptivní obsluhu událostí, a balík `@react-three/postprocessing` zajišťuje finální obrazovou stylizaci. Stavová knihovna Zustand centralizuje herní stav, socket připojení, dialogy i parametry kamery, takže data nejsou roztříštěna mezi mnoho lokálních komponent. Knihovna `react-spring` pak řeší problém vizuální diskontinuity při síťové synchronizaci tím, že interpoluje změny pozic entit mezi dvěma snapshoty @r3f-docs @threejs-docs @zustand-docs @reactspring-docs.
+
+V serverové vrstvě je zásadní role knihovny Drizzle ORM, která poskytuje typově bezpečnou práci s relační databází a současně usnadňuje transakční zápisy v situacích, kde se mění více tabulek naráz, například při obchodování, přesunu inventáře, odpočinku nebo levelování. Nad touto datovou vrstvou je postavena autentizace přes Better Auth, která zajišťuje relace uživatelů a jednotné přihlášení. Praktickým přínosem tohoto spojení je především to, že herní operace mohou vycházet z již ověřené identity uživatele a navazovat na ni další autorizaci, například rozlišení, zda jde o běžného hráče nebo Dungeon Mastera @drizzle-docs @better-auth-docs.
+
+=== Praktické zhodnocení zvoleného postupu
+
+Z pohledu vývoje se jako nejvhodnější ukázalo pořadí, v němž byla nejprve vytvořena autoritativní serverová logika, poté realtime synchronizace a až následně pokročilé 3D rozhraní. Díky tomu bylo možné každou vrstvu ověřovat samostatně a průběžně kontrolovat, zda klient pouze korektně zobrazuje stav, který vznikl na serveru. Současně se potvrdilo, že propojení Next.js, Socket.IO, Zustand a React Three Fiber tvoří funkční celek: Next.js poskytuje aplikační rámec, Socket.IO zajišťuje událostní komunikaci, Zustand drží sdílený klientský stav a React Three Fiber převádí tento stav do prostorové vizualizace @nextjs-docs @socketio-docs @zustand-docs @r3f-docs.
+
+Tento způsob vývoje odpovídá požadavkům na moderní multiplayerovou webovou aplikaci, v níž je třeba současně řešit konzistenci dat, interaktivitu uživatelského rozhraní i výkon 3D vykreslování. V kontextu maturitní práce je podstatné, že zvolený technologický stack nebyl využit samoúčelně, ale vždy s ohledem na konkrétní problém: Socket.IO pro synchronizaci herního stavu v reálném čase, React Three Fiber pro přehlednou správu 3D scény a Zustand pro propojení herních dat s uživatelským rozhraním. Výsledkem je aplikace, která je rozšiřitelná, srozumitelná při další údržbě a současně dostatečně robustní pro provoz víceuživatelské hry.
 
 == Kompozice scény a odpovědnosti jednotlivých vrstev
 
-Herní stránka je složena jako kompozice několika navzájem oddělených vrstev. Vrstva `GameProvider` zajišťuje napojení na multiplayer instanci a životní cyklus připojení. Vrstva `Main` vytváří `Canvas` pro podporu a vykreslení R3F komponentů. V tomto kontextu jsou umístěny:
+Herní stránka je složena jako kompozice několika navzájem oddělených vrstev. Vrstva `GameProvider` zajišťuje napojení na multiplayer instanci a životní cyklus připojení. Vrstva `Main` nejprve rozhoduje, zda je zařízení pro tuto část aplikace podporováno; při přístupu z mobilního zařízení je zobrazena náhradní informační obrazovka, zatímco na desktopu komponenta vytvoří `Canvas` s výchozí kamerou a poskytne prostor pro všechny R3F komponenty. V tomto kontextu jsou umístěny:
 - entity čítající charaktery, monstra a specifické interaktivní objekty
 - podlaha a interaktivní vrstvy pro zvýraznění dosažitelných polí a detekci kliknutí
 - světla a kamera pro zajištění správného osvětlení a pohledu na scénu
 
 Z pohledu systémové správy je implementován hybridní provozní model, který odděluje vykreslovací odpovědnosti od řízení aplikačního stavu a současně zachovává jednotné doménové kontrakty.
 
-Technicky je tok operací realizován jako deterministický příkaz. Uživatelský vstup ve 3D scéně je serializován do doménové akce, akce je validována proti aktuálnímu snapshotu, následně je odeslána na backend přes socket kanál a po serverovém ověření a potvrzení je promítnuta do centrálního uložiště na klientské straně. Tím je zajištěno, že změna vzniklá interakcí  3D entitou se konzistentně projeví v obou prezentačních vrstvách i ve sdíleném synchronizovaném stavu celého lobby.
+Technicky je tok operací realizován jako deterministický příkaz. Uživatelský vstup ve 3D scéně je serializován do doménové akce, akce je validována proti aktuálnímu snapshotu, následně je odeslána na backend přes socket kanál a po serverovém ověření a potvrzení je promítnuta do centrálního uložiště na klientské straně. Tím je zajištěno, že změna vzniklá interakcí s 3D entitou se konzistentně projeví v obou prezentačních vrstvách i ve sdíleném synchronizovaném stavu celého lobby. Prakticky je důležité i to, že stejný snapshot používají souběžně komponenty scény, dialogové panely i kamera, takže nedochází k rozpojení vizuální a logické vrstvy.
 
 Renderovací subsystém je navržen modulárně, tudíž každý typ objektu má samostatnou komponentu, vlastní datový vstup a optimalizační strategii. Tím je dosaženo vysoké čitelnosti vykreslovacího řetězece i predikovatelného výkonového chování.
 
@@ -263,7 +295,9 @@ Stěny jsou implementovány jako instance jediné geometrie a společného mater
 
 === Postprocessing
 
-Postprocessing je v rámci grafického řetězce realizován jako separátní kompoziční fáze, která operuje nad již kompletně vykresleným framebufferem. Tento procesní postup znamená, že vizuální efekty nejsou aplikovány izolovaně na jednotlivé herní entity, ale zpracovávají až finální obrazový výstup scény, což plně odpovídá standardům moderních vykreslovacích pipeline. Zvolená metodika umožňuje efektivní nasazení screen-space efektů, mezi které patří bloom pro simulaci rozptylu světla, techniky pixelizace pro specifickou estetiku nebo procedurální vykreslování hran při pohybu. V kontextu celého projektu tato vrstva zajišťuje konzistentní stylizaci vizuálního výstupu, aniž by docházelo k zásahům do vnitřních mechanik, výpočetních pravidel nebo interakčního modelu simulace.
+Postprocessing je v rámci projektu realizován jako samostatná komponenta vložená přímo do renderovacího stromu React Three Fiber. Praktická implementace je záměrně úsporná: využívá `EffectComposer` z balíku `@react-three/postprocessing`, na který je navázán efekt `Pixelation` s nízkou granularitou. Výsledkem není fotorealistické vyhlazení obrazu, ale stylizace, která podporuje herní atmosféru a současně snižuje vizuální nároky na jemné detaily modelů. Vedle toho je aktivována komponenta `AdaptiveEvents` z knihovny `@react-three/drei`, která pomáhá udržet interakci se scénou i v situacích, kdy se mění zatížení vykreslování @r3f-docs @threejs-docs.
+
+Z návrhového hlediska je důležité, že tato vrstva nijak nezasahuje do doménové logiky hry. Postprocessing pracuje až nad hotovým obrazem, a proto neovlivňuje výpočet tahu, kolize, vzdálenosti ani pravidla schopností. Jeho úkolem je výhradně upravit výsledné zobrazení tak, aby byla scéna vizuálně konzistentní a čitelná.
 
 == Metriky vzdálenosti v distribuovaném systému
 
@@ -350,7 +384,7 @@ Tento princip je použit napříč všechny typy akcí prováděných v při kom
 
 == Inicializace WebSocket serveru
 
-Klíčovým architektonickým řešením je způsob, jakým je Socket.IO server inicializován v rámci stejného procesu jako Next.js aplikace. Endpoint `/api/socket` v Pages Routeru funguje jako vstupní bod, který v případě prvního volání vytvoří instanci `Server` z knihovny Socket.IO a napojí ji na nativní Node.js HTTP server přístupný prostřednictvím objektu `res.socket.server` @socketio-docs. Při každém dalším požadavku na tento endpoint server detekuje existující instanci a okamžitě odpovídá, čímž se zabrání duplicitnímu vytváření WebSocket serveru.
+Klíčovým architektonickým řešením je způsob, jakým je Socket.IO server inicializován v rámci stejného procesu jako Next.js aplikace. Endpoint `/api/socket` v Pages Routeru funguje jako vstupní bod, který v případě prvního volání vytvoří instanci `Server` z knihovny Socket.IO a napojí ji na nativní Node.js HTTP server přístupný prostřednictvím objektu `res.socket.server`. Při každém dalším požadavku na tento endpoint server detekuje existující instanci a okamžitě odpovídá, čímž se zabrání duplicitnímu vytváření WebSocket serveru.
 
 Po navázání spojení s klientem server registruje moduly, které jsou organizovány podle doménových oblastí: `lobby` pro správu herních místností, `game-entities` pro správu herních entit, `game-actions` pro herní akce jako pohyb a používání schopností, `inventory` pro správu inventáře, `trading` pro obchodování mezi hráči, `campfire` pro interakce s objekty typu ohniště a `leveling` pro systém postupu na vyšší úrovně. Každý modul přijímá kontextový objekt `SocketContext` obsahující referenci na socket připojeného klienta, globální instanci serveru a sdílenou mapu herních instancí uloženou v operační paměti. Tato mapa slouží jako cache vrstva, která minimalizuje počet dotazů do databáze při opakovaných operacích v rámci jedné herní relace.
 
@@ -364,7 +398,13 @@ Databázové schéma je definováno deklarativně pomocí Drizzle ORM v jazyce T
 
 === Autentizace a uživatelé
 
-Autentizační vrstva je založena na knihovně Better Auth, která poskytuje kompletní řešení pro správu uživatelských účtů, relací a ověřování identity @better-auth-docs. Schéma zahrnuje tabulky `user`, `session`, `account` a `verification`. Tabulka `user` uchovává základní údaje o uživateli včetně jména, emailu a avataru. Tabulka `session` spravuje aktivní relace s podporou expirace a automatické obnovy. Tabulka `account` umožňuje napojení na externí poskytovatele identity, jako jsou GitHub a Google, prostřednictvím protokolu OAuth 2.0#footnote[OAuth 2.0 je autorizační framework umožňující aplikacím třetích stran získat omezený přístup k uživatelským zdrojům bez sdílení přihlašovacích údajů.]. Konfigurace Better Auth zajišťuje šifrování OAuth tokenů, cachování relací v cookies s pětiminutovou platností a sedmidenní session s denní obnovitelností.
+Autentizační vrstva je založena na knihovně Better Auth, která poskytuje kompletní řešení pro správu uživatelských účtů, relací a ověřování identity. Schéma zahrnuje tabulky `user`, `session`, `account` a `verification`. Tabulka `user` uchovává základní údaje o uživateli včetně jména, emailu a avataru. Tabulka `session` spravuje aktivní relace s podporou expirace a automatické obnovy. Tabulka `account` umožňuje napojení na externí poskytovatele identity, jako jsou GitHub a Google, prostřednictvím protokolu OAuth 2.0#footnote[OAuth 2.0 je autorizační framework umožňující aplikacím třetích stran získat omezený přístup k uživatelským zdrojům bez sdílení přihlašovacích údajů.]. Konfigurace Better Auth zajišťuje šifrování OAuth tokenů, cachování relací v cookies s pětiminutovou platností a sedmidenní session s denní obnovitelností.
+
+== Autentizace a middleware
+
+Autentizační vrstva využívá knihovnu Better Auth, která je integrována s Drizzle ORM prostřednictvím adaptéru `drizzleAdapter`. Konfigurace zahrnuje podporu emailového přihlášení s heslem i přihlášení přes sociální poskytovatele (GitHub, Google). Middleware na úrovni Next.js zajišťuje ochranu cest: nepřihlášení uživatelé jsou přesměrováni na přihlašovací stránku a naopak, přihlášení uživatelé jsou přesměrováni z autentizační stránky na hlavní panel.
+
+Systém relací je konfigurován s sedmidenní platností a denní obnovou, přičemž je využito cachování v cookies s pětiminutovou platností pro snížení zátěže na databázi při opakovaných požadavcích. Tokeny od externích poskytovatelů jsou šifrovány, čímž je minimalizováno riziko úniku citlivých údajů i při kompromitaci databáze.
 
 === Herní entity
 
@@ -372,15 +412,47 @@ Herní entity jsou modelovány prostřednictvím polymorfní struktury, kde tabu
 
 Tabulka `character` modeluje hráčské postavy s atributy rozdělenými do čtyř kategorií: síla, obratnost, odolnost a inteligence. Statistiky postavy, jako jsou maximální životy, počet akcí za tah, vytrvalost a nosnost, jsou odvozeny z těchto atributů algoritmicky a ukládány do databáze jako denormalizované hodnoty. Důvodem denormalizace je eliminace opakovaného přepočtu v serverových handlerech, kde je rychlost odezvy kritická. Tabulka `monster` modeluje nepřátelské entity s vlastními schopnostmi uloženými ve formátu JSONB pole.
 
+== Tvorba postavy
+
+Tvůrce postav je implementován jako celoobrazovkový dialog, který provádí hráče procesem definice herní postavy. Proces začíná výběrem rasy z predefinovaného katalogu tvořeného trpaslíkem, elfem, člověkem a orkem, přičemž každá rasa má odlišné základní hodnoty atributů usnadňující specifické herní styly. Po výběru rasy má hráč k dispozici sedm volných atributových bodů, které může distribuovat mezi čtyři atributy s maximálním přídavkem tří bodů na jeden atribut.
+
+Součástí tvorby je také nákupní systém, ve kterém má hráč počáteční rozpočet 100 zlatých mincí. Za tyto prostředky si může pořídit výchozí vybavení z katalogu předmětů. Statistiky postavy jsou přepočítávány v reálném čase při každé změně atributů pomocí centrální funkce `calculateCharacterStats`, čímž hráč okamžitě vidí dopad svých rozhodnutí na parametry jako životy, akce za tah nebo nosnost.
+
+#block(breakable: false)[ ```text
+ALGORITHM calculateCharacterStats(character, inventory = {weight: 0, armor: 0})
+  max_hp := floor(character.attributes.constitution + character.attributes.strength / 2 + 5)
+  max_actions := floor(
+    character.level / 4 + character.attributes.dexterity / 8 + character.attributes.intelligence / 8
+  )
+  max_weight := floor(10 + character.attributes.strength + character.attributes.constitution / 2)
+  max_memory := floor(character.attributes.intelligence / 2 + character.level + 1)
+  IF max_weight < inventory.weight THEN
+    stamina_divisor := 2
+  ELSE
+    stamina_divisor := 1
+  END IF
+  stamina := floor((character.attributes.dexterity / 2 + 5) / stamina_divisor)
+  RETURN {
+    max_hp,
+    max_actions,
+    stamina,
+    weight = inventory.weight,
+    max_weight,
+    max_memory,
+    armor = inventory.armor
+  }
+END
+``` ]
+
 === Inventář a obchodování
 
 Inventářní systém je implementován prostřednictvím vazební tabulky `inventory` s kompozitním primárním klíčem tvořeným párem `character_id` a `item_id`. Tato struktura zajišťuje, že každá postava může vlastnit jeden záznam pro každý typ předmětu, přičemž množství je evidováno jako celé číslo. Sloupec `equipped` typu boolean určuje, zda je předmět aktivně nasazen. Tabulka `item` definuje katalog předmětů s atributy jako typ, váha, hodnota, brnění a pole schopností. Schopnosti jsou uloženy ve formátu JSON pole, což umožňuje flexibilní definici různých typů útočných a podpůrných efektů bez nutnosti dalších relačních tabulek.
 
 Pro truhly existuje analogická vazební tabulka `chest_inventory` se stejnou strukturou, avšak bez atributu vybavení. Obchodování u ohniště je modelováno tabulkou `campfire_shop_item`, která definuje nabídku předmětů a jejich ceny v herní měně pro konkrétní ohniště.
 
-== Systém tahů a sekvencování
+== Systém tahů a pořadí
 
-Herní systém střídání tahů je implementován jako deterministický stavový automat, jehož stav je uložen v JSONB sloupci `data` tabulky `lobby`. Tento sloupec obsahuje tři klíčové položky: pole `sequence` definující pořadí entit v kole, index `turn` ukazující na aktuálně aktivní entitu a pole `walls` uchovávající pozice stěn na herní mapě.
+Herní mechanika střídání tahů je navržena jako řízený sekvenční systém, který uchovává stav aktuálního kola a pořadí jednotlivých entit. Tento systém sleduje tři hlavní informace: pořadí entit v kole#footnote[Sekvence uložena jakožto jednorozmorně pole typu string], aktuálně aktivní entitu#footnote[Intex `turn` udržující numerickou hodnotu pořadí entity v sekvenci].
 
 Přechod na další tah je serverová operace, při které se inkrementuje index `turn`. Pokud index dosáhne konce sekvence, je nastaven na hodnotu $-1$, což indikuje fázi přípravy, ve které má Dungeon Master výlučnou kontrolu nad správou entit, úpravou sekvence a umisťováním objektů. Při aktivaci nového tahu server automaticky obnoví počet akcí příslušné entity na její maximum, čímž se zajistí konzistentní výchozí stav pro každý tah.
 
@@ -388,77 +460,142 @@ Pořadí v sekvenci je editovatelné Dungeon Masterem v přípravné fázi. Oper
 
 == Pohyb entit na herní mřížce
 
-Pohybový systém je založen na dlaždicové mřížce, kde je prostor diskretizován na celočíselné souřadnice a pohyb je omezen Manhattanovou vzdáleností. Při požadavku na pohyb server nejprve vypočítá množinu dosažitelných polí na základě parametru `stamina` entity. Pro každý potenciální cíl v rozsahu $plus.minus$ stamina od aktuální pozice je ověřena absence kolize se stěnou a obsazenost jiným entitou @aima-book. Pouze pokud požadovaná pozice patří do této množiny, je pohyb proveden.
+Pohybový systém je založen na dlaždicové mřížce, kde je prostor diskretizován na celočíselné souřadnice a pohyb je omezen Manhattanovou vzdáleností#footnote[Manhattanová vzdálenost je součet absolutních rozdílů souřadnic mezi dvěma body v soustavě.]. Při požadavku na pohyb server nejprve vypočítá množinu dosažitelných polí na základě parametru `staminy`, jež je dostupná pro entity typu `Character` a `Monster`. Pro každý potenciální cíl v rozsahu staminy od aktuální pozice je ověřena absence kolize se stěnou a obsazenost jiným entitou. Pouze pokud požadovaná pozice patří do této množiny, je pohyb proveden.
 
-Pohybová akce spotřebuje jednu akci z disponibilního počtu akcí entity v tomto tahu. Tím je zajištěno, že hráč musí strategicky plánovat, zda své akce využije na pohyb, použití schopností nebo kombinaci obojího. Serverová validace tohoto pravidla zabraňuje situaci, kdy by klient mohl odeslat pohyb s vyčerpaným akčním rozpočtem.
+Pohybová akce spotřebuje jednu akci z maximálního počtu akcí dané entity v tomto tahu. Tím je zajištěno, že hráč musí strategicky plánovat, zda své akce využije na pohyb, použití schopností nebo kombinaci obojího. Serverová validace tohoto pravidla zabraňuje situaci, kdy by klient mohl odeslat pohyb s vyčerpaným akčním rozpočtem.
 
-Na klientské straně je pohybová interpolace realizována pomocí knihovny `react-spring`, která zajišťuje plynulý přechod entity mezi dvěma pozicemi na mřížce. Parametry pružinového modelu (tuhost 120, tlumení 14) jsou nastaveny tak, aby výsledný pohyb působil fyzikálně věrohodně, přičemž entity dosáhnou cílové pozice bez oscilace @reactspring-docs.
+Na klientské straně je pohybová interpolace entit realizována prostřednictvím knihovny `react-spring`, která umožňuje plynulé přechody mezi dvěma pozicemi na herní mřížce. Tento přístup využívá princip pružinového modelu, kdy jsou parametry optimalizovány tak, aby pohyb entity působil věrohodně. Model zajišťuje vizuálně konzistentní interakci hráče s herní mapou a podporuje intuitivní vnímání pohybu, přičemž každá změna pozice je animována postupně, namísto okamžitého skoku mezi pozicemi.
 
 == Systém schopností a bojová mechanika
 
-Bojový systém je navržen jako automatizovaná verze klasických stolních pravidel. Každá schopnost je definována strukturou obsahující název, cenu v akcích, dosah, cílení a rozsah účinku. Parametr `targeting` určuje, zda schopnost cílí na jednu pozici, oblast efektu kolem cílového bodu, nebo na nejbližší entity v zadaném poloměru. Tento flexibilní model umožňuje modelovat jak jednoduché útoky na jedno pole, tak plošné kouzla ovlivňující více entit současně.
+Bojový systém je navržen jako automatizovaná verze klasických stolních pravidel. Každá schopnost je definována strukturou obsahující název, počet akcí na seslání, speciální effekty, dosah, cílení a rozsah účinku. Parametr `targeting` určuje typ útoku, přičemž záporné číslo znamená útok na konkrétní cíle a kladné číslo označuje plošný efekt. Tento flexibilní model umožňuje modelovat jak jednoduché útoky na jedno pole, tak plošné kouzla ovlivňující více entit současně.
 
-Při použití schopnosti server provádí víceúrovňovou validaci. Nejprve ověří oprávnění — hráč může použít schopnost pouze entity, kterou vlastní, nebo kterou je oprávněn řídit jako Dungeon Master. Následně zkontroluje, zda je schopnost dostupná v arzenálu entity (u postav je odvozena z vybavených zbraní, u monster je přímo součástí definice). Poté ověří dostatečný počet akcí a vzdálenost cíle od pozice útočníka @dnd-srd.
+Při použití schopnosti server provádí víceúrovňovou validaci. Nejprve ověří oprávnění daného uživatele a postavy. Následně zkontroluje, zda je schopnost dostupná v arzenálu entity. Poté ověří dostatečný počet akcí, platnost a vzdálenost cíle od pozice útočníka.
 
-Výpočet poškození je realizován jako náhodný hod v rozsahu definovaném schopností, od jehož výsledku je odečtena hodnota brnění oběti. Celý proces je zabalen do databázové transakce @postgresql-docs, která zajišťuje atomicitu aktualizace životů všech zasažených entit. Pokud monstrum zemře (životy klesnou na nulu), server navíc vyhodnotí odměnu ve formě zkušenostních bodů distribuovaných mezi všechny hráčské postavy v instanci a případný drop předmětů z inventáře monstra.
+Výpočet poškození je realizován jako generování náhodného čísla v rozsahu definovaném schopností, od jehož výsledku je odečtena hodnota brnění zasažené entity. Celý proces je zabalen do `databázové transakce`#footnote[Sada operací, která je poslána do databáze v jednom kroku.], která zajišťuje atomicitu aktualizace životů všech zasažených entit. Pokud monstrum zemře, server navíc vyhodnotí odměnu ve formě zkušenostních bodů distribuovaných mezi všechny hráčské postavy v instanci a případný drop předmětů z inventáře monstra.
 
 == Inventářní operace a přenos předmětů
 
-Inventářní systém rozlišuje tři typy operací: přidělení předmětu ze strany Dungeon Mastera, přenos předmětu mezi entitami a vyhození předmětu. Přidělení je výlučná pravomoc Dungeon Mastera a je realizováno jako upsert operace, která v případě existence záznamu zvýší množství, jinak vytvoří nový záznam. Přenos předmětů mezi entitami podléhá pravidlům blízkosti — cílová a zdrojová entita musí být v Manhattanově vzdálenosti menší nebo rovné jedné.
+Inventářní subsystém je ve skutečné implementaci rozdělen do více socket operací: `grant`, `transfer`, `delete`, `drop` a `equip`. Přidělení i mazání jsou vyhrazeny Dungeon Masterovi a slouží zejména pro správu scénáře, odměn nebo testování herního stavu. Přidělení je realizováno jako upsert#footnote[Operace přidávající nebo aktualizující existující záznam v databázi, pokuď již existuje.] nad inventářem postavy nebo truhly, takže při opakovaném předání stejného předmětu nevznikají duplicitní řádky, ale pouze se navyšuje množství. Po každé úspěšné změně server znovu načte instanci a rozešle aktualizovanou část dat všem klientům v daném lobby.
 
-Systém vybavení (equip/unequip) umožňuje hráčům nasazovat a sundávat předměty typu zbraně, přičemž vybavení zbraně automaticky zpřístupní její schopnosti v bojovém systému. Nosnost postavy je odvozena z atributů síly a odolnosti, přičemž překročení maximální nosnosti penalizuje vytrvalost snížením na polovinu, což efektivně omezuje pohybový rozsah přetížené postavy.
+Při přenosu předmětů server nejprve ověří existenci zdrojové a cílové entity a zároveň zakáže operace s neplatnými typy entit. Běžný hráč může bez role Master přesouvat předměty pouze mezi vlastní postavou a truhlou; přímé přesuny mezi cizími postavami nebo jinými kombinacemi entit povoleny nejsou. Samotné odečtení množství ze zdroje a připsání do cíle probíhá v databázové transakci, takže nevzniká mezistav, ve kterém by předmět dočasně zmizel nebo byl naopak zdvojen. Operace `drop` pak slouží k bezpečnému odebrání části inventáře z postavy. Pokud je předmět právě nasazený, server nedovolí odhodit poslední aktivně vybavený kus, čímž brání vzniku nekonzistentního stavu. Samostatná operace `equip` přepíná stav vybavení a současně kontroluje omezení vybavení.
+
+#block(breakable: false)[ ```text
+ALGORITHM TransferInventoryItem(user, lobby, source, target, item, qty)
+  REQUIRE lobby exists and user is member
+  REQUIRE source != target
+  REQUIRE source and target are character or chest
+  IF user is not Master
+    REQUIRE move is own_character <-> chest
+  BEGIN TRANSACTION
+    debit(source, item, qty)
+    credit(target, item, qty)
+  COMMIT
+  refresh_and_broadcast(lobby)
+END
+``` ]
 
 == Obchodování mezi hráči
 
-Obchodní systém je implementován jako dvoustranná relace řízená in-memory stavem na serveru. Každá obchodní relace (`TradeSession`) obsahuje identifikátory obou účastníků, jejich aktuální nabídky a stav potvrzení. Nabídky jsou průběžně validovány proti skutečnému inventáři, čímž se zabraňuje nabízení předmětů, které hráč nevlastní v dostatečném množství @gamasutra-trading.
+Obchodní systém je implementován jako dvoustranná relace řízená in-memory stavem na serveru. Aktivní relace jsou uloženy v mapě `activeTradeSessions`, přičemž každá relace obsahuje dvojici účastníků, jejich nabídky, příznaky potvrzení a čas poslední změny. Prakticky významná je pomocná funkce `sanitizeOffer`, která každou přijatou nabídku okamžitě normalizuje podle skutečného inventáře postavy. Pokud tedy klient pošle vyšší množství, než skutečně vlastní, nebo neexistující předmět, server nabídku automaticky ořízne na bezpečnou hodnotu. Stejný princip je použit i pro herní měnu reprezentovanou atributem _coins_ charakteru.
 
-Obchod je dokončen až v okamžiku, kdy oba účastníci potvrdí svou nabídku. V tomto bodě server provede finální validaci obou nabídek, zamkne příslušné inventářní záznamy v rámci databázové transakce a provede atomickou výměnu předmětů a měny. Pokud jakákoliv podmínka není splněna, transakce je zahozena a obchod je označen jako neplatný. Tento přístup eliminuje řadu exploitů, které jsou běžné v systémech bez transakční integrity, jako je duplicitní využití předmětu nebo manipulace s nabídkou v okamžiku potvrzení.
+Změna nabídky automaticky ruší předchozí potvrzení obou účastníků. Tím se zamezí situaci, kdy jeden hráč potvrdí obchod a druhý následně skrytě upraví svou část nabídky. K finálnímu vypořádání dochází až ve chvíli, kdy oba účastníci relace potvrdí aktuální stav. Server pak v rámci funkce `settleTrade` spustí databázovou transakci, odečte všechny nabízené předměty a měnu z inventáře prvního účastníka a připíše je druhému, a poté analogicky obráceně. Pokud se kdykoliv ukáže, že některý předmět již není dostupný v požadovaném množství, transakce skončí chybou, potvrzení se vynulují a relace zůstane otevřená pro další úpravy. Součástí modulu jsou také operace `cancel` a `list`, takže obchod může být bezpečně zrušen nebo znovu načten po obnovení klienta.
+
+#block(breakable: false)[ ```text
+ALGORITHM ConfirmTrade(user, lobby, session, actor)
+  REQUIRE session belongs to lobby
+  REQUIRE actor participates in session
+  REQUIRE user controls actor
+  mark actor as confirmed
+  IF not both_confirmed(session)
+    publish_session(session)
+    RETURN
+  BEGIN TRANSACTION
+    exchange_items_and_currency(session)
+  COMMIT
+  close_session(session, "completed")
+  refresh_and_broadcast(lobby)
+END
+``` ]
 
 == Interakce s objektem ohniště
 
-Ohniště (`campfire`) je speciální typ entity, která slouží jako servisní bod pro hráčské postavy. Systém poskytuje tři hlavní interakce: odpočinek, obchod a výměnu předmětů. Interakce s ohništěm jsou podmíněny blízkostí — pouze postava v Manhattanově vzdálenosti $<= 1$ od ohniště může provádět tyto akce.
+Ohniště (`campfire`) je v implementaci dvojí subsystém. V přípravné fázi kola, tedy při hodnotě `turn = -1`, může Dungeon Master ohniště přidávat, mazat a přesouvat. Při vytvoření nového ohniště server zároveň vygeneruje základní obchodní nabídku z katalogu všech předmětů a nastaví ceny podle jejich evidované hodnoty. Při přesunu je navíc kontrolováno, zda cílové pole neobsahuje stěnu, takže ohniště nelze umístit do blokované pozice.
 
-Odpočinkový mechanismus umožňuje hráčské postavě obnovit životy na maximum za cenu herní měny. Výpočet ceny je odvozen z rozdílu aktuálních a maximálních životů, čímž je zajištěno, že hráči s menším poškozením platí méně. Obchodní systém u ohniště funguje jako jednosměrný obchod, kde hráč nakupuje předměty za fixní ceny definované v tabulce `campfire_shop_item`.
+V samotné hře plní ohniště servisní roli. Operace `rest` umožňuje řízené léčení postavy, ale ne za cenu měny. Místo toho spotřebovává zvolený počet zbývajících akcí postavy a podle pomocné funkce `calculateRestHealing` z nich odvozuje množství obnovených životů. Úprava životů i počtu zbývajících akcí probíhá v jedné transakci. Vedle toho lze přes `shop:setup` přepsat nabídku předmětů konkrétního ohniště a přes `shop:buy` nakupovat položky za `Gold Coin`. V serverové vrstvě je zde tedy hlavním validovaným kritériem oprávnění hráče, fáze hry a dostupnost měny; vzdálenost od ohniště není v této části implementace vynucována na úrovni handleru, ale může být omezena již na úrovni uživatelského rozhraní.
+
+#block(breakable: false)[ ```text
+ALGORITHM RestCharacter(user, lobby, character, actions)
+  REQUIRE user controls character or is Master
+  REQUIRE actions <= character.remaining_actions
+  healing := calculate_rest_healing(character, actions)
+  BEGIN TRANSACTION
+    set character.hp := min(character.max_hp, character.hp + healing)
+    set character.remaining_actions := character.remaining_actions - actions
+  COMMIT
+  refresh_and_broadcast(lobby)
+END
+``` ]
 
 == Systém postupu na vyšší úrovně
 
-Systém postupu na vyšší úrovně (leveling) je navržen jako gradientní zlepšování atributů postavy. Při zisku dostatečného počtu zkušenostních bodů může hráč investovat přesně pět atributových bodů do libovolné kombinace čtyř atributů. Server validuje, že celkový součet přidělených bodů je přesně pět a že žádný atribut nemá záporný přírůstek.
+Systém postupu na vyšší úrovně je v socket vrstvě tvořen trojicí operací `xp:info`, `xp:award` a `levelup`. Handler `xp:info` vrací klientovi informace o současné úrovni, aktuálním množství zkušeností a hranici pro další úroveň. Tato hranice je počítána vztahem `floor(100 * 1.1^(level - 1))`, takže požadavek na další úroveň postupně roste. Handler `xp:award` je vyhrazen Dungeon Masterovi a slouží k řízenému přidělení zkušeností konkrétní postavě. Tím je zachována autoritativní kontrola nad tempem postupu celé kampaně.
 
-Po přidělení bodů jsou statistiky postavy přepočítány na základě nových atributů a aktuálního inventáře. Životy jsou následně obnoveny na nové maximum, což reflektuje tradici stolních RPG systémů, kde postup na vyšší úroveň přináší plné uzdravení @dnd-srd. Celá operace je provedena jako atomická aktualizace databáze, čímž se zabraňuje nekoherentním stavům při souběžných požadavcích.
+Samotný `levelup` může vyvolat vlastník postavy nebo Dungeon Master. Server nejprve ověří, že struktura vstupu dává smysl a že součet investovaných bodů je přesně pět. Následně z nových atributů a z aktuálního inventáře odvodí všechny sekundární statistiky pomocí funkce `calculateCharacterStats`. Prakticky je důležité, že se nepřepočítávají pouze atributy, ale také hodnoty jako maximální počet akcí, nosnost nebo odvozené maximum životů. Po úspěšném přepočtu server zvýší úroveň postavy o jedna, uloží nové statistiky a současně nastaví aktuální životy na nové maximum, takže hráč ihned vstupuje do další fáze hry se stabilním a konzistentním stavem.
 
-== Tvorba postavy
-
-Tvůrce postav je implementován jako celoobrazovkový dialog, který provádí hráče procesem definice herní postavy. Proces začíná výběrem rasy z predefinovaného katalogu (trpaslík, elf, člověk, ork), přičemž každá rasa má odlišné základní hodnoty atributů usnadňující specifické herní styly. Po výběru rasy má hráč k dispozici sedm volných atributových bodů, které může distribuovat mezi čtyři atributy s maximálním přídavkem tří bodů na jeden atribut nad základní hodnotu dané rasy.
-
-Součástí tvorby je také nákupní systém, ve kterém má hráč počáteční rozpočet 100 zlatých mincí. Za tyto prostředky si může pořídit výchozí vybavení z katalogu předmětů. Statistiky postavy jsou přepočítávány v reálném čase při každé změně atributů pomocí centrální funkce `calculateCharacterStats`, čímž hráč okamžitě vidí dopad svých rozhodnutí na parametry jako životy, akce za tah nebo nosnost.
+#block(breakable: false)[ ```text
+ALGORITHM levelUpCharacter(user, lobby, character, points)
+  REQUIRE user owns character or is Master
+  REQUIRE all assigned points are non-negative
+  REQUIRE sum(points) = 5
+  new_attributes := character.attributes + points
+  stats := recalculate_stats(new_attributes, inventory)
+  update character(level + 1, new_attributes, stats, hp = stats.max_hp)
+  refresh_and_broadcast(lobby)
+END
+``` ]
+#block(breakable: false)[ ```text
+ALGORITHM calculateRestHealing(character, actions_spent_resting)
+  base_healing := actions_spent_resting
+  constitution_bonus := floor(
+    (base_healing * (character.attributes.constitution * 0.15)) / 100
+  )
+  level_bonus := floor(base_healing * (character.level - 1) * 0.05)
+  max_healing_per_action := ceil(character.max_hp * 0.2)
+  total_healing := base_healing + constitution_bonus + level_bonus
+  RETURN min(total_healing, actions_spent_resting * max_healing_per_action)
+END
+``` ]
 
 == Správa lobby a herních místností
 
-Systém herních místností (lobbies) je implementován jako víceúrovňová struktura, která zajišťuje jak sociální, tak herní aspekty multiplayerové interakce. Každé lobby je vlastněno uživatelem v roli Dungeon Mastera a může obsahovat více členů. Členství je spravováno prostřednictvím vazební tabulky `lobby_member` s evidencí posledního přístupu a posledního přečtení zpráv, což umožňuje implementaci nepřečtených notifikací.
+Systém herních místností (lobbies) je implementován jako víceúrovňová struktura, která zajišťuje jak sociální, tak herní aspekty multiplayerové interakce. Každé lobby je vlastněno uživatelem v roli Dungeon Mastera a může obsahovat více členů. Členství je spravováno prostřednictvím vazební tabulky `lobby_member` s evidencí posledního přístupu a posledního přečtení zpráv, což umožňuje implementaci nepřečtených notifikací. Na úrovni Socket.IO je tento model rozveden do šesti základních operací: `get`, `create`, `join`, `leave`, `send` a `markRead`. Díky tomu může klient po přihlášení nejprve načíst seznam svých lobby a současně se automaticky připojit do všech odpovídajících komunikačních místností `lobby:{id}`.
 
-Komunikační systém v rámci lobby zahrnuje textový chat s ukládáním zpráv do databáze a real-time distribucí přes Socket.IO. Zprávy jsou distribuovány výhradně členům příslušné místnosti prostřednictvím mechanismu Socket.IO rooms, čímž je zajištěna izolace komunikace mezi jednotlivými herními sezeními @socketio-docs.
+Komunikační systém v rámci lobby zahrnuje textový chat s ukládáním zpráv do databáze a real-time distribucí přes Socket.IO. Prakticky je důležité, že operace `join` a `send` nevracejí výsledek pouze jednomu klientovi, ale publikují jej celé místnosti pomocí _io.to(room).emit(...)_. Všichni členové tak dostávají synchronní informaci o připojení nového hráče i o nových zprávách. Naopak operace `markRead` je lokálnější povahy a potvrzuje klientovi, kdy byla jeho četba zpráv zaevidována. Tato kombinace broadcastových a lokálních událostí umožňuje oddělit sociální komunikaci od herního snapshotu a současně zachovat izolaci mezi jednotlivými relacemi.
 
-== Autentizace a middleware
-
-Autentizační vrstva využívá knihovnu Better Auth, která je integrována s Drizzle ORM prostřednictvím adaptéru `drizzleAdapter` @better-auth-docs. Konfigurace zahrnuje podporu emailového přihlášení s heslem i přihlášení přes sociální poskytovatele (GitHub, Google). Middleware na úrovni Next.js zajišťuje ochranu cest: nepřihlášení uživatelé jsou přesměrováni na přihlašovací stránku a naopak, přihlášení uživatelé jsou přesměrováni z autentizační stránky na hlavní panel.
-
-Systém relací je konfigurován s sedmidenní platností a denní obnovou, přičemž je využito cachování v cookies s pětiminutovou platností pro snížení zátěže na databázi při opakovaných požadavcích. Tokeny od externích poskytovatelů jsou šifrovány, čímž je minimalizováno riziko úniku citlivých údajů i při kompromitaci databáze.
+#block(breakable: false)[ ```text
+ALGORITHM SendLobbyMessage(user, lobby, content)
+  REQUIRE user is member of lobby
+  message := persist_message(user, lobby, content)
+  publish_to_room("lobby:" + lobby.id, "lobby:send", message)
+END
+``` ]
 
 == Načítání 3D modelů a správa assetů
 
-Systém načítání 3D modelů je postaven na víceúrovňové architektuře, která zajišťuje flexibilitu a odolnost vůči chybám. Každá entita v databázi může volitelně obsahovat cestu k souboru ve formátu GLB nebo glTF#footnote[GL Transmission Format je otevřený standard pro efektivní přenos a rychlé načítání 3D scén a modelů.], který je uložen v adresáři `/public` a servisován jako statický asset @gltf-spec.
+Systém načítání 3D modelů je postaven na víceúrovňové architektuře, která zajišťuje flexibilitu a odolnost vůči chybám. Každá entita v databázi může volitelně obsahovat cestu k souboru ve formátu GLB nebo glTF#footnote[GL Transmission Format je otevřený standard pro efektivní přenos a rychlé načítání 3D scén a modelů.], který je uložen v adresáři `/public` a servisován jako statický asset.
 
 Načítání je realizováno lazy inicializací instance `GLTFLoader` z knihovny Three.js, která je volána výhradně na klientské straně, aby nedocházelo k chybám v serverovém prostředí. Načtené modely jsou ukládány do paměťové cache na úrovni modulu, takže opakovaný přístup ke stejnému modelu nevyvolává nový síťový požadavek.
 
 V případě, že model není k dispozici nebo jeho cesta je neplatná, systém automaticky přepne na parametrickou záložní geometrii — sféru pro postavy a monstra, kvádr pro truhly a kužel pro ohniště. Tento fallback mechanismus zajišťuje, že hra zůstane plně funkční i bez vlastních 3D modelů, což je zásadní jak pro vývoj, tak pro scénáře, kdy server s assety není dostupný.
 
-== Optimalizační strategie na klientské straně
+== Optimalizace
 
 Aplikace implementuje několik vrstev optimalizace, které zajišťují plynulý běh i při vysokém počtu entit a složité scéně.
 
 === Selektory Zustand
 
-Díky nativní podpoře selektorů v knihovně Zustand @zustand-docs jsou komponenty odebírající stav z centrálního úložiště překreslovány pouze při změně konkrétní části stavu, kterou skutečně využívají. Tento princip je aplikován systematicky napříč celou aplikací, například komponenta tlačítka pro ukončení tahu reaguje výhradně na změnu oprávnění `canEndTurn`, nikoliv na každou změnu herního stavu.
+Díky nativní podpoře selektorů v knihovně Zustand jsou komponenty odebírající stav z centrálního úložiště překreslovány pouze při změně konkrétní části stavu, kterou skutečně využívají. Tento princip je aplikován systematicky napříč celou aplikací, například komponenta tlačítka pro ukončení tahu reaguje výhradně na změnu oprávnění `canEndTurn`, nikoliv na každou změnu herního stavu.
 
 === React.memo a memoizace komponent
 
@@ -466,10 +603,12 @@ Komponenty, které přijívají stabilní vstupní data, jsou obaleny do `React.
 
 === Render distance a visibility culling
 
-Každá entita a vizuální prvek podléhá kontrole viditelnosti na základě vzdálenosti od kamery. Funkce `isWithinRenderDistance` vyhodnocuje Čebyševovu vzdálenost od pozice kamery a vrací boolean hodnotu, která rozhoduje o tom, zda je prvek zařazen do vykreslovacího průchodu. Tento mechanismus efektivně redukuje počet objektů ve scéně bez nutnosti implementace pokročilého frustum cullingu na úrovni aplikační vrstvy.
+Každá entita a vizuální prvek podléhá kontrole viditelnosti na základě vzdálenosti od kamery. Funkce `isWithinRenderDistance` vyhodnocuje čtvercovvou vzdálenost od pozice kamery a vrací boolean hodnotu, která rozhoduje o tom, zda je prvek zařazen do vykreslovacího průchodu. Tento mechanismus efektivně redukuje počet objektů ve scéně bez nutnosti implementace pokročilého systému culling#footnote[Culling je proces odstranění objektů ze zobrazovacího bufferu, které nejsou aktuálně vidět.] na úrovni aplikační vrstvy.
 
-== Shrnutí implementace
+= Závěr
 
-Projekt Mystique představuje kompletní implementaci webové multiplayerové RPG platformy, která kombinuje moderní webové technologie do koherentního celku. Architektura je navržena s důrazem na autoritativní serverový model, kde je veškerá herní logika validována na serveru a klient funguje výhradně jako prezentační vrstva. Jednotný jazyk TypeScript napříč celým stackem minimalizuje kognitivní zátěž při přechodu mezi klientskou a serverovou částí a umožňuje sdílení typových definic a doménových kontraktů.
+Stanovené cíle práce byly v úvodních pasážích analyzovány specifika stolních her na hrdiny a principy jejich přenosu do digitálního prostoru, přičemž tyto teoretické poznatky byly následně aplikovány pro návrh a rozvoj komplexní multiplayerové platformy. Webová aplikace byla vyvinuta jakožto zcela nový projekt, využívající moderní technologický stack a modulární architekturu s důrazem na precizní synchronizaci herních dat a vysokou reaktivitu uživatelského rozhraní v reálném čase.
 
-Praktická implementace prokázala životaschopnost zvoleného technologického stacku pro vývoj komplexních multiplayerových aplikací. Hybridní přístup kombinující App Router pro serverové vykreslování a Pages Router pro WebSocket komunikaci je efektivním řešením limitací jednotlivých subsystémů, přestože vyžaduje pečlivé oddělení odpovědností. Modulární architektura socket handlerů, deklarativní databázové schéma a komponentový model React Three Fiber vytvářejí základ, který je dobře připraven pro budoucí rozšíření o nové herní mechaniky, typy entit a interakcí.
+== kritické hodnocení použitých technologií
+
+V rámci volby použitých technologií se jako zásadní problém ukázala dekonstrukce meta-framework. Přestože Next.js dominuje v poli běžných webových aplikací, v kontextu vysoce dynamického herního serveru se v mnoha ohledech se tento framework ukázal jako nevhodná primární volba. Jeho architektura, ktérá je silně orientovaná na bezstavové operace a HTTP request/response cyklus, naráží na své limity. Aplikace vyžaduje perzistentní obousměrné spojení a nízká latence, kterou Next.Js není schopno dodat. Vrozená omezení standardního App Routeru při správě WebSocketů si vynutila hybridní přístup a částečný návrat k nízkoúrovňovým mechanismům Node.js.

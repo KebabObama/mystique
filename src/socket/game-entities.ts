@@ -1,7 +1,7 @@
 import { db, schema } from "@/lib/db";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import * as Lobby from "@/lib/lobby";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { emitFullState, exists, isPosition, refresh, update, type SocketContext } from "./helpers";
 
 /** Registers the game entities socket handlers. */
@@ -232,7 +232,7 @@ export const register = (ctx: SocketContext) => {
   socket.on("game:character:add", async (userId, lobbyId, characterId) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
-    if (inst.characters.some((entity) => entity.id === characterId)) {
+    if (inst.characters.some((entity) => entity.characterId === characterId)) {
       socket.emit("error", "Character already exists within this instance.");
       return;
     }
@@ -244,15 +244,19 @@ export const register = (ctx: SocketContext) => {
         socket.emit("error", "Character not found");
         return;
       }
-      if (character.lobbyId && character.lobbyId !== lobbyId) {
-        socket.emit("error", "Character is already in another lobby");
+
+      const existing = await tx.query.lobbyEntity.findFirst({
+        where: and(
+          eq(schema.lobbyEntity.lobbyId, lobbyId),
+          eq(schema.lobbyEntity.characterId, characterId),
+          eq(schema.lobbyEntity.type, "character")
+        ),
+      });
+
+      if (existing) {
+        socket.emit("error", "Character already exists within this instance.");
         return;
       }
-
-      await tx
-        .update(schema.character)
-        .set({ lobbyId })
-        .where(eq(schema.character.id, characterId));
 
       const [entity] = await tx
         .insert(schema.lobbyEntity)

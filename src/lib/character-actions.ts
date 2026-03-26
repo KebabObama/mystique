@@ -3,8 +3,12 @@
 import { db, schema } from "@/lib/db";
 import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+
+type StartingInventoryItem = { itemId: string; quantity: number };
+
+const STARTING_COINS = 100;
 
 /** Provides the get all items function. */
 export const getAllItems = async () => {
@@ -20,43 +24,91 @@ export const getAllItems = async () => {
 export const createCharacter = async (
   userId: string,
   data: Game.Character,
+  startingInventory: StartingInventoryItem[] = [],
   options?: { path?: string }
 ) => {
   try {
-    const stats = InGameHelpers.calculateCharacterStats(data, { weight: 0, armor: 0 });
-    const [newChar] = await db
-      .insert(schema.character)
-      .values({
-        ownerId: userId,
-        name: data.name,
-        race: data.race,
-        attributes: data.attributes,
-        hp: stats.maxHp,
-        maxHp: stats.maxHp,
-        maxActions: stats.maxActions,
-        stamina: stats.stamina,
-        weight: 0,
-        maxWeight: stats.maxWeight,
-        maxMemory: stats.maxMemory,
-        armor: 0,
-        coins: 100,
-      })
-      .returning();
+    const inventoryByItemId = new Map<string, number>();
 
-    const allItems = await db.select().from(schema.item);
-    if (allItems.length > 0) {
-      await db
-        .insert(schema.inventory)
-        .values(
-          allItems.map((item) => ({
-            characterId: newChar.id,
-            itemId: item.id,
-            quantity: 1,
-            equipped: false,
-          }))
-        )
-        .onConflictDoNothing();
+    for (const entry of startingInventory) {
+      if (!entry.itemId || entry.quantity <= 0) continue;
+      inventoryByItemId.set(
+        entry.itemId,
+        (inventoryByItemId.get(entry.itemId) ?? 0) + entry.quantity
+      );
     }
+
+    const normalizedInventory = [...inventoryByItemId.entries()].map(([itemId, quantity]) => ({
+      itemId,
+      quantity,
+    }));
+
+    const selectedItems = normalizedInventory.length
+      ? await db
+          .select()
+          .from(schema.item)
+          .where(
+            inArray(
+              schema.item.id,
+              normalizedInventory.map((entry) => entry.itemId)
+            )
+          )
+      : [];
+
+    const selectedItemMap = new Map(selectedItems.map((item) => [item.id, item]));
+    const persistedInventory = normalizedInventory.filter((entry) =>
+      selectedItemMap.has(entry.itemId)
+    );
+    const totalWeight = persistedInventory.reduce(
+      (sum, entry) => sum + (selectedItemMap.get(entry.itemId)?.weight ?? 0) * entry.quantity,
+      0
+    );
+    const totalCost = persistedInventory.reduce(
+      (sum, entry) => sum + (selectedItemMap.get(entry.itemId)?.value ?? 0) * entry.quantity,
+      0
+    );
+
+    if (totalCost > STARTING_COINS) {
+      return { success: false, error: "Selected items exceed starting coins" };
+    }
+
+    const stats = InGameHelpers.calculateCharacterStats(data, { weight: totalWeight, armor: 0 });
+
+    const newChar = await db.transaction(async (tx) => {
+      const [createdCharacter] = await tx
+        .insert(schema.character)
+        .values({
+          ownerId: userId,
+          name: data.name,
+          race: data.race,
+          attributes: data.attributes,
+          hp: stats.maxHp,
+          maxHp: stats.maxHp,
+          maxActions: stats.maxActions,
+          stamina: stats.stamina,
+          weight: stats.weight,
+          maxWeight: stats.maxWeight,
+          maxMemory: stats.maxMemory,
+          armor: stats.armor,
+          coins: Math.max(STARTING_COINS - totalCost, 0),
+        })
+        .returning();
+
+      if (persistedInventory.length > 0) {
+        await tx
+          .insert(schema.inventory)
+          .values(
+            persistedInventory.map((entry) => ({
+              characterId: createdCharacter.id,
+              itemId: entry.itemId,
+              quantity: entry.quantity,
+              equipped: false,
+            }))
+          );
+      }
+
+      return createdCharacter;
+    });
 
     revalidatePath(options?.path || "/dashboard");
     return { success: true, character: newChar };

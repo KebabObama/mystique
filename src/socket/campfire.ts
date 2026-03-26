@@ -1,6 +1,6 @@
 import { db, schema } from "@/lib/db";
 import { InGameHelpers } from "@/lib/ingame-helpers";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import {
   type SocketContext,
   exists,
@@ -28,18 +28,16 @@ export const register = (ctx: SocketContext) => {
           .values({ name: "Campfire" })
           .returning();
 
-        const allItems = await tx.query.item.findMany();
-        if (allItems.length > 0) {
-          await tx
-            .insert(schema.campfireShopItem)
-            .values(
-              allItems.map((shopItem) => ({
-                campfireId: newCampfire.id,
-                itemId: shopItem.id,
-                cost: Math.max(0, shopItem.value),
-              }))
-            );
-        }
+        const allItems = await tx.select().from(schema.item);
+        await tx
+          .insert(schema.campfireShopItem)
+          .values(
+            allItems.map((shopItem) => ({
+              campfireId: newCampfire.id,
+              itemId: shopItem.id,
+              cost: shopItem.value,
+            }))
+          );
 
         await tx
           .insert(schema.lobbyEntity)
@@ -180,45 +178,33 @@ export const register = (ctx: SocketContext) => {
     }
 
     if (!shopItem) return;
-
     const totalCost = shopItem.cost * quantity;
-
-    const currencyItem = await db.query.item.findFirst({
-      where: eq(schema.item.name, "Gold Coin"),
-    });
-    if (!currencyItem) return;
-
-    const currencyInv = charEntity.inventory.find((inv) => inv.id === currencyItem.id);
-    if (!currencyInv || currencyInv.quantity < totalCost) {
+    if (charEntity.coins < totalCost) {
       socket.emit("error", "Insufficient currency");
       return;
     }
 
-    await db.transaction(async (tx) => {
-      const remaining = currencyInv.quantity - totalCost;
-      if (remaining <= 0) {
-        await tx
-          .delete(schema.inventory)
-          .where(
-            and(
-              eq(schema.inventory.characterId, charEntity.characterId),
-              eq(schema.inventory.itemId, currencyItem.id)
-            )
-          );
-      } else {
-        await tx
-          .update(schema.inventory)
-          .set({ quantity: remaining })
-          .where(
-            and(
-              eq(schema.inventory.characterId, charEntity.characterId),
-              eq(schema.inventory.itemId, currencyItem.id)
-            )
-          );
-      }
+    try {
+      await db.transaction(async (tx) => {
+        const character = await tx.query.character.findFirst({
+          where: eq(schema.character.id, charEntity.characterId),
+        });
 
-      await upsertCharacterInventory(tx, charEntity.characterId, itemId, quantity);
-    });
+        if (!character || character.coins < totalCost) {
+          throw new Error("Insufficient currency");
+        }
+
+        await tx
+          .update(schema.character)
+          .set({ coins: character.coins - totalCost })
+          .where(eq(schema.character.id, charEntity.characterId));
+
+        await upsertCharacterInventory(tx, charEntity.characterId, itemId, quantity);
+      });
+    } catch (error) {
+      socket.emit("error", error instanceof Error ? error.message : "Purchase failed");
+      return;
+    }
 
     await refresh(ctx, lobbyId, "game:campfire:purchase");
   });

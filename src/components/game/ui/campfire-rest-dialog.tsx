@@ -49,7 +49,7 @@ export const CampfireRestDialog = () => {
             />
           </div>
 
-          <div className="space-y-2 rounded-lg bg-slate-100 p-3">
+          <div className="space-y-2 rounded-lg p-3">
             <p className="text-sm">
               <span className="font-medium">Current HP:</span> {charEntity.hp} /{charEntity.maxHp}
             </p>
@@ -61,7 +61,7 @@ export const CampfireRestDialog = () => {
             </p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-6">
             <Button onClick={handleRest} className="flex-1">
               Rest
             </Button>

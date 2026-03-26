@@ -16,8 +16,6 @@ type CharacterInfoProps = {
 
 /** Renders the character dashboard component. */
 export const CharacterDashboard = ({ character, children, asChild }: CharacterInfoProps) => {
-  const [hoveredAttr, setHoveredAttr] = React.useState<Game.Attribute>("strength");
-
   return (
     <Dialog fullscreen>
       <Dialog.Trigger asChild={asChild}>{children}</Dialog.Trigger>
@@ -81,8 +79,6 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
                 </span>
               </button>
             </Card>
-            <Card className="text-muted bg-background h-full"></Card>
-            <div className="bg-border -mx-6 h-9 w-[100%+2rem]" />
             <Card className="text-muted bg-background py-1">
               <span className="-mx-3 mb-1.5 flex items-center justify-between border-b-6 px-3 pb-1.5 text-center">
                 {(() => {
@@ -99,8 +95,7 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
                 })()}
               </span>
               {Game.ATTRIBUTES.map((e) => (
-                <button
-                  onMouseOver={() => setHoveredAttr(e)}
+                <div
                   className="hover:text-muted/50 flex w-full flex-row justify-between capitalize"
                   key={e}
                 >
@@ -109,25 +104,15 @@ export const CharacterDashboard = ({ character, children, asChild }: CharacterIn
                     {character.attributes[e]}
                     {React.createElement(ATTRIBUTE_ICON[e], { className: "size-4 text-muted" })}
                   </span>
-                </button>
+                </div>
               ))}
-            </Card>
-            <Card className="bg-background min-h-42 text-center">
-              <h3 className="text-lg font-black uppercase">{hoveredAttr}</h3>
-              {hoveredAttr && (
-                <p className="leading-tight font-medium opacity-70">
-                  {Game.ATTRIBUTE_DESCRIPTION[hoveredAttr]}
-                </p>
-              )}
             </Card>
           </section>
           <section
-            className={`col-span-2 mt-12 mr-3 flex flex-col items-center gap-6 p-3 ${!character.inventory.length && "justify-center"}`}
+            className={`col-span-2 mt-12 mr-3 flex max-h-[85dvh] flex-col items-center gap-6 overflow-y-auto p-3 ${!character.inventory.length && "justify-center"}`}
           >
             {character.inventory.length > 0 ? (
-              character.inventory.map((item) => {
-                return <ItemCard item={item} key={item.id} />;
-              })
+              character.inventory.map((item) => <ItemCard item={item} key={item.id} />)
             ) : (
               <div>No items in inventory</div>
             )}
