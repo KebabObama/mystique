@@ -111,37 +111,26 @@ export namespace InGameHelpers {
     if (entity.type === "chest" || entity.type === "campfire") return [];
 
     return entity.inventory
-      .filter((entry: any) => entry.equipped && entry.type === "weapon")
-      .flatMap((entry: any) => entry.abilities);
+      .filter((e) => e.equipped && e.type === "weapon")
+      .flatMap((e) => e.abilities);
   };
 
   /** Provides the calculate character stats function. */
   export const calculateCharacterStats = (
-    c: { attributes: Record<Game.Attribute, number>; level: number; memory: number },
+    c: Pick<Game.CharacterEntity, "attributes" | "level" | "memory">,
     inventory: { weight: number; armor: number } = { weight: 0, armor: 0 }
   ) => {
-    const maxHp = Math.floor(c.attributes.constitution + c.attributes.strength / 2 + 5);
-    const maxActions = Math.floor(
-      c.level / 4 + c.attributes.dexterity / 8 + c.attributes.intelligence / 8
-    );
-    const maxWeight = Math.floor(10 + c.attributes.strength + c.attributes.constitution / 2);
-    const maxMemory = Math.floor(c.attributes.intelligence / 2 + c.level + 1);
-    const stamina = Math.floor(
-      (c.attributes.dexterity / 2 + 5) / (maxWeight < inventory.weight ? 2 : 1)
-    );
-    return {
-      maxHp,
-      maxActions,
-      stamina,
-      weight: inventory.weight,
-      maxWeight,
-      maxMemory,
-      armor: inventory.armor,
-    };
+    const attrs = c.attributes;
+    const maxHp = Math.floor(attrs.constitution + attrs.strength / 2 + 5);
+    const maxActions = Math.floor(c.level / 4 + attrs.dexterity / 8 + attrs.intelligence / 8);
+    const maxWeight = Math.floor(10 + attrs.strength + attrs.constitution / 2);
+    const maxMemory = Math.floor(attrs.intelligence / 2 + c.level + 1);
+    const stamina = Math.floor((attrs.dexterity / 2 + 5) / (maxWeight < inventory.weight ? 2 : 1));
+    return { maxHp, maxActions, stamina, maxWeight, maxMemory, ...inventory };
   };
 
   /** Provides the generate random name function. */
-  export const generateRandomName = (c: { race: Game.Race }) => {
+  export const generateRandomName = (c: Pick<Game.Character, "race">) => {
     const NAME_PREFIXES: Record<Game.Race, Array<string>> = {
       dwarf: ["Thor", "Brom", "Gim", "Dwa", "Bal", "Krag", "Dum", "Thrain"],
       elf: ["Gala", "Lego", "Ara", "Cele", "Thran", "Elro", "Fea", "Luth"],
@@ -155,6 +144,7 @@ export namespace InGameHelpers {
       human: ["gorn", "wen", "ric", "ley", "ton", "wyn", "dor", "ian"],
       orc: ["ash", "nak", "ush", "gul", "lok", "tar", "gar", "dak"],
     };
+
     const prefixes = NAME_PREFIXES[c.race];
     const suffixes = NAME_SUFFIXES[c.race];
     const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
@@ -185,26 +175,23 @@ export namespace InGameHelpers {
     ability: Game.Ability,
     target: Game.Position
   ): Array<Game.CombatEntity> => {
-    const combatEntities = entities.filter(
-      (entity): entity is Game.CombatEntity =>
-        entity.type === "character" || entity.type === "monster"
-    );
+    const combatEntities = entities.filter((e) => e.type === "character" || e.type === "monster");
 
     if (ability.targeting < 0) {
       return combatEntities
-        .map((entity) => ({
-          entity,
-          distance: Math.abs(entity.position.x - target.x) + Math.abs(entity.position.z - target.z),
+        .map((e) => ({
+          e,
+          distance: Math.abs(e.position.x - target.x) + Math.abs(e.position.z - target.z),
         }))
-        .filter((entry) => entry.distance <= Math.abs(ability.targeting))
+        .filter((e) => e.distance <= Math.abs(ability.targeting))
         .sort((a, b) => a.distance - b.distance)
         .slice(0, Math.abs(ability.targeting))
-        .map((entry) => entry.entity);
+        .map((e) => e.e);
     }
 
     const selectedTiles = getAbilityImpactTiles(target, ability.targeting);
-    return combatEntities.filter((entity) =>
-      selectedTiles.some((tile) => tile.x === entity.position.x && tile.z === entity.position.z)
+    return combatEntities.filter((e) =>
+      selectedTiles.some((t) => t.x === e.position.x && t.z === e.position.z)
     );
   };
 
@@ -235,11 +222,8 @@ export namespace InGameHelpers {
     itemType: Game.ItemType
   ): boolean => {
     if (itemType === "misc") return false;
-    const equippedOfType = character.inventory.filter(
-      (inv: any) => inv.equipped && inv.type === itemType
-    ).length;
-    const maxSlots = itemType === "ring" ? 2 : 1;
-    return equippedOfType < maxSlots;
+    const equippedOfType = character.inventory.filter((i) => i.equipped && i.type === itemType);
+    return equippedOfType.length < (itemType === "ring" ? 2 : 1);
   };
 
   /** Defines the calculate rest healing constant. */
@@ -247,13 +231,11 @@ export namespace InGameHelpers {
     character: Pick<Game.CharacterEntity, "attributes" | "level" | "maxHp">,
     actionsSpentResting: number
   ): number => {
-    const baseHealing = actionsSpentResting;
-    const constitutionBonus = Math.floor(
-      (baseHealing * (character.attributes.constitution * 0.15)) / 100
-    );
-    const levelBonus = Math.floor(baseHealing * (character.level - 1) * 0.05);
+    const base = actionsSpentResting;
+    const constitutionBonus = Math.floor((base * (character.attributes.constitution * 0.15)) / 100);
+    const levelBonus = Math.floor(base * (character.level - 1) * 0.05);
     const maxHealingPerAction = Math.ceil(character.maxHp * 0.2);
-    const totalHealing = baseHealing + constitutionBonus + levelBonus;
+    const totalHealing = base + constitutionBonus + levelBonus;
     return Math.min(totalHealing, actionsSpentResting * maxHealingPerAction);
   };
 }
