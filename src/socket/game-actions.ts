@@ -18,6 +18,7 @@ export const register = (ctx: SocketContext) => {
         ? InGameHelpers.getEntityById(inst, inst.data.sequence[previousTurn])
         : undefined;
 
+    let sequence = [...inst.data.sequence];
     let turn = inst.data.turn;
     if (turn === -1) {
       if (userId !== inst.masterId) return;
@@ -26,8 +27,6 @@ export const register = (ctx: SocketContext) => {
       const next = turn + 1;
       turn = next >= inst.data.sequence.length ? -1 : next;
     }
-
-    let sequence = [...inst.data.sequence];
 
     await db.transaction(async (tx) => {
       if (
@@ -62,11 +61,7 @@ export const register = (ctx: SocketContext) => {
 
           await tx
             .update(schema.lobbyEntity)
-            .set({
-              actions: resolved.actions,
-              effects: resolved.effects,
-              activeEffects: resolved.activeEffects,
-            })
+            .set(resolved)
             .where(eq(schema.lobbyEntity.id, currentEntity.id));
 
           break;

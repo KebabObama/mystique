@@ -22,23 +22,15 @@ const isParticipantController = (
   return entity.ownerId === userId || inst.masterId === userId;
 };
 
-const sanitizeOffer = (offer: unknown, entity: CharacterEntity): Trading.Offer => {
-  const payload = (offer ?? {}) as {
-    items?: Array<{ itemId?: unknown; quantity?: unknown }>;
-    currency?: unknown;
-  };
-
-  const ownedByItemId = new Map<string, number>(
-    entity.inventory.map((entry) => [entry.id, entry.quantity])
-  );
+const sanitizeOffer = (
+  offer: { items?: Array<{ itemId: string; quantity: number }>; currency?: number },
+  entity: CharacterEntity
+): Trading.Offer => {
   const normalized = new Map<string, number>();
 
-  for (const raw of payload.items ?? []) {
-    if (typeof raw?.itemId !== "string") continue;
-    if (typeof raw?.quantity !== "number" || !Number.isFinite(raw.quantity)) continue;
-
+  for (const raw of offer.items ?? []) {
     const itemId = raw.itemId;
-    const owned = Number(ownedByItemId.get(itemId) ?? 0);
+    const owned = Number(entity.inventory.find((e) => e.id === itemId)?.quantity ?? 0);
     if (owned <= 0) continue;
 
     const requested = Math.max(0, Math.floor(raw.quantity));
@@ -48,15 +40,9 @@ const sanitizeOffer = (offer: unknown, entity: CharacterEntity): Trading.Offer =
     normalized.set(itemId, Math.min(owned, current + requested));
   }
 
-  const maxCurrency = entity.coins;
-  const requestedCurrency =
-    typeof payload.currency === "number" && Number.isFinite(payload.currency)
-      ? Math.max(0, Math.floor(payload.currency))
-      : 0;
-
   return {
     items: Array.from(normalized.entries()).map(([itemId, quantity]) => ({ itemId, quantity })),
-    currency: Math.min(maxCurrency, requestedCurrency),
+    currency: Math.min(entity.coins, Math.max(0, Math.floor(offer.currency as number))),
   };
 };
 
@@ -196,6 +182,10 @@ const settleTrade = async (
   });
 };
 
+const isParticipant = (inst: Game.Instance, userId: string, array: string[]) => {
+  return array.some((entityId) => isParticipantController(inst, userId, entityId));
+};
+
 /** Registers the trading socket handlers. */
 export const register = (ctx: SocketContext) => {
   const { socket } = ctx;
@@ -322,14 +312,13 @@ export const register = (ctx: SocketContext) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
-    const sessions = Array.from(activeTradeSessions.values()).filter(
-      (session) =>
-        session.lobbyId === lobbyId &&
-        [session.entityAId, session.entityBId].some((entityId) =>
-          isParticipantController(inst, userId, entityId)
+    socket.emit(
+      "game:trade:list",
+      activeTradeSessions
+        .values()
+        .filter(
+          (s) => s.lobbyId === lobbyId && isParticipant(inst, userId, [s.entityAId, s.entityBId])
         )
     );
-
-    socket.emit("game:trade:list", sessions);
   });
 };

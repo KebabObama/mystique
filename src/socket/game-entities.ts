@@ -87,22 +87,9 @@ export const register = (ctx: SocketContext) => {
     if (!template) return;
 
     const fresh = await db.transaction(async (tx) => {
-      const [newMonster] = await tx
-        .insert(schema.monster)
-        .values({
-          name: template.name,
-          level: template.level,
-          hp: template.hp,
-          maxHp: template.maxHp,
-          armor: template.armor,
-          stamina: template.stamina,
-          maxActions: template.maxActions,
-          memory: template.memory,
-          abilities: template.abilities,
-        })
-        .returning();
+      const [newMonster] = await tx.insert(schema.monster).values(template).returning();
 
-      const [entity] = await tx
+      const entity = await tx
         .insert(schema.lobbyEntity)
         .values({
           lobbyId: inst.id,
@@ -111,7 +98,8 @@ export const register = (ctx: SocketContext) => {
           position,
           actions: newMonster.maxActions,
         })
-        .returning();
+        .returning()
+        .then((e) => e[0]);
 
       await tx
         .update(schema.lobby)
@@ -127,14 +115,10 @@ export const register = (ctx: SocketContext) => {
 
   socket.on("game:monster:delete", async (userId, lobbyId, entityId) => {
     const inst = await exists(ctx, userId, lobbyId);
-    if (!inst) return;
-    if (inst.masterId !== userId || inst.data.turn !== -1) return;
-    if (typeof entityId !== "string") return;
-
-    const monsterEntity = inst.monsters.find((entity) => entity.id === entityId);
-    if (!monsterEntity) return;
-
-    const sequence = inst.data.sequence.filter((id) => id !== monsterEntity.id);
+    const monsterEntity = inst?.monsters.find((entity) => entity.id === entityId);
+    const sequence = inst?.data.sequence.filter((id) => id !== monsterEntity?.id);
+    if (!inst || inst.masterId !== userId || inst.data.turn !== -1 || !monsterEntity || !sequence)
+      return;
 
     const fresh = await db.transaction(async (tx) => {
       await tx.delete(schema.lobbyEntity).where(eq(schema.lobbyEntity.id, monsterEntity.id));

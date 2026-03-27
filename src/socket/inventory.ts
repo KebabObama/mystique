@@ -11,6 +11,81 @@ import {
   upsertChestInventory,
 } from "./helpers";
 
+type DbTx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+const takeCharacterInventory = async (
+  tx: DbTx,
+  characterId: string,
+  itemId: string,
+  quantity: number,
+  options?: { allowPartial?: boolean; preserveEquippedOne?: boolean }
+) => {
+  const source = await tx.query.inventory.findFirst({
+    where: and(eq(schema.inventory.characterId, characterId), eq(schema.inventory.itemId, itemId)),
+  });
+  if (!source) return 0;
+
+  const minRemaining = options?.preserveEquippedOne && source.equipped ? 1 : 0;
+  const maxTake = Math.max(0, source.quantity - minRemaining);
+  const taken = options?.allowPartial ? Math.min(quantity, maxTake) : quantity;
+
+  if (maxTake <= 0 || (!options?.allowPartial && maxTake < quantity)) return 0;
+
+  if (source.quantity - taken <= 0) {
+    await tx
+      .delete(schema.inventory)
+      .where(
+        and(eq(schema.inventory.characterId, characterId), eq(schema.inventory.itemId, itemId))
+      );
+  } else {
+    await tx
+      .update(schema.inventory)
+      .set({ quantity: source.quantity - taken })
+      .where(
+        and(eq(schema.inventory.characterId, characterId), eq(schema.inventory.itemId, itemId))
+      );
+  }
+
+  return taken;
+};
+
+const takeChestInventory = async (
+  tx: DbTx,
+  chestId: string,
+  itemId: string,
+  quantity: number,
+  options?: { allowPartial?: boolean }
+) => {
+  const source = await tx.query.chestInventory.findFirst({
+    where: and(
+      eq(schema.chestInventory.chestId, chestId),
+      eq(schema.chestInventory.itemId, itemId)
+    ),
+  });
+  if (!source) return 0;
+
+  if (!options?.allowPartial && source.quantity < quantity) return 0;
+
+  const taken = options?.allowPartial ? Math.min(quantity, source.quantity) : quantity;
+
+  if (source.quantity - taken <= 0) {
+    await tx
+      .delete(schema.chestInventory)
+      .where(
+        and(eq(schema.chestInventory.chestId, chestId), eq(schema.chestInventory.itemId, itemId))
+      );
+  } else {
+    await tx
+      .update(schema.chestInventory)
+      .set({ quantity: source.quantity - taken })
+      .where(
+        and(eq(schema.chestInventory.chestId, chestId), eq(schema.chestInventory.itemId, itemId))
+      );
+  }
+
+  return taken;
+};
+
 /** Registers the inventory socket handlers. */
 export const register = (ctx: SocketContext) => {
   const { socket } = ctx;
@@ -23,7 +98,10 @@ export const register = (ctx: SocketContext) => {
     const target = InGameHelpers.getEntityById(inst, targetEntityId);
     if (!target || target.type === "monster" || target.type === "campfire") return;
 
-    const item = await db.query.item.findFirst({ where: eq(schema.item.id, itemId) });
+    const item = await db.query.item.findFirst({
+      where: eq(schema.item.id, itemId),
+      columns: { id: true },
+    });
     if (!item) return;
 
     const quantity = normalizeQuantity(qty);
@@ -31,10 +109,9 @@ export const register = (ctx: SocketContext) => {
     await db.transaction(async (tx) => {
       if (target.type === "character") {
         await upsertCharacterInventory(tx, target.characterId, item.id, quantity);
-        return;
+      } else {
+        await upsertChestInventory(tx, target.chestId, item.id, quantity);
       }
-
-      await upsertChestInventory(tx, target.chestId, item.id, quantity);
     });
 
     await refresh(ctx, lobbyId);
@@ -72,75 +149,24 @@ export const register = (ctx: SocketContext) => {
         if (!validPlayerMove) return;
       }
 
-      await db.transaction(async (tx) => {
-        if (fromEntity.type === "character") {
-          const source = await tx.query.inventory.findFirst({
-            where: and(
-              eq(schema.inventory.characterId, fromEntity.characterId),
-              eq(schema.inventory.itemId, itemId)
-            ),
-          });
-          if (!source || source.quantity < quantity) return;
+      const moved = await db.transaction(async (tx) => {
+        const taken =
+          fromEntity.type === "character"
+            ? await takeCharacterInventory(tx, fromEntity.characterId, itemId, quantity)
+            : await takeChestInventory(tx, fromEntity.chestId, itemId, quantity);
 
-          if (source.quantity === quantity) {
-            await tx
-              .delete(schema.inventory)
-              .where(
-                and(
-                  eq(schema.inventory.characterId, fromEntity.characterId),
-                  eq(schema.inventory.itemId, itemId)
-                )
-              );
-          } else {
-            await tx
-              .update(schema.inventory)
-              .set({ quantity: source.quantity - quantity })
-              .where(
-                and(
-                  eq(schema.inventory.characterId, fromEntity.characterId),
-                  eq(schema.inventory.itemId, itemId)
-                )
-              );
-          }
-        } else {
-          const source = await tx.query.chestInventory.findFirst({
-            where: and(
-              eq(schema.chestInventory.chestId, fromEntity.chestId),
-              eq(schema.chestInventory.itemId, itemId)
-            ),
-          });
-          if (!source || source.quantity < quantity) return;
-
-          if (source.quantity === quantity) {
-            await tx
-              .delete(schema.chestInventory)
-              .where(
-                and(
-                  eq(schema.chestInventory.chestId, fromEntity.chestId),
-                  eq(schema.chestInventory.itemId, itemId)
-                )
-              );
-          } else {
-            await tx
-              .update(schema.chestInventory)
-              .set({ quantity: source.quantity - quantity })
-              .where(
-                and(
-                  eq(schema.chestInventory.chestId, fromEntity.chestId),
-                  eq(schema.chestInventory.itemId, itemId)
-                )
-              );
-          }
-        }
+        if (taken <= 0) return 0;
 
         if (toEntity.type === "character") {
-          await upsertCharacterInventory(tx, toEntity.characterId, itemId, quantity);
-          return;
+          await upsertCharacterInventory(tx, toEntity.characterId, itemId, taken);
+          return taken;
         }
 
-        await upsertChestInventory(tx, toEntity.chestId, itemId, quantity);
+        await upsertChestInventory(tx, toEntity.chestId, itemId, taken);
+        return taken;
       });
 
+      if (moved <= 0) return;
       await refresh(ctx, lobbyId);
     }
   );
@@ -155,68 +181,16 @@ export const register = (ctx: SocketContext) => {
     const entity = InGameHelpers.getEntityById(inst, entityId);
     if (!entity || entity.type === "monster" || entity.type === "campfire") return;
 
-    await db.transaction(async (tx) => {
-      if (entity.type === "character") {
-        const source = await tx.query.inventory.findFirst({
-          where: and(
-            eq(schema.inventory.characterId, entity.characterId),
-            eq(schema.inventory.itemId, itemId)
-          ),
-        });
-        if (!source || source.quantity < quantity) return;
+    const changed = await db.transaction(async (tx) => {
+      const taken =
+        entity.type === "character"
+          ? await takeCharacterInventory(tx, entity.characterId, itemId, quantity)
+          : await takeChestInventory(tx, entity.chestId, itemId, quantity);
 
-        if (source.quantity === quantity) {
-          await tx
-            .delete(schema.inventory)
-            .where(
-              and(
-                eq(schema.inventory.characterId, entity.characterId),
-                eq(schema.inventory.itemId, itemId)
-              )
-            );
-        } else {
-          await tx
-            .update(schema.inventory)
-            .set({ quantity: source.quantity - quantity })
-            .where(
-              and(
-                eq(schema.inventory.characterId, entity.characterId),
-                eq(schema.inventory.itemId, itemId)
-              )
-            );
-        }
-      } else {
-        const source = await tx.query.chestInventory.findFirst({
-          where: and(
-            eq(schema.chestInventory.chestId, entity.chestId),
-            eq(schema.chestInventory.itemId, itemId)
-          ),
-        });
-        if (!source || source.quantity < quantity) return;
-
-        if (source.quantity === quantity) {
-          await tx
-            .delete(schema.chestInventory)
-            .where(
-              and(
-                eq(schema.chestInventory.chestId, entity.chestId),
-                eq(schema.chestInventory.itemId, itemId)
-              )
-            );
-        } else {
-          await tx
-            .update(schema.chestInventory)
-            .set({ quantity: source.quantity - quantity })
-            .where(
-              and(
-                eq(schema.chestInventory.chestId, entity.chestId),
-                eq(schema.chestInventory.itemId, itemId)
-              )
-            );
-        }
-      }
+      return taken > 0;
     });
 
+    if (!changed) return;
     await refresh(ctx, lobbyId);
   });
 
@@ -233,40 +207,14 @@ export const register = (ctx: SocketContext) => {
     const isMaster = inst.masterId === userId;
     if (!isOwner && !isMaster) return;
 
-    await db.transaction(async (tx) => {
-      const source = await tx.query.inventory.findFirst({
-        where: and(
-          eq(schema.inventory.characterId, entity.characterId),
-          eq(schema.inventory.itemId, itemId)
-        ),
+    const dropped = await db.transaction(async (tx) => {
+      return takeCharacterInventory(tx, entity.characterId, itemId, quantity, {
+        allowPartial: true,
+        preserveEquippedOne: true,
       });
-      if (!source || source.quantity < quantity) return;
-      const maxDrop = source.equipped ? source.quantity - 1 : source.quantity;
-      const safeDrop = Math.min(quantity, maxDrop);
-      if (safeDrop <= 0) return;
-
-      if (source.quantity - safeDrop <= 0) {
-        await tx
-          .delete(schema.inventory)
-          .where(
-            and(
-              eq(schema.inventory.characterId, entity.characterId),
-              eq(schema.inventory.itemId, itemId)
-            )
-          );
-      } else {
-        await tx
-          .update(schema.inventory)
-          .set({ quantity: source.quantity - safeDrop })
-          .where(
-            and(
-              eq(schema.inventory.characterId, entity.characterId),
-              eq(schema.inventory.itemId, itemId)
-            )
-          );
-      }
     });
 
+    if (dropped <= 0) return;
     await refresh(ctx, lobbyId);
   });
 
@@ -293,19 +241,21 @@ export const register = (ctx: SocketContext) => {
     if (entry.item.type === "misc") return;
 
     if (!entry.equipped) {
-      const equippedCount = await db.query.inventory.findMany({
+      const equippedItems = await db.query.inventory.findMany({
         where: and(
           eq(schema.inventory.characterId, entity.characterId),
           eq(schema.inventory.equipped, true)
         ),
-        with: { item: true },
+        columns: {},
+        with: { item: { columns: { type: true } } },
       });
 
-      const itemType = entry.item.type;
-      const equippedOfType = equippedCount.filter((inv) => inv.item.type === itemType);
-
-      const maxSlots = itemType === "ring" ? 2 : 1;
-      if (equippedOfType.length >= maxSlots) return;
+      const maxSlots = entry.item.type === "ring" ? 2 : 1;
+      let equippedOfType = 0;
+      for (const equippedItem of equippedItems) {
+        if (equippedItem.item.type === entry.item.type) equippedOfType += 1;
+        if (equippedOfType >= maxSlots) return;
+      }
     }
 
     await db

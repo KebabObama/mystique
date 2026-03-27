@@ -18,9 +18,7 @@ export const register = (ctx: SocketContext) => {
     try {
       const inst = await exists(ctx, userId, lobbyId);
       if (!inst) return;
-      if (inst.masterId !== userId) return;
-      if (inst.data.turn !== -1) return;
-      if (!isPosition(position)) return;
+      if (inst.masterId !== userId || inst.data.turn !== -1 || !isPosition(position)) return;
 
       await db.transaction(async (tx) => {
         const [newCampfire] = await tx
@@ -76,15 +74,9 @@ export const register = (ctx: SocketContext) => {
     if (inst.masterId !== userId || inst.data.turn !== -1) return;
     if (!isPosition(position)) return;
 
-    const campfireEntity = InGameHelpers.getEntities(inst).find(
-      (entity) => entity.id === entityId && entity.type === "campfire"
-    );
-    if (!campfireEntity) return;
-
-    const blockedByWall = inst.data.walls.some(
-      (wall) => wall.x === position.x && wall.z === position.z
-    );
-    if (blockedByWall) return;
+    const campfireEntity = inst.campfires.find((cf) => cf.id === entityId);
+    const blockedByWall = inst.data.walls.some((w) => w.x === position.x && w.z === position.z);
+    if (!campfireEntity || blockedByWall) return;
 
     await db
       .update(schema.lobbyEntity)
@@ -98,10 +90,8 @@ export const register = (ctx: SocketContext) => {
     const inst = await exists(ctx, userId, lobbyId);
     if (!inst) return;
 
-    const charEntity = InGameHelpers.getEntities(inst).find((e) => e.id === characterEntityId);
-    if (!charEntity || charEntity.type !== "character") return;
-
-    if (charEntity.ownerId !== userId && inst.masterId !== userId) return;
+    const charEntity = inst.characters.find((e) => e.id === characterEntityId);
+    if (!charEntity || (charEntity.ownerId !== userId && inst.masterId !== userId)) return;
 
     const actions = normalizeQuantity(actionsToRest);
     const currentActions = charEntity.actions ?? charEntity.maxActions ?? 0;
@@ -157,23 +147,18 @@ export const register = (ctx: SocketContext) => {
 
   socket.on("game:campfire:shop:buy", async (userId, lobbyId, characterEntityId, itemId, qty) => {
     const inst = await exists(ctx, userId, lobbyId);
-    if (!inst) return;
 
-    const charEntity = InGameHelpers.getEntities(inst).find((e) => e.id === characterEntityId);
-    if (!charEntity || charEntity.type !== "character") return;
-
-    if (charEntity.ownerId !== userId && inst.masterId !== userId) return;
-
+    const charEntity = inst?.characters.find((e) => e.id === characterEntityId);
     const quantity = normalizeQuantity(qty);
 
+    if (!inst || !charEntity || (charEntity.ownerId !== userId && inst.masterId !== userId)) return;
+
     let shopItem = null;
-    for (const entity of InGameHelpers.getEntities(inst)) {
-      if (entity.type === "campfire") {
-        const found = entity.shopItems.find((si) => si.id === itemId);
-        if (found) {
-          shopItem = found;
-          break;
-        }
+    for (const entity of inst.campfires) {
+      const found = entity.shopItems.find((si) => si.id === itemId);
+      if (found) {
+        shopItem = found;
+        break;
       }
     }
 
@@ -190,9 +175,7 @@ export const register = (ctx: SocketContext) => {
           where: eq(schema.character.id, charEntity.characterId),
         });
 
-        if (!character || character.coins < totalCost) {
-          throw new Error("Insufficient currency");
-        }
+        if (!character || character.coins < totalCost) throw new Error("Insufficient currency");
 
         await tx
           .update(schema.character)
