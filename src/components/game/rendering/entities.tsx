@@ -4,6 +4,7 @@ import { useCamera } from "@/hooks/use-camera";
 import { useDialog } from "@/hooks/use-dialog";
 import { useGame } from "@/hooks/use-game";
 import { useHoveredEntity } from "@/hooks/use-hovered-entity";
+import { usePermissions } from "@/hooks/use-permissions";
 import { useUser } from "@/hooks/use-user";
 import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
@@ -30,6 +31,7 @@ const EntityMesh = ({
   const clearHoveredEntity = useHoveredEntity((s) => s.clearHoveredEntity);
   const tileCenter = Render.getTileCenter(entity.position);
   const userId = useUser((s) => s?.id);
+  const isMasterOnTurn = usePermissions((s) => s.isMasterOnTurn);
   const [loadedModel, setLoadedModel] = useState<THREE.Group | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -59,11 +61,10 @@ const EntityMesh = ({
   }, [meshPath]);
 
   const getColor = (): string => {
-    if (entity.type === "character") {
-      return entity.id === currentId && entity.ownerId === userId ? "green" : "blue";
-    }
-    const colors: Record<string, string> = {
-      monster: "red",
+    const check = entity.id === currentId;
+    const colors = {
+      character: check && (entity as Game.Character).ownerId === userId ? "green" : "blue",
+      monster: check && isMasterOnTurn ? "green" : "red",
       chest: "#8b5a2b",
       campfire: "#ffa500",
     };
