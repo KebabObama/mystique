@@ -13,11 +13,12 @@ export const MoveButton = () => {
   const isMasterOnTurn = usePermissions((s) => s.isMasterOnTurn);
   const canHaveActions = current?.type === "character" || current?.type === "monster";
   const actions = current?.actions ?? (canHaveActions ? current.maxActions : 0) ?? 0;
+  const currentHp = canHaveActions ? (current?.hp ?? current?.maxHp ?? 0) : 1;
 
   if (!current) return null;
 
   if (current.type === "character" || current.type === "monster") {
-    if (!canControlCurrent || actions <= 0) return null;
+    if (!canControlCurrent || actions <= 0 || currentHp <= 0) return null;
     return (
       <Button size="sm" onClick={() => setMode({ type: "character:move" })}>
         <Move /> Move

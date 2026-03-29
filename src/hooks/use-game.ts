@@ -208,6 +208,11 @@ export const useGame = create<GameStore>((set, get) => ({
       const entity = InGameHelpers.getEntityById(instance, entityId);
       if (!entity) return;
 
+      if (entity.type === "character" || entity.type === "monster") {
+        const currentHp = entity.hp ?? entity.maxHp ?? 0;
+        if (currentHp <= 0) return;
+      }
+
       switch (entity.type) {
         case "character":
         case "monster":
@@ -256,6 +261,8 @@ export const useGame = create<GameStore>((set, get) => ({
       }
 
       const { stamina } = entity;
+      const currentHp = entity.hp ?? entity.maxHp ?? 0;
+      if (currentHp <= 0) return [];
       if (stamina <= 0) return [];
 
       const start = entity.position;
@@ -370,6 +377,11 @@ export const useGame = create<GameStore>((set, get) => ({
       const ability = mode.ability;
 
       if (current.type === "chest" || current.type === "campfire") return;
+      const currentHp = current.hp ?? current.maxHp ?? 0;
+      if (currentHp <= 0) {
+        toast.error("Cannot use abilities while dead.");
+        return;
+      }
       const actions = current.actions ?? current.maxActions ?? 0;
       if (actions < ability.cost) {
         toast.error("Not enough actions.");
@@ -392,6 +404,10 @@ export const useGame = create<GameStore>((set, get) => ({
 
       const entity = InGameHelpers.getEntityById(instance, entityId);
       if (!entity) return [];
+      if (entity.type === "character" || entity.type === "monster") {
+        const currentHp = entity.hp ?? entity.maxHp ?? 0;
+        if (currentHp <= 0) return [];
+      }
 
       return InGameHelpers.getAbilityViableTargets(
         entity,

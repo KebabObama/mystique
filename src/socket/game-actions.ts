@@ -141,6 +141,8 @@ export const register = (ctx: SocketContext) => {
     if (entity.type === "chest" || entity.type === "campfire") return;
     if (entity.type === "character" && entity.ownerId !== userId) return;
     if (entity.type === "monster" && userId !== inst.masterId) return;
+    const currentHp = entity.hp ?? entity.maxHp ?? 0;
+    if (currentHp <= 0) return;
     const currentActions = entity.actions ?? entity.maxActions ?? 0;
     if (currentActions <= 0) return;
 
@@ -179,6 +181,8 @@ export const register = (ctx: SocketContext) => {
     const caster = InGameHelpers.getEntityById(inst, currentId);
     if (!caster) return;
     if (caster.type === "chest" || caster.type === "campfire") return;
+    const casterHp = caster.hp ?? caster.maxHp ?? 0;
+    if (casterHp <= 0) return;
 
     if (caster.type === "character" && caster.ownerId !== userId) return;
     if (caster.type === "monster" && inst.masterId !== userId) return;

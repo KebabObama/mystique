@@ -45,6 +45,12 @@ export const AbilitiesDrawer = () => {
   const { useAt, getViable } = useGame((s) => s.abilities);
 
   if (!canControlCurrent || !current) return null;
+  const isDead =
+    (current.type === "character" || current.type === "monster") &&
+    (current.hp ?? current.maxHp ?? 0) <= 0;
+
+  if (isDead) return null;
+
   const abilities = InGameHelpers.getEntityAbilities(current);
   const selectedAbility = mode.type === "ability" ? mode.ability : undefined;
   const selectedTarget = mode.type === "ability" ? mode.target : undefined;
