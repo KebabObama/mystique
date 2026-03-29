@@ -12,7 +12,7 @@ import { Mesh } from "@/lib/mesh";
 import { Render } from "@/lib/render";
 import { animated, useSpring } from "@react-spring/three";
 import { ThreeEvent } from "@react-three/fiber";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import * as THREE from "three";
 
 const AnimatedPrimitive = animated.primitive as unknown as React.ComponentType<any>;
@@ -32,25 +32,18 @@ const EntityMesh = ({
   const tileCenter = Render.getTileCenter(entity.position);
   const userId = useUser((s) => s?.id);
   const isMasterOnTurn = usePermissions((s) => s.isMasterOnTurn);
-  const [loadedModel, setLoadedModel] = useState<THREE.Group | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadedModel, setLoadedModel] = React.useState<THREE.Group | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  const { x, z } = useSpring({
-    x: tileCenter.x,
-    z: tileCenter.z,
-    config: { tension: 120, friction: 14 },
-  });
-
+  const { x, z } = useSpring({ ...tileCenter, config: { tension: 120, friction: 14 } });
   const visible = Render.distance(entity.position, target, "chebyshev") <= 25;
 
-  const meshPath = (entity as any)?.meshPath;
-
-  useEffect(() => {
+  React.useEffect(() => {
     setLoadedModel(null);
-    if (!Mesh.isValidMeshPath(meshPath)) return;
+    if (!Mesh.isValidMeshPath(entity.meshPath)) return;
 
     setIsLoading(true);
-    Mesh.loadModel(meshPath as string)
+    Mesh.loadModel(entity.meshPath as string)
       .then((model) => {
         setLoadedModel(model);
         setIsLoading(false);
@@ -58,7 +51,7 @@ const EntityMesh = ({
       .catch(() => {
         setIsLoading(false);
       });
-  }, [meshPath]);
+  }, [entity.meshPath]);
 
   const getColor = (): string => {
     const check = entity.id === currentId;
@@ -88,12 +81,12 @@ const EntityMesh = ({
     clearHoveredEntity(entity.id);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (visible) return;
     clearHoveredEntity(entity.id);
   }, [clearHoveredEntity, entity.id, visible]);
 
-  useEffect(() => () => clearHoveredEntity(entity.id), [clearHoveredEntity, entity.id]);
+  React.useEffect(() => () => clearHoveredEntity(entity.id), [clearHoveredEntity, entity.id]);
 
   const animatedProps = {
     "position-x": x,

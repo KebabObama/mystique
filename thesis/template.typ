@@ -187,6 +187,8 @@
 
   body
 
+  pagebreak()
+
   bibliography("works.bib", title: "Seznam použité literatury", style: "iso690-2022.csl")
 
   pagebreak()
@@ -194,12 +196,5 @@
   outline(
     title: heading(level: 1, outlined: true, [Seznam obrázků]),
     target: figure.where(kind: image),
-  )
-
-  pagebreak()
-
-  outline(
-    title: heading(level: 1, outlined: true, [Seznam tabulek]),
-    target: figure.where(kind: table),
   )
 }

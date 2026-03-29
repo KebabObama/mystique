@@ -1,8 +1,10 @@
 = Úvod
 
-Hráči stolních her na hrdiny pro více hráčů tvoří zvláštní větev herních systémů, kde se kombinuje společné vyprávění, rozhodování na základě předem definovaných pravidel a spolupráce hráčů v jednom sdíleným světě. Nejznámější zástupci tohoto žánru jsou hry jako Dungeons & Dragons, a v českém prostředí pak specificky i Dračí doupě. Nejvýraznější znak je bezesporu jasná separace rolí. Většina hráčů kontroluje svého hrdinu, zatímco vypravěč, též nazývaný _dungeon master_, či v českém překladu _pán jeskyně_, řídí svět, pravidla vykládá a reaguje na to, co ostatní hráči činí.
+Stolních hry na hrdiny, zvláště ty pro více hráčů, tvoří vlastní jedinečnou větev herních systémů, kde se kombinuje společné vyprávění, rozhodování na základě předem definovaných pravidel a spolupráce hráčů v jednom sdíleným světě. Nejznámější zástupci tohoto žánru jsou hry jako Dungeons & Dragons, a v českém prostředí pak specificky i Dračí doupě. Nejvýraznější znak je bezesporu jasná separace rolí. Většina hráčů kontroluje svého hrdinu, zatímco vypravěč, též nazývaný _dungeon master_, či v českém překladu _pán jeskyně_, řídí svět, pravidla vykládá a reaguje na to, co ostatní hráči činí.
 
-S vývojem webových technologií a online komunikace se začíná čím dál pravděpodobněji mluvit i o transformaci těchto her do virtuální reality. Do online zpracování hry lze přidat celou řadu výhod, ať již jde o usnadnění organizace hry, nebo možnost hrát i v přímé nepřítemnosti jednoho nebo více hráčů.
+S vývojem webových technologií a online komunikace se začíná čím dál častěji mluvit o transformaci těchto her do virtuálního prostředí. Do online zpracování hry lze přidat celou řadu výhod, ať již jde o usnadnění organizace hry, nebo možnost hrát i v přímé nepřítemnosti jednoho nebo více hráčů. Většina dostupných řešení však často trpí nutností stahování a instalací programů, což vytvoří bariéru pro nové uživatele.
+
+#set heading(numbering: "1.1")
 
 = Architektura
 
@@ -28,6 +30,7 @@ Hlavním přínosem TypeScriptu je zavedení striktního typového systému. V p
 
 TypeScript rovněž poskytuje pokročilé funkce, jako jsou rozhraní a generické typy. Ty jsou v projektu využity pro tvorbu znovupoužitelných komponent a funkcí, které mohou pracovat s různými datovými typy při zachování plné typové kontroly. Tato technologie tvoří nezbytný podklad pro fungování knihoven jako Drizzle ORM, které na typové bezpečnosti přímo staví svou architekturu.
 
+#pagebreak()
 = Použité technologie
 
 Výběr technologií na vývoj komplexní aplikace s multiplayer podporou je rozhodujícím bodem, který určuje nikoli pouze možnosti dalšího rozvoje, ale také omezení výkonu, bezpečnosti a udržitelnosti vyvinutého kódu. Pro vývoj platformy na bázi hry Dungeons & Dragons byly vybrane technologie, které představují aktuální špičku na poli vývojových technologií webových aplikací. Značný důraz byl kladen na modulárnost, rozšiřitelnost a efektivní zpracování dynam
@@ -40,7 +43,7 @@ Jako základy technologie pro moderne webové aplikace se dnes často používaj
 
 V rámci App Routeru jsou veškeré komponenty implicitně nastaveny jako serverové. Při zpracování požadavku server provede rendering React stromu, jehož výstupem není prostý HTML řetězec, ale specifický textový formát RSC Payload. Tento stream obsahuje serializovanou reprezentaci UI stromu, odkazy na klientské komponenty a předpočítaná data, na jejichž základě klientský prohlížeč postupně rekonstruuje DOM. Tento mechanismus umožňuje přímý přístup k databázi či souborovému systému pomocí async/await přímo v těle komponenty, bez nutnosti expozice API endpointů.
 
-Pro interaktivní prvky jsou využívány Client Components uvozené direktivou 'use client'. Next.js tyto komponenty izoluje do separátních JavaScriptových balíčků (chunks), které jsou odesílány klientovi k následné hydrataci – procesu, kdy se na serverem vyrenderované HTML naváže klientská aplikační logika. Tento model zajišťuje, že statické části rozhraní nezatěžují hlavní vlákno prohlížeče, zatímco dynamické segmenty zůstávají plně interaktivní.
+Pro interaktivní prvky jsou využívány Client Components uvozené direktivou 'use client'. Next.js tyto komponenty izoluje do separátních JavaScriptových balíčků (chunks), které jsou odesílány klientovi k následné hydrataci -- procesu, kdy se na serverem vyrenderované HTML naváže klientská aplikační logika. Tento model zajišťuje, že statické části rozhraní nezatěžují hlavní vlákno prohlížeče, zatímco dynamické segmenty zůstávají plně interaktivní.
 
 Tento model hybridního renderování zajišťuje, že statické části rozhraní nezatěžují hlavní vlákno prohlížeče, zatímco dynamické části zůstávají plně interaktivní.
 
@@ -50,21 +53,21 @@ Navzdory pokročilé abstrakci App Routeru, který staví na moderním a standar
 
 === Caching a Data Fetching
 
-Next.js implementuje komplexní vícevrstvý cachovací mechanismus inspirovaný standardy protokolu HTTP, který však rozšiřuje o vysokou míru granularity až na úroveň jednotlivých komponent. První linii této architektury tvoří Request Memoization, jež v rámci jediného renderovacího cyklu eliminuje redundanci datových dotazů tím, že identické volání funkce pro načtení dat provede pouze jednou, čímž efektivně snižuje zátěž navazujících vrstev. Na tuto fázi navazuje Data Cache, kde jsou výsledky požadavků typu fetch perzistentně ukládány přímo v souborovém systému serveru; statická data jsou tak načtena pouze při sestavení aplikace (buildu) nebo při historicky prvním požadavku a následně jsou distribuována přímo z cache bez nutnosti opětovné komunikace se zdrojem. Klíčovým prvkem pro správu dynamických herních či aplikačních dat je pak mechanismus revalidace, který umožňuje on-demand invalidaci uložených záznamů. Jakákoliv změna stavu, například úprava statistik v administraci, tak skrze serverovou akci zajistí doručení aktuálních dat hned při příštím klientském požadavku, aniž by bylo nutné přistoupit k neefektivnímu globálnímu vypínání cachování.
+Next.js implementuje komplexní vícevrstvý cachovací mechanismus inspirovaný standardy protokolu HTTP, který však rozšiřuje o vysokou míru granularity až na úroveň jednotlivých komponent. První linii této architektury tvoří Request Memoization, jež v rámci jediného renderovacího cyklu eliminuje redundanci datových dotazů tím, že identické volání funkce pro načtení dat provede pouze jednou, čímž efektivně snižuje zátěž navazujících vrstev. Na tuto fázi navazuje Data Cache, kde jsou výsledky požadavků typu fetch perzistentně ukládány přímo v souborovém systému serveru; statická data jsou tak načtena pouze při sestavení aplikace nebo při historicky prvním požadavku a následně jsou distribuována přímo z cache bez nutnosti opětovné komunikace se zdrojem. Klíčovým prvkem pro správu dynamických herních či aplikačních dat je pak mechanismus revalidace, který umožňuje on-demand invalidaci uložených záznamů. Jakákoliv změna stavu, například úprava statistik v administraci, tak skrze serverovou akci zajistí doručení aktuálních dat hned při příštím klientském požadavku, aniž by bylo nutné přistoupit k neefektivnímu globálnímu vypínání cachování.
 
 === Runtime
 
-Architektura frameworku nabízí vysokou míru flexibility díky možnosti volby specifického běhového prostředí (dále již nazývaného `runtime`) pro každou jednotlivou cestu nebo API endpoint, což vývojářům umožňuje precizně optimalizovat výkon aplikace podle povahy konkrétní úlohy. Dominantním prostředím pro většinu aplikační logiky zůstává Node.js runtime, který poskytuje plnou podporu standardních serverových API a nízkoúrovňových operací. I přes určitou režii spojenou s komplexností Node.js modulů a potenciálně vyšší latencí při studených startech, je toto prostředí nezbytné pro operace vyžadující přímý přístup k systémovým prostředkům. V kontextu herního serveru se Node.js využívá zejména pro obsluhu WebSocket serveru a náročné databázové procesy realizované skrze Drizzle ORM, kde je vyžadována robustní manipulace s daty a stabilní konektivita.
+Architektura frameworku nabízí vysokou míru flexibility díky možnosti volby specifického běhového prostředí (dále již nazývaného _runtime_) pro každou jednotlivou cestu nebo API endpoint, což vývojářům umožňuje precizně optimalizovat výkon aplikace podle povahy konkrétní úlohy. Dominantním prostředím pro většinu aplikační logiky zůstává Node.js runtime, který poskytuje plnou podporu standardních serverových API a nízkoúrovňových operací. I přes určitou režii spojenou s komplexností Node.js modulů a potenciálně vyšší latencí při studených startech, je toto prostředí nezbytné pro operace vyžadující přímý přístup k systémovým prostředkům. V kontextu herního serveru se Node.js využívá zejména pro obsluhu WebSocket serveru a náročné databázové procesy realizované skrze Drizzle ORM, kde je vyžadována robustní manipulace s daty a stabilní konektivita.
 
-Protiváhu k robustnímu Node.js představuje Edge Runtime, který je navržen s důrazem na maximální efektivitu a minimální latenci. Toto prostředí je postaveno na technologii V8 isolation, která je výrazně lehčí než tradiční Node.js kontejnery, což umožňuje bleskové spuštění kódu v datových centrech fyzicky nejbližších uživateli. Vzhledem k vysoké optimalizaci a omezené sadě dostupných API je Edge Runtime ideální volbou pro kritické operace, které nesmí brzdit tok požadavku. Typické nasazení zahrnuje komplexní middleware pro ověřování přístupových práv, dynamické směrování nebo proxy servery zajišťující transparentní autentizaci, kde je prioritou okamžitá odezva systému bez zbytečné režie standardního serverového prostředí.
+Protiváhu k robustnímu ekosystému Node.js představuje Edge Runtime, který je navržen s důrazem na maximální efektivitu a minimální latenci. Toto prostředí je postaveno na technologii V8 isolation, která je výrazně lehčí než tradiční Node.js kontejnery, což umožňuje bleskové spuštění kódu v datových centrech fyzicky nejbližších uživateli. Vzhledem k vysoké optimalizaci a omezené sadě dostupných API je Edge Runtime ideální volbou pro kritické operace, které nesmí brzdit tok požadavku. Typické nasazení zahrnuje komplexní middleware pro ověřování přístupových práv, dynamické směrování nebo proxy servery zajišťující transparentní autentizaci, kde je prioritou okamžitá odezva systému bez zbytečné režie standardního serverového prostředí.
 
 == Turbopack
 
-Pro efektivní vývoj byla využita nová generace bundleru -- Turbopack. Tento nástroj, napsaný v jazyce Rust, nahrazuje Webpack a řeší problém pomalého startu vývojového serveru u rozsáhlých aplikací. Turbopack využívá inkrementální výpočty -- pamatuje si výsledky předchozích sestavení a přepočítává pouze ty moduly, které byly změněny. V praxi to znamená, že i když aplikace naroste do stovek komponent a tisíců řádků kódu, změna v jedné React komponentě se v prohlížeči projeví v řádu desítek až stovek milisekund.
+Pro efektivní vývoj byla využita nová generace bundleru#footnote[Bundler je nástroj pro spojení vícero zdrojových souborů do jednoho optimalizovaného souboru, který je přenesen na stranu klienta] -- Turbopack. Tento nástroj, napsaný v jazyce Rust, nahrazuje Webpack a řeší problém pomalého startu vývojového serveru u rozsáhlých aplikací. Turbopack využívá inkrementální výpočty -- pamatuje si výsledky předchozích sestavení a přepočítává pouze ty moduly, které byly změněny. V praxi to znamená, že i když aplikace naroste do stovek komponent a tisíců řádků kódu, změna v jedné React komponentě se v prohlížeči projeví v řádu desítek až stovek milisekund.
 
 == React
 
-Zatímco Next.js zajišťuje celkovou architekturu a serverové schopnosti aplikace, samotné uživatelské rozhraní a interaktivita jsou postaveny na knihovně React. V kontextu této práce není React vnímán pouze jako nástroj pro tvorbu šablon, ale jako komplexní runtime prostředí, které definuje, jakým způsobem jsou data transformována do vizuální podoby a jak aplikace reaguje na vstupy uživatele v čase @react-docs.
+Zatímco Next.js zajišťuje celkovou architekturu a serverové schopnosti aplikace, samotné uživatelské rozhraní a interaktivita jsou postaveny na knihovně React. V kontextu této práce není React vnímán pouze jako nástroj pro tvorbu šablon a komponent, ale jako komplexní runtime prostředí, které definuje, jakým způsobem jsou data transformována do vizuální podoby a jak aplikace reaguje na vstupy uživatele v čase @react-docs.
 
 === JavaScript XML
 
@@ -88,15 +91,11 @@ Díky tomuto mechanismu může herní smyčka aktualizovat stav hry desítkykrá
 
 === Hooky a životní cyklus komponent
 
-Logika funkcionálních komponent je řízena pomocí mechanismu Hooků, které umožňují _"napojit se"_ na vnitřní stavy a životní cyklus Reactu. Existují tři typy hooků dělené podle funkcionality:
-
-+ Stavové
-+ Efektové
-+ Referenční
+Logika funkcionálních komponent je řízena pomocí mechanismu Hooků, které umožňují _"napojit se"_ na vnitřní stavy a životní cyklus Reactu. Existují tři typy hooků dělené podle funkcionality.
 
 Stavové hooky Slouží k uchování lokálního stavu komponenty mezi jednotlivými rendery. Standardem ve většině aplikací jsou: useState a useReducer. Zatímco useState je využit pro jednoduché hodnoty, popřípadně vnořené objekty, tak useReducer je implementován pro komplexní logiku, kde jeden akční vstup může ovlivnit více stavových proměnných. Při změně hodnoty hooku vždy nastane aktualizace komponentu ve kterém se hook nachází.
 
-Efektový hook se jmenuje hook useEffek a je používáno jako náhrada pro starší životní cyklus v podobě soběstačné metody. Jedná se o způsob, jak napojit na životní cyklus React komponentu, který se spustí jen v případě, že se hodnota jeho „závislostí“ změní. Pokuď se funkce v useEffekt napojuje na DOM strukturu je potřeba vždy vyčistit _"event listenery"_ na konci životního cyklu aplikace.
+Standardní efektový hook se jmenuje hook _useEffect_ a je používáno jako náhrada pro starší životní cyklus v podobě soběstačné metody. Jedná se o způsob, jak napojit na životní cyklus React komponentu, který se spustí jen v případě, že se hodnota jeho „závislostí“ změní. Pokuď se funkce v _useEffect_ napojuje na DOM strukturu je potřeba vždy vyčistit _"event listenery"_ na konci životního cyklu aplikace.
 
 Referenční hook useRef umožňuje uchovat referenci na hodnotu, která přetrvává mezi rendery, ale jejíž změna nevyvolává nové vykreslení. Využíván je především na reference HTML elementů a udržování více verzí hodnot jednoho parametru.
 
@@ -138,15 +137,7 @@ Pro efektivní komunikaci aplikačního kódu v jazyce typescript s databází P
 
 Drizzle se odlišuje od tradičních ORM frameworků svou lehkostí. Funguje jako tenká vrstva nad SQL driverem. Jedná se dudíž o nižší úroveň abstrakce, která umožňuje psát 1: 1 sql dotazy.  Hlavní výhodou je zero Runtime Overhead. Na rozdíl od konkurenčních řešení, jako je Prisma ORM, která často spouští na pozadí vlastního binárního souboru pro zpracování dotazů, je Drizzle čistá TypeScript knihovna. Při běhu aplikace pouze sestaví optimalizovaný SQL řetězec a předá jej databázi. To minimalizuje dobu náběhu aplikace, což je klíčové v prostředí serverless funkcí. Dále využití Drizzle ORM preferuje code-First Schema. Tím je umožněna definice databázových tabulek probající přímo v kódu aplikace. Vývojář definuje schéma pomocí TypeScript objektů, které slouží jako _"jediný zdroj pravdy"_. Z této definice se následně generují jak SQL migrace pro databázi, tak relace tabulek a typy pro aplikaci.
 
-Předností Drizzle ORM je hluboká integrace s TypeScriptem. Knihovna využívá pokročilou inferenci typů. Tento mechanismus funguje end-to-end:
-
-+ Při psaní dotazu
-  - Editor kódu napovídá názvy sloupců a jejich typy.
-  - Pokud se vývojář pokusí porovnat text s číslem, kompilátor vyhlásí chybu ještě před spuštěním aplikace.
-
-+ Při návratu dat
-  - Výsledek databázového dotazu je automaticky typován.
-  - Není potřeba manuálně definovat rozhraní pro výsledky dotazů, Drizzle je odvodí dynamicky na základě toho, jaké sloupce a relace byly v dotazu vyžádány.
+Významnou předností Drizzle ORM je i hluboká integrace s jazykem TypeScript a využití pokročilé _inferované typové kontroly_#footnote[Inferovaný typ je princip typescriptu, díky němuž se typy automaticky odvozují z kontextu nebo předem definované hodnoty]. Tento mechanismus funguje napříč celým procesem práce s databází. Při tvorbě dotazů poskytuje editor přesné napovídání názvů sloupců i jejich datových typů a zároveň umožňuje odhalit typové nesrovnalosti již v době kompilace. Při získávání dat jsou výsledky dotazů automaticky typovány, takže není nutné ručně definovat rozhraní pro jejich strukturu. Typy jsou odvozeny dynamicky na základě specifikace dotazu, včetně vybraných sloupců a relací.
 
 Pro práci s propojenými daty nabízí Drizzle zjednodušené Relational Query API. To umožňuje vývojářům načítat hierarchická data deklarativně, podobně jako v GraphQL nebo Prisma ORM. Drizzle interně optimalizuje tyto požadavky, aby předešel problému N+1, situaci, kdy aplikace pro každou položku seznamu posílá do databáze samostatný dotaz. Podle struktury dat a použitého databázového ovladače Drizzle buď zkompiluje požadavek do jednoho efektivního SQL dotazu, nebo data načte paralelně v minimálním počtu kroků a spojí je na úrovni aplikace. Tím zajišťuje optimální výkon i při složitých datových strukturách. Součástí ekosystému je nástroj Drizzle Kit, který automatizuje správu změn v databázi. Porovnává aktuální schéma definované v TypeScriptu se snapshotem předchozího stavu a generuje SQL migrační soubory. Tento proces zajišťuje, že vývoj databáze je verzovaný, transparentní a bezpečně replikovatelný napříč vývojovým, testovacím a produkčním prostředím.
 
@@ -156,9 +147,7 @@ Pro definici vizuální podoby uživatelského rozhraní a tvorbu responzivního
 
 === Utility-First paradigma
 
-Základem Tailwind CSS je koncept Utility-First. Namísto vytváření sémantických tříd, které v sobě nesou desítky deklarací, framework poskytuje atomické třídy reprezentující jednotlivé CSS vlastnosti. V kontextu aplikace tento přístup přináší několik klíčových výhod. Prnví je eliminace kontextového přepínání:
-- Stylizace probíhá přímo v kódu komponenty.
-- Vývojář definuje vzhled elementů, pomocí řetězení tříd pro okraje, barvy a typografii, což výrazně zrychluje iterační cyklus vývoje.
+Základem Tailwind CSS je koncept Utility-First. Namísto vytváření sémantických tříd, které v sobě nesou desítky deklarací, framework poskytuje atomické třídy reprezentující jednotlivé CSS vlastnosti. V kontextu aplikace tento přístup přináší několik klíčových výhod. Prnví je eliminace kontextového přepínání, jež umožňuje probíhání stylizace přímo v kódu komponenty, což zrychluje vývojový cyklus. Vývojář definuje vzhled elementů pomocí řetězení tříd pro okraje, barvy a typografii, což výrazně zrychluje iterační cyklus vývoje.
 
 Dále Tailwind CSS definuje pevný systém hodnot pro mezery, stíny a barevné palety. Tím je zajištěno, že rozhraní působí celistvým dojmem a všechny prvky dodržují stejný vizuální řád bez manuálního hlídání konkrétních pixelových hodnot. Optimalizace knihovny využívá proces zvaný _"Purging"_. Během sestavování aplikace analyzuje zdrojový kód a do výsledného CSS souboru zahrne pouze ty třídy, které jsou v aplikaci skutečně použity. To vede k extrémně malým souborům stylů, což zrychluje načítání herního rozhraní.
 
@@ -190,17 +179,17 @@ Zustand vyniká svou schopností snadno integrovat asynchronní logiku přímo d
 
 == WebGL a 3D renderování ve webové aplikaci
 
-Pro vytvoření interaktivního 3D prostředí herního světa je potřeba využit vícevrstvý technologický stack. Na nejnižší úrovni stojí WebGL jako standardizované grafické API pro přístup ke grafické kartě (dále již pouze jako GPU) z prostředí webového prohlížeče. Nad ním je použita knihovna `Three.js`, která abstrahuje nízkoúrovňové operace do objektového modelu scény. Další vrstvu tvoří React Three Fiber, jenž převádí deklarativní paradigma Reactu do správy 3D scény. Sadu specializovaných pomocných komponent poskytuje knihovna `drei` a plynulé fyzikálně založené animace jsou realizovány pomocí `react-spring` v integraci `@react-spring/three`.
+Pro vytvoření interaktivního 3D prostředí herního světa je potřeba využit vícevrstvý technologický stack. Na nejnižší úrovni stojí WebGL jako standardizované grafické API pro přístup ke grafické kartě (dále již pouze jako GPU) z prostředí webového prohlížeče. Nad ním je použita knihovna _Three.js_, která abstrahuje nízkoúrovňové operace do objektového modelu scény. Další vrstvu tvoří React Three Fiber, jenž převádí deklarativní paradigma Reactu do správy 3D scény. Sadu specializovaných pomocných komponent poskytuje knihovna _drei_ a plynulé fyzikálně založené animace jsou realizovány pomocí _react-spring_ v integraci _\@react-spring/three_.
 
 === WebGL
 
-Web Graphics Library (dále již pouze jako WebGL) je JavaScriptové rozhraní vycházející z OpenGL ES#footnote[OpenGL for Embedded Systems je odlehčená specifikace grafického API OpenGL určená pro vestavěná zařízení a mobilní platformy.], které umožňuje provádět grafické operace přímo na grafickém procesoru. Vykreslovací pipeline je programovatelná a skládá se zejména z vertex shaderu a fragment shaderu#footnote[Shader je program spouštěný na GPU. Vertex shader transformuje vrcholy modelu do projekčního prostoru, zatímco fragment shader určuje výslednou barvu fragmentu#footnote[Fragmentem bývá označen sametný pixel nebo vektorová část geometrie meshe.] po rasterizaci.]. Vertex shader zpracovává vrcholy geometrie, aplikuje transformační matice model-view-projection a připravuje data pro rasterizaci. Fragment shader následně určuje výslednou barvu jednotlivých pixelů s ohledem na materiál, textury, osvětlení a případné postprocesní efekty @khronos-webgl @w3c-webgl @khronos-opengles32 @realtime-rendering @pbr-book.
+Web Graphics Library (dále již pouze jako WebGL) je JavaScriptové rozhraní vycházející z OpenGL ES#footnote[OpenGL for Embedded Systems je odlehčená specifikace grafického API OpenGL určená pro vestavěná zařízení a mobilní platformy.], které umožňuje provádět grafické operace přímo na grafickém procesoru. Vykreslovací pipeline je programovatelná a skládá se zejména z vertex shaderu a fragment shaderu#footnote[Shader je program spouštěný na GPU. Vertex shader transformuje vrcholy modelu do projekčního prostoru, zatímco fragment shader určuje výslednou barvu fragmentu#footnote[Fragmentem bývá označen sametný pixel nebo vektorová část geometrie meshe.] po rasterizaci.]. Vertex shader zpracovává vrcholy geometrie, aplikuje transformační matice model-view-projection a připravuje data pro rasterizaci. Fragment shader následně určuje výslednou barvu jednotlivých pixelů s ohledem na materiál, textury, osvětlení a případné postprocesní efekty @w3c-webgl @realtime-rendering @pbr-book.
 
-Data jsou do grafické výpočetní jednotky přenášena prostřednictvím bufferů a atributů, zatímco globální parametry scény jako jsou světelné podmínky, transformační matice nebo čas jsou předávány přes uniform proměnné. WebGL dále používá depth buffer pro korektní překryv objektů v prostoru, stencil buffer pro maskování a blending pro práci s průhledností. Výkonové limity jsou úzce svázány s počtem draw-call, velikostí geometrií, komplexitou shaderů a šířkou paměťové propustnosti mezi CPU a GPU.
+Data jsou do grafické výpočetní jednotky přenášena prostřednictvím bufferů a atributů, zatímco globální parametry scény jako jsou světelné podmínky, transformační matice nebo čas jsou předávány přes uniform proměnné @khronos-webgl. WebGL dále používá depth buffer pro korektní překryv objektů v prostoru, stencil buffer pro maskování a blending pro práci s průhledností. Výkonové limity jsou úzce svázány s počtem draw-call, velikostí geometrií, komplexitou shaderů a šířkou paměťové propustnosti mezi CPU a GPU  @khronos-opengles32.
 
 === Three.js
 
-Three.js představuje vysokou abstrakční vrstvu nad WebGL @threejs-docs. Místo manuální správy shader programů, bufferů a stavu renderovacího kontextu nabízí scénový graf s entitami jako `Scene`, `Camera`, `Mesh`, `Geometry`, `Material` a `Light`. Vývojář tak pracuje s doménově srozumitelnými objekty a transformačním stromem, zatímco knihovna interně řeší serializaci dat do GPU, optimalizaci renderovacího průchodu a správu WebGL stavu.
+Three.js představuje vysokou abstrakční vrstvu nad WebGL @threejs-docs. Místo manuální správy shader programů, bufferů a stavu renderovacího kontextu nabízí scénový graf s entitami jako _Scene_, _Camera_, _Mesh_, _Geometry_, _Material_ a _Light_. Vývojář tak pracuje s doménově srozumitelnými objekty a transformačním stromem, zatímco knihovna interně řeší serializaci dat do GPU, optimalizaci renderovacího průchodu a správu WebGL stavu. @threejs-docs
 
 Klíčovou součástí je renderovací smyčka, kde renderer v každém snímku vyhodnocuje scénu vzhledem ke kameře a generuje výsledný obraz. Three.js zároveň poskytuje nástroje pro raycasting, načítání externích assetů, práci s PBR materiály#footnote[Physically Based Rendering je model materiálů založený na fyzikálních vlastnostech povrchu.] a správu stínování. V praxi to umožňuje vytvářet komplexní 3D rozhraní bez nutnosti psát nízkoúrovňový grafický kód od začátku.
 
@@ -208,27 +197,29 @@ Klíčovou součástí je renderovací smyčka, kde renderer v každém snímku 
 
 React Three Fiber (dále již pouze jako R3F) je vlastní renderer pro React, který mapuje JSX prvky na objekty Three.js @r3f-docs. Nejedná se o nadstavbu typu „wrapper komponent“, ale o plnohodnotný React reconciler#footnote[Reconciler je interní mechanismus Reactu, který porovnává předchozí a nový stav stromu komponent a provádí pouze minimální sadu změn potřebných pro aktualizaci výstupu.]. To znamená, že životní cyklus 3D objektů je řízen stejným principem diffingu a reconciliace jako běžné DOM komponenty: při změně stavu React vypočítá minimální nutné změny a aplikuje je do scénového grafu Three.js.
 
-Architektonicky je zásadní komponenta `Canvas`, která inicializuje renderer, scénu, kameru a interní loop. Hook `useFrame` umožňuje registrovat per-frame logiku#footnote[Per-frame logika je kód spouštěný při každém vykresleném snímku.] s přesným časovým krokem, například pro aktualizaci pozic, simulaci projektilů nebo interpolaci síťových snapshotů. R3F také podporuje řízení renderování v režimu `always` i `demand`, což umožňuje cíleně snižovat výpočetní zátěž v okamžicích, kdy se scéna nemění.
+Architektonicky je zásadní komponenta _Canvas_, která inicializuje renderer, scénu, kameru a interní loop. Hook _useFrame_ umožňuje registrovat per-frame logiku#footnote[Per-frame logika je kód spouštěný při každém vykresleném snímku.] s přesným časovým krokem, například pro aktualizaci pozic, simulaci projektilů nebo interpolaci síťových snapshotů. R3F také podporuje řízení renderování v režimu _always_ i _demand_, což umožňuje cíleně snižovat výpočetní zátěž v okamžicích, kdy se scéna nemění.
 
 Významnou výhodou je přímá integrace s React ekosystémem. Stav aplikace lze sdílet přes stejné mechanismy jako ve 2D UI (například Zustand), a 3D komponenty tak mohou reagovat na stejné doménové události jako zbytek aplikace. Tento jednotný datový model redukuje architektonickou složitost a usnadňuje údržbu rozsáhlého projektu.
 
-=== \@react-three/drei
+=== React Three Drei
 
-Knihovna `drei` poskytuje množinu předpřipravených utilit a komponent nad R3F, které řeší opakující se technické úlohy @drei-docs. Patří sem například orbitální ovládání kamery (`OrbitControls`), načítání modelů a textur (`useGLTF`, `useTexture`), environment mapy, helpery světel, předkonfigurované geometrie a komponenty pro text nebo postprocessing.
+Knihovna _drei_ poskytuje množinu předpřipravených utilit a komponent nad R3F, které řeší opakující se technické úlohy @drei-docs. Patří sem například orbitální ovládání kamery (_OrbitControls_), načítání modelů a textur (_useGLTF_, _useTexture_), environment mapy, helpery světel, předkonfigurované geometrie a komponenty pro text nebo postprocessing.
 
-Hlavní přínos `drei` spočívá v redukci boilerplate kódu a ve standardizaci osvědčených implementačních vzorů. Tím se zkracuje čas vývoje, snižuje riziko chyb při konfiguraci scény a zlepšuje čitelnost komponentové vrstvy. V kontextu maturitní práce je důležité, že `drei` neomezuje přístup k nízkoúrovňovým mechanismům Three.js; pouze poskytuje ergonomičtější vstupní bod pro běžné scénáře.
+Hlavní přínos _drei_ spočívá v redukci boilerplate kódu a ve standardizaci osvědčených implementačních vzorů. Tím se zkracuje čas vývoje, snižuje riziko chyb při konfiguraci scény a zlepšuje čitelnost komponentové vrstvy. V kontextu maturitní práce je důležité, že _drei_ neomezuje přístup k nízkoúrovňovým mechanismům Three.js; pouze poskytuje ergonomičtější vstupní bod pro běžné scénáře.
 
-=== React Spring pro 3D animace
+=== React Spring
 
-Knihovna `react-spring` v kombinaci s modulem `@react-spring/three` realizuje animace na bázi pružinového modelu, nikoliv na pevných časových křivkách @reactspring-docs. Pohyb je popsán parametry fyzikální soustavy, kterými jsou: tuhost, tlumení, hmotnost, atd. Využití `react-spring` vede k přirozenému průběhu změn a stabilnímu chování i při přerušení nebo změně cílového stavu během animace.
+Knihovna _react-spring_ v kombinaci s modulem _\@react-spring/three_ realizuje animace na bázi pružinového modelu, nikoliv na pevných časových křivkách @reactspring-docs. Pohyb je popsán parametry fyzikální soustavy, kterými jsou: tuhost, tlumení, hmotnost, atd. Využití _react-spring_ vede k přirozenému průběhu změn a stabilnímu chování i při přerušení nebo změně cílového stavu během animace.
 
 V prostředí R3F se animované hodnoty přímo mapují na transformace a materiálové vlastnosti objektů. Přesněji se jedná o hodnoty jako pozice, rotace, viditelnost a attributy upravující geometrii. Tento přístup je zásadní pro interaktivní herní UI, kde se stav může měnit asynchronně v závislosti na síťové komunikaci. Oproti klasickým keyframe animacím umožňuje pružinový model kontinuální a vizuálně hladké přechody mezi diskrétními stavy herní logiky.
 
-=== Spolupráce vrstev v praxi
+=== Spolupráce vrstev
 
-Při běhu aplikace probíhá zpracování ve více navazujících vrstvách. React vrstva vyhodnotí změnu stavu (například pohyb postavy, změnu iniciativy nebo aktivaci efektu). React Three Fiber tuto změnu promítne do odpovídajících uzlů scénového grafu Three.js. Three.js následně připraví renderovací data pro WebGL a předá je grafickému procesoru. Pokud je změna animovaná, `react-spring` generuje mezikroky, které jsou v každém snímku aplikovány přes R3F do scény.
+Při běhu aplikace probíhá zpracování ve více navazujících vrstvách. React vrstva vyhodnotí změnu stavu #footnote[příkladem jsou pohyby entit, změny iniciativy nebo aktivace schopností]. React Three Fiber tuto změnu promítne do odpovídajících uzlů scénového grafu Three.js. Three.js následně připraví renderovací data pro WebGL a předá je grafickému procesoru. Pokud je změna animovaná, _react-spring_ generuje mezikroky, které jsou v každém snímku aplikovány přes R3F do scény.
 
-Tento model poskytuje jasné oddělení odpovědností: WebGL řeší nízkoúrovňové vykreslení, Three.js správu 3D domény, R3F integraci s React architekturou, `drei` produktivitu vývoje a `react-spring` fyzikálně konzistentní přechody stavů. Výsledkem je škálovatelné řešení, které je vhodné pro multiplayerovou RPG aplikaci s důrazem na plynulost, čitelnost kódu a dlouhodobou udržitelnost.
+Tento model poskytuje jasné oddělení odpovědností: WebGL řeší nízkoúrovňové vykreslení, Three.js správu 3D domény, R3F integraci s React architekturou, _drei_ produktivitu vývoje a _react-spring_ fyzikálně konzistentní přechody stavů. Výsledkem je škálovatelné řešení, které je vhodné pro multiplayerovou RPG aplikaci s důrazem na plynulost, čitelnost kódu a dlouhodobou udržitelnost.
+
+#pagebreak()
 
 = Vývoj aplikace
 
@@ -258,7 +249,7 @@ Při vývoji 3D části bylo zároveň nutné počítat s tím, že ne všechny 
 
 Z praktického hlediska se v projektu nejedná o soubor izolovaných knihoven, ale o navazující vrstvy, z nichž každá řeší jiný typ problému. Framework Next.js tvoří aplikační kostru celého systému: pomocí App Routeru jsou realizovány běžné stránky aplikace, dashboard a herní rozhraní, zatímco Pages Router je využit pro endpoint `/api/socket`, jehož prostřednictvím se inicializuje realtime komunikační vrstva. Toto rozdělení se v praxi ukázalo jako účelné, protože umožnilo zachovat komfort moderního React frameworku a současně obejít omezení, která jsou spojena s nasazením WebSocket serveru přímo v čistě server-component architektuře @nextjs-docs @socketio-docs.
 
-Na klientské straně plní React Three Fiber roli integrační vrstvy mezi Reactem a 3D scénou. Knihovna Three.js zde zůstává nízkoúrovňovým základem, který poskytuje scénový graf, kameru, světla, materiály a načítání modelů pomocí `GLTFLoader`, zatímco React Three Fiber převádí tyto koncepty do deklarativních komponent. Knihovna `@react-three/drei` doplňuje pomocné mechanismy, v této implementaci zejména adaptivní obsluhu událostí, a balík `@react-three/postprocessing` zajišťuje finální obrazovou stylizaci. Stavová knihovna Zustand centralizuje herní stav, socket připojení, dialogy i parametry kamery, takže data nejsou roztříštěna mezi mnoho lokálních komponent. Knihovna `react-spring` pak řeší problém vizuální diskontinuity při síťové synchronizaci tím, že interpoluje změny pozic entit mezi dvěma snapshoty @r3f-docs @threejs-docs @zustand-docs @reactspring-docs.
+Na klientské straně plní React Three Fiber roli integrační vrstvy mezi Reactem a 3D scénou. Knihovna Three.js zde zůstává nízkoúrovňovým základem, který poskytuje scénový graf, kameru, světla, materiály a načítání modelů pomocí _GLTFLoader_, zatímco React Three Fiber převádí tyto koncepty do deklarativních komponent. Knihovna _\@react-three/drei_ doplňuje pomocné mechanismy, v této implementaci zejména adaptivní obsluhu událostí, a balík _\@react-three/postprocessing_ zajišťuje finální obrazovou stylizaci. Stavová knihovna Zustand centralizuje herní stav, socket připojení, dialogy i parametry kamery, takže data nejsou roztříštěna mezi mnoho lokálních komponent. Knihovna _react-spring_ pak řeší problém vizuální diskontinuity při síťové synchronizaci tím, že interpoluje změny pozic entit mezi dvěma snapshoty @r3f-docs @threejs-docs @zustand-docs @reactspring-docs.
 
 V serverové vrstvě je zásadní role knihovny Drizzle ORM, která poskytuje typově bezpečnou práci s relační databází a současně usnadňuje transakční zápisy v situacích, kde se mění více tabulek naráz, například při obchodování, přesunu inventáře, odpočinku nebo levelování. Nad touto datovou vrstvou je postavena autentizace přes Better Auth, která zajišťuje relace uživatelů a jednotné přihlášení. Praktickým přínosem tohoto spojení je především to, že herní operace mohou vycházet z již ověřené identity uživatele a navazovat na ni další autorizaci, například rozlišení, zda jde o běžného hráče nebo Dungeon Mastera @drizzle-docs @better-auth-docs.
 
@@ -270,7 +261,7 @@ Tento způsob vývoje odpovídá požadavkům na moderní multiplayerovou webovo
 
 == Kompozice scény a odpovědnosti jednotlivých vrstev
 
-Herní stránka je složena jako kompozice několika navzájem oddělených vrstev. Vrstva `GameProvider` zajišťuje napojení na multiplayer instanci a životní cyklus připojení. Vrstva `Main` nejprve rozhoduje, zda je zařízení pro tuto část aplikace podporováno; při přístupu z mobilního zařízení je zobrazena náhradní informační obrazovka, zatímco na desktopu komponenta vytvoří `Canvas` s výchozí kamerou a poskytne prostor pro všechny R3F komponenty. V tomto kontextu jsou umístěny:
+Herní stránka je složena jako kompozice několika navzájem oddělených vrstev. Vrstva _GameProvider_ zajišťuje napojení na multiplayer instanci a životní cyklus připojení. Vrstva _Main_ nejprve rozhoduje, zda je zařízení pro tuto část aplikace podporováno; při přístupu z mobilního zařízení je zobrazena náhradní informační obrazovka, zatímco na desktopu komponenta vytvoří _Canvas_ s výchozí kamerou a poskytne prostor pro všechny R3F komponenty. V tomto kontextu jsou umístěny:
 - entity čítající charaktery, monstra a specifické interaktivní objekty
 - podlaha a interaktivní vrstvy pro zvýraznění dosažitelných polí a detekci kliknutí
 - světla a kamera pro zajištění správného osvětlení a pohledu na scénu
@@ -283,11 +274,11 @@ Renderovací subsystém je navržen modulárně, tudíž každý typ objektu má
 
 === Podlaha a interakční vrstvy
 
-Komponenta `Floor` představuje translační vrstvu mezi diskrétním herním modelem (dlaždicová mřížka) a spojitým 3D prostorem. Jejím úkolem není pouze vykreslení povrchu, ale zejména projekce herních pravidel do vizuálních interakčních markerů. Teoreticky jde o dvoufázové zpracování. Prvním je výpočet doménových kandidátů (viable tiles, impact tiles, area of effect) na základě aktuálního stavu hry a pravidel pro danou akci. Druhým je samotná vizualizace těchto kandidátů, která je podmíněna lokální viditelností a render distance. Tím se zajišťuje, že hráč vidí pouze relevantní informace, které odpovídají jeho aktuálnímu pohledu na herní svět. Tato separace výpočtu a vykreslení je zásadní pro determinismus: stejná pravidla mohou být použita jak pro UI feedback, tak pro serverovou validaci akce.
+Komponenta _Floor_ představuje translační vrstvu mezi diskrétním herním modelem (dlaždicová mřížka) a spojitým 3D prostorem. Jejím úkolem není pouze vykreslení povrchu, ale zejména projekce herních pravidel do vizuálních interakčních markerů. Teoreticky jde o dvoufázové zpracování. Prvním je výpočet doménových kandidátů (viable tiles, impact tiles, area of effect) na základě aktuálního stavu hry a pravidel pro danou akci. Druhým je samotná vizualizace těchto kandidátů, která je podmíněna lokální viditelností a render distance. Tím se zajišťuje, že hráč vidí pouze relevantní informace, které odpovídají jeho aktuálnímu pohledu na herní svět. Tato separace výpočtu a vykreslení je zásadní pro determinismus: stejná pravidla mohou být použita jak pro UI feedback, tak pro serverovou validaci akce.
 
 === Entity
 
-Vrstva `Entities` realizuje render herních aktérů i statických interaktivních objektů pomocí jednotného kontraktu entity. Rendering je založen na principu „model-first. Avšak pro zkrácení načítací doby byl přidán fallback s parametrickou geometrii, která slouží jako záložní varianta, když se něco pokazí. Součástí je i časově spojitá interpolace pozice pomocí spring-based smoothing (dále již pouze jako SbM), která filtruje síťovou diskretizaci a redukuje vizuální sekání při příjmu a vykreslování nových dat. Dále je aplikována selektivní viditelnost odvozená od vzdálenosti vykreslování od pozice kamery, čímž se omezuje počet objektů zařazených do render pass v každém snímku.
+Vrstva _Entities_ realizuje render herních aktérů i statických interaktivních objektů pomocí jednotného kontraktu entity. Rendering je založen na principu „model-first. Avšak pro zkrácení načítací doby byl přidán fallback s parametrickou geometrii, která slouží jako záložní varianta, když se něco pokazí. Součástí je i časově spojitá interpolace pozice pomocí spring-based smoothing (dále již pouze jako SbM), která filtruje síťovou diskretizaci a redukuje vizuální sekání při příjmu a vykreslování nových dat. Dále je aplikována selektivní viditelnost odvozená od vzdálenosti vykreslování od pozice kamery, čímž se omezuje počet objektů zařazených do render pass v každém snímku.
 
 === Stěny jako instancované objekty
 
@@ -295,13 +286,13 @@ Stěny jsou implementovány jako instance jediné geometrie a společného mater
 
 === Postprocessing
 
-Postprocessing je v rámci projektu realizován jako samostatná komponenta vložená přímo do renderovacího stromu React Three Fiber. Praktická implementace je záměrně úsporná: využívá `EffectComposer` z balíku `@react-three/postprocessing`, na který je navázán efekt `Pixelation` s nízkou granularitou. Výsledkem není fotorealistické vyhlazení obrazu, ale stylizace, která podporuje herní atmosféru a současně snižuje vizuální nároky na jemné detaily modelů. Vedle toho je aktivována komponenta `AdaptiveEvents` z knihovny `@react-three/drei`, která pomáhá udržet interakci se scénou i v situacích, kdy se mění zatížení vykreslování @r3f-docs @threejs-docs.
+Postprocessing je v rámci projektu realizován jako samostatná komponenta vložená přímo do renderovacího stromu React Three Fiber. Praktická implementace je záměrně úsporná: využívá _EffectComposer_ z balíku _\@react-three/postprocessing_, na který je navázán efekt _Pixelation_ s nízkou granularitou. Výsledkem není fotorealistické vyhlazení obrazu, ale stylizace, která podporuje herní atmosféru a současně snižuje vizuální nároky na jemné detaily modelů. Vedle toho je aktivována komponenta _AdaptiveEvents_ z knihovny _\@react-three/drei_, která pomáhá udržet interakci se scénou i v situacích, kdy se mění zatížení vykreslování @r3f-docs @threejs-docs.
 
 Z návrhového hlediska je důležité, že tato vrstva nijak nezasahuje do doménové logiky hry. Postprocessing pracuje až nad hotovým obrazem, a proto neovlivňuje výpočet tahu, kolize, vzdálenosti ani pravidla schopností. Jeho úkolem je výhradně upravit výsledné zobrazení tak, aby byla scéna vizuálně konzistentní a čitelná.
 
 == Metriky vzdálenosti v distribuovaném systému
 
-Klíčovým prvkem pro řízení prostorové logiky a optimalizaci vykreslování je centrální utilitární funkce `Render.distance()`. Tato funkce v závislosti na kontextu volání počítá vzdálenost mezi dvěma body pomocí tří rozdílných matematických metrik, z nichž každá hraje specifickou roli v interpretaci herního prostoru.
+Klíčovým prvkem pro řízení prostorové logiky a optimalizaci vykreslování je centrální utilitární funkce _Render.distance()_. Tato funkce v závislosti na kontextu volání počítá vzdálenost mezi dvěma body pomocí tří rozdílných matematických metrik, z nichž každá hraje specifickou roli v interpretaci herního prostoru.
 
 
 První z nich, Eukleidovská vzdálenost, představuje geometricky nejkratší přímou spojnici dvou bodů ve vektorovém prostoru, definovanou vztahem $d(x, y) = sqrt(sum_(i=1)^n (x_i - y_i)^2)$. V systému je využívána primárně pro definici parametrů viditelnosti, neboli render distance, kde její lineární charakter poskytuje uživateli nejpřirozenější vizuální vjem hloubky.
@@ -311,16 +302,22 @@ Naproti tomu Manhattanská vzdálenost definuje prostor jako součet absolutníc
 Poslední aplikovanou metodou je Čebyševova vzdálenost, která je určena jako maximum z rozdílů v jednotlivých dimenzích, formálně $L_infinity = max_i (|x_i - y_i|)$. Své uplatnění nachází především v algoritmech pro render culling a definici čtvercových výřezových oblastí, kde umožňuje bleskově rozhodnout o relevanci objektu vzhledem k pozici kamery. Tato trojúrovňová diferenciace metrik dovoluje systému precizně oddělit vizuální věrnost od přísné herní logiky a efektivně tak alokovat výpočetní prostředky.
 == Kamera
 
-Kamera je implementována jako samostatný subsystém tvořený zustand úložištěm `useCamera`, který uchovává hodnoty a logiku kamery mimo renderované komponenty, a aktualizační smyčkou `useFrame` použitou ke tvorbě pohybu a ovládacích prvků. Uživatelský vstup realizovaný klávesami není mapován přímo na kartézskou pozici kamery, ale na parametry orbitálního modelu. Konkrétně se jedná o trojrozměrný vektorový bod `target`, kolem něhož se kamera orientuje, dále o parametry `azimuth`#footnote[úhel reprezentující rotaci kolem vertikální osy], `elevation`#footnote[elevation je veličina určující vertikální náklon pohledu] a  `distance`#footnote[distance vyjadřuje vzdálenost kamery od cílového bodu], který fakticky odpovídá rotaci, náklonu a vzálenosi kamery v tomto pořadí.
+Kamera je implementována jako samostatný subsystém tvořený zustand úložištěm _useCamera_, který uchovává hodnoty a logiku kamery mimo renderované komponenty, a aktualizační smyčkou _useFrame_ použitou ke tvorbě pohybu a ovládacích prvků. Uživatelský vstup realizovaný klávesami není mapován přímo na kartézskou pozici kamery, ale na parametry orbitálního modelu. Konkrétně se jedná o trojrozměrný vektorový bod _target_, kolem něhož se kamera orientuje, dále o parametry _azimuth_#footnote[úhel reprezentující rotaci kolem vertikální osy], _elevation_#footnote[elevation je veličina určující vertikální náklon pohledu] a  _distance_#footnote[distance vyjadřuje vzdálenost kamery od cílového bodu], který fakticky odpovídá rotaci, náklonu a vzálenosi kamery v tomto pořadí.
+
+#figure(
+  image("assets/camera.png"),
+  caption: [ Schéma modulu kamery a jeho parametrů.
+  ],
+)
 
 V každém vykresleném snímku jsou tyto parametry přepočítány ze sférických souřadnic na kartézskou polohu kamery. Výsledná pozice je následně použita na zajištění konzistentní orientace směrem k cíli. Tento model je stabilnější než přímá translace kamery v prostoru, protože jednoznačně odděluje informaci o tom, kam se kamera dívá, od informace o tom, odkud se dívá. Orientace je tedy vždy determinována vztahem k cílovému bodu, zatímco pozice je definována radiální vzdáleností a úhlovými parametry.
 
-Použití časování `delta` navíc zajišťuje nezávislost pohybu na snímkové frekvenci, což znamená, že rychlost změny parametrů zůstává konzistentní napříč zařízeními s odlišným snímky za vteřinu. Díky tomu nenastávají problémy s optimalizací tvořené mezisnímky a nedokanýlími načteními požadavků ze strany serveru.
+Použití časování _delta_ navíc zajišťuje nezávislost pohybu na snímkové frekvenci, což znamená, že rychlost změny parametrů zůstává konzistentní napříč zařízeními s odlišným snímky za vteřinu. Díky tomu nenastávají problémy s optimalizací tvořené mezisnímky a nedokanýlími načteními požadavků ze strany serveru.
 
 
 == Kontextové menu a dialogy
 
-Dialogový systém je centralizován ve stavovém úložišti `useDialog`, které vytvořeno pomocí knihovny zustand a představuje aplikační vrstvu řízení modálních oken a kontextových panelů. Každý dialog má explicitně definovaný stav otevření či zavření a současně nese vlastní kontext. Otevření dialogu tedy není lokální UI stav konkrétní komponenty, ale doménová událost odvozená z herního modelu.
+Dialogový systém je centralizován ve stavovém úložišti _useDialog_, které vytvořeno pomocí knihovny zustand a představuje aplikační vrstvu řízení modálních oken a kontextových panelů. Každý dialog má explicitně definovaný stav otevření či zavření a současně nese vlastní kontext. Otevření dialogu tedy není lokální UI stav konkrétní komponenty, ale doménová událost odvozená z herního modelu.
 
 Vyvolání kontextového menu nad entitou probíhá jako řízený proces. Po kliknutí pravým tlačítkem v rámci 3D scény komponenta reprezentující danou entitu předá identifikátor entity a souřadnice kurzoru do metody openAt v rámci větve useDialog.entityContextMenu. Samotná komponenta EntityContextMenu následně na základě aktuální instance hry a oprávnění hráče dynamicky odvodí množinu povolených akcí. Každá položka menu je podrobena doménové validaci zahrnující kontrolu vzdálenosti, vlastnictví, tahu nebo role typu Master. Teprve po úspěšném vyhodnocení těchto pravidel je možné vyvolat odpovídající aplikační reakci, například otevření inventáře nebo specializovaného dialogu typu odpočinek, obchod či interakce s objektem.
 
@@ -398,7 +395,7 @@ Databázové schéma je definováno deklarativně pomocí Drizzle ORM v jazyce T
 
 === Autentizace a uživatelé
 
-Autentizační vrstva je založena na knihovně Better Auth, která poskytuje kompletní řešení pro správu uživatelských účtů, relací a ověřování identity. Schéma zahrnuje tabulky `user`, `session`, `account` a `verification`. Tabulka `user` uchovává základní údaje o uživateli včetně jména, emailu a avataru. Tabulka `session` spravuje aktivní relace s podporou expirace a automatické obnovy. Tabulka `account` umožňuje napojení na externí poskytovatele identity, jako jsou GitHub a Google, prostřednictvím protokolu OAuth 2.0#footnote[OAuth 2.0 je autorizační framework umožňující aplikacím třetích stran získat omezený přístup k uživatelským zdrojům bez sdílení přihlašovacích údajů.]. Konfigurace Better Auth zajišťuje šifrování OAuth tokenů, cachování relací v cookies s pětiminutovou platností a sedmidenní session s denní obnovitelností.
+Autentizační vrstva je založena na knihovně Better Auth, která poskytuje kompletní řešení pro správu uživatelských účtů, relací a ověřování identity. Schéma zahrnuje tabulky `user`, `session`, `account` a `verification`, přičemž tabulka `user` uchovává základní údaje o uživateli včetně jména, emailu a avataru. Tabulka `session` spravuje aktivní relace s podporou expirace a automatické obnovy. V tabulkce `account` jsou uložena data umožňující napojení na externí poskytovatele identity, v případě této aplikace se jedná o přihlášení od služby Google, prostřednictvím protokolu OAuth 2.0#footnote[OAuth 2.0 je autorizační framework umožňující aplikacím třetích stran získat omezený přístup k uživatelským zdrojům bez sdílení přihlašovacích údajů.] @google-oauth2. Konfigurace Better Auth zajišťuje šifrování OAuth tokenů, cachování relací v cookies s pětiminutovou platností a sedmidenní session s denní obnovitelností.
 
 == Autentizace a middleware
 
@@ -464,7 +461,7 @@ Pohybový systém je založen na dlaždicové mřížce, kde je prostor diskreti
 
 Pohybová akce spotřebuje jednu akci z maximálního počtu akcí dané entity v tomto tahu. Tím je zajištěno, že hráč musí strategicky plánovat, zda své akce využije na pohyb, použití schopností nebo kombinaci obojího. Serverová validace tohoto pravidla zabraňuje situaci, kdy by klient mohl odeslat pohyb s vyčerpaným akčním rozpočtem.
 
-Na klientské straně je pohybová interpolace entit realizována prostřednictvím knihovny `react-spring`, která umožňuje plynulé přechody mezi dvěma pozicemi na herní mřížce. Tento přístup využívá princip pružinového modelu, kdy jsou parametry optimalizovány tak, aby pohyb entity působil věrohodně. Model zajišťuje vizuálně konzistentní interakci hráče s herní mapou a podporuje intuitivní vnímání pohybu, přičemž každá změna pozice je animována postupně, namísto okamžitého skoku mezi pozicemi.
+Na klientské straně je pohybová interpolace entit realizována prostřednictvím knihovny _react-spring_, která umožňuje plynulé přechody mezi dvěma pozicemi na herní mřížce. Tento přístup využívá princip pružinového modelu, kdy jsou parametry optimalizovány tak, aby pohyb entity působil věrohodně. Model zajišťuje vizuálně konzistentní interakci hráče s herní mapou a podporuje intuitivní vnímání pohybu, přičemž každá změna pozice je animována postupně, namísto okamžitého skoku mezi pozicemi.
 
 == Systém schopností a bojová mechanika
 
@@ -520,7 +517,7 @@ END
 
 == Interakce s objektem ohniště
 
-Ohniště (`campfire`) je v implementaci dvojí subsystém. V přípravné fázi kola, tedy při hodnotě `turn = -1`, může Dungeon Master ohniště přidávat, mazat a přesouvat. Při vytvoření nového ohniště server zároveň vygeneruje základní obchodní nabídku z katalogu všech předmětů a nastaví ceny podle jejich evidované hodnoty. Při přesunu je navíc kontrolováno, zda cílové pole neobsahuje stěnu, takže ohniště nelze umístit do blokované pozice.
+Ohniště (`campfire`) je v implementaci vytvořen jako dvojitý subsystém. V přípravné fázi kola, může _Dungeon Master_ ohniště volně přidávat, mazat a přesouvat. Při vytvoření nového ohniště server zároveň vygeneruje základní obchodní nabídku z katalogu všech předmětů a nastaví ceny podle jejich evidované hodnoty. Při přesunu je navíc kontrolováno, zda cílové pole neobsahuje stěnu, takže ohniště nelze umístit do blokované pozice.
 
 V samotné hře plní ohniště servisní roli. Operace `rest` umožňuje řízené léčení postavy, ale ne za cenu měny. Místo toho spotřebovává zvolený počet zbývajících akcí postavy a podle pomocné funkce `calculateRestHealing` z nich odvozuje množství obnovených životů. Úprava životů i počtu zbývajících akcí probíhá v jedné transakci. Vedle toho lze přes `shop:setup` přepsat nabídku předmětů konkrétního ohniště a přes `shop:buy` nakupovat položky za `Gold Coin`. V serverové vrstvě je zde tedy hlavním validovaným kritériem oprávnění hráče, fáze hry a dostupnost měny; vzdálenost od ohniště není v této části implementace vynucována na úrovni handleru, ale může být omezena již na úrovni uživatelského rozhraní.
 
@@ -583,32 +580,36 @@ END
 
 == Načítání 3D modelů a správa assetů
 
-Systém načítání 3D modelů je postaven na víceúrovňové architektuře, která zajišťuje flexibilitu a odolnost vůči chybám. Každá entita v databázi může volitelně obsahovat cestu k souboru ve formátu GLB nebo glTF#footnote[GL Transmission Format je otevřený standard pro efektivní přenos a rychlé načítání 3D scén a modelů.], který je uložen v adresáři `/public` a servisován jako statický asset.
+Systém načítání 3D modelů je postaven na víceúrovňové architektuře, která zajišťuje flexibilitu a odolnost vůči chybám. Každá entita v databázi může volitelně obsahovat cestu k souboru ve formátu GLB nebo glTF#footnote[GL Transmission Format je otevřený standard pro efektivní přenos a rychlé načítání 3D scén a modelů.], který je uložen v adresáři _/public_ a servisován jako statický asset.
 
-Načítání je realizováno lazy inicializací instance `GLTFLoader` z knihovny Three.js, která je volána výhradně na klientské straně, aby nedocházelo k chybám v serverovém prostředí. Načtené modely jsou ukládány do paměťové cache na úrovni modulu, takže opakovaný přístup ke stejnému modelu nevyvolává nový síťový požadavek.
+Načítání je realizováno lazy inicializací instance _GLTFLoader_ z knihovny Three.js, která je volána výhradně na klientské straně, aby nedocházelo k chybám v serverovém prostředí. Načtené modely jsou ukládány do paměťové cache na úrovni modulu, takže opakovaný přístup ke stejnému modelu nevyvolává nový síťový požadavek.
 
 V případě, že model není k dispozici nebo jeho cesta je neplatná, systém automaticky přepne na parametrickou záložní geometrii — sféru pro postavy a monstra, kvádr pro truhly a kužel pro ohniště. Tento fallback mechanismus zajišťuje, že hra zůstane plně funkční i bez vlastních 3D modelů, což je zásadní jak pro vývoj, tak pro scénáře, kdy server s assety není dostupný.
 
-== Optimalizace
+#pagebreak()
+
+= Optimalizace
 
 Aplikace implementuje několik vrstev optimalizace, které zajišťují plynulý běh i při vysokém počtu entit a složité scéně.
 
-=== Selektory Zustand
+== Selektory Zustand
 
-Díky nativní podpoře selektorů v knihovně Zustand jsou komponenty odebírající stav z centrálního úložiště překreslovány pouze při změně konkrétní části stavu, kterou skutečně využívají. Tento princip je aplikován systematicky napříč celou aplikací, například komponenta tlačítka pro ukončení tahu reaguje výhradně na změnu oprávnění `canEndTurn`, nikoliv na každou změnu herního stavu.
+Díky nativní podpoře selektorů v knihovně Zustand jsou komponenty odebírající stav z centrálního úložiště překreslovány pouze při změně konkrétní části stavu, kterou skutečně využívají. Tento princip je aplikován systematicky napříč celou aplikací, například komponenta tlačítka pro ukončení tahu reaguje výhradně na změnu oprávnění _canEndTurn_, nikoliv na každou změnu herního stavu.
 
-=== React.memo a memoizace komponent
+== Memorizace komponent
 
-Komponenty, které přijívají stabilní vstupní data, jsou obaleny do `React.memo`, čímž React přeskočí jejich vykreslení, pokud se vstupní vlastnosti referenčně nezměnily. Tato technika je využita zejména u vizuálně náročných komponent jako `Floor`, kde by zbytečné překreslení vedlo k rekalkulaci dlaždic, přepočtu viditelnosti stěn a aktualizaci instancované geometrie @react-docs.
+Komponenty, které přijívají stabilní vstupní data, jsou obaleny do _React.memo_, čímž React přeskočí jejich vykreslení, pokud se vstupní vlastnosti referenčně nezměnily. Tato technika je využita zejména u vizuálně náročných komponent jako _Floor_, kde by zbytečné překreslení vedlo k rekalkulaci dlaždic, přepočtu viditelnosti stěn a aktualizaci instancované geometrie @react-docs.
 
-=== Render distance a visibility culling
+== Visibility culling
 
-Každá entita a vizuální prvek podléhá kontrole viditelnosti na základě vzdálenosti od kamery. Funkce `isWithinRenderDistance` vyhodnocuje čtvercovvou vzdálenost od pozice kamery a vrací boolean hodnotu, která rozhoduje o tom, zda je prvek zařazen do vykreslovacího průchodu. Tento mechanismus efektivně redukuje počet objektů ve scéně bez nutnosti implementace pokročilého systému culling#footnote[Culling je proces odstranění objektů ze zobrazovacího bufferu, které nejsou aktuálně vidět.] na úrovni aplikační vrstvy.
+Každá entita a vizuální prvek podléhá kontrole viditelnosti na základě vzdálenosti od kamery. Funkce _isWithinRenderDistance_ vyhodnocuje čtvercovvou vzdálenost od pozice kamery a vrací boolean hodnotu, která rozhoduje o tom, zda je prvek zařazen do vykreslovacího průchodu. Tento mechanismus efektivně redukuje počet objektů ve scéně bez nutnosti implementace pokročilého systému culling#footnote[Culling je proces odstranění objektů ze zobrazovacího bufferu, které nejsou aktuálně vidět.] na úrovni aplikační vrstvy.
 
-= Závěr
+#pagebreak()
+#heading(numbering: none, [Závěr])
 
-Stanovené cíle práce byly v úvodních pasážích analyzovány specifika stolních her na hrdiny a principy jejich přenosu do digitálního prostoru, přičemž tyto teoretické poznatky byly následně aplikovány pro návrh a rozvoj komplexní multiplayerové platformy. Webová aplikace byla vyvinuta jakožto zcela nový projekt, využívající moderní technologický stack a modulární architekturu s důrazem na precizní synchronizaci herních dat a vysokou reaktivitu uživatelského rozhraní v reálném čase.
+Stanovené cíle práce byly v úvodních pasážích analyzovány specifika stolních her na hrdiny a principy jejich přenosu do digitálního prostoru, přičemž tyto teoretické poznatky byly následně aplikovány pro návrh a rozvoj komplexní multiplayerové platformy. Webová aplikace byla vyvinuta jakožto zcela nový projekt, využívající moderní technologie a modulární architekturu. Nasazení projektu bylo provedeno na VPS platformy Digital Ocean zapomocí _Docker application image_ s reverse proxy _Nginx_. Aplikace se poté prokálaza dostatečně optimalizována navzdory využívání socketů na synchronizaci dat.
 
-== kritické hodnocení použitých technologií
 
-V rámci volby použitých technologií se jako zásadní problém ukázala dekonstrukce meta-framework. Přestože Next.js dominuje v poli běžných webových aplikací, v kontextu vysoce dynamického herního serveru se v mnoha ohledech se tento framework ukázal jako nevhodná primární volba. Jeho architektura, ktérá je silně orientovaná na bezstavové operace a HTTP request/response cyklus, naráží na své limity. Aplikace vyžaduje perzistentní obousměrné spojení a nízká latence, kterou Next.Js není schopno dodat. Vrozená omezení standardního App Routeru při správě WebSocketů si vynutila hybridní přístup a částečný návrat k nízkoúrovňovým mechanismům Node.js.
+#heading(numbering: none, outlined: false, [Hodnocení použitých technologií], level: 2)
+
+V rámci volby použitých technologií se jako zásadní problém ukázala volba meta-frameworku. Přestože Next.js dominuje v poli běžných webových aplikací, v kontextu vysoce dynamického serveru se v mnoha ohledech tento framework ukázal jako nevhodná primární volba. Jeho architektura, ktérá je silně orientovaná na bezstavové operace a HTTP, popřípadně HTTPs , request/response cyklus, naráží na své limity. Aplikace vyžaduje perzistentní obousměrné spojení a nízkou latenci, kterou Next.Js není schopno dodat. Vrozená omezení standardního App Routeru při správě WebSocketů si vynutila hybridní přístup a částečný návrat k nízkoúrovňovým mechanismům Node.js, které značně spomalily a znepříjemnili vývoj.
