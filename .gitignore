@@ -43,8 +43,6 @@ next-env.d.ts
 /.direnv
 /.envrc
 
-**.md
-
 **/.idea
 **/_things
 **/desktop.ini
