@@ -1,28 +1,27 @@
 services:
-  traefik:
-    image: traefik:v3.0
-    container_name: mystique_traefik
+  nginx:
+    image: nginx:alpine
+    container_name: mystique_nginx
     restart: unless-stopped
-    command:
-      - "--api.dashboard=true"
-      - "--api.insecure=false"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--certificatesresolvers.le.acme.tlschallenge=true"
-      - "--certificatesresolvers.le.acme.email=${LETSENCRYPT_EMAIL}"
-      - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
-
+    depends_on:
+      - app
     ports:
       - "80:80"
       - "443:443"
-
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./letsencrypt:/letsencrypt"
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certbot/www:/var/www/certbot:ro
+      - ./letsencrypt:/etc/letsencrypt:ro
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: mystique_certbot
+    restart: unless-stopped
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./letsencrypt:/etc/letsencrypt
+    entrypoint: /bin/sh
+    command: -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h; done"
 
   app:
     build: .
@@ -34,12 +33,6 @@ services:
       - postgres
       - minio
       - migrate
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mystique.rule=Host(`mystique.prazakl.cz`)"
-      - "traefik.http.routers.mystique.entrypoints=websecure"
-      - "traefik.http.routers.mystique.tls.certresolver=le"
-      - "traefik.http.services.mystique.loadbalancer.server.port=3000"
 
   migrate:
     image: oven/bun:1.1
