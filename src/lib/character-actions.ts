@@ -4,7 +4,7 @@ import { db, schema } from "@/lib/db";
 import { Game } from "@/lib/game";
 import { InGameHelpers } from "@/lib/ingame-helpers";
 import { and, eq, inArray } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 type StartingInventoryItem = { itemId: string; quantity: number };
 
@@ -111,6 +111,7 @@ export const createCharacter = async (
     });
 
     revalidatePath(options?.path || "/dashboard");
+    revalidateTag("characters");
     return { success: true, character: newChar };
   } catch (error) {
     return { success: false, error: "Internal Server Error" };
@@ -122,6 +123,7 @@ export const deleteCharacter = async (characterId: string, options?: { path?: st
   try {
     await db.delete(schema.character).where(eq(schema.character.id, characterId));
     revalidatePath(options?.path || "/dashboard");
+    revalidateTag("characters");
     return { success: true };
   } catch (error) {
     return { success: false, error: "Internal Server Error" };
@@ -149,6 +151,7 @@ export const unlinkCharacterFromLobby = async (
         );
     });
     revalidatePath(options?.path || "/dashboard");
+    revalidateTag("characters");
     return { success: true };
   } catch (error) {
     return { success: false, error: "Internal Server Error" };

@@ -19,7 +19,9 @@ export const CharacterDelete = ({ character, children, asChild }: CharacaterDele
   const [confirm, setConfirm] = React.useState("");
   const handle = async () => {
     const { error } = await deleteCharacter(character.id);
-    if (!error) toast.success("Character successfully deleted.");
+    if (!error) {
+      toast.success("Character successfully deleted.");
+    }
     else toast.error(error);
   };
   return (
