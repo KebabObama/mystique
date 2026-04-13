@@ -7,6 +7,18 @@ server {
     }
 
     location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name mystique.prazakl.cz;
+
+    ssl_certificate /etc/letsencrypt/live/mystique.prazakl.cz/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mystique.prazakl.cz/privkey.pem;
+
+    location / {
         proxy_pass http://app:3000;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
