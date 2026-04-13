@@ -1,7 +1,7 @@
-FROM node:22-alpine
+FROM oven/bun:latest
 WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN npm ci
+COPY package.json bun.lock* ./
+RUN bun install
 COPY . .
-RUN NEXT_IGNORE_TYPECHECK=1 npm run build
-CMD ["npm", "run", "start"]
+RUN  bun run build
+CMD ["bun", "run", "start"]
