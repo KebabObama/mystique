@@ -112,9 +112,6 @@ namespace Bucket {
   };
 }
 
-/** Provides the default Bucket export. */
-export default Bucket;
-
 /** Provides the upload file function. */
 export const uploadFile = async (
   bucketName: Bucket.Names,
