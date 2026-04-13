@@ -108,9 +108,7 @@ export const createCharacter = async (
       }
 
       return createdCharacter;
-    });
-
-    location.reload();    
+    });   
     revalidateTag("characters");
     return { success: true, character: newChar };
   } catch (error) {

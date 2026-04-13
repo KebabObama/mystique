@@ -50,6 +50,7 @@ export const CharacterCreator = () => {
     }
     toast.success("Character forged!");
     setOpen(false);
+    location.reload();
   };
 
   const [attrPoints, setAttrPoints] = React.useState<number>(7);
