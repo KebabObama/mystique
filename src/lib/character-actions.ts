@@ -120,7 +120,7 @@ export const createCharacter = async (
 export const deleteCharacter = async (characterId: string, options?: { path?: string }) => {
   try {
     await db.delete(schema.character).where(eq(schema.character.id, characterId));
-    revalidatePath(options?.path || "/dashboard");
+    revalidatePath(options?.path || "/(classic)/dashboard");
     revalidateTag("characters");
     return { success: true };
   } catch (error) {
