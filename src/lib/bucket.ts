@@ -5,12 +5,15 @@ import { Client } from "minio";
 
 /** Provides bucket storage helpers. */
 namespace Bucket {
+  /** Indicates whether the app is running in production. */
+  const isProduction = process.env.NODE_ENV === "production";
+
   /** Represents the bucket names type. */
   export type Names = keyof typeof names;
 
   /** Defines the connection constant. */
   export const connection = {
-    endPoint: process.env.S3_ENDPOINT || "localhost",
+    endPoint: process.env.S3_ENDPOINT || (isProduction ? "minio" : "localhost"),
     port: Number(process.env.S3_PORT) || 9000,
     accessKey: process.env.S3_ROOT_USER as string,
     secretKey: process.env.S3_ROOT_PASSWORD as string,
