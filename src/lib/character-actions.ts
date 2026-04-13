@@ -110,7 +110,7 @@ export const createCharacter = async (
       return createdCharacter;
     });
 
-    revalidatePath(options?.path || "/dashboard");
+    location.reload();    
     revalidateTag("characters");
     return { success: true, character: newChar };
   } catch (error) {
