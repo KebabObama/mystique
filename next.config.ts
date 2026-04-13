@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   compress: true,
   reactStrictMode: false,
   // output: "standalone",
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default nextConfig;

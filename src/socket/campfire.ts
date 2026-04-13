@@ -27,15 +27,17 @@ export const register = (ctx: SocketContext) => {
           .returning();
 
         const allItems = await tx.select().from(schema.item);
-        await tx
-          .insert(schema.campfireShopItem)
-          .values(
-            allItems.map((shopItem) => ({
-              campfireId: newCampfire.id,
-              itemId: shopItem.id,
-              cost: shopItem.value,
-            }))
-          );
+        if (allItems.length > 0) {
+          await tx
+            .insert(schema.campfireShopItem)
+            .values(
+              allItems.map((shopItem) => ({
+                campfireId: newCampfire.id,
+                itemId: shopItem.id,
+                cost: shopItem.value,
+              }))
+            );
+        }
 
         await tx
           .insert(schema.lobbyEntity)

@@ -86,8 +86,10 @@ export const register = (ctx: SocketContext) => {
     const template = await db.query.monster.findFirst({ where: eq(schema.monster.id, monsterId) });
     if (!template) return;
 
+    const { id: _templateId, ...templateData } = template;
+
     const fresh = await db.transaction(async (tx) => {
-      const [newMonster] = await tx.insert(schema.monster).values(template).returning();
+      const [newMonster] = await tx.insert(schema.monster).values(templateData).returning();
 
       const entity = await tx
         .insert(schema.lobbyEntity)

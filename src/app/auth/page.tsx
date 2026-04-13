@@ -7,11 +7,11 @@ import { Input } from "@/components/ui/input";
 import Tabs from "@/components/ui/tabs";
 import { authClient } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 /** Renders the auth page. */
 export default () => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [googleLoading, setGoogleLoading] = useState<boolean>(false);
 
   return (
     <Card className="absolute top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 gap-6">
@@ -25,10 +25,10 @@ export default () => {
           <Tabs.Trigger value="register">Sign Up</Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content className="flex flex-col gap-4" value="login">
-          <Login loading={loading} setLoading={setLoading} />
+          <Login />
         </Tabs.Content>
         <Tabs.Content className="flex flex-col gap-4" value="register">
-          <Register loading={loading} setLoading={setLoading} />
+          <Register />
         </Tabs.Content>
       </Tabs>
 
@@ -41,12 +41,15 @@ export default () => {
         </div>
       </div>
 
-      <Google loading={loading} setLoading={setLoading} />
+      <Google loading={googleLoading} setLoading={setGoogleLoading} />
     </Card>
   );
 };
 
 type Props = { loading: boolean; setLoading: (loading: boolean) => void };
+type AuthActionState = { status: "idle" | "success" | "error"; message?: string };
+
+const initialAuthActionState: AuthActionState = { status: "idle" };
 
 const Google = ({ loading, setLoading }: Props) => {
   const handleGoogleSignIn = async () => {
@@ -56,8 +59,9 @@ const Google = ({ loading, setLoading }: Props) => {
       toast.show("Redirecting to Google...");
     } catch {
       toast.error("Authentication failed");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -67,157 +71,160 @@ const Google = ({ loading, setLoading }: Props) => {
   );
 };
 
-const Login = ({ loading, setLoading }: Props) => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
+const Login = () => {
   const router = useRouter();
+  const [state, formAction, pending] = useActionState<AuthActionState, FormData>(
+    async (_previousState, formData) => {
+      const email = formData.get("email")?.toString().trim() ?? "";
+      const password = formData.get("password")?.toString() ?? "";
+      const rememberMe = formData.get("rememberMe") === "on";
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const result = await authClient.signIn.email({
-        email,
-        password,
-        callbackURL: "/dashboard",
-        rememberMe,
-      });
-      if (result.error) toast.error("Sign in failed");
-      else {
-        toast.show("Success!");
-        router.push("/dashboard");
+      try {
+        const result = await authClient.signIn.email({
+          email,
+          password,
+          callbackURL: "/dashboard",
+          rememberMe,
+        });
+        if (result.error) return { status: "error", message: "Sign in failed" };
+        return { status: "success", message: "Success!" };
+      } catch {
+        return { status: "error", message: "Sign in failed" };
       }
-    } catch {
-      toast.error("Sign in failed");
+    },
+    initialAuthActionState,
+  );
+
+  useEffect(() => {
+    if (state.status === "error") {
+      toast.error(state.message ?? "Sign in failed");
+      return;
     }
-    setLoading(false);
-  };
+    if (state.status === "success") {
+      toast.show(state.message ?? "Success!");
+      router.push("/dashboard");
+    }
+  }, [router, state]);
 
   return (
-    <form className="flex flex-col gap-3" onSubmit={handleLogin}>
+    <form action={formAction} className="flex flex-col gap-3">
       <label htmlFor="login-email">Email</label>
       <Input
-        disabled={loading}
+        disabled={pending}
         id="login-email"
-        onChange={(e) => setEmail(e.target.value)}
+        name="email"
         placeholder="Enter your email"
         required
         type="email"
-        value={email}
       />
       <label htmlFor="login-password">Password</label>
       <Input
-        disabled={loading}
+        disabled={pending}
         id="login-password"
-        onChange={(e) => setPassword(e.target.value)}
+        name="password"
         placeholder="Enter your password"
         required
         type="password"
-        value={password}
       />
       <div className="mt-2 flex items-center gap-2">
         <input
-          checked={rememberMe}
           className="accent-primary ring-border ml-2.5 size-4 cursor-pointer bg-transparent ring-4 disabled:cursor-not-allowed"
-          disabled={loading}
+          disabled={pending}
           id="remember-me"
-          onChange={(e) => setRememberMe(e.target.checked)}
+          name="rememberMe"
           type="checkbox"
         />
         <label className="cursor-pointer text-sm select-none" htmlFor="remember-me">
           Remember me
         </label>
       </div>
-      <Button className="mt-2 w-full" disabled={loading} type="submit">
-        {loading ? "Signing in..." : "Sign In"}
+      <Button className="mt-2 w-full" disabled={pending} type="submit">
+        {pending ? "Signing in..." : "Sign In"}
       </Button>
     </form>
   );
 };
 
-const Register = ({ loading, setLoading }: Props) => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [name, setName] = useState<string>("");
+const Register = () => {
   const router = useRouter();
+  const [state, formAction, pending] = useActionState<AuthActionState, FormData>(
+    async (_previousState, formData) => {
+      const name = formData.get("name")?.toString().trim() ?? "";
+      const email = formData.get("email")?.toString().trim() ?? "";
+      const password = formData.get("password")?.toString() ?? "";
+      const confirmPassword = formData.get("confirmPassword")?.toString() ?? "";
 
-  const handleRegister = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      toast.error("Passwords don't match");
-      return;
-    }
-    if (password.length < 6) {
-      toast.error("Password too short");
-      return;
-    }
-    setLoading(true);
-    try {
-      const result = await authClient.signUp.email({
-        email,
-        password,
-        name,
-        callbackURL: "/dashboard",
-      });
-      if (result.error) {
-        toast.error("Registration failed");
-      } else {
-        toast.success("Account created!");
-        router.push("/dashboard");
+      if (password !== confirmPassword) return { status: "error", message: "Passwords don't match" };
+      if (password.length < 6) return { status: "error", message: "Password too short" };
+
+      try {
+        const result = await authClient.signUp.email({
+          email,
+          password,
+          name,
+          callbackURL: "/dashboard",
+        });
+        if (result.error) return { status: "error", message: "Registration failed" };
+        return { status: "success", message: "Account created!" };
+      } catch {
+        return { status: "error", message: "Registration failed" };
       }
-    } catch {
-      toast.error("Registration failed");
+    },
+    initialAuthActionState,
+  );
+
+  useEffect(() => {
+    if (state.status === "error") {
+      toast.error(state.message ?? "Registration failed");
+      return;
     }
-    setLoading(false);
-  };
+    if (state.status === "success") {
+      toast.success(state.message ?? "Account created!");
+      router.push("/dashboard");
+    }
+  }, [router, state]);
 
   return (
-    <form className="flex flex-col gap-3" onSubmit={handleRegister}>
+    <form action={formAction} className="flex flex-col gap-3">
       <label htmlFor="register-name">Full Name</label>
       <Input
-        disabled={loading}
+        disabled={pending}
         id="register-name"
-        onChange={(e) => setName(e.target.value)}
+        name="name"
         placeholder="Enter your full name"
         required
         type="text"
-        value={name}
       />
       <label htmlFor="register-email">Email</label>
       <Input
-        disabled={loading}
+        disabled={pending}
         id="register-email"
-        onChange={(e) => setEmail(e.target.value)}
+        name="email"
         placeholder="Enter your email"
         required
         type="email"
-        value={email}
       />
       <label htmlFor="register-password">Password</label>
       <Input
-        disabled={loading}
+        disabled={pending}
         id="register-password"
         minLength={6}
-        onChange={(e) => setPassword(e.target.value)}
+        name="password"
         placeholder="Create a password (min. 6 characters)"
         required
         type="password"
-        value={password}
       />
       <label htmlFor="register-confirm-password">Confirm Password</label>
       <Input
-        disabled={loading}
+        disabled={pending}
         id="register-confirm-password"
-        onChange={(e) => setConfirmPassword(e.target.value)}
+        name="confirmPassword"
         placeholder="Confirm your password"
         required
         type="password"
-        value={confirmPassword}
       />
-      <Button className="mt-3 w-full" disabled={loading} type="submit">
-        {loading ? "Creating account..." : "Create Account"}
+      <Button className="mt-3 w-full" disabled={pending} type="submit">
+        {pending ? "Creating account..." : "Create Account"}
       </Button>
     </form>
   );

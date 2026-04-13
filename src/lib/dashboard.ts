@@ -3,7 +3,6 @@
 import { db, schema } from "@/lib/db";
 import { Game } from "@/lib/game";
 import { eq } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
 
 /** Represents the character lobby type. */
 export type CharacterLobby = { id: string; name: string; memberCount: number; members: string[] };
@@ -25,43 +24,39 @@ export type LobbyInfo = {
 /**
  * Get all characters owned by a user with their lobby information
  */
-export const getCharacters = unstable_cache(
-  async (userId: string) => {
-    const results = await db.query.character.findMany({
-      where: eq(schema.character.ownerId, userId),
-      with: {
-        inventory: { with: { item: true } },
-        lobbyEntities: {
-          columns: { lobbyId: true },
-          with: { lobby: { with: { members: { columns: {}, with: { user: true } } } } },
-        },
+export const getCharacters = async (userId: string) => {
+  const results = await db.query.character.findMany({
+    where: eq(schema.character.ownerId, userId),
+    with: {
+      inventory: { with: { item: true } },
+      lobbyEntities: {
+        columns: { lobbyId: true },
+        with: { lobby: { with: { members: { columns: {}, with: { user: true } } } } },
       },
-    });
+    },
+  });
 
-    return results.map(({ inventory, lobbyEntities, ...character }) => {
-      const lobbies = new Map<string, CharacterLobby>();
+  return results.map(({ inventory, lobbyEntities, ...character }) => {
+    const lobbies = new Map<string, CharacterLobby>();
 
-      for (const entry of lobbyEntities) {
-        if (!entry.lobby || lobbies.has(entry.lobby.id)) continue;
+    for (const entry of lobbyEntities) {
+      if (!entry.lobby || lobbies.has(entry.lobby.id)) continue;
 
-        lobbies.set(entry.lobby.id, {
-          id: entry.lobby.id,
-          name: entry.lobby.name,
-          memberCount: entry.lobby.members.length,
-          members: entry.lobby.members.map((member) => member.user.name),
-        });
-      }
+      lobbies.set(entry.lobby.id, {
+        id: entry.lobby.id,
+        name: entry.lobby.name,
+        memberCount: entry.lobby.members.length,
+        members: entry.lobby.members.map((member) => member.user.name),
+      });
+    }
 
-      return {
-        ...character,
-        inventory: inventory.map((i) => ({ ...i, ...i.item })),
-        lobbies: [...lobbies.values()],
-      };
-    }) as CharacterWithLobby[];
-  },
-  [],
-  { tags: ["characters"] }
-);
+    return {
+      ...character,
+      inventory: inventory.map((i) => ({ ...i, ...i.item })),
+      lobbies: [...lobbies.values()],
+    };
+  }) as CharacterWithLobby[];
+};
 
 /**
  * Get lobbies the user is a member of

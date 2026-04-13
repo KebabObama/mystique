@@ -6,6 +6,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    depends_on:
+      - app
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./certbot/www:/var/www/certbot
@@ -49,7 +51,7 @@ services:
       - .:/app
     depends_on:
       - postgres
-    command: sh -c "bun install && bun run db:push"
+    command: sh -c "bun install && bun run db:push && bun run db:seed"
 
   postgres:
     image: postgres:latest

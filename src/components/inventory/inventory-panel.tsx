@@ -30,7 +30,7 @@ export const InventoryPanel = ({ items }: InventoryPanelProps) => {
       return <ViewPanel character={entity} onClose={closePanel} readonly />;
 
     case "storage": {
-      const source = instance.chests.find((e) => e.id === sourceEntityId);
+      const source = instance.characters.find((e) => e.id === sourceEntityId);
       if (!source) return null;
       return <StoragePanel sourceEntity={source} targetEntity={entity} onClose={closePanel} />;
     }
